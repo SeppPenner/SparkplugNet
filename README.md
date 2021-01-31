@@ -40,7 +40,13 @@ The assembly was written and tested in .Net 5.0.
 The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/).
 
 ## Requirements
-* Mqtt broker with TODO!
+* MQTT broker that implements 100% of the MQTT 3.1.1 specification
+* MQTT broker with QoS 0 and 1 support
+* MQTT broker with retained messages support
+* MQTT broker with last will and testament support
+* MQTT broker with a flexible security system
+
+[MQTTnet](https://github.com/chkr1011/MQTTnet) is recommended.
 
 ## Supported Sparkplug standards
 * Version 2.2, spAv1.0 and spBv1.0.
