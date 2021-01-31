@@ -22,6 +22,7 @@ namespace SparkplugNet.Application
     using MQTTnet.Protocol;
 
     using SparkplugNet.Enumerations;
+    using SparkplugNet.Metrics;
 
     /// <inheritdoc cref="SparkplugBase"/>
     /// <summary>
@@ -55,7 +56,7 @@ namespace SparkplugNet.Application
         /// <summary>
         /// Gets the node states.
         /// </summary>
-        public ConcurrentDictionary<string, SparkplugConnectionStatus> NodeStates { get; } = new ConcurrentDictionary<string, SparkplugConnectionStatus>();
+        public ConcurrentDictionary<string, BasicMetrics> NodeStates { get; } = new ConcurrentDictionary<string, BasicMetrics>();
 
         /// <summary>
         /// Starts the Sparkplug application.
@@ -117,10 +118,12 @@ namespace SparkplugNet.Application
             this.Client.UseDisconnectedHandler(
                 async e =>
                     {
-                        // Set all states to unknown as we disconnected
+                        // Set all states to unknown as we are disconnected
                         foreach (var nodeState in this.NodeStates)
                         {
-                            this.NodeStates[nodeState.Key] = SparkplugConnectionStatus.Unknown;
+                            var value = this.NodeStates[nodeState.Key];
+                            value.ConnectionStatus = SparkplugConnectionStatus.Unknown;
+                            this.NodeStates[nodeState.Key] = value;
                         }
 
                         // Wait until the disconnect interval is reached
