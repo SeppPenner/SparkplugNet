@@ -9,9 +9,7 @@
 
 namespace SparkplugNet.Node
 {
-    using System;
     using System.Collections.Concurrent;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -22,6 +20,7 @@ namespace SparkplugNet.Node
     using MQTTnet.Protocol;
 
     using SparkplugNet.Enumerations;
+    using SparkplugNet.Extensions;
     using SparkplugNet.Metrics;
 
     /// <inheritdoc cref="SparkplugBase"/>
@@ -145,16 +144,26 @@ namespace SparkplugNet.Node
         /// </summary>
         private void AddMessageReceivedHandler()
         {
-            this.Client.UseApplicationMessageReceivedHandler(e =>
-            {
-                // Todo: Parse client and device data here and update their states (Dictionaries here) based on the namespace
-                Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
-                Console.WriteLine();
-            });
+            this.Client.UseApplicationMessageReceivedHandler(
+                e =>
+                    {
+                        var topic = e.ApplicationMessage.Topic;
+
+                        if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+                        {
+                            // Todo: Handle node command message
+                        }
+
+                        if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                        {
+                            // Todo: Handle device command message
+                        }
+
+                        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+                        {
+                            // Todo: Handle state message
+                        }
+                    });
         }
 
         /// <summary>
