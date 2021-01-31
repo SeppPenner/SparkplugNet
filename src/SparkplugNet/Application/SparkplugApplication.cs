@@ -139,15 +139,15 @@ namespace SparkplugNet.Application
         private void AddMessageReceivedHandler()
         {
             this.Client.UseApplicationMessageReceivedHandler(e =>
-                {
-                    // Todo: Parse client and device data here and update their states (Dictionaries here) based on the namespace
-                    Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                    Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                    Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                    Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                    Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
-                    Console.WriteLine();
-                });
+            {
+                // Todo: Parse client and device data here and update their states (Dictionaries here) based on the namespace
+                Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
+                Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
+                Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+                Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
+                Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
+                Console.WriteLine();
+            });
         }
 
         /// <summary>
