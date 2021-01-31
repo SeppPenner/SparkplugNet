@@ -46,7 +46,7 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 * MQTT broker with last will and testament support
 * MQTT broker with a flexible security system
 
-[MQTTnet](https://github.com/chkr1011/MQTTnet) is recommended.
+[MQTTnet.Server](https://github.com/chkr1011/MQTTnet/releases) is recommended.
 
 ## Supported Sparkplug standards
 * Version 2.2, spAv1.0 and spBv1.0.
