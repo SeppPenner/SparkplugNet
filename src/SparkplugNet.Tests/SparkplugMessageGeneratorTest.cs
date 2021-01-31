@@ -36,7 +36,7 @@ namespace SparkplugNet.Tests
         /// Tests the Sparkplug message generator with a message with Sparkplug version 2.2, a version A namespace and a online state.
         /// </summary>
         [TestMethod]
-        public void TestNamespaceAOnline()
+        public void TestStateMessageNamespaceAOnline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
                 SparkplugVersion.V22,
@@ -52,7 +52,7 @@ namespace SparkplugNet.Tests
         /// Tests the Sparkplug message generator with a message with Sparkplug version 2.2, a version A namespace and a offline state.
         /// </summary>
         [TestMethod]
-        public void TestNamespaceAOffline()
+        public void TestStateMessageNamespaceAOffline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
                 SparkplugVersion.V22,
@@ -68,7 +68,7 @@ namespace SparkplugNet.Tests
         /// Tests the Sparkplug message generator with a message with Sparkplug version 2.2, a version B namespace and a online state.
         /// </summary>
         [TestMethod]
-        public void TestNamespaceBOnline()
+        public void TestStateMessageNamespaceBOnline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
                 SparkplugVersion.V22,
@@ -86,7 +86,7 @@ namespace SparkplugNet.Tests
         /// Tests the Sparkplug message generator with a message with Sparkplug version 2.2, a version B namespace and a offline state.
         /// </summary>
         [TestMethod]
-        public void TestNamespaceBOffline()
+        public void TestStateMessageNamespaceBOffline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
                 SparkplugVersion.V22,
