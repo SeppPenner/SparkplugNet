@@ -1,0 +1,48 @@
+# Payload definition
+
+## Application
+
+|Method|Topic|Type|Payload|
+|-|-|-|-|
+|Publish|`STATE/scada_host_id`|A|`OFFLINE`|
+|Publish|`STATE/scada_host_id`|B|?|
+|Publish|`STATE/scada_host_id`|A|`ONLINE`|
+|Publish|`STATE/scada_host_id`|B|?|
+|Publish|`spAv1.0/group_id/NCMD/edge_node_id`|A|?|
+|Publish|`spBv1.0/group_id/NCMD/edge_node_id`|B|?|
+|Publish|`spAv1.0/group_id/DCMD/edge_node_id/device_id`|A|?|
+|Publish|`spBv1.0/group_id/DCMD/edge_node_id/device_id`|B|?|
+|Subscribe|`spAv1.0/#`|A|-|
+|Subscribe|`spBv1.0/#`|B|-|
+
+## Node
+
+|Method|Topic|Type|Payload|
+|-|-|-|-|
+|Publish|`spAv1.0/group_id/NDEATH/edge_node_id`|A|`OFFLINE`|
+|Publish|`spBv1.0/group_id/NDEATH/edge_node_id`|B|?|
+|Publish|`spAv1.0/group_id/NBIRTH/edge_node_id`|A|`ONLINE`|
+|Publish|`spBv1.0/group_id/NBIRTH/edge_node_id`|B|?|
+|Publish|`spAv1.0/group_id/NDATA/edge_node_id`|A|?|
+|Publish|`spBv1.0/group_id/NDATA/edge_node_id`|B|?|
+|Subscribe|`spAv1.0/group_id/NCMD/edge_node_id`|A|?|
+|Subscribe|`spBv1.0/group_id/NCMD/edge_node_id`|B|?|
+|Subscribe|`spAv1.0/group_id/DCMD/edge_node_id/#`|A|?|
+|Subscribe|`spBv1.0/group_id/DCMD/edge_node_id/#`|B|?|
+|Subscribe|`STATE/scada_host_id`|A|`OFFLINE`|
+|Subscribe|`STATE/scada_host_id`|B|?|
+|Subscribe|`STATE/scada_host_id`|A|`ONLINE`|
+|Subscribe|`STATE/scada_host_id`|B|?|
+
+## Device
+
+|Method|Topic|Type|Payload|
+|-|-|-|-|
+|Publish|`spAv1.0/group_id/DBIRTH/edge_node_id/device_id`|A|`OFFLINE`|
+|Publish|`spBv1.0/group_id/DBIRTH/edge_node_id/device_id`|B|?|
+|Publish|`spAv1.0/group_id/DDEATH/edge_node_id/device_id`|A|`ONLINE`|
+|Publish|`spBv1.0/group_id/DDEATH/edge_node_id/device_id`|B|?|
+|Publish|`spAv1.0/group_id/DDATA/edge_node_id/device_id`|A|?|
+|Publish|`spBv1.0/group_id/DDATA/edge_node_id/device_id`|B|?|
+|Subscribe|`spAv1.0/group_id/DCMD/edge_node_id/device_id`|A|?|
+|Subscribe|`spBv1.0/group_id/DCMD/edge_node_id/device_id`|B|?|
