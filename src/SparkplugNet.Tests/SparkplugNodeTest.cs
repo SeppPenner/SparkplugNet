@@ -5,21 +5,22 @@
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    using SparkplugNet.Application;
     using SparkplugNet.Enumerations;
+    using SparkplugNet.Node;
 
     [TestClass]
-    public class SparkplugApplicationTest
+    public class SparkplugNodeTest
     {
-        private SparkplugApplicationOptions options = new SparkplugApplicationOptions(
+        private SparkplugNodeOptions options = new SparkplugNodeOptions(
             "localhost",
             "testApplication",
             "test",
             "password",
             false,
             "scala1",
-            TimeSpan.FromSeconds(5),
-            true);
+            "group1",
+            "edge1",
+            TimeSpan.FromSeconds(5));
 
         /// <summary>
         /// Tests the Sparkplug application with the version A namespace.
@@ -27,8 +28,8 @@
         [TestMethod]
         public async Task TestNamespaceA()
         {
-            var application = new SparkplugApplication(SparkplugVersion.V22, SparkplugNamespace.VersionA);
-            await application.Start(this.options);
+            var node = new SparkplugNode(SparkplugVersion.V22, SparkplugNamespace.VersionA);
+            await node.Start(this.options);
         }
 
         /// <summary>
@@ -37,8 +38,8 @@
         [TestMethod]
         public async Task TestNamespaceB()
         {
-            var application = new SparkplugApplication(SparkplugVersion.V22, SparkplugNamespace.VersionB);
-            await application.Start(this.options);
+            var node = new SparkplugNode(SparkplugVersion.V22, SparkplugNamespace.VersionB);
+            await node.Start(this.options);
         }
     }
 }
