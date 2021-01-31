@@ -19,7 +19,7 @@ namespace SparkplugNet.Messages
     /// <summary>
     /// The Sparkplug message generator.
     /// </summary>
-    internal class SparkplugMessageGenerator
+    public class SparkplugMessageGenerator
     {
         /// <summary>
         /// The topic generator.
