@@ -1,7 +1,7 @@
 SparkplugNet
 ====================================
 
-SparkplugNet is a library to use the Sparkplug IIoT standard in .Net. It uses [MQTTnet](https://github.com/chkr1011/MQTTnet) in the background.
+SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in .Net. It uses [MQTTnet](https://github.com/chkr1011/MQTTnet) in the background.
 The assembly was written and tested in .Net 5.0.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/w6pu8fcav4n7651t?svg=true)](https://ci.appveyor.com/project/SeppPenner/sparkplugnet)
