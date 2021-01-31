@@ -25,7 +25,7 @@ namespace SparkplugNet.Messages
         /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <returns>The wildcard namespace subscription topic <see cref="string"/></returns>
-        internal string GetWildcardNamespaceSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace)
+        public string GetWildcardNamespaceSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace)
         {
             if (version is SparkplugVersion.V22)
             {
@@ -43,7 +43,7 @@ namespace SparkplugNet.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <returns>The node command subscription topic <see cref="string"/>.</returns>
-        internal string GetNodeCommandSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
+        public string GetNodeCommandSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
         {
             if (version is SparkplugVersion.V22)
             {
@@ -61,7 +61,7 @@ namespace SparkplugNet.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <returns>The wildcard device command subscription topic <see cref="string"/>.</returns>
-        internal string GetWildcardDeviceCommandSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
+        public string GetWildcardDeviceCommandSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
         {
             if (version is SparkplugVersion.V22)
             {
@@ -80,7 +80,7 @@ namespace SparkplugNet.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <returns>The wildcard device command subscription topic <see cref="string"/>.</returns>
-        internal string GetDeviceCommandSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        public string GetDeviceCommandSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
         {
             if (version is SparkplugVersion.V22)
             {
@@ -96,7 +96,7 @@ namespace SparkplugNet.Messages
         /// <param name="version">The version.</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <returns>The state subscription topic <see cref="string"/></returns>
-        internal string GetStateSubscribeTopic(SparkplugVersion version, string scadaHostIdentifier)
+        public string GetStateSubscribeTopic(SparkplugVersion version, string scadaHostIdentifier)
         {
             if (version is SparkplugVersion.V22)
             {
@@ -116,7 +116,7 @@ namespace SparkplugNet.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier. (Optional)</param>
         /// <returns>The topic as <see cref="string"/>.</returns>
-        internal string GetTopic(
+        public string GetTopic(
             SparkplugVersion version,
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -140,7 +140,7 @@ namespace SparkplugNet.Messages
         /// <param name="version">The version.</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <returns>The STATE message topic as <see cref="string"/>.</returns>
-        internal string GetSparkplugStateMessageTopic(
+        public string GetSparkplugStateMessageTopic(
             SparkplugVersion version,
             string scadaHostIdentifier)
         {

@@ -34,7 +34,7 @@ namespace SparkplugNet.Messages
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="online">A value indicating whether the message sender is online or not.</param>
         /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-        internal MqttApplicationMessage GetSparkplugStateMessage(SparkplugVersion version, SparkplugNamespace nameSpace, string scadaHostIdentifier, bool online)
+        public MqttApplicationMessage GetSparkplugStateMessage(SparkplugVersion version, SparkplugNamespace nameSpace, string scadaHostIdentifier, bool online)
         {
             if (!scadaHostIdentifier.IsIdentifierValid())
             {
@@ -59,7 +59,7 @@ namespace SparkplugNet.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <returns>A new <see cref="MqttApplicationMessage"/>.</returns>
-        internal MqttApplicationMessage CreateSparkplugMessage(
+        public MqttApplicationMessage CreateSparkplugMessage(
             SparkplugVersion version,
             SparkplugNamespace nameSpace,
             string groupIdentifier,
