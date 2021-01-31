@@ -67,7 +67,7 @@ namespace SparkplugNet.Device
 
             // Connect, subscribe to incoming messages and send a state message
             await this.ConnectInternal(options);
-            await this.SubscribeInternal();
+            await this.SubscribeInternal(options);
             await this.PublishInternal(options);
         }
 
@@ -117,7 +117,7 @@ namespace SparkplugNet.Device
 
                         // Connect, subscribe to incoming messages and send a state message
                         await this.ConnectInternal(options);
-                        await this.SubscribeInternal();
+                        await this.SubscribeInternal(options);
                         await this.PublishInternal(options);
                     });
         }
