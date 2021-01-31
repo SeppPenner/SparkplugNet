@@ -30,6 +30,7 @@ namespace SparkplugNet.Application
         /// <param name="useTls">A value indicating whether TLS should be used or not</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="reconnectInterval">The reconnect interval.</param>
+        /// <param name="isPrimaryApplication">A value indicating whether the application the primary application or not. If this value is set to <c>true</c>, the application sends STATE messages, else not.</param>
         /// <param name="webSocketParameters">The WebSocket parameters.</param>
         /// <param name="proxyOptions">The proxy options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -41,6 +42,7 @@ namespace SparkplugNet.Application
             bool useTls,
             string scadaHostIdentifier,
             TimeSpan reconnectInterval,
+            bool isPrimaryApplication,
             MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
             MqttClientWebSocketProxyOptions? proxyOptions = null,
             CancelToken? cancellationToken = null)
@@ -52,6 +54,7 @@ namespace SparkplugNet.Application
             this.UseTls = useTls;
             this.ScadaHostIdentifier = scadaHostIdentifier;
             this.ReconnectInterval = reconnectInterval;
+            this.IsPrimaryApplication = isPrimaryApplication;
             this.WebSocketParameters = webSocketParameters;
             this.ProxyOptions = proxyOptions;
             this.CancellationToken = cancellationToken ?? CancelToken.None;
@@ -91,6 +94,12 @@ namespace SparkplugNet.Application
         /// Gets or sets the reconnect interval.
         /// </summary>
         public TimeSpan ReconnectInterval { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the application the primary application or not.
+        /// If this value is set to <c>true</c>, the application sends STATE messages, else not.
+        /// </summary>
+        public bool IsPrimaryApplication { get; set; }
 
         /// <summary>
         /// Gets or sets the WebSocket parameters.

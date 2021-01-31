@@ -74,10 +74,10 @@ namespace SparkplugNet.Application
             this.AddDisconnectedHandler(options);
             this.AddMessageReceivedHandler();
 
-            // Connect, send a state message and subscribe to incoming messages
+            // Connect, subscribe to incoming messages and send a state message
             await this.ConnectInternal(options);
-            await this.PublishInternal(options);
             await this.SubscribeInternal();
+            await this.PublishInternal(options);
         }
 
         /// <summary>
@@ -126,10 +126,10 @@ namespace SparkplugNet.Application
                         // Wait until the disconnect interval is reached
                         await Task.Delay(options.ReconnectInterval);
 
-                        // Connect, send a state message and subscribe to incoming messages
+                        // Connect, subscribe to incoming messages and send a state message
                         await this.ConnectInternal(options);
-                        await this.PublishInternal(options);
                         await this.SubscribeInternal();
+                        await this.PublishInternal(options);
                     });
         }
 
@@ -189,7 +189,7 @@ namespace SparkplugNet.Application
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.willMessage != null)
+            if (this.willMessage != null && options.IsPrimaryApplication)
             {
                 builder.WithWillMessage(this.willMessage);
             }
@@ -206,8 +206,12 @@ namespace SparkplugNet.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishInternal(SparkplugApplicationOptions options)
         {
-            options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(this.applicationOnlineMessage, options.CancellationToken.Value);
+            // Only send state messages for the primary application
+            if (options.IsPrimaryApplication)
+            {
+                options.CancellationToken ??= CancellationToken.None;
+                await this.Client.PublishAsync(this.applicationOnlineMessage, options.CancellationToken.Value);
+            }
         }
 
         /// <summary>
@@ -216,7 +220,7 @@ namespace SparkplugNet.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task SubscribeInternal()
         {
-            var topic = this.TopicGenerator.GetApplicationSubscribeTopic(this.Version, this.NameSpace);
+            var topic = this.TopicGenerator.GetWildcardNamespaceSubscribeTopic(this.Version, this.NameSpace);
             await this.Client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
         }
     }
