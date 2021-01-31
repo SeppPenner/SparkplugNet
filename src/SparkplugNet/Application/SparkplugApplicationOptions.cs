@@ -24,6 +24,7 @@ namespace SparkplugNet.Application
         /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
         /// </summary>
         /// <param name="brokerAddress">The broker address.</param>
+        /// <param name="port">The broker port.</param>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="userName">The user name.</param>
         /// <param name="password">The password.</param>
@@ -36,6 +37,7 @@ namespace SparkplugNet.Application
         /// <param name="cancellationToken">The cancellation token.</param>
         public SparkplugApplicationOptions(
             string brokerAddress,
+            int port,
             string clientId,
             string userName,
             string password,
@@ -48,6 +50,7 @@ namespace SparkplugNet.Application
             CancelToken? cancellationToken = null)
         {
             this.BrokerAddress = brokerAddress;
+            this.Port = port;
             this.ClientId = clientId;
             this.UserName = userName;
             this.Password = password;
@@ -64,6 +67,11 @@ namespace SparkplugNet.Application
         /// Gets or sets the broker address.
         /// </summary>
         public string BrokerAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the port.
+        /// </summary>
+        public int Port { get; set; }
 
         /// <summary>
         /// Gets or sets the client identifier.

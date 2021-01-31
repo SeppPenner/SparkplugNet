@@ -24,6 +24,7 @@ namespace SparkplugNet.Device
         /// Initializes a new instance of the <see cref="SparkplugDeviceOptions"/> class.
         /// </summary>
         /// <param name="brokerAddress">The broker address.</param>
+        /// <param name="port">The broker port.</param>
         /// <param name="clientId">The client identifier.</param>
         /// <param name="userName">The user name.</param>
         /// <param name="password">The password.</param>
@@ -38,6 +39,7 @@ namespace SparkplugNet.Device
         /// <param name="cancellationToken">The cancellation token.</param>
         public SparkplugDeviceOptions(
             string brokerAddress,
+            int port,
             string clientId,
             string userName,
             string password,
@@ -52,6 +54,7 @@ namespace SparkplugNet.Device
             CancelToken? cancellationToken = null)
         {
             this.BrokerAddress = brokerAddress;
+            this.Port = port;
             this.ClientId = clientId;
             this.UserName = userName;
             this.Password = password;
@@ -70,6 +73,11 @@ namespace SparkplugNet.Device
         /// Gets or sets the broker address.
         /// </summary>
         public string BrokerAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the port.
+        /// </summary>
+        public int Port { get; set; }
 
         /// <summary>
         /// Gets or sets the client identifier.

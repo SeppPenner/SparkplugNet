@@ -175,7 +175,7 @@ namespace SparkplugNet.Application
 
             if (options.WebSocketParameters is null)
             {
-                builder.WithTcpServer(options.BrokerAddress);
+                builder.WithTcpServer(options.BrokerAddress, options.Port);
             }
             else
             {
