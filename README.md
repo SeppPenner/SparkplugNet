@@ -56,6 +56,7 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 * https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf
 * https://documents.opto22.com/2357_Industrial_Strength_MQTT_Sparkplug_B.pdf
 * https://github.com/eclipse/tahu
+* https://github.com/eclipse/kura/blob/develop/kura/org.eclipse.kura.core.cloud/src/main/protobuf/kurapayload.proto
 
 Change history
 --------------
