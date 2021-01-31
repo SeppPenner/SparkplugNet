@@ -97,11 +97,13 @@ namespace SparkplugNet.Application
         {
             this.willMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.Version,
+                this.NameSpace,
                 options.ScadaHostIdentifier,
                 false);
 
             this.applicationOnlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.Version,
+                this.NameSpace,
                 options.ScadaHostIdentifier,
                 true);
         }
