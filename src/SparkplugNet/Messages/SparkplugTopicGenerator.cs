@@ -72,6 +72,25 @@ namespace SparkplugNet.Messages
         }
 
         /// <summary>
+        /// Gets the device command subscription topic.
+        /// </summary>
+        /// <param name="version">The version.</param>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <returns>The wildcard device command subscription topic <see cref="string"/>.</returns>
+        internal string GetDeviceCommandSubscribeTopic(SparkplugVersion version, SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        {
+            if (version is SparkplugVersion.V22)
+            {
+                return $"{nameSpace.GetDescription()}/{groupIdentifier}/{SparkplugMessageType.DeviceCommand.GetDescription()}/{edgeNodeIdentifier}/{deviceIdentifier}";
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(version));
+        }
+
+        /// <summary>
         /// Gets state subscription topic.
         /// </summary>
         /// <param name="version">The version.</param>

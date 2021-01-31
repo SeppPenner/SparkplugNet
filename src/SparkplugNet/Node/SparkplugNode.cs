@@ -39,7 +39,7 @@ namespace SparkplugNet.Node
         /// <summary>
         /// The node online message.
         /// </summary>
-        private MqttApplicationMessage? applicationOnlineMessage;
+        private MqttApplicationMessage? nodeOnlineMessage;
 
         /// <inheritdoc cref="SparkplugBase"/>
         /// <summary>
@@ -104,7 +104,7 @@ namespace SparkplugNet.Node
                 options.EdgeNodeIdentifier,
                 null);
 
-            this.applicationOnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.nodeOnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
                 this.Version,
                 this.NameSpace,
                 options.GroupIdentifier,
@@ -214,7 +214,7 @@ namespace SparkplugNet.Node
         private async Task PublishInternal(SparkplugNodeOptions options)
         {
             options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(this.applicationOnlineMessage, options.CancellationToken.Value);
+            await this.Client.PublishAsync(this.nodeOnlineMessage, options.CancellationToken.Value);
         }
 
         /// <summary>
