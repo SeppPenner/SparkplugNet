@@ -57,6 +57,7 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 * https://documents.opto22.com/2357_Industrial_Strength_MQTT_Sparkplug_B.pdf
 * https://github.com/eclipse/tahu
 * https://github.com/eclipse/kura/blob/develop/kura/org.eclipse.kura.core.cloud/src/main/protobuf/kurapayload.proto
+* https://github.com/eclipse/tahu/blob/master/sparkplug_b/sparkplug_b_c_sharp.proto
 
 Change history
 --------------
