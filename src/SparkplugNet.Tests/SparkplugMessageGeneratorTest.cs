@@ -39,7 +39,6 @@ namespace SparkplugNet.Tests
         public void TestStateMessageNamespaceAOnline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
-                SparkplugVersion.V22,
                 SparkplugNamespace.VersionA,
                 "scada1",
                 true);
@@ -55,7 +54,6 @@ namespace SparkplugNet.Tests
         public void TestStateMessageNamespaceAOffline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
-                SparkplugVersion.V22,
                 SparkplugNamespace.VersionA,
                 "scada1",
                 false);
@@ -71,7 +69,6 @@ namespace SparkplugNet.Tests
         public void TestStateMessageNamespaceBOnline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
-                SparkplugVersion.V22,
                 SparkplugNamespace.VersionB,
                 "scada1",
                 true);
@@ -89,7 +86,6 @@ namespace SparkplugNet.Tests
         public void TestStateMessageNamespaceBOffline()
         {
             var message = this.messageGenerator.GetSparkplugStateMessage(
-                SparkplugVersion.V22,
                 SparkplugNamespace.VersionB,
                 "scada1",
                 false);

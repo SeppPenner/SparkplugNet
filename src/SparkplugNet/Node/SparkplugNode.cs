@@ -44,11 +44,9 @@ namespace SparkplugNet.Node
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <seealso cref="SparkplugBase"/>
-        public SparkplugNode(SparkplugVersion version, SparkplugNamespace nameSpace)
-            : base(version, nameSpace)
+        public SparkplugNode(SparkplugNamespace nameSpace) : base(nameSpace)
         {
         }
 
@@ -96,7 +94,6 @@ namespace SparkplugNet.Node
         private void LoadMessages(SparkplugNodeOptions options)
         {
             this.willMessage = this.MessageGenerator.CreateSparkplugMessage(
-                this.Version,
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.NodeDeath,
@@ -104,7 +101,6 @@ namespace SparkplugNet.Node
                 null);
 
             this.nodeOnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
-                this.Version,
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.NodeBirth,
@@ -233,13 +229,13 @@ namespace SparkplugNet.Node
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task SubscribeInternal(SparkplugNodeOptions options)
         {
-            var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.Version, this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
+            var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
             await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
 
-            var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.Version, this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
+            var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
             await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
 
-            var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(this.Version, options.ScadaHostIdentifier);
+            var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(options.ScadaHostIdentifier);
             await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
         }
     }

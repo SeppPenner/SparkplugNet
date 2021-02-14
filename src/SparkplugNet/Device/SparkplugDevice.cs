@@ -42,11 +42,9 @@ namespace SparkplugNet.Device
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugDevice"/> class.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <seealso cref="SparkplugBase"/>
-        public SparkplugDevice(SparkplugVersion version, SparkplugNamespace nameSpace)
-            : base(version, nameSpace)
+        public SparkplugDevice(SparkplugNamespace nameSpace) : base(nameSpace)
         {
         }
 

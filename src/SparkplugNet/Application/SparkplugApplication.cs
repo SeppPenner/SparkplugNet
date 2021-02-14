@@ -44,11 +44,9 @@ namespace SparkplugNet.Application
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <seealso cref="SparkplugBase"/>
-        public SparkplugApplication(SparkplugVersion version, SparkplugNamespace nameSpace)
-            : base(version, nameSpace)
+        public SparkplugApplication(SparkplugNamespace nameSpace) : base(nameSpace)
         {
         }
 

@@ -29,12 +29,11 @@ namespace SparkplugNet.Messages
         /// <summary>
         /// Gets a STATE message.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="online">A value indicating whether the message sender is online or not.</param>
         /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-        public MqttApplicationMessage GetSparkplugStateMessage(SparkplugVersion version, SparkplugNamespace nameSpace, string scadaHostIdentifier, bool online)
+        public MqttApplicationMessage GetSparkplugStateMessage(SparkplugNamespace nameSpace, string scadaHostIdentifier, bool online)
         {
             if (!scadaHostIdentifier.IsIdentifierValid())
             {
@@ -43,8 +42,8 @@ namespace SparkplugNet.Messages
 
             return nameSpace switch
             {
-                SparkplugNamespace.VersionA => GetSparkplugStateMessageA(version, scadaHostIdentifier, online),
-                SparkplugNamespace.VersionB => GetSparkplugStateMessageB(version, scadaHostIdentifier, online),
+                SparkplugNamespace.VersionA => GetSparkplugStateMessageA(scadaHostIdentifier, online),
+                SparkplugNamespace.VersionB => GetSparkplugStateMessageB(scadaHostIdentifier, online),
                 _ => throw new ArgumentOutOfRangeException(nameof(nameSpace))
             };
         }
@@ -60,7 +59,6 @@ namespace SparkplugNet.Messages
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <returns>A new <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage CreateSparkplugMessage(
-            SparkplugVersion version,
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             SparkplugMessageType messageType,
@@ -93,8 +91,8 @@ namespace SparkplugNet.Messages
 
             return nameSpace switch
             {
-                SparkplugNamespace.VersionA => this.GenerateNamespaceAMessage(version, nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier),
-                SparkplugNamespace.VersionB => this.GenerateNamespaceBMessage(version, nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier),
+                SparkplugNamespace.VersionA => this.GenerateNamespaceAMessage(nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier),
+                SparkplugNamespace.VersionB => this.GenerateNamespaceBMessage(nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier),
                 _ => throw new ArgumentOutOfRangeException(nameof(nameSpace))
             };
         }
@@ -102,47 +100,34 @@ namespace SparkplugNet.Messages
         /// <summary>
         /// Gets a STATE message with namespace version A.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="online">A value indicating whether the message sender is online or not.</param>
         /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-        private MqttApplicationMessage GetSparkplugStateMessageA(SparkplugVersion version, string scadaHostIdentifier, bool online)
+        private MqttApplicationMessage GetSparkplugStateMessageA(string scadaHostIdentifier, bool online)
         {
-            if (version is SparkplugVersion.V22)
-            {
-                return new MqttApplicationMessageBuilder()
-                    .WithTopic(this.topicGenerator.GetSparkplugStateMessageTopic(version, scadaHostIdentifier))
-                    .WithPayload(online ? "ONLINE" : "OFFLINE")
-                    .WithAtLeastOnceQoS()
-                    .WithRetainFlag()
-                    .Build();
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(version));
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(this.topicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
+                .WithPayload(online ? "ONLINE" : "OFFLINE")
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
         }
 
         /// <summary>
         /// Gets a STATE message with namespace version B.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="online">A value indicating whether the message sender is online or not.</param>
         /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-        private static MqttApplicationMessage GetSparkplugStateMessageB(SparkplugVersion version, string scadaHostIdentifier, bool online)
+        private static MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online)
         {
-            if (version is SparkplugVersion.V22)
-            {
-                // Todo: Add version B payload here.
-                throw new InvalidOperationException();
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(version));
+            // Todo: Add version B payload here.
+            throw new InvalidOperationException();
         }
 
         /// <summary>
         /// Creates a message (Except STATE messages) with namespace version A.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="messageType">The message type.</param>
@@ -150,34 +135,27 @@ namespace SparkplugNet.Messages
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <returns>A new <see cref="MqttApplicationMessage"/>.</returns>
         private MqttApplicationMessage GenerateNamespaceAMessage(
-            SparkplugVersion version,
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             SparkplugMessageType messageType,
             string edgeNodeIdentifier,
             string? deviceIdentifier)
         {
-            if (version is SparkplugVersion.V22)
-            {
-                var topic = this.topicGenerator.GetTopic(version, nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier);
+            var topic = this.topicGenerator.GetTopic(nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier);
 
-                var payload = this.GetPayloadNamespaceA(messageType);
+            var payload = this.GetPayloadNamespaceA(messageType);
 
-                return new MqttApplicationMessageBuilder()
-                    .WithTopic(topic)
-                    .WithPayload(payload)
-                    .WithAtLeastOnceQoS()
-                    .WithRetainFlag()
-                    .Build();
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(version));
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload(payload)
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
         }
 
         /// <summary>
         /// Creates a message (Except STATE messages) with namespace version B.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="messageType">The message type.</param>
@@ -185,28 +163,22 @@ namespace SparkplugNet.Messages
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <returns>A new <see cref="MqttApplicationMessage"/>.</returns>
         private MqttApplicationMessage GenerateNamespaceBMessage(
-            SparkplugVersion version,
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             SparkplugMessageType messageType,
             string edgeNodeIdentifier,
             string? deviceIdentifier)
         {
-            if (version is SparkplugVersion.V22)
-            {
-                var topic = this.topicGenerator.GetTopic(version, nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier);
+            var topic = this.topicGenerator.GetTopic(nameSpace, groupIdentifier, messageType, edgeNodeIdentifier, deviceIdentifier);
 
-                var payload = this.GetPayloadNamespaceB(messageType);
+            var payload = this.GetPayloadNamespaceB(messageType);
 
-                return new MqttApplicationMessageBuilder()
-                    .WithTopic(topic)
-                    .WithPayload(payload)
-                    .WithAtLeastOnceQoS()
-                    .WithRetainFlag()
-                    .Build();
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(version));
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload(payload)
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
         }
 
         /// <summary>

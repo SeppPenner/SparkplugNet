@@ -37,11 +37,6 @@ namespace SparkplugNet
         protected readonly IMqttClient Client;
 
         /// <summary>
-        /// The Sparkplug version.
-        /// </summary>
-        protected readonly SparkplugVersion Version;
-
-        /// <summary>
         /// The Sparkplug namespace.
         /// </summary>
         protected readonly SparkplugNamespace NameSpace;
@@ -49,11 +44,9 @@ namespace SparkplugNet
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugBase"/> class.
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
-        public SparkplugBase(SparkplugVersion version, SparkplugNamespace nameSpace)
+        public SparkplugBase(SparkplugNamespace nameSpace)
         {
-            this.Version = version;
             this.NameSpace = nameSpace;
             this.Client = new MqttFactory().CreateMqttClient();
         }
