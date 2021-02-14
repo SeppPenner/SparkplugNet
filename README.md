@@ -58,6 +58,8 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 * https://github.com/eclipse/tahu
 * https://github.com/eclipse/kura/blob/develop/kura/org.eclipse.kura.core.cloud/src/main/protobuf/kurapayload.proto
 * https://github.com/eclipse/tahu/blob/master/sparkplug_b/sparkplug_b_c_sharp.proto
+* https://protogen.marcgravell.com/
+* https://stackoverflow.com/questions/66199386/protobuf-net-how-to-use-the-any-data-type
 
 Change history
 --------------
