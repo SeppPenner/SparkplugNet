@@ -23,6 +23,9 @@ namespace SparkplugNet.Application
     using SparkplugNet.Extensions;
     using SparkplugNet.Metrics;
 
+    using VersionAPayload = Payloads.VersionA.Payload;
+    using VersionBPayload = Payloads.VersionB.Payload;
+
     /// <inheritdoc cref="SparkplugBase"/>
     /// <summary>
     /// A class that handles a Sparkplug application.
@@ -141,44 +144,39 @@ namespace SparkplugNet.Application
                     {
                         var topic = e.ApplicationMessage.Topic;
 
-                        if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
-                        {
-                            // Todo: Handle node birth message
-                        }
+                        var needsPayloadHanding = topic.Contains(SparkplugMessageType.NodeBirth.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.NodeDeath.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.NodeData.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceData.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.NodeCommand.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription());
 
-                        if (topic.Contains(SparkplugMessageType.NodeDeath.GetDescription()))
+                        if (needsPayloadHanding)
                         {
-                            // Todo: Handle node death message
-                        }
+                            switch (this.NameSpace)
+                            {
+                                case SparkplugNamespace.VersionA:
+                                    var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
 
-                        if (topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription()))
-                        {
-                            // Todo: Handle device birth message
-                        }
+                                    if (payloadVersionA != null)
+                                    {
+                                        this.VersionAPayloadReceived?.Invoke(payloadVersionA);
+                                    }
 
-                        if (topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription()))
-                        {
-                            // Todo: Handle device death message
-                        }
+                                    break;
 
-                        if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
-                        {
-                            // Todo: Handle node data message
-                        }
+                                case SparkplugNamespace.VersionB:
+                                    var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
 
-                        if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
-                        {
-                            // Todo: Handle device data message
-                        }
+                                    if (payloadVersionB != null)
+                                    {
+                                        this.VersionBPayloadReceived?.Invoke(payloadVersionB);
+                                    }
 
-                        if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
-                        {
-                            // Todo: Handle node command message
-                        }
-
-                        if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
-                        {
-                            // Todo: Handle device command message
+                                    break;
+                            }
                         }
                     });
         }

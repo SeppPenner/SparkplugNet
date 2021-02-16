@@ -9,6 +9,8 @@
 
 namespace SparkplugNet
 {
+    using System;
+
     using MQTTnet;
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
@@ -16,11 +18,24 @@ namespace SparkplugNet
     using SparkplugNet.Enumerations;
     using SparkplugNet.Messages;
 
+    using VersionAPayload = Payloads.VersionA.Payload;
+    using VersionBPayload = Payloads.VersionB.Payload;
+
     /// <summary>
     /// A base class for all Sparkplug applications, nodes and devices.
     /// </summary>
     public class SparkplugBase
     {
+        /// <summary>
+        /// The callback for the version A payload received event.
+        /// </summary>
+        public readonly Action<VersionAPayload>? VersionAPayloadReceived = null;
+
+        /// <summary>
+        /// The callback for the version B payload received event.
+        /// </summary>
+        public readonly Action<VersionBPayload>? VersionBPayloadReceived = null;
+
         /// <summary>
         /// The message generator.
         /// </summary>

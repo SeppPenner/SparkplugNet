@@ -9,7 +9,9 @@
 
 namespace SparkplugNet.Node
 {
+    using System;
     using System.Collections.Concurrent;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -22,6 +24,9 @@ namespace SparkplugNet.Node
     using SparkplugNet.Enumerations;
     using SparkplugNet.Extensions;
     using SparkplugNet.Metrics;
+
+    using VersionAPayload = Payloads.VersionA.Payload;
+    using VersionBPayload = Payloads.VersionB.Payload;
 
     /// <inheritdoc cref="SparkplugBase"/>
     /// <summary>
@@ -49,6 +54,11 @@ namespace SparkplugNet.Node
         public SparkplugNode(SparkplugNamespace nameSpace) : base(nameSpace)
         {
         }
+
+        /// <summary>
+        /// The callback for the status message received event.
+        /// </summary>
+        public readonly Action<string>? StatusMessageReceived = null;
 
         /// <summary>
         /// Gets the device states.
@@ -145,19 +155,35 @@ namespace SparkplugNet.Node
                     {
                         var topic = e.ApplicationMessage.Topic;
 
-                        if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+                        if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()) || topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                         {
-                            // Todo: Handle node command message
-                        }
+                            switch (this.NameSpace)
+                            {
+                                case SparkplugNamespace.VersionA:
+                                    var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
 
-                        if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
-                        {
-                            // Todo: Handle device command message
+                                    if (payloadVersionA != null)
+                                    {
+                                        this.VersionAPayloadReceived?.Invoke(payloadVersionA);
+                                    }
+
+                                    break;
+
+                                case SparkplugNamespace.VersionB:
+                                    var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
+
+                                    if (payloadVersionB != null)
+                                    {
+                                        this.VersionBPayloadReceived?.Invoke(payloadVersionB);
+                                    }
+
+                                    break;
+                            }
                         }
 
                         if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
                         {
-                            // Todo: Handle state message
+                            this.StatusMessageReceived?.Invoke(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                         }
                     });
         }

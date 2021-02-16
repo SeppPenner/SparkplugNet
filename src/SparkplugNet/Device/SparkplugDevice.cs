@@ -21,6 +21,9 @@ namespace SparkplugNet.Device
     using SparkplugNet.Enumerations;
     using SparkplugNet.Extensions;
 
+    using VersionAPayload = Payloads.VersionA.Payload;
+    using VersionBPayload = Payloads.VersionB.Payload;
+
     /// <inheritdoc cref="SparkplugBase"/>
     /// <summary>
     /// A class that handles a Sparkplug application.
@@ -129,7 +132,28 @@ namespace SparkplugNet.Device
 
                         if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                         {
-                            // Todo: Handle device command message
+                            switch (this.NameSpace)
+                            {
+                                case SparkplugNamespace.VersionA:
+                                    var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
+
+                                    if (payloadVersionA != null)
+                                    {
+                                        this.VersionAPayloadReceived?.Invoke(payloadVersionA);
+                                    }
+
+                                    break;
+
+                                case SparkplugNamespace.VersionB:
+                                    var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
+
+                                    if (payloadVersionB != null)
+                                    {
+                                        this.VersionBPayloadReceived?.Invoke(payloadVersionB);
+                                    }
+
+                                    break;
+                            }
                         }
                     });
         }
