@@ -21,7 +21,6 @@ namespace SparkplugNet.Application
 
     using SparkplugNet.Enumerations;
     using SparkplugNet.Extensions;
-    using SparkplugNet.Metrics;
 
     using VersionAPayload = Payloads.VersionA.Payload;
     using VersionBPayload = Payloads.VersionB.Payload;
@@ -54,9 +53,14 @@ namespace SparkplugNet.Application
         }
 
         /// <summary>
-        /// Gets the node states.
+        /// Gets the node states for the payload version A.
         /// </summary>
-        public ConcurrentDictionary<string, BasicMetrics> NodeStates { get; } = new ConcurrentDictionary<string, BasicMetrics>();
+        public ConcurrentDictionary<string, VersionAPayload.KuraMetric> NodeStatesPayloadA { get; } = new ConcurrentDictionary<string, VersionAPayload.KuraMetric>();
+
+        /// <summary>
+        /// Gets the node states for the payload version B.
+        /// </summary>
+        public ConcurrentDictionary<string, VersionBPayload.Metric> NodeStatesPayloadB { get; } = new ConcurrentDictionary<string, VersionBPayload.Metric>();
 
         /// <summary>
         /// Starts the Sparkplug application.
@@ -66,7 +70,8 @@ namespace SparkplugNet.Application
         public async Task Start(SparkplugApplicationOptions options)
         {
             // Clear states
-            this.NodeStates.Clear();
+            this.NodeStatesPayloadA.Clear();
+            this.NodeStatesPayloadB.Clear();
 
             // Load messages
             this.LoadMessages(options);
@@ -116,13 +121,22 @@ namespace SparkplugNet.Application
             this.Client.UseDisconnectedHandler(
                 async e =>
                     {
-                        // Set all states to unknown as we are disconnected
-                        foreach (var nodeState in this.NodeStates)
-                        {
-                            var value = this.NodeStates[nodeState.Key];
-                            value.ConnectionStatus = SparkplugConnectionStatus.Unknown;
-                            this.NodeStates[nodeState.Key] = value;
-                        }
+                        // Todo: Use the metrics correctly.
+                        //// Set all states to unknown as we are disconnected
+                        //foreach (var nodeState in this.NodeStatesPayloadA)
+                        //{
+                        //    var value = this.NodeStatesPayloadA[nodeState.Key];
+                        //    value.ConnectionStatus = SparkplugConnectionStatus.Unknown;
+                        //    this.NodeStatesPayloadA[nodeState.Key] = value;
+                        //}
+
+                        //// Set all states to unknown as we are disconnected
+                        //foreach (var nodeState in this.NodeStatesPayloadB)
+                        //{
+                        //    var value = this.NodeStatesPayloadB[nodeState.Key];
+                        //    value.ConnectionStatus = SparkplugConnectionStatus.Unknown;
+                        //    this.NodeStatesPayloadB[nodeState.Key] = value;
+                        //}
 
                         // Wait until the disconnect interval is reached
                         await Task.Delay(options.ReconnectInterval);
