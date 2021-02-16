@@ -15,7 +15,6 @@ The assembly was written and tested in .Net 5.0.
 [![Gitter](https://badges.gitter.im/SparkplugNet/community.svg)](https://gitter.im/SparkplugNet/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Available for
-* NetFramework 4.6
 * NetFramework 4.6.2
 * NetFramework 4.7
 * NetFramework 4.7.2
