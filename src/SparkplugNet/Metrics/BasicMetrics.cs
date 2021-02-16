@@ -13,6 +13,7 @@ namespace SparkplugNet.Metrics
 
     using SparkplugNet.Enumerations;
 
+    /// Todo: Remove later
     /// <summary>
     /// A class containing the basic metrics.
     /// </summary>
