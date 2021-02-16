@@ -5,9 +5,9 @@
 |Method|Topic|Type|Payload|
 |-|-|-|-|
 |Publish|`STATE/scada_host_id`|A|`OFFLINE`|
-|Publish|`STATE/scada_host_id`|B|?|
+|Publish|`STATE/scada_host_id`|B|`OFFLINE`|
 |Publish|`STATE/scada_host_id`|A|`ONLINE`|
-|Publish|`STATE/scada_host_id`|B|?|
+|Publish|`STATE/scada_host_id`|B|`ONLINE`|
 |Publish|`spAv1.0/group_id/NCMD/edge_node_id`|A|?|
 |Publish|`spBv1.0/group_id/NCMD/edge_node_id`|B|?|
 |Publish|`spAv1.0/group_id/DCMD/edge_node_id/device_id`|A|?|
@@ -30,9 +30,9 @@
 |Subscribe|`spAv1.0/group_id/DCMD/edge_node_id/#`|A|?|
 |Subscribe|`spBv1.0/group_id/DCMD/edge_node_id/#`|B|?|
 |Subscribe|`STATE/scada_host_id`|A|`OFFLINE`|
-|Subscribe|`STATE/scada_host_id`|B|?|
+|Subscribe|`STATE/scada_host_id`|B|`OFFLINE`|
 |Subscribe|`STATE/scada_host_id`|A|`ONLINE`|
-|Subscribe|`STATE/scada_host_id`|B|?|
+|Subscribe|`STATE/scada_host_id`|B|`ONLINE`|
 
 ## Device
 
