@@ -42,8 +42,8 @@ namespace SparkplugNet.Messages
 
             return nameSpace switch
             {
-                SparkplugNamespace.VersionA => GetSparkplugStateMessageA(scadaHostIdentifier, online),
-                SparkplugNamespace.VersionB => GetSparkplugStateMessageB(scadaHostIdentifier, online),
+                SparkplugNamespace.VersionA => this.GetSparkplugStateMessageA(scadaHostIdentifier, online),
+                SparkplugNamespace.VersionB => this.GetSparkplugStateMessageB(scadaHostIdentifier, online),
                 _ => throw new ArgumentOutOfRangeException(nameof(nameSpace))
             };
         }
@@ -118,10 +118,14 @@ namespace SparkplugNet.Messages
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="online">A value indicating whether the message sender is online or not.</param>
         /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-        private static MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online)
+        private MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online)
         {
-            // Todo: Add version B payload here.
-            throw new InvalidOperationException();
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(this.topicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
+                .WithPayload(online ? "ONLINE" : "OFFLINE")
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
         }
 
         /// <summary>
