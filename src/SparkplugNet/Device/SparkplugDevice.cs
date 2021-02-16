@@ -84,7 +84,6 @@ namespace SparkplugNet.Device
         private void LoadMessages(SparkplugDeviceOptions options)
         {
             this.willMessage = this.MessageGenerator.CreateSparkplugMessage(
-                this.Version,
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.DeviceDeath,
@@ -92,7 +91,6 @@ namespace SparkplugNet.Device
                 options.DeviceIdentifier);
 
             this.deviceOnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
-                this.Version,
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.DeviceBirth,
@@ -203,7 +201,7 @@ namespace SparkplugNet.Device
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task SubscribeInternal(SparkplugDeviceOptions options)
         {
-            var deviceCommandSubscribeTopic = this.TopicGenerator.GetDeviceCommandSubscribeTopic(this.Version, this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier, options.DeviceIdentifier);
+            var deviceCommandSubscribeTopic = this.TopicGenerator.GetDeviceCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier, options.DeviceIdentifier);
             await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
         }
     }

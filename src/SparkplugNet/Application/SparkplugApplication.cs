@@ -94,13 +94,11 @@ namespace SparkplugNet.Application
         private void LoadMessages(SparkplugApplicationOptions options)
         {
             this.willMessage = this.MessageGenerator.GetSparkplugStateMessage(
-                this.Version,
                 this.NameSpace,
                 options.ScadaHostIdentifier,
                 false);
 
             this.applicationOnlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
-                this.Version,
                 this.NameSpace,
                 options.ScadaHostIdentifier,
                 true);
@@ -255,7 +253,7 @@ namespace SparkplugNet.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task SubscribeInternal()
         {
-            var topic = this.TopicGenerator.GetWildcardNamespaceSubscribeTopic(this.Version, this.NameSpace);
+            var topic = this.TopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);
             await this.Client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
         }
     }

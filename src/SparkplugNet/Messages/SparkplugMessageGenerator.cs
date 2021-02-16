@@ -51,7 +51,6 @@ namespace SparkplugNet.Messages
         /// <summary>
         /// Creates a message (Except STATE messages).
         /// </summary>
-        /// <param name="version">The version.</param>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="messageType">The message type.</param>
