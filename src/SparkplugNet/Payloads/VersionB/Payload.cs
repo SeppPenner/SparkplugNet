@@ -30,7 +30,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
     public byte[] Body { get; set; }
 
     [global::ProtoBuf.ProtoMember(6, Name = @"details")]
-    public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+    public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
     [global::ProtoBuf.ProtoContract()]
     public partial class Template : global::ProtoBuf.IExtensible
@@ -57,7 +57,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
         public bool IsDefinition { get; set; }
 
         [global::ProtoBuf.ProtoMember(6, Name = @"details")]
-        public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+        public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
         [global::ProtoBuf.ProtoContract()]
         public partial class Parameter : global::ProtoBuf.IExtensible
@@ -161,7 +161,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
                     => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
                 [global::ProtoBuf.ProtoMember(1, Name = @"extensions")]
-                public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Extensions { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+                public global::System.Collections.Generic.List<byte> Extensions { get; set; } = new global::System.Collections.Generic.List<byte>();
 
             }
 
@@ -189,7 +189,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
         public global::System.Collections.Generic.List<Row> Rows { get; set; } = new global::System.Collections.Generic.List<Row>();
 
         [global::ProtoBuf.ProtoMember(5, Name = @"details")]
-        public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+        public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
         [global::ProtoBuf.ProtoContract()]
         public partial class DataSetValue : global::ProtoBuf.IExtensible
@@ -286,7 +286,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
                     => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
                 [global::ProtoBuf.ProtoMember(1, Name = @"details")]
-                public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+                public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
             }
 
@@ -303,7 +303,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
             public global::System.Collections.Generic.List<Payload.DataSet.DataSetValue> Elements { get; set; } = new global::System.Collections.Generic.List<Payload.DataSet.DataSetValue>();
 
             [global::ProtoBuf.ProtoMember(2, Name = @"details")]
-            public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
         }
 
@@ -430,7 +430,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"details")]
-            public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
         }
 
@@ -450,7 +450,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
         public global::System.Collections.Generic.List<Payload.PropertyValue> Values { get; set; } = new global::System.Collections.Generic.List<Payload.PropertyValue>();
 
         [global::ProtoBuf.ProtoMember(3, Name = @"details")]
-        public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+        public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
     }
 
@@ -465,7 +465,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
         public global::System.Collections.Generic.List<Payload.PropertySet> Propertysets { get; set; } = new global::System.Collections.Generic.List<Payload.PropertySet>();
 
         [global::ProtoBuf.ProtoMember(2, Name = @"details")]
-        public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+        public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
     }
 
@@ -506,7 +506,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
         public string Description { get; set; } = "";
 
         [global::ProtoBuf.ProtoMember(9, Name = @"details")]
-        public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+        public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
     }
 
@@ -663,7 +663,7 @@ public partial class Payload : global::ProtoBuf.IExtensible
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"details")]
-            public global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any> Details { get; set; } = new global::System.Collections.Generic.List<global::Google.Protobuf.WellKnownTypes.Any>();
+            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
         }
 
