@@ -1,73 +1,75 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugNode.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugApplication.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   A class that handles a Sparkplug node.
+//   A class that handles a Sparkplug application.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Node
+namespace SparkplugNet.Core.Application
 {
-    using System;
     using System.Collections.Concurrent;
-    using System.Text;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
     using MQTTnet.Formatter;
     using MQTTnet.Protocol;
 
-    using SparkplugNet.Enumerations;
-    using SparkplugNet.Extensions;
+    using SparkplugNet.Core.Enumerations;
+    using SparkplugNet.Core.Extensions;
 
-    using VersionAPayload = Payloads.VersionA.Payload;
-    using VersionBPayload = Payloads.VersionB.Payload;
+    using VersionAPayload = VersionA.Payload;
+    using VersionBPayload = VersionB.Payload;
 
     /// <inheritdoc cref="SparkplugBase"/>
     /// <summary>
-    /// A class that handles a Sparkplug node.
+    /// A class that handles a Sparkplug application.
     /// </summary>
     /// <seealso cref="SparkplugBase"/>
-    public class SparkplugNode : SparkplugBase
+    public class SparkplugApplicationBase<T> : SparkplugBase where T : class, new()
     {
         /// <inheritdoc cref="SparkplugBase"/>
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
+        /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
         /// </summary>
-        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="knownMetrics">The metric names.</param>
         /// <seealso cref="SparkplugBase"/>
-        public SparkplugNode(SparkplugNamespace nameSpace) : base(nameSpace)
+        public SparkplugApplicationBase(List<T> knownMetrics)
         {
+            this.KnownMetrics = knownMetrics;
+
+            this.NameSpace = knownMetrics switch
+            {
+                List<VersionAPayload> => SparkplugNamespace.VersionA,
+                List<VersionBPayload> => SparkplugNamespace.VersionB,
+                _ => SparkplugNamespace.VersionB
+            };
         }
 
         /// <summary>
-        /// The callback for the status message received event.
+        /// Gets the known metric names.
         /// </summary>
-        public readonly Action<string>? StatusMessageReceived = null;
+        public List<T> KnownMetrics { get; }
 
         /// <summary>
-        /// Gets the device states for the payload version A.
+        /// Gets the node states.
         /// </summary>
-        public ConcurrentDictionary<string, VersionAPayload.KuraMetric> DeviceStatesPayloadA { get; } = new ();
+        public ConcurrentDictionary<string, MetricState<T>> NodeStates{ get; } = new ();
 
         /// <summary>
-        /// Gets the device states for the payload version B.
-        /// </summary>
-        public ConcurrentDictionary<string, VersionBPayload.Metric> DeviceStatesPayloadB { get; } = new ();
-
-        /// <summary>
-        /// Starts the Sparkplug node.
+        /// Starts the Sparkplug application.
         /// </summary>
         /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task Start(SparkplugNodeOptions options)
+        public async Task Start(SparkplugApplicationOptions options)
         {
             // Clear states
-            this.DeviceStatesPayloadA.Clear();
-            this.DeviceStatesPayloadB.Clear();
+            this.NodeStates.Clear();
 
             // Load messages
             this.LoadMessages(options);
@@ -78,12 +80,12 @@ namespace SparkplugNet.Node
 
             // Connect, subscribe to incoming messages and send a state message
             await this.ConnectInternal(options);
-            await this.SubscribeInternal(options);
+            await this.SubscribeInternal();
             await this.PublishInternal(options);
         }
 
         /// <summary>
-        /// Stops the Sparkplug node.
+        /// Stops the Sparkplug application.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Stop()
@@ -95,55 +97,41 @@ namespace SparkplugNet.Node
         /// Loads the messages used by the the Sparkplug application.
         /// </summary>
         /// <param name="options">The configuration option.</param>
-        private void LoadMessages(SparkplugNodeOptions options)
+        private void LoadMessages(SparkplugApplicationOptions options)
         {
-            this.WillMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.WillMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
-                options.GroupIdentifier,
-                SparkplugMessageType.NodeDeath,
-                options.EdgeNodeIdentifier,
-                null);
+                options.ScadaHostIdentifier,
+                false);
 
-            this.OnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.OnlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
-                options.GroupIdentifier,
-                SparkplugMessageType.NodeBirth,
-                options.EdgeNodeIdentifier,
-                null);
+                options.ScadaHostIdentifier,
+                true);
         }
 
         /// <summary>
         /// Adds the disconnected handler and the reconnect functionality to the client.
         /// </summary>
         /// <param name="options">The configuration option.</param>
-        private void AddDisconnectedHandler(SparkplugNodeOptions options)
+        private void AddDisconnectedHandler(SparkplugApplicationOptions options)
         {
             this.Client.UseDisconnectedHandler(
-                async e =>
+                async _ =>
                     {
-                        // Todo: Use the metrics correctly.
-                        //// Set all states to unknown as we are disconnected
-                        //foreach (var nodeState in this.DeviceStatesPayloadA)
-                        //{
-                        //    var value = this.DeviceStatesPayloadA[nodeState.Key];
-                        //    value.ConnectionStatus = SparkplugConnectionStatus.Unknown;
-                        //    this.DeviceStatesPayloadA[nodeState.Key] = value;
-                        //}
+                        // Set all metrics to stale
+                        this.UpdateMetricState(SparkplugMetricStatus.Offline);
 
-                        //// Set all states to unknown as we are disconnected
-                        //foreach (var nodeState in this.DeviceStatesPayloadB)
-                        //{
-                        //    var value = this.DeviceStatesPayloadB[nodeState.Key];
-                        //    value.ConnectionStatus = SparkplugConnectionStatus.Unknown;
-                        //    this.DeviceStatesPayloadB[nodeState.Key] = value;
-                        //}
+                        // Invoke disconnected callback
+                        this.OnDisconnected?.Invoke();
 
                         // Wait until the disconnect interval is reached
                         await Task.Delay(options.ReconnectInterval);
 
                         // Connect, subscribe to incoming messages and send a state message
                         await this.ConnectInternal(options);
-                        await this.SubscribeInternal(options);
+                        this.UpdateMetricState(SparkplugMetricStatus.Online);
+                        await this.SubscribeInternal();
                         await this.PublishInternal(options);
                     });
         }
@@ -158,7 +146,16 @@ namespace SparkplugNet.Node
                     {
                         var topic = e.ApplicationMessage.Topic;
 
-                        if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()) || topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                        var needsPayloadHanding = topic.Contains(SparkplugMessageType.NodeBirth.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.NodeDeath.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.NodeData.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceData.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.NodeCommand.GetDescription())
+                                                  || topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription());
+
+                        if (needsPayloadHanding)
                         {
                             switch (this.NameSpace)
                             {
@@ -167,6 +164,7 @@ namespace SparkplugNet.Node
 
                                     if (payloadVersionA != null)
                                     {
+                                        // Todo: Store metrics for node if metrics are known
                                         this.VersionAPayloadReceived?.Invoke(payloadVersionA);
                                     }
 
@@ -177,26 +175,22 @@ namespace SparkplugNet.Node
 
                                     if (payloadVersionB != null)
                                     {
+                                        // Todo: Store metrics for node if metrics are known
                                         this.VersionBPayloadReceived?.Invoke(payloadVersionB);
                                     }
 
                                     break;
                             }
                         }
-
-                        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
-                        {
-                            this.StatusMessageReceived?.Invoke(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                        }
                     });
         }
 
         /// <summary>
-        /// Connects the Sparkplug node to the MQTT broker.
+        /// Connects the Sparkplug application to the MQTT broker.
         /// </summary>
         /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task ConnectInternal(SparkplugNodeOptions options)
+        private async Task ConnectInternal(SparkplugApplicationOptions options)
         {
             options.CancellationToken ??= CancellationToken.None;
 
@@ -230,7 +224,7 @@ namespace SparkplugNet.Node
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.WillMessage != null)
+            if (this.WillMessage != null && options.IsPrimaryApplication)
             {
                 builder.WithWillMessage(this.WillMessage);
             }
@@ -245,27 +239,38 @@ namespace SparkplugNet.Node
         /// </summary>
         /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishInternal(SparkplugNodeOptions options)
+        private async Task PublishInternal(SparkplugApplicationOptions options)
         {
-            options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
+            // Only send state messages for the primary application
+            if (options.IsPrimaryApplication)
+            {
+                options.CancellationToken ??= CancellationToken.None;
+                await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
+            }
         }
 
         /// <summary>
-        /// Subscribes the client to the node subscribe topics.
+        /// Subscribes the client to the application subscribe topic.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task SubscribeInternal(SparkplugNodeOptions options)
+        private async Task SubscribeInternal()
         {
-            var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
-            await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            var topic = this.TopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);
+            await this.Client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
+        }
 
-            var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
-            await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+        /// <summary>
+        /// Updates the metric state.
+        /// </summary>
+        /// <param name="metricState">The metric state.</param>
+        private void UpdateMetricState(SparkplugMetricStatus metricState)
+        {
+            var keys = new List<string>(this.NodeStates.Keys.ToList());
 
-            var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(options.ScadaHostIdentifier);
-            await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            foreach (string key in keys)
+            {
+                this.NodeStates[key].MetricStatus = metricState;
+            }
         }
     }
 }

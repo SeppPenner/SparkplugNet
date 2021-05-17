@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Enumerations
+namespace SparkplugNet.Core.Enumerations
 {
     using System.ComponentModel;
 

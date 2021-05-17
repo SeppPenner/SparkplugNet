@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugApplicationOptions.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugNodeOptions.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Application
+namespace SparkplugNet.Core.Node
 {
     using System;
 
@@ -18,10 +18,10 @@ namespace SparkplugNet.Application
     /// <summary>
     /// A class that contains the application options.
     /// </summary>
-    public class SparkplugApplicationOptions
+    public class SparkplugNodeOptions
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
+        /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
         /// </summary>
         /// <param name="brokerAddress">The broker address.</param>
         /// <param name="port">The broker port.</param>
@@ -30,12 +30,13 @@ namespace SparkplugNet.Application
         /// <param name="password">The password.</param>
         /// <param name="useTls">A value indicating whether TLS should be used or not</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="reconnectInterval">The reconnect interval.</param>
-        /// <param name="isPrimaryApplication">A value indicating whether the application the primary application or not. If this value is set to <c>true</c>, the application sends STATE messages, else not.</param>
         /// <param name="webSocketParameters">The WebSocket parameters.</param>
         /// <param name="proxyOptions">The proxy options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public SparkplugApplicationOptions(
+        public SparkplugNodeOptions(
             string brokerAddress,
             int port,
             string clientId,
@@ -43,8 +44,9 @@ namespace SparkplugNet.Application
             string password,
             bool useTls,
             string scadaHostIdentifier,
+            string groupIdentifier,
+            string edgeNodeIdentifier,
             TimeSpan reconnectInterval,
-            bool isPrimaryApplication,
             MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
             MqttClientWebSocketProxyOptions? proxyOptions = null,
             CancelToken? cancellationToken = null)
@@ -56,8 +58,9 @@ namespace SparkplugNet.Application
             this.Password = password;
             this.UseTls = useTls;
             this.ScadaHostIdentifier = scadaHostIdentifier;
+            this.GroupIdentifier = groupIdentifier;
+            this.EdgeNodeIdentifier = edgeNodeIdentifier;
             this.ReconnectInterval = reconnectInterval;
-            this.IsPrimaryApplication = isPrimaryApplication;
             this.WebSocketParameters = webSocketParameters;
             this.ProxyOptions = proxyOptions;
             this.CancellationToken = cancellationToken ?? CancelToken.None;
@@ -99,15 +102,19 @@ namespace SparkplugNet.Application
         public string ScadaHostIdentifier { get; set; }
 
         /// <summary>
+        /// Gets or sets the group identifier.
+        /// </summary>
+        public string GroupIdentifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets the edge node identifier.
+        /// </summary>
+        public string EdgeNodeIdentifier { get; set; }
+
+        /// <summary>
         /// Gets or sets the reconnect interval.
         /// </summary>
         public TimeSpan ReconnectInterval { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the application the primary application or not.
-        /// If this value is set to <c>true</c>, the application sends STATE messages, else not.
-        /// </summary>
-        public bool IsPrimaryApplication { get; set; }
 
         /// <summary>
         /// Gets or sets the WebSocket parameters.

@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet
+namespace SparkplugNet.Core
 {
     using System;
 
@@ -15,11 +15,11 @@ namespace SparkplugNet
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
 
-    using SparkplugNet.Enumerations;
-    using SparkplugNet.Messages;
+    using SparkplugNet.Core.Enumerations;
+    using SparkplugNet.Core.Messages;
 
-    using VersionAPayload = Payloads.VersionA.Payload;
-    using VersionBPayload = Payloads.VersionB.Payload;
+    using VersionAPayload = VersionA.Payload;
+    using VersionBPayload = VersionB.Payload;
 
     /// <summary>
     /// A base class for all Sparkplug applications, nodes and devices.
@@ -37,6 +37,11 @@ namespace SparkplugNet
         public readonly Action<VersionBPayload>? VersionBPayloadReceived = null;
 
         /// <summary>
+        /// The callback for the disconnected event. Indicates that metrics might be stale.
+        /// </summary>
+        public readonly Action? OnDisconnected = null;
+
+        /// <summary>
         /// The message generator.
         /// </summary>
         protected readonly SparkplugMessageGenerator MessageGenerator = new ();
@@ -52,17 +57,10 @@ namespace SparkplugNet
         protected readonly IMqttClient Client;
 
         /// <summary>
-        /// The Sparkplug namespace.
-        /// </summary>
-        protected readonly SparkplugNamespace NameSpace;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugBase"/> class.
         /// </summary>
-        /// <param name="nameSpace">The namespace.</param>
-        public SparkplugBase(SparkplugNamespace nameSpace)
+        public SparkplugBase()
         {
-            this.NameSpace = nameSpace;
             this.Client = new MqttFactory().CreateMqttClient();
         }
 
@@ -80,5 +78,10 @@ namespace SparkplugNet
         /// Gets or sets the online message.
         /// </summary>
         protected MqttApplicationMessage? OnlineMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Sparkplug namespace.
+        /// </summary>
+        protected SparkplugNamespace NameSpace { get; set; }
     }
 }

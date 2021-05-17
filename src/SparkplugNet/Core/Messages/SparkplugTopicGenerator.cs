@@ -7,10 +7,10 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Messages
+namespace SparkplugNet.Core.Messages
 {
-    using SparkplugNet.Enumerations;
-    using SparkplugNet.Extensions;
+    using SparkplugNet.Core.Enumerations;
+    using SparkplugNet.Core.Extensions;
 
     /// <summary>
     /// The Sparkplug topic generator.

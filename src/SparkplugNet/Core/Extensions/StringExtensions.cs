@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Extensions
+namespace SparkplugNet.Core.Extensions
 {
     /// <summary>
     /// A class that contains extension method for all <see cref="string"/> data type.

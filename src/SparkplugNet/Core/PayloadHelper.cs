@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet
+namespace SparkplugNet.Core
 {
     using System.IO;
 

@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Extensions
+namespace SparkplugNet.Core.Extensions
 {
     using System;
     using System.ComponentModel;

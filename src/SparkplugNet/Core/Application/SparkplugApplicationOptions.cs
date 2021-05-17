@@ -1,13 +1,13 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugDeviceOptions.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugApplicationOptions.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   A class that contains the device options.
+//   A class that contains the application options.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Device
+namespace SparkplugNet.Core.Application
 {
     using System;
 
@@ -16,12 +16,12 @@ namespace SparkplugNet.Device
     using CancelToken = System.Threading.CancellationToken;
 
     /// <summary>
-    /// A class that contains the device options.
+    /// A class that contains the application options.
     /// </summary>
-    public class SparkplugDeviceOptions
+    public class SparkplugApplicationOptions
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugDeviceOptions"/> class.
+        /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
         /// </summary>
         /// <param name="brokerAddress">The broker address.</param>
         /// <param name="port">The broker port.</param>
@@ -30,14 +30,12 @@ namespace SparkplugNet.Device
         /// <param name="password">The password.</param>
         /// <param name="useTls">A value indicating whether TLS should be used or not</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
-        /// <param name="groupIdentifier">The group identifier.</param>
-        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-        /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="reconnectInterval">The reconnect interval.</param>
+        /// <param name="isPrimaryApplication">A value indicating whether the application the primary application or not. If this value is set to <c>true</c>, the application sends STATE messages, else not.</param>
         /// <param name="webSocketParameters">The WebSocket parameters.</param>
         /// <param name="proxyOptions">The proxy options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public SparkplugDeviceOptions(
+        public SparkplugApplicationOptions(
             string brokerAddress,
             int port,
             string clientId,
@@ -45,10 +43,8 @@ namespace SparkplugNet.Device
             string password,
             bool useTls,
             string scadaHostIdentifier,
-            string groupIdentifier,
-            string edgeNodeIdentifier,
-            string deviceIdentifier,
             TimeSpan reconnectInterval,
+            bool isPrimaryApplication,
             MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
             MqttClientWebSocketProxyOptions? proxyOptions = null,
             CancelToken? cancellationToken = null)
@@ -60,10 +56,8 @@ namespace SparkplugNet.Device
             this.Password = password;
             this.UseTls = useTls;
             this.ScadaHostIdentifier = scadaHostIdentifier;
-            this.GroupIdentifier = groupIdentifier;
-            this.EdgeNodeIdentifier = edgeNodeIdentifier;
-            this.DeviceIdentifier = deviceIdentifier;
             this.ReconnectInterval = reconnectInterval;
+            this.IsPrimaryApplication = isPrimaryApplication;
             this.WebSocketParameters = webSocketParameters;
             this.ProxyOptions = proxyOptions;
             this.CancellationToken = cancellationToken ?? CancelToken.None;
@@ -105,24 +99,15 @@ namespace SparkplugNet.Device
         public string ScadaHostIdentifier { get; set; }
 
         /// <summary>
-        /// Gets or sets the group identifier.
-        /// </summary>
-        public string GroupIdentifier { get; set; }
-
-        /// <summary>
-        /// Gets or sets the edge node identifier.
-        /// </summary>
-        public string EdgeNodeIdentifier { get; set; }
-
-        /// <summary>
-        /// Gets or sets the device identifier.
-        /// </summary>
-        public string DeviceIdentifier { get; set; }
-
-        /// <summary>
         /// Gets or sets the reconnect interval.
         /// </summary>
         public TimeSpan ReconnectInterval { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the application the primary application or not.
+        /// If this value is set to <c>true</c>, the application sends STATE messages, else not.
+        /// </summary>
+        public bool IsPrimaryApplication { get; set; }
 
         /// <summary>
         /// Gets or sets the WebSocket parameters.

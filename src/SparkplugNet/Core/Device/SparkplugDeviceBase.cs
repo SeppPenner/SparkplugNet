@@ -7,38 +7,52 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Device
+namespace SparkplugNet.Core.Device
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
     using MQTTnet.Formatter;
     using MQTTnet.Protocol;
 
-    using SparkplugNet.Enumerations;
-    using SparkplugNet.Extensions;
+    using SparkplugNet.Core.Enumerations;
+    using SparkplugNet.Core.Extensions;
 
-    using VersionAPayload = Payloads.VersionA.Payload;
-    using VersionBPayload = Payloads.VersionB.Payload;
+    using VersionAPayload = VersionA.Payload;
+    using VersionBPayload = VersionB.Payload;
 
     /// <inheritdoc cref="SparkplugBase"/>
     /// <summary>
-    /// A class that handles a Sparkplug application.
+    /// A class that handles a Sparkplug device.
     /// </summary>
     /// <seealso cref="SparkplugBase"/>
-    public class SparkplugDevice : SparkplugBase
+    public class SparkplugDeviceBase<T> : SparkplugBase where T : class, new()
     {
         /// <inheritdoc cref="SparkplugBase"/>
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugDevice"/> class.
+        /// Initializes a new instance of the <see cref="SparkplugDeviceBase{T}"/> class.
         /// </summary>
-        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="knownMetrics">The metric names.</param>
         /// <seealso cref="SparkplugBase"/>
-        public SparkplugDevice(SparkplugNamespace nameSpace) : base(nameSpace)
+        public SparkplugDeviceBase(List<T> knownMetrics)
         {
+            this.KnownMetrics = knownMetrics;
+
+            this.NameSpace = knownMetrics switch
+            {
+                List<VersionAPayload> => SparkplugNamespace.VersionA,
+                List<VersionBPayload> => SparkplugNamespace.VersionB,
+                _ => SparkplugNamespace.VersionB
+            };
         }
+
+        /// <summary>
+        /// Gets the known metric names.
+        /// </summary>
+        public List<T> KnownMetrics { get; }
 
         /// <summary>
         /// Starts the Sparkplug device.
@@ -67,6 +81,24 @@ namespace SparkplugNet.Device
         public async Task Stop()
         {
             await this.Client.DisconnectAsync();
+        }
+
+        /// <summary>
+        /// Publishes some metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        public async Task PublishMetrics(T metrics)
+        {
+            if (this.NameSpace == SparkplugNamespace.VersionA)
+            {
+                // Todo : Publish metrics
+            }
+
+            if (this.NameSpace == SparkplugNamespace.VersionB)
+            {
+                // Todo : Publish metrics
+            }
         }
 
         /// <summary>
@@ -99,6 +131,9 @@ namespace SparkplugNet.Device
             this.Client.UseDisconnectedHandler(
                 async _ =>
                     {
+                        // Invoke disconnected callback
+                        this.OnDisconnected?.Invoke();
+
                         // Wait until the disconnect interval is reached
                         await Task.Delay(options.ReconnectInterval);
 

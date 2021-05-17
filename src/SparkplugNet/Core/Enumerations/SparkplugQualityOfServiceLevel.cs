@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Enumerations
+namespace SparkplugNet.Core.Enumerations
 {
     /// <summary>
     /// The Sparkplug quality of service level enumeration.

@@ -1,13 +1,13 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugNodeOptions.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugDeviceOptions.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   A class that contains the application options.
+//   A class that contains the device options.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Node
+namespace SparkplugNet.Core.Device
 {
     using System;
 
@@ -16,12 +16,12 @@ namespace SparkplugNet.Node
     using CancelToken = System.Threading.CancellationToken;
 
     /// <summary>
-    /// A class that contains the application options.
+    /// A class that contains the device options.
     /// </summary>
-    public class SparkplugNodeOptions
+    public class SparkplugDeviceOptions
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
+        /// Initializes a new instance of the <see cref="SparkplugDeviceOptions"/> class.
         /// </summary>
         /// <param name="brokerAddress">The broker address.</param>
         /// <param name="port">The broker port.</param>
@@ -32,11 +32,12 @@ namespace SparkplugNet.Node
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="reconnectInterval">The reconnect interval.</param>
         /// <param name="webSocketParameters">The WebSocket parameters.</param>
         /// <param name="proxyOptions">The proxy options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public SparkplugNodeOptions(
+        public SparkplugDeviceOptions(
             string brokerAddress,
             int port,
             string clientId,
@@ -46,6 +47,7 @@ namespace SparkplugNet.Node
             string scadaHostIdentifier,
             string groupIdentifier,
             string edgeNodeIdentifier,
+            string deviceIdentifier,
             TimeSpan reconnectInterval,
             MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
             MqttClientWebSocketProxyOptions? proxyOptions = null,
@@ -60,6 +62,7 @@ namespace SparkplugNet.Node
             this.ScadaHostIdentifier = scadaHostIdentifier;
             this.GroupIdentifier = groupIdentifier;
             this.EdgeNodeIdentifier = edgeNodeIdentifier;
+            this.DeviceIdentifier = deviceIdentifier;
             this.ReconnectInterval = reconnectInterval;
             this.WebSocketParameters = webSocketParameters;
             this.ProxyOptions = proxyOptions;
@@ -110,6 +113,11 @@ namespace SparkplugNet.Node
         /// Gets or sets the edge node identifier.
         /// </summary>
         public string EdgeNodeIdentifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets the device identifier.
+        /// </summary>
+        public string DeviceIdentifier { get; set; }
 
         /// <summary>
         /// Gets or sets the reconnect interval.

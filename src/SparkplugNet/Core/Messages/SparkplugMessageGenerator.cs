@@ -7,14 +7,14 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Messages
+namespace SparkplugNet.Core.Messages
 {
     using System;
 
     using MQTTnet;
 
-    using SparkplugNet.Enumerations;
-    using SparkplugNet.Extensions;
+    using SparkplugNet.Core.Enumerations;
+    using SparkplugNet.Core.Extensions;
 
     /// <summary>
     /// The Sparkplug message generator.
