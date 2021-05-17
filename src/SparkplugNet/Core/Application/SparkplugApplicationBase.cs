@@ -62,6 +62,11 @@ namespace SparkplugNet.Core.Application
         public ConcurrentDictionary<string, MetricState<T>> NodeStates{ get; } = new ();
 
         /// <summary>
+        /// Gets the node states.
+        /// </summary>
+        public ConcurrentDictionary<string, MetricState<T>> DeviceStates{ get; } = new ();
+
+        /// <summary>
         /// Starts the Sparkplug application.
         /// </summary>
         /// <param name="options">The configuration option.</param>
@@ -70,6 +75,7 @@ namespace SparkplugNet.Core.Application
         {
             // Clear states
             this.NodeStates.Clear();
+            this.DeviceStates.Clear();
 
             // Load messages
             this.LoadMessages(options);
@@ -165,6 +171,7 @@ namespace SparkplugNet.Core.Application
                                     if (payloadVersionA != null)
                                     {
                                         // Todo: Store metrics for node if metrics are known
+                                        // Todo: Store metrics for device if metrics are known
                                         this.VersionAPayloadReceived?.Invoke(payloadVersionA);
                                     }
 
@@ -176,6 +183,7 @@ namespace SparkplugNet.Core.Application
                                     if (payloadVersionB != null)
                                     {
                                         // Todo: Store metrics for node if metrics are known
+                                        // Todo: Store metrics for device if metrics are known
                                         this.VersionBPayloadReceived?.Invoke(payloadVersionB);
                                     }
 
