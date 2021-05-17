@@ -9,6 +9,7 @@
 
 namespace SparkplugNet.Core.Device
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -86,19 +87,34 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Publishes some metrics.
         /// </summary>
-        /// <param name="metrics">The metrics.</param>
+        /// <param name="metric">The metric.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishMetrics(T metrics)
+        public async Task PublishMetrics(T metric)
         {
+            if(!this.Client.IsConnected)
+            {
+                throw new Exception("The MQTT client is not connected, please try again.");
+            }
+
             if (this.NameSpace == SparkplugNamespace.VersionA)
             {
-                // Todo : Publish metrics
+                await this.PublishVersionAMessage(metric);
             }
 
             if (this.NameSpace == SparkplugNamespace.VersionB)
             {
-                // Todo : Publish metrics
+                await this.PublishVersionBMessage(metric);
             }
+        }
+
+        private async Task PublishVersionAMessage(T metric)
+        {
+            // Todo : Publish metrics if they're valid!
+        }
+
+        private async Task PublishVersionBMessage(T metric)
+        {
+            // Todo : Publish metrics if they're valid!
         }
 
         /// <summary>
