@@ -74,8 +74,7 @@ namespace SparkplugNet.Tests
                 true);
 
             Assert.AreEqual($"STATE/{ScadaHostIdentifier}", message.Topic);
-
-            // Todo: Add test once payload is final
+            
             Assert.AreEqual(string.Empty, message.ConvertPayloadToString());
         }
 
@@ -91,8 +90,7 @@ namespace SparkplugNet.Tests
                 false);
 
             Assert.AreEqual($"STATE/{ScadaHostIdentifier}", message.Topic);
-
-            // Todo: Add test once payload is final
+            
             Assert.AreEqual("OFFLINE", message.ConvertPayloadToString());
         }
     }
