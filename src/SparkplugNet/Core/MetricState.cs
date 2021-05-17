@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.Core
 {
+    using System.Collections.Concurrent;
+
     using SparkplugNet.Core.Enumerations;
 
     /// <summary>
@@ -23,8 +25,8 @@ namespace SparkplugNet.Core
         public SparkplugMetricStatus MetricStatus { get; set; } = SparkplugMetricStatus.Unknown;
 
         /// <summary>
-        /// Gets or sets the metric.
+        /// Gets or sets the metrics.
         /// </summary>
-        public T Metric { get; set; } = new ();
+        public ConcurrentDictionary<string, T> Metrics { get; set; } = new ();
     }
 }
