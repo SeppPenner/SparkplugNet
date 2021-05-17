@@ -14,8 +14,7 @@ namespace SparkplugNet.Node
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-
-    using MQTTnet;
+    
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
     using MQTTnet.Formatter;
@@ -34,16 +33,6 @@ namespace SparkplugNet.Node
     /// <seealso cref="SparkplugBase"/>
     public class SparkplugNode : SparkplugBase
     {
-        /// <summary>
-        /// The will message.
-        /// </summary>
-        private MqttApplicationMessage? willMessage;
-
-        /// <summary>
-        /// The node online message.
-        /// </summary>
-        private MqttApplicationMessage? nodeOnlineMessage;
-
         /// <inheritdoc cref="SparkplugBase"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
@@ -108,14 +97,14 @@ namespace SparkplugNet.Node
         /// <param name="options">The configuration option.</param>
         private void LoadMessages(SparkplugNodeOptions options)
         {
-            this.willMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.WillMessage = this.MessageGenerator.CreateSparkplugMessage(
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.NodeDeath,
                 options.EdgeNodeIdentifier,
                 null);
 
-            this.nodeOnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.OnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.NodeBirth,
@@ -241,9 +230,9 @@ namespace SparkplugNet.Node
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.willMessage != null)
+            if (this.WillMessage != null)
             {
-                builder.WithWillMessage(this.willMessage);
+                builder.WithWillMessage(this.WillMessage);
             }
 
             this.ClientOptions = builder.Build();
@@ -259,7 +248,7 @@ namespace SparkplugNet.Node
         private async Task PublishInternal(SparkplugNodeOptions options)
         {
             options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(this.nodeOnlineMessage, options.CancellationToken.Value);
+            await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
         }
 
         /// <summary>

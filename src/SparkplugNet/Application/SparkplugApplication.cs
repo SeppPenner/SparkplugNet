@@ -10,10 +10,10 @@
 namespace SparkplugNet.Application
 {
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-
-    using MQTTnet;
+    
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
     using MQTTnet.Formatter;
@@ -32,25 +32,22 @@ namespace SparkplugNet.Application
     /// <seealso cref="SparkplugBase"/>
     public class SparkplugApplication : SparkplugBase
     {
-        /// <summary>
-        /// The will message.
-        /// </summary>
-        private MqttApplicationMessage? willMessage;
-
-        /// <summary>
-        /// The application online message.
-        /// </summary>
-        private MqttApplicationMessage? applicationOnlineMessage;
-
         /// <inheritdoc cref="SparkplugBase"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
         /// </summary>
         /// <param name="nameSpace">The namespace.</param>
+        /// <param name="metricNames">The metric names.</param>
         /// <seealso cref="SparkplugBase"/>
-        public SparkplugApplication(SparkplugNamespace nameSpace) : base(nameSpace)
+        public SparkplugApplication(SparkplugNamespace nameSpace, List<string> metricNames) : base(nameSpace)
         {
+            this.KnownMetricNames = metricNames;
         }
+
+        /// <summary>
+        /// Gets the known metric names.
+        /// </summary>
+        public List<string> KnownMetricNames { get; }
 
         /// <summary>
         /// Gets the node states for the payload version A.
@@ -101,12 +98,12 @@ namespace SparkplugNet.Application
         /// <param name="options">The configuration option.</param>
         private void LoadMessages(SparkplugApplicationOptions options)
         {
-            this.willMessage = this.MessageGenerator.GetSparkplugStateMessage(
+            this.WillMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
                 options.ScadaHostIdentifier,
                 false);
 
-            this.applicationOnlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
+            this.OnlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
                 options.ScadaHostIdentifier,
                 true);
@@ -234,9 +231,9 @@ namespace SparkplugNet.Application
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.willMessage != null && options.IsPrimaryApplication)
+            if (this.WillMessage != null && options.IsPrimaryApplication)
             {
-                builder.WithWillMessage(this.willMessage);
+                builder.WithWillMessage(this.WillMessage);
             }
 
             this.ClientOptions = builder.Build();
@@ -255,7 +252,7 @@ namespace SparkplugNet.Application
             if (options.IsPrimaryApplication)
             {
                 options.CancellationToken ??= CancellationToken.None;
-                await this.Client.PublishAsync(this.applicationOnlineMessage, options.CancellationToken.Value);
+                await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
             }
         }
 

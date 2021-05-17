@@ -70,5 +70,15 @@ namespace SparkplugNet
         /// Gets or sets the MQTT client options.
         /// </summary>
         protected IMqttClientOptions? ClientOptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the will message.
+        /// </summary>
+        protected MqttApplicationMessage? WillMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the online message.
+        /// </summary>
+        protected MqttApplicationMessage? OnlineMessage { get; set; }
     }
 }

@@ -11,8 +11,7 @@ namespace SparkplugNet.Device
 {
     using System.Threading;
     using System.Threading.Tasks;
-
-    using MQTTnet;
+    
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
     using MQTTnet.Formatter;
@@ -31,16 +30,6 @@ namespace SparkplugNet.Device
     /// <seealso cref="SparkplugBase"/>
     public class SparkplugDevice : SparkplugBase
     {
-        /// <summary>
-        /// The will message.
-        /// </summary>
-        private MqttApplicationMessage? willMessage;
-
-        /// <summary>
-        /// The device online message.
-        /// </summary>
-        private MqttApplicationMessage? deviceOnlineMessage;
-
         /// <inheritdoc cref="SparkplugBase"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugDevice"/> class.
@@ -86,14 +75,14 @@ namespace SparkplugNet.Device
         /// <param name="options">The configuration option.</param>
         private void LoadMessages(SparkplugDeviceOptions options)
         {
-            this.willMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.WillMessage = this.MessageGenerator.CreateSparkplugMessage(
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.DeviceDeath,
                 options.EdgeNodeIdentifier,
                 options.DeviceIdentifier);
 
-            this.deviceOnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.OnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
                 this.NameSpace,
                 options.GroupIdentifier,
                 SparkplugMessageType.DeviceBirth,
@@ -108,7 +97,7 @@ namespace SparkplugNet.Device
         private void AddDisconnectedHandler(SparkplugDeviceOptions options)
         {
             this.Client.UseDisconnectedHandler(
-                async e =>
+                async _ =>
                     {
                         // Wait until the disconnect interval is reached
                         await Task.Delay(options.ReconnectInterval);
@@ -197,9 +186,9 @@ namespace SparkplugNet.Device
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.willMessage != null)
+            if (this.WillMessage != null)
             {
-                builder.WithWillMessage(this.willMessage);
+                builder.WithWillMessage(this.WillMessage);
             }
 
             this.ClientOptions = builder.Build();
@@ -215,7 +204,7 @@ namespace SparkplugNet.Device
         private async Task PublishInternal(SparkplugDeviceOptions options)
         {
             options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(this.deviceOnlineMessage, options.CancellationToken.Value);
+            await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
         }
 
         /// <summary>
