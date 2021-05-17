@@ -62,12 +62,12 @@ namespace SparkplugNet.Node
         /// <summary>
         /// Gets the device states for the payload version A.
         /// </summary>
-        public ConcurrentDictionary<string, VersionAPayload.KuraMetric> DeviceStatesPayloadA { get; } = new ConcurrentDictionary<string, VersionAPayload.KuraMetric>();
+        public ConcurrentDictionary<string, VersionAPayload.KuraMetric> DeviceStatesPayloadA { get; } = new ();
 
         /// <summary>
         /// Gets the device states for the payload version B.
         /// </summary>
-        public ConcurrentDictionary<string, VersionBPayload.Metric> DeviceStatesPayloadB { get; } = new ConcurrentDictionary<string, VersionBPayload.Metric>();
+        public ConcurrentDictionary<string, VersionBPayload.Metric> DeviceStatesPayloadB { get; } = new ();
 
         /// <summary>
         /// Starts the Sparkplug node.

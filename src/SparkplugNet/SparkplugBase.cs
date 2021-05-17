@@ -39,12 +39,12 @@ namespace SparkplugNet
         /// <summary>
         /// The message generator.
         /// </summary>
-        protected readonly SparkplugMessageGenerator MessageGenerator = new SparkplugMessageGenerator();
+        protected readonly SparkplugMessageGenerator MessageGenerator = new ();
 
         /// <summary>
         /// The topic generator.
         /// </summary>
-        protected readonly SparkplugTopicGenerator TopicGenerator = new SparkplugTopicGenerator();
+        protected readonly SparkplugTopicGenerator TopicGenerator = new ();
 
         /// <summary>
         /// The MQTT client.

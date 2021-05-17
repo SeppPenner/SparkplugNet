@@ -55,12 +55,12 @@ namespace SparkplugNet.Application
         /// <summary>
         /// Gets the node states for the payload version A.
         /// </summary>
-        public ConcurrentDictionary<string, VersionAPayload.KuraMetric> NodeStatesPayloadA { get; } = new ConcurrentDictionary<string, VersionAPayload.KuraMetric>();
+        public ConcurrentDictionary<string, VersionAPayload.KuraMetric> NodeStatesPayloadA { get; } = new ();
 
         /// <summary>
         /// Gets the node states for the payload version B.
         /// </summary>
-        public ConcurrentDictionary<string, VersionBPayload.Metric> NodeStatesPayloadB { get; } = new ConcurrentDictionary<string, VersionBPayload.Metric>();
+        public ConcurrentDictionary<string, VersionBPayload.Metric> NodeStatesPayloadB { get; } = new ();
 
         /// <summary>
         /// Starts the Sparkplug application.

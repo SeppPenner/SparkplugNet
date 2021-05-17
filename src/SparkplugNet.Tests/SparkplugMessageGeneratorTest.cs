@@ -30,7 +30,7 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The message generator.
         /// </summary>
-        private readonly SparkplugMessageGenerator messageGenerator = new SparkplugMessageGenerator();
+        private readonly SparkplugMessageGenerator messageGenerator = new ();
 
         /// <summary>
         /// Tests the Sparkplug message generator with a message with Sparkplug version 2.2, a version A namespace and a online state.

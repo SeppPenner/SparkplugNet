@@ -24,7 +24,7 @@ namespace SparkplugNet.Messages
         /// <summary>
         /// The topic generator.
         /// </summary>
-        private readonly SparkplugTopicGenerator topicGenerator = new SparkplugTopicGenerator();
+        private readonly SparkplugTopicGenerator topicGenerator = new ();
 
         /// <summary>
         /// Gets a STATE message.
