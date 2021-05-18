@@ -13,6 +13,9 @@ namespace SparkplugNet.Tests
 
     using MQTTnet;
 
+    using SparkplugNet.Core.Enumerations;
+    using SparkplugNet.Core.Messages;
+
     /// <summary>
     /// A class to test the <see cref="SparkplugMessageGenerator"/> class.
     /// </summary>
