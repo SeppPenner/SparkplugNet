@@ -11,15 +11,15 @@ DDeath: No idea how the seq number should be used here!
 
 
 Test:
-Tests für NodeBirth-Messages
-Tests für DeviceBirth-Messages
-Tests für NodeDeath-Messages
-Tests für DeviceDeath-Messages
-
-
-
-
+DBIRTH
+DBIRTH
+NDEATH
+DDEATH
 NDATA
+
+
+
+
 DDATA
 NCMD
 DCMD
