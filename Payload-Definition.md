@@ -19,10 +19,10 @@
 
 |Method|Topic|Type|Payload|
 |-|-|-|-|
-|Publish|`spAv1.0/group_id/NDEATH/edge_node_id`|A|`OFFLINE`|
-|Publish|`spBv1.0/group_id/NDEATH/edge_node_id`|B|?|
-|Publish|`spAv1.0/group_id/NBIRTH/edge_node_id`|A|`ONLINE`|
-|Publish|`spBv1.0/group_id/NBIRTH/edge_node_id`|B|?|
+|Publish|`spAv1.0/group_id/NDEATH/edge_node_id`|A|`type: PayloadA`|
+|Publish|`spBv1.0/group_id/NDEATH/edge_node_id`|B|`type: PayloadB`|
+|Publish|`spAv1.0/group_id/NBIRTH/edge_node_id`|A|`type: PayloadA`|
+|Publish|`spBv1.0/group_id/NBIRTH/edge_node_id`|B|`type: PayloadB`|
 |Publish|`spAv1.0/group_id/NDATA/edge_node_id`|A|?|
 |Publish|`spBv1.0/group_id/NDATA/edge_node_id`|B|?|
 |Subscribe|`spAv1.0/group_id/NCMD/edge_node_id`|A|?|
@@ -38,10 +38,10 @@
 
 |Method|Topic|Type|Payload|
 |-|-|-|-|
-|Publish|`spAv1.0/group_id/DBIRTH/edge_node_id/device_id`|A|`OFFLINE`|
-|Publish|`spBv1.0/group_id/DBIRTH/edge_node_id/device_id`|B|?|
-|Publish|`spAv1.0/group_id/DDEATH/edge_node_id/device_id`|A|`ONLINE`|
-|Publish|`spBv1.0/group_id/DDEATH/edge_node_id/device_id`|B|?|
+|Publish|`spAv1.0/group_id/DBIRTH/edge_node_id/device_id`|A|`type: PayloadA`|
+|Publish|`spBv1.0/group_id/DBIRTH/edge_node_id/device_id`|B|`type: PayloadB`|
+|Publish|`spAv1.0/group_id/DDEATH/edge_node_id/device_id`|A|`type: PayloadA`|
+|Publish|`spBv1.0/group_id/DDEATH/edge_node_id/device_id`|B|`type: PayloadB`|
 |Publish|`spAv1.0/group_id/DDATA/edge_node_id/device_id`|A|?|
 |Publish|`spBv1.0/group_id/DDATA/edge_node_id/device_id`|B|?|
 |Subscribe|`spAv1.0/group_id/DCMD/edge_node_id/device_id`|A|?|
