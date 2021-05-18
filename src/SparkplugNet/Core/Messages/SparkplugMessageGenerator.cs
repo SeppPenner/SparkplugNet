@@ -28,7 +28,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// The topic generator.
         /// </summary>
-        private readonly SparkplugTopicGenerator topicGenerator = new();
+        private readonly SparkplugTopicGenerator topicGenerator = new ();
 
         /// <summary>
         /// Gets a STATE message.
@@ -247,6 +247,53 @@ namespace SparkplugNet.Core.Messages
                         var metrics = new List<VersionBPayload.Metric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
                         return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
+                    }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(nameSpace));
+            }
+        }
+
+        /// <summary>
+        /// Gets a NDATA message.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="sessionNumber">The session number.</param>
+        /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
+        public MqttApplicationMessage GetSparkPlugNodeDataMessage(
+            SparkplugNamespace nameSpace,
+            string groupIdentifier,
+            string edgeNodeIdentifier,
+            string deviceIdentifier,
+            long sessionNumber)
+        {
+            if (!groupIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(groupIdentifier));
+            }
+
+            if (!edgeNodeIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(edgeNodeIdentifier));
+            }
+
+            switch (nameSpace)
+            {
+                case SparkplugNamespace.VersionA:
+                    {
+                        var metrics = new List<VersionAPayload.KuraMetric>();
+                        AddSessionNumberToMetrics(metrics, sessionNumber);
+                        return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
+                    }
+
+                case SparkplugNamespace.VersionB:
+                    {
+                        var metrics = new List<VersionBPayload.Metric>();
+                        AddSessionNumberToMetrics(metrics, sessionNumber);
+                        return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
                     }
 
                 default:
@@ -578,9 +625,86 @@ namespace SparkplugNet.Core.Messages
                 .Build();
         }
 
+        /// <summary>
+        /// Gets a NDATA message with namespace version A.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="dateTime">The date time.</param>
+        /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
+        private MqttApplicationMessage GetSparkPlugNodeDataA(
+            SparkplugNamespace nameSpace,
+            string groupIdentifier,
+            string edgeNodeIdentifier,
+            string deviceIdentifier,
+            List<VersionAPayload.KuraMetric> metrics,
+            DateTimeOffset dateTime)
+        {
+            var payload = new VersionAPayload
+            {
+                Metrics = metrics,
+                Timestamp = dateTime.ToUnixTimeMilliseconds()
+            };
 
+            var serialized = PayloadHelper.Serialize(payload);
 
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(
+                    this.topicGenerator.GetTopic(
+                        nameSpace,
+                        groupIdentifier,
+                        SparkplugMessageType.NodeData,
+                        edgeNodeIdentifier,
+                        deviceIdentifier)).WithPayload(serialized)
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
+        }
 
+        /// <summary>
+        /// Gets a NDATA message with namespace version B.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
+        /// <param name="dateTime">The date time.</param>
+        /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
+        private MqttApplicationMessage GetSparkPlugNodeDataB(
+            SparkplugNamespace nameSpace,
+            string groupIdentifier,
+            string edgeNodeIdentifier,
+            string deviceIdentifier,
+            List<VersionBPayload.Metric> metrics,
+            int sequenceNumber,
+            DateTimeOffset dateTime)
+        {
+            var payload = new VersionBPayload
+            {
+                Metrics = metrics,
+                Seq = (ulong)sequenceNumber,
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
+            };
+
+            var serialized = PayloadHelper.Serialize(payload);
+
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(
+                    this.topicGenerator.GetTopic(
+                        nameSpace,
+                        groupIdentifier,
+                        SparkplugMessageType.NodeData,
+                        edgeNodeIdentifier,
+                        deviceIdentifier)).WithPayload(serialized)
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
+        }
 
 
 
