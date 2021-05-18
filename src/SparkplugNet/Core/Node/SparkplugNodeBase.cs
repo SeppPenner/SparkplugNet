@@ -65,9 +65,6 @@ namespace SparkplugNet.Core.Node
             // Clear states
             this.DeviceStates.Clear();
 
-            // Load messages
-            this.LoadMessages(options);
-
             // Add handlers
             this.AddDisconnectedHandler(options);
             this.AddMessageReceivedHandler();
@@ -85,23 +82,6 @@ namespace SparkplugNet.Core.Node
         public async Task Stop()
         {
             await this.Client.DisconnectAsync();
-        }
-
-        /// <summary>
-        /// Loads the messages used by the the Sparkplug application.
-        /// </summary>
-        /// <param name="options">The configuration option.</param>
-        private void LoadMessages(SparkplugNodeOptions options)
-        {
-            this.WillMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
-                this.NameSpace,
-                options.GroupIdentifier,
-                options.EdgeNodeIdentifier);
-
-            this.OnlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage(
-                this.NameSpace,
-                options.GroupIdentifier,
-                options.EdgeNodeIdentifier);
         }
 
         /// <summary>
@@ -182,6 +162,13 @@ namespace SparkplugNet.Core.Node
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task ConnectInternal(SparkplugNodeOptions options)
         {
+            // Get the will message
+            var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
+                this.NameSpace,
+                options.GroupIdentifier,
+                options.EdgeNodeIdentifier);
+
+            // Build up the MQTT client and connect
             options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
@@ -214,9 +201,9 @@ namespace SparkplugNet.Core.Node
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.WillMessage != null)
+            if (willMessage != null)
             {
-                builder.WithWillMessage(this.WillMessage);
+                builder.WithWillMessage(willMessage);
             }
 
             this.ClientOptions = builder.Build();
@@ -231,8 +218,19 @@ namespace SparkplugNet.Core.Node
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishInternal(SparkplugNodeOptions options)
         {
+            // Get the online message and increase the sequence counter.
+            var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage(
+                this.NameSpace,
+                options.GroupIdentifier,
+                options.EdgeNodeIdentifier,
+                this.KnownMetrics,
+                this.LastSequenceNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            // Publish data
             options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
+            await this.Client.PublishAsync(onlineMessage, options.CancellationToken.Value);
         }
 
         /// <summary>

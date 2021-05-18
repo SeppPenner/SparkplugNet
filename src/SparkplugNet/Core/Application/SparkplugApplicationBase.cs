@@ -64,9 +64,6 @@ namespace SparkplugNet.Core.Application
             this.NodeStates.Clear();
             this.DeviceStates.Clear();
 
-            // Load messages
-            this.LoadMessages(options);
-
             // Add handlers
             this.AddDisconnectedHandler(options);
             this.AddMessageReceivedHandler();
@@ -84,23 +81,6 @@ namespace SparkplugNet.Core.Application
         public async Task Stop()
         {
             await this.Client.DisconnectAsync();
-        }
-
-        /// <summary>
-        /// Loads the messages used by the the Sparkplug application.
-        /// </summary>
-        /// <param name="options">The configuration option.</param>
-        private void LoadMessages(SparkplugApplicationOptions options)
-        {
-            this.WillMessage = this.MessageGenerator.GetSparkplugStateMessage(
-                this.NameSpace,
-                options.ScadaHostIdentifier,
-                false);
-
-            this.OnlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
-                this.NameSpace,
-                options.ScadaHostIdentifier,
-                true);
         }
 
         /// <summary>
@@ -187,6 +167,13 @@ namespace SparkplugNet.Core.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task ConnectInternal(SparkplugApplicationOptions options)
         {
+            // Get the will message
+            var willMessage = this.MessageGenerator.GetSparkplugStateMessage(
+                this.NameSpace,
+                options.ScadaHostIdentifier,
+                false);
+
+            // Build up the MQTT client and connect
             options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
@@ -219,9 +206,9 @@ namespace SparkplugNet.Core.Application
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.WillMessage != null && options.IsPrimaryApplication)
+            if (willMessage != null && options.IsPrimaryApplication)
             {
-                builder.WithWillMessage(this.WillMessage);
+                builder.WithWillMessage(willMessage);
             }
 
             this.ClientOptions = builder.Build();
@@ -236,11 +223,19 @@ namespace SparkplugNet.Core.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishInternal(SparkplugApplicationOptions options)
         {
-            // Only send state messages for the primary application
+            // Only send state messages for the primary application.
             if (options.IsPrimaryApplication)
             {
+                // Get the online message and increase the sequence counter.
+                var onlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
+                    this.NameSpace,
+                    options.ScadaHostIdentifier,
+                    true);
+                this.IncrementLastSequenceNumber();
+
+                // Publish data
                 options.CancellationToken ??= CancellationToken.None;
-                await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
+                await this.Client.PublishAsync(onlineMessage, options.CancellationToken.Value);
             }
         }
 

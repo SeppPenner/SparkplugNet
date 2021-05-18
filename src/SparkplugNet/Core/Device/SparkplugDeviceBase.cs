@@ -50,9 +50,6 @@ namespace SparkplugNet.Core.Device
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Start(SparkplugDeviceOptions options)
         {
-            // Load messages
-            this.LoadMessages(options);
-
             // Add handlers
             this.AddDisconnectedHandler(options);
             this.AddMessageReceivedHandler();
@@ -142,27 +139,6 @@ namespace SparkplugNet.Core.Device
         }
 
         /// <summary>
-        /// Loads the messages used by the the Sparkplug device.
-        /// </summary>
-        /// <param name="options">The configuration option.</param>
-        private void LoadMessages(SparkplugDeviceOptions options)
-        {
-            this.WillMessage = this.MessageGenerator.CreateSparkplugMessage(
-                this.NameSpace,
-                options.GroupIdentifier,
-                SparkplugMessageType.DeviceDeath,
-                options.EdgeNodeIdentifier,
-                options.DeviceIdentifier);
-
-            this.OnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
-                this.NameSpace,
-                options.GroupIdentifier,
-                SparkplugMessageType.DeviceBirth,
-                options.EdgeNodeIdentifier,
-                null);
-        }
-
-        /// <summary>
         /// Adds the disconnected handler and the reconnect functionality to the client.
         /// </summary>
         /// <param name="options">The configuration option.</param>
@@ -229,6 +205,15 @@ namespace SparkplugNet.Core.Device
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task ConnectInternal(SparkplugDeviceOptions options)
         {
+            // Get the will message
+            var willMessage = this.MessageGenerator.CreateSparkplugMessage(
+                this.NameSpace,
+                options.GroupIdentifier,
+                SparkplugMessageType.DeviceDeath,
+                options.EdgeNodeIdentifier,
+                options.DeviceIdentifier);
+
+            // Build up the MQTT client and connect
             options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
@@ -261,9 +246,9 @@ namespace SparkplugNet.Core.Device
                     options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.WillMessage != null)
+            if (willMessage != null)
             {
-                builder.WithWillMessage(this.WillMessage);
+                builder.WithWillMessage(willMessage);
             }
 
             this.ClientOptions = builder.Build();
@@ -278,8 +263,20 @@ namespace SparkplugNet.Core.Device
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishInternal(SparkplugDeviceOptions options)
         {
+            // Get the online message and increase the sequence counter.
+            var onlineMessage = this.MessageGenerator.GetSparkPlugDeviceBirthMessage(
+                this.NameSpace,
+                options.GroupIdentifier,
+                options.EdgeNodeIdentifier,
+                options.DeviceIdentifier,
+                this.KnownMetrics,
+                this.LastSequenceNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            // Publish data
             options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(this.OnlineMessage, options.CancellationToken.Value);
+            await this.Client.PublishAsync(onlineMessage, options.CancellationToken.Value);
         }
 
         /// <summary>

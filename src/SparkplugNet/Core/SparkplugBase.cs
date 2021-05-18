@@ -82,14 +82,9 @@ namespace SparkplugNet.Core
         protected IMqttClientOptions? ClientOptions { get; set; }
 
         /// <summary>
-        /// Gets or sets the will message.
+        /// Gets the last sequence number.
         /// </summary>
-        protected MqttApplicationMessage? WillMessage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the online message.
-        /// </summary>
-        protected MqttApplicationMessage? OnlineMessage { get; set; }
+        protected int LastSequenceNumber { get; private set; }
 
         /// <summary>
         /// Gets the Sparkplug namespace.
@@ -100,5 +95,20 @@ namespace SparkplugNet.Core
         /// Gets the known metric names.
         /// </summary>
         public List<T> KnownMetrics { get; }
+
+        /// <summary>
+        /// Increments the last sequence number.
+        /// </summary>
+        public void IncrementLastSequenceNumber()
+        {
+            if (this.LastSequenceNumber == 255)
+            {
+                this.LastSequenceNumber = 0;
+            }
+            else
+            {
+                this.LastSequenceNumber++;
+            }
+        }
     }
 }
