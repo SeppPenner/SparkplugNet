@@ -85,9 +85,9 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Publishes some metrics.
         /// </summary>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishMetrics(T metric)
+        public async Task PublishMetrics(List<T> metrics)
         {
             if(!this.Client.IsConnected)
             {
@@ -96,59 +96,91 @@ namespace SparkplugNet.Core.Device
 
             if (this.NameSpace == SparkplugNamespace.VersionA)
             {
-                if (!(metric is VersionAPayload.KuraMetric convertedMetric))
+                if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
                 {
                     throw new Exception("Invalid metric type specified for version A metric.");
                 }
                 
-                await this.PublishVersionAMessage(convertedMetric);
+                await this.PublishVersionAMessage(convertedMetrics);
             }
 
             if (this.NameSpace == SparkplugNamespace.VersionB)
             {
-                if (!(metric is VersionBPayload.Metric convertedMetric))
+                if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
                 {
                     throw new Exception("Invalid metric type specified for version B metric.");
                 }
 
-                await this.PublishVersionBMessage(convertedMetric);
+                await this.PublishVersionBMessage(convertedMetrics);
             }
         }
 
         /// <summary>
         /// Publishes a version A metric.
         /// </summary>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionAMessage(VersionAPayload.KuraMetric metric)
+        private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             if (!(this.KnownMetrics is List<VersionAPayload.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
 
-            if (knownMetrics.FirstOrDefault(m => m.Name == metric.Name) != default)
-            {
-                // Todo : Publish metrics if they're valid!
-            }
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Get the data message and increase the sequence counter.
+            var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
+                this.NameSpace,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
+                this.options.DeviceIdentifier,
+                metrics,
+                this.LastSequenceNumber,
+                LastSessionNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            await this.Client.PublishAsync(dataMessage);
         }
 
         /// <summary>
         /// Publishes a version B metric.
         /// </summary>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBMessage(VersionBPayload.Metric metric)
+        private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             if (!(this.KnownMetrics is List<VersionBPayload.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
 
-            if (knownMetrics.FirstOrDefault(m => m.Name == metric.Name) != default)
-            {
-                // Todo : Publish metrics if they're valid!
-            }
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Get the data message and increase the sequence counter.
+            var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
+                this.NameSpace,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
+                this.options.DeviceIdentifier,
+                metrics,
+                this.LastSequenceNumber,
+                LastSessionNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            await this.Client.PublishAsync(dataMessage);
         }
 
         /// <summary>
