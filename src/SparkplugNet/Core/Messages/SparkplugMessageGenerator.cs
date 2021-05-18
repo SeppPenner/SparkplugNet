@@ -64,6 +64,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="metrics">The metrics.</param>
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="dateTime">The date time.</param>
+        /// <param name="sessionNumber">The session number.</param>
         /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugNodeBirthMessage<T>(
             SparkplugNamespace nameSpace,
@@ -71,7 +72,8 @@ namespace SparkplugNet.Core.Messages
             string edgeNodeIdentifier,
             List<T> metrics,
             int sequenceNumber,
-            DateTimeOffset dateTime)
+            DateTimeOffset dateTime,
+            long sessionNumber)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -88,18 +90,17 @@ namespace SparkplugNet.Core.Messages
             {
                 case SparkplugNamespace.VersionA:
                 {
-                    var newMetrics = metrics as List<VersionAPayload.KuraMetric>
-                                     ?? new List<VersionAPayload.KuraMetric>();
-
+                    var newMetrics = metrics as List<VersionAPayload.KuraMetric> ?? new List<VersionAPayload.KuraMetric>();
+                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
                     return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime);
                 }
 
                 case SparkplugNamespace.VersionB:
                 {
                     var newMetrics = metrics as List<VersionBPayload.Metric> ?? new List<VersionBPayload.Metric>();
-
+                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
                     return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime);
-                    }
+                }
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(nameSpace));
@@ -341,6 +342,44 @@ namespace SparkplugNet.Core.Messages
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
+        }
+
+
+
+
+
+
+
+        /// <summary>
+        /// Adds the session number to the metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="sessionSequenceNumber">The session number.</param>
+        private static void AddSessionNumberToMetrics(ICollection<VersionAPayload.KuraMetric> metrics, long sessionSequenceNumber)
+        {
+            // Add a BDSEQ metric
+            metrics.Add(new VersionAPayload.KuraMetric
+            {
+                Name = "BDSEQ",
+                LongValue = sessionSequenceNumber,
+                Type = VersionAPayload.KuraMetric.ValueType.Int64
+            });
+        }
+
+        /// <summary>
+        /// Adds the session number to the metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="sessionSequenceNumber">The session number.</param>
+        private static void AddSessionNumberToMetrics(ICollection<VersionBPayload.Metric> metrics, long sessionSequenceNumber)
+        {
+            // Add a BDSEQ metric
+            metrics.Add(new VersionBPayload.Metric
+            {
+                Name = "BDSEQ",
+                LongValue = (ulong)sessionSequenceNumber,
+                Datatype = 11
+            });
         }
     }
 }

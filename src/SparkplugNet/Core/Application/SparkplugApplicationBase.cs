@@ -167,13 +167,16 @@ namespace SparkplugNet.Core.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task ConnectInternal(SparkplugApplicationOptions options)
         {
-            // Get the will message
+            // Increment the session number.
+            this.IncrementLastSessionNumber();
+
+            // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
                 options.ScadaHostIdentifier,
                 false);
 
-            // Build up the MQTT client and connect
+            // Build up the MQTT client and connect.
             options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()

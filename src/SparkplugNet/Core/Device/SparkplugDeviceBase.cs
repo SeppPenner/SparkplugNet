@@ -205,6 +205,9 @@ namespace SparkplugNet.Core.Device
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task ConnectInternal(SparkplugDeviceOptions options)
         {
+            // Increment the session number.
+            this.IncrementLastSessionNumber();
+
             // Get the will message
             var willMessage = this.MessageGenerator.CreateSparkplugMessage(
                 this.NameSpace,

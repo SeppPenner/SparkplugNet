@@ -81,10 +81,16 @@ namespace SparkplugNet.Core
         /// </summary>
         protected IMqttClientOptions? ClientOptions { get; set; }
 
+        /// Todo: Move to device only?!
         /// <summary>
-        /// Gets the last sequence number.
+        /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For a DBIRTH message).
         /// </summary>
         protected int LastSequenceNumber { get; private set; }
+
+        /// <summary>
+        /// Gets the last session number. Starts at -1 as it is incremented before the connect already.
+        /// </summary>
+        protected long LastSessionNumber { get; private set; } = -1;
 
         /// <summary>
         /// Gets the Sparkplug namespace.
@@ -108,6 +114,21 @@ namespace SparkplugNet.Core
             else
             {
                 this.LastSequenceNumber++;
+            }
+        }
+
+        /// <summary>
+        /// Increments the last session number.
+        /// </summary>
+        public void IncrementLastSessionNumber()
+        {
+            if (this.LastSessionNumber == long.MaxValue)
+            {
+                this.LastSessionNumber = 0;
+            }
+            else
+            {
+                this.LastSessionNumber++;
             }
         }
     }
