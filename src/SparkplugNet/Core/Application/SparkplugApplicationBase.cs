@@ -173,6 +173,9 @@ namespace SparkplugNet.Core.Application
                                     }
 
                                     break;
+
+                                default:
+                                    throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
                             }
                         }
                     });
