@@ -10,6 +10,7 @@
 namespace SparkplugNet.Core
 {
     using System;
+    using System.Collections.Generic;
 
     using MQTTnet;
     using MQTTnet.Client;
@@ -24,7 +25,8 @@ namespace SparkplugNet.Core
     /// <summary>
     /// A base class for all Sparkplug applications, nodes and devices.
     /// </summary>
-    public class SparkplugBase
+    /// <typeparam name="T">The type parameter.</typeparam>
+    public class SparkplugBase<T> where T : class, new()
     {
         /// <summary>
         /// The callback for the version A payload received event.
@@ -57,10 +59,25 @@ namespace SparkplugNet.Core
         protected readonly IMqttClient Client;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugBase"/> class.
+        /// A dummy field to mark the type of payload that the device has.
         /// </summary>
-        public SparkplugBase()
+        private readonly T dummyMarker = new ();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
+        /// </summary>
+        /// <param name="knownMetrics">The metric names.</param>
+        public SparkplugBase(List<string> knownMetrics)
         {
+            this.KnownMetrics = knownMetrics;
+
+            this.NameSpace = this.dummyMarker switch
+            {
+                VersionAPayload => SparkplugNamespace.VersionA,
+                VersionBPayload => SparkplugNamespace.VersionB,
+                _ => SparkplugNamespace.VersionB
+            };
+
             this.Client = new MqttFactory().CreateMqttClient();
         }
 
@@ -80,8 +97,13 @@ namespace SparkplugNet.Core
         protected MqttApplicationMessage? OnlineMessage { get; set; }
 
         /// <summary>
-        /// Gets or sets the Sparkplug namespace.
+        /// Gets the Sparkplug namespace.
         /// </summary>
-        protected SparkplugNamespace NameSpace { get; set; }
+        protected SparkplugNamespace NameSpace { get; }
+
+        /// <summary>
+        /// Gets the known metric names.
+        /// </summary>
+        public List<string> KnownMetrics { get; }
     }
 }

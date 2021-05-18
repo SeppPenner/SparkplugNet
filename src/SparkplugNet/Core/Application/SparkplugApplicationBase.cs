@@ -26,36 +26,23 @@ namespace SparkplugNet.Core.Application
     using VersionAPayload = VersionA.Payload;
     using VersionBPayload = VersionB.Payload;
 
-    /// <inheritdoc cref="SparkplugBase"/>
+    /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
     /// A class that handles a Sparkplug application.
     /// </summary>
-    /// <seealso cref="SparkplugBase"/>
-    public class SparkplugApplicationBase<T> : SparkplugBase where T : class, new()
+    /// <seealso cref="SparkplugBase{T}"/>
+    public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new()
     {
-        /// <inheritdoc cref="SparkplugBase"/>
+        /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
-        /// <seealso cref="SparkplugBase"/>
-        public SparkplugApplicationBase(List<T> knownMetrics)
+        /// <seealso cref="SparkplugBase{T}"/>
+        public SparkplugApplicationBase(List<string> knownMetrics) : base(knownMetrics)
         {
-            this.KnownMetrics = knownMetrics;
-
-            this.NameSpace = knownMetrics switch
-            {
-                List<VersionAPayload> => SparkplugNamespace.VersionA,
-                List<VersionBPayload> => SparkplugNamespace.VersionB,
-                _ => SparkplugNamespace.VersionB
-            };
         }
-
-        /// <summary>
-        /// Gets the known metric names.
-        /// </summary>
-        public List<T> KnownMetrics { get; }
-
+        
         /// <summary>
         /// Gets the node states.
         /// </summary>

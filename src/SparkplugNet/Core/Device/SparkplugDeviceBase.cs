@@ -25,35 +25,22 @@ namespace SparkplugNet.Core.Device
     using VersionAPayload = VersionA.Payload;
     using VersionBPayload = VersionB.Payload;
 
-    /// <inheritdoc cref="SparkplugBase"/>
+    /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
     /// A class that handles a Sparkplug device.
     /// </summary>
-    /// <seealso cref="SparkplugBase"/>
-    public class SparkplugDeviceBase<T> : SparkplugBase where T : class, new()
+    /// <seealso cref="SparkplugBase{T}"/>
+    public class SparkplugDeviceBase<T> : SparkplugBase<T> where T : class, new()
     {
-        /// <inheritdoc cref="SparkplugBase"/>
+        /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugDeviceBase{T}"/> class.
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
-        /// <seealso cref="SparkplugBase"/>
-        public SparkplugDeviceBase(List<T> knownMetrics)
+        /// <seealso cref="SparkplugBase{T}"/>
+        public SparkplugDeviceBase(List<string> knownMetrics) : base(knownMetrics)
         {
-            this.KnownMetrics = knownMetrics;
-
-            this.NameSpace = knownMetrics switch
-            {
-                List<VersionAPayload> => SparkplugNamespace.VersionA,
-                List<VersionBPayload> => SparkplugNamespace.VersionB,
-                _ => SparkplugNamespace.VersionB
-            };
         }
-
-        /// <summary>
-        /// Gets the known metric names.
-        /// </summary>
-        public List<T> KnownMetrics { get; }
 
         /// <summary>
         /// Starts the Sparkplug device.
@@ -87,34 +74,58 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Publishes some metrics.
         /// </summary>
+        /// <param name="metricName">The metric name.</param>
         /// <param name="metric">The metric.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishMetrics(T metric)
+        public async Task PublishMetrics(string metricName, T metric)
         {
             if(!this.Client.IsConnected)
             {
                 throw new Exception("The MQTT client is not connected, please try again.");
             }
 
+            if (string.IsNullOrWhiteSpace(metricName))
+            {
+                throw new ArgumentNullException(nameof(metricName));
+            }
+
             if (this.NameSpace == SparkplugNamespace.VersionA)
             {
-                await this.PublishVersionAMessage(metric);
+                await this.PublishVersionAMessage(metricName, metric);
             }
 
             if (this.NameSpace == SparkplugNamespace.VersionB)
             {
-                await this.PublishVersionBMessage(metric);
+                await this.PublishVersionBMessage(metricName, metric);
             }
         }
 
-        private async Task PublishVersionAMessage(T metric)
+        /// <summary>
+        /// Publishes a version A metric.
+        /// </summary>
+        /// <param name="metricName">The metric name.</param>
+        /// <param name="metric">The metric.</param>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        private async Task PublishVersionAMessage(string metricName, T metric)
         {
-            // Todo : Publish metrics if they're valid!
+            if (this.KnownMetrics.Contains(metricName))
+            {
+                // Todo : Publish metrics if they're valid!
+            }
         }
 
-        private async Task PublishVersionBMessage(T metric)
+        /// <summary>
+        /// Publishes a version B metric.
+        /// </summary>
+        /// <param name="metricName">The metric name.</param>
+        /// <param name="metric">The metric.</param>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        private async Task PublishVersionBMessage(string metricName, T metric)
         {
-            // Todo : Publish metrics if they're valid!
+            if (this.KnownMetrics.Contains(metricName))
+            {
+                // Todo : Publish metrics if they're valid!
+            }
         }
 
         /// <summary>
