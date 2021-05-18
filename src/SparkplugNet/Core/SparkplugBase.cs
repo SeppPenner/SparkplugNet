@@ -59,22 +59,17 @@ namespace SparkplugNet.Core
         protected readonly IMqttClient Client;
 
         /// <summary>
-        /// A dummy field to mark the type of payload that the device has.
-        /// </summary>
-        private readonly T dummyMarker = new ();
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
-        public SparkplugBase(List<string> knownMetrics)
+        public SparkplugBase(List<T> knownMetrics)
         {
             this.KnownMetrics = knownMetrics;
 
-            this.NameSpace = this.dummyMarker switch
+            this.NameSpace = this.KnownMetrics switch
             {
-                VersionAPayload => SparkplugNamespace.VersionA,
-                VersionBPayload => SparkplugNamespace.VersionB,
+                List<VersionAPayload.KuraMetric> => SparkplugNamespace.VersionA,
+                List<VersionBPayload.Metric> => SparkplugNamespace.VersionB,
                 _ => SparkplugNamespace.VersionB
             };
 
@@ -104,6 +99,6 @@ namespace SparkplugNet.Core
         /// <summary>
         /// Gets the known metric names.
         /// </summary>
-        public List<string> KnownMetrics { get; }
+        public List<T> KnownMetrics { get; }
     }
 }

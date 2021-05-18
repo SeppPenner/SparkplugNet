@@ -39,7 +39,7 @@ namespace SparkplugNet.Core.Application
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
         /// <seealso cref="SparkplugBase{T}"/>
-        public SparkplugApplicationBase(List<string> knownMetrics) : base(knownMetrics)
+        public SparkplugApplicationBase(List<T> knownMetrics) : base(knownMetrics)
         {
         }
         

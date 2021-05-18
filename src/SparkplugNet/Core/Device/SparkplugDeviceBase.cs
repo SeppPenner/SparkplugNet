@@ -11,6 +11,7 @@ namespace SparkplugNet.Core.Device
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -38,7 +39,7 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
         /// <seealso cref="SparkplugBase{T}"/>
-        public SparkplugDeviceBase(List<string> knownMetrics) : base(knownMetrics)
+        public SparkplugDeviceBase(List<T> knownMetrics) : base(knownMetrics)
         {
         }
 
@@ -74,41 +75,49 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Publishes some metrics.
         /// </summary>
-        /// <param name="metricName">The metric name.</param>
         /// <param name="metric">The metric.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishMetrics(string metricName, T metric)
+        public async Task PublishMetrics(T metric)
         {
             if(!this.Client.IsConnected)
             {
                 throw new Exception("The MQTT client is not connected, please try again.");
             }
 
-            if (string.IsNullOrWhiteSpace(metricName))
-            {
-                throw new ArgumentNullException(nameof(metricName));
-            }
-
             if (this.NameSpace == SparkplugNamespace.VersionA)
             {
-                await this.PublishVersionAMessage(metricName, metric);
+                if (!(metric is VersionAPayload.KuraMetric convertedMetric))
+                {
+                    throw new Exception("Invalid metric type specified for version A metric.");
+                }
+                
+                await this.PublishVersionAMessage(convertedMetric);
             }
 
             if (this.NameSpace == SparkplugNamespace.VersionB)
             {
-                await this.PublishVersionBMessage(metricName, metric);
+                if (!(metric is VersionBPayload.Metric convertedMetric))
+                {
+                    throw new Exception("Invalid metric type specified for version B metric.");
+                }
+
+                await this.PublishVersionBMessage(convertedMetric);
             }
         }
 
         /// <summary>
         /// Publishes a version A metric.
         /// </summary>
-        /// <param name="metricName">The metric name.</param>
         /// <param name="metric">The metric.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionAMessage(string metricName, T metric)
+        private async Task PublishVersionAMessage(VersionAPayload.KuraMetric metric)
         {
-            if (this.KnownMetrics.Contains(metricName))
+            if (!(this.KnownMetrics is List<VersionAPayload.KuraMetric> knownMetrics))
+            {
+                throw new Exception("Invalid metric type specified for version A metric.");
+            }
+
+            if (knownMetrics.FirstOrDefault(m => m.Name == metric.Name) != default)
             {
                 // Todo : Publish metrics if they're valid!
             }
@@ -117,12 +126,16 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Publishes a version B metric.
         /// </summary>
-        /// <param name="metricName">The metric name.</param>
         /// <param name="metric">The metric.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBMessage(string metricName, T metric)
+        private async Task PublishVersionBMessage(VersionBPayload.Metric metric)
         {
-            if (this.KnownMetrics.Contains(metricName))
+            if (!(this.KnownMetrics is List<VersionBPayload.Metric> knownMetrics))
+            {
+                throw new Exception("Invalid metric type specified for version B metric.");
+            }
+
+            if (knownMetrics.FirstOrDefault(m => m.Name == metric.Name) != default)
             {
                 // Todo : Publish metrics if they're valid!
             }

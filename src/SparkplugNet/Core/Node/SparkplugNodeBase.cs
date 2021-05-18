@@ -41,7 +41,7 @@ namespace SparkplugNet.Core.Node
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
         /// <seealso cref="SparkplugBase{T}"/>
-        public SparkplugNodeBase(List<string> knownMetrics) : base(knownMetrics)
+        public SparkplugNodeBase(List<T> knownMetrics) : base(knownMetrics)
         {
         }
 
@@ -93,19 +93,15 @@ namespace SparkplugNet.Core.Node
         /// <param name="options">The configuration option.</param>
         private void LoadMessages(SparkplugNodeOptions options)
         {
-            this.WillMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.WillMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
                 this.NameSpace,
                 options.GroupIdentifier,
-                SparkplugMessageType.NodeDeath,
-                options.EdgeNodeIdentifier,
-                null);
+                options.EdgeNodeIdentifier);
 
-            this.OnlineMessage = this.MessageGenerator.CreateSparkplugMessage(
+            this.OnlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage(
                 this.NameSpace,
                 options.GroupIdentifier,
-                SparkplugMessageType.NodeBirth,
-                options.EdgeNodeIdentifier,
-                null);
+                options.EdgeNodeIdentifier);
         }
 
         /// <summary>
