@@ -870,7 +870,7 @@ namespace SparkplugNet.Core.Messages
             // Add a BDSEQ metric
             metrics.Add(new VersionAPayload.KuraMetric
             {
-                Name = "BDSEQ",
+                Name = Constants.SessionNumberMetricName,
                 LongValue = sessionSequenceNumber,
                 Type = VersionAPayload.KuraMetric.ValueType.Int64
             });
@@ -886,7 +886,7 @@ namespace SparkplugNet.Core.Messages
             // Add a BDSEQ metric
             metrics.Add(new VersionBPayload.Metric
             {
-                Name = "BDSEQ",
+                Name = Constants.SessionNumberMetricName,
                 LongValue = (ulong)sessionSequenceNumber,
                 Datatype = 11
             });
