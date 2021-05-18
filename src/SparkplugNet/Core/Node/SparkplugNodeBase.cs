@@ -24,7 +24,6 @@ namespace SparkplugNet.Core.Node
 
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
-    using SparkplugNet.Core.Messages;
 
     using VersionAPayload = VersionA.Payload;
     using VersionBPayload = VersionB.Payload;
@@ -36,6 +35,11 @@ namespace SparkplugNet.Core.Node
     /// <seealso cref="SparkplugBase{T}"/>
     public class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
     {
+        /// <summary>
+        /// The options.
+        /// </summary>
+        private SparkplugNodeOptions? options;
+
         /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugNodeBase{T}"/> class.
@@ -54,26 +58,34 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Gets the device states.
         /// </summary>
-        public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new();
+        public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new ();
 
         /// <summary>
         /// Starts the Sparkplug node.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
+        /// <param name="nodeOptions">The node options.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task Start(SparkplugNodeOptions options)
+        public async Task Start(SparkplugNodeOptions nodeOptions)
         {
+            // Storing the options.
+            this.options = nodeOptions;
+
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Clear states.
             this.DeviceStates.Clear();
             
             // Add handlers.
-            this.AddDisconnectedHandler(options);
+            this.AddDisconnectedHandler();
             this.AddMessageReceivedHandler();
 
             // Connect, subscribe to incoming messages and send a state message.
-            await this.ConnectInternal(options);
-            await this.SubscribeInternal(options);
-            await this.PublishInternal(options);
+            await this.ConnectInternal();
+            await this.SubscribeInternal();
+            await this.PublishInternal();
         }
 
         /// <summary>
@@ -88,10 +100,15 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Publishes some metrics.
         /// </summary>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishMetrics(T metric)
+        public async Task PublishMetrics(List<T> metrics)
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             if (!this.Client.IsConnected)
             {
                 throw new Exception("The MQTT client is not connected, please try again.");
@@ -99,71 +116,104 @@ namespace SparkplugNet.Core.Node
 
             if (this.NameSpace == SparkplugNamespace.VersionA)
             {
-                if (!(metric is VersionAPayload.KuraMetric convertedMetric))
+                if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
                 {
                     throw new Exception("Invalid metric type specified for version A metric.");
                 }
 
-                await this.PublishVersionAMessage(convertedMetric);
+                await this.PublishVersionAMessage(convertedMetrics);
             }
 
             if (this.NameSpace == SparkplugNamespace.VersionB)
             {
-                if (!(metric is VersionBPayload.Metric convertedMetric))
+                if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
                 {
                     throw new Exception("Invalid metric type specified for version B metric.");
                 }
 
-                await this.PublishVersionBMessage(convertedMetric);
+                await this.PublishVersionBMessage(convertedMetrics);
             }
         }
 
         /// <summary>
         /// Publishes a version A metric.
         /// </summary>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionAMessage(VersionAPayload.KuraMetric metric)
+        private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             if (!(this.KnownMetrics is List<VersionAPayload.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
 
-            if (knownMetrics.FirstOrDefault(m => m.Name == metric.Name) != default)
-            {
-                var message = this.MessageGenerator.
-                // Todo : Publish metrics if they're valid!
-            }
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Get the data message and increase the sequence counter.
+            var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(
+                this.NameSpace,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
+                metrics,
+                this.LastSequenceNumber,
+                LastSessionNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            await this.Client.PublishAsync(dataMessage);
         }
 
         /// <summary>
         /// Publishes a version B metric.
         /// </summary>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBMessage(VersionBPayload.Metric metric)
+        private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             if (!(this.KnownMetrics is List<VersionBPayload.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
 
-            if (knownMetrics.FirstOrDefault(m => m.Name == metric.Name) != default)
-            {
-                // Todo : Publish metrics if they're valid!
-            }
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Get the data message and increase the sequence counter.
+            var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(
+                this.NameSpace,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
+                metrics,
+                this.LastSequenceNumber,
+                LastSessionNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            await this.Client.PublishAsync(dataMessage);
         }
 
         /// <summary>
         /// Adds the disconnected handler and the reconnect functionality to the client.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
-        private void AddDisconnectedHandler(SparkplugNodeOptions options)
+        private void AddDisconnectedHandler()
         {
             this.Client.UseDisconnectedHandler(
                 async _ =>
                     {
+                        if (this.options is null)
+                        {
+                            throw new ArgumentNullException(nameof(this.options));
+                        }
+
                         // Set all metrics to stale
                         this.UpdateMetricState(SparkplugMetricStatus.Offline);
 
@@ -171,13 +221,13 @@ namespace SparkplugNet.Core.Node
                         this.OnDisconnected?.Invoke();
 
                         // Wait until the disconnect interval is reached
-                        await Task.Delay(options.ReconnectInterval);
+                        await Task.Delay(this.options.ReconnectInterval);
 
                         // Connect, subscribe to incoming messages and send a state message
-                        await this.ConnectInternal(options);
-                        await this.SubscribeInternal(options);
+                        await this.ConnectInternal();
+                        await this.SubscribeInternal();
                         this.UpdateMetricState(SparkplugMetricStatus.Online);
-                        await this.PublishInternal(options);
+                        await this.PublishInternal();
                     });
         }
 
@@ -229,99 +279,106 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Connects the Sparkplug node to the MQTT broker.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task ConnectInternal(SparkplugNodeOptions options)
+        private async Task ConnectInternal()
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Increment the session number.
             this.IncrementLastSessionNumber();
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
                 this.NameSpace,
-                options.GroupIdentifier,
-                options.EdgeNodeIdentifier,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
                 this.LastSessionNumber);
 
             // Build up the MQTT client and connect.
-            options.CancellationToken ??= CancellationToken.None;
+            this.options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
-                .WithClientId(options.ClientId)
-                .WithCredentials(options.UserName, options.Password)
+                .WithClientId(this.options.ClientId)
+                .WithCredentials(this.options.UserName, this.options.Password)
                 .WithCleanSession(false)
                 .WithProtocolVersion(MqttProtocolVersion.V311);
 
-            if (options.UseTls)
+            if (this.options.UseTls)
             {
                 builder.WithTls();
             }
 
-            if (options.WebSocketParameters is null)
+            if (this.options.WebSocketParameters is null)
             {
-                builder.WithTcpServer(options.BrokerAddress, options.Port);
+                builder.WithTcpServer(this.options.BrokerAddress, this.options.Port);
             }
             else
             {
-                builder.WithWebSocketServer(options.BrokerAddress, options.WebSocketParameters);
+                builder.WithWebSocketServer(this.options.BrokerAddress, this.options.WebSocketParameters);
             }
 
-            if (options.ProxyOptions != null)
+            if (this.options.ProxyOptions != null)
             {
                 builder.WithProxy(
-                    options.ProxyOptions.Address,
-                    options.ProxyOptions.Username,
-                    options.ProxyOptions.Password,
-                    options.ProxyOptions.Domain,
-                    options.ProxyOptions.BypassOnLocal);
+                    this.options.ProxyOptions.Address,
+                    this.options.ProxyOptions.Username,
+                    this.options.ProxyOptions.Password,
+                    this.options.ProxyOptions.Domain,
+                    this.options.ProxyOptions.BypassOnLocal);
             }
 
-            if (willMessage != null)
-            {
-                builder.WithWillMessage(willMessage);
-            }
-
+            builder.WithWillMessage(willMessage);
             this.ClientOptions = builder.Build();
-
-            await this.Client.ConnectAsync(this.ClientOptions, options.CancellationToken.Value);
+            await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
         }
 
         /// <summary>
         /// Publishes data to the MQTT broker.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishInternal(SparkplugNodeOptions options)
+        private async Task PublishInternal()
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Get the online message and increase the sequence counter.
             var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage(
                 this.NameSpace,
-                options.GroupIdentifier,
-                options.EdgeNodeIdentifier,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
                 this.KnownMetrics,
                 0,
                 this.LastSessionNumber,
                 DateTimeOffset.Now);
 
             // Publish data.
-            options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(onlineMessage, options.CancellationToken.Value);
+            this.options.CancellationToken ??= CancellationToken.None;
+            await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
         }
 
         /// <summary>
         /// Subscribes the client to the node subscribe topics.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task SubscribeInternal(SparkplugNodeOptions options)
+        private async Task SubscribeInternal()
         {
-            var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+            var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
             await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
 
-            var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier);
+            var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
             await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
 
-            var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(options.ScadaHostIdentifier);
+            var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(this.options.ScadaHostIdentifier);
             await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
         }
 

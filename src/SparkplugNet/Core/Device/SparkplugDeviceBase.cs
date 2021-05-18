@@ -33,6 +33,11 @@ namespace SparkplugNet.Core.Device
     /// <seealso cref="SparkplugBase{T}"/>
     public class SparkplugDeviceBase<T> : SparkplugBase<T> where T : class, new()
     {
+        /// <summary>
+        /// The options.
+        /// </summary>
+        private SparkplugDeviceOptions? options;
+
         /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugDeviceBase{T}"/> class.
@@ -46,18 +51,26 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Starts the Sparkplug device.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
+        /// <param name="deviceOptions">The device options.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task Start(SparkplugDeviceOptions options)
+        public async Task Start(SparkplugDeviceOptions deviceOptions)
         {
+            // Storing the options.
+            this.options = deviceOptions;
+
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Add handlers.
-            this.AddDisconnectedHandler(options);
+            this.AddDisconnectedHandler();
             this.AddMessageReceivedHandler();
 
             // Connect, subscribe to incoming messages and send a state message.
-            await this.ConnectInternal(options);
-            await this.SubscribeInternal(options);
-            await this.PublishInternal(options);
+            await this.ConnectInternal();
+            await this.SubscribeInternal();
+            await this.PublishInternal();
         }
 
         /// <summary>
@@ -141,22 +154,26 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Adds the disconnected handler and the reconnect functionality to the client.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
-        private void AddDisconnectedHandler(SparkplugDeviceOptions options)
+        private void AddDisconnectedHandler()
         {
             this.Client.UseDisconnectedHandler(
                 async _ =>
                     {
+                        if (this.options is null)
+                        {
+                            throw new ArgumentNullException(nameof(this.options));
+                        }
+
                         // Invoke disconnected callback.
                         this.OnDisconnected?.Invoke();
 
                         // Wait until the disconnect interval is reached.
-                        await Task.Delay(options.ReconnectInterval);
+                        await Task.Delay(this.options.ReconnectInterval);
 
                         // Connect, subscribe to incoming messages and send a state message.
-                        await this.ConnectInternal(options);
-                        await this.SubscribeInternal(options);
-                        await this.PublishInternal(options);
+                        await this.ConnectInternal();
+                        await this.SubscribeInternal();
+                        await this.PublishInternal();
                     });
         }
 
@@ -201,77 +218,80 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Connects the Sparkplug device to the MQTT broker.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task ConnectInternal(SparkplugDeviceOptions options)
+        private async Task ConnectInternal()
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Increment the session number.
             this.IncrementLastSessionNumber();
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugDeviceDeathMessage(
                 this.NameSpace,
-                options.GroupIdentifier,
-                options.EdgeNodeIdentifier,
-                options.DeviceIdentifier,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
+                this.options.DeviceIdentifier,
                 this.LastSessionNumber);
 
             // Build up the MQTT client and connect.
-            options.CancellationToken ??= CancellationToken.None;
+            this.options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
-                .WithClientId(options.ClientId)
-                .WithCredentials(options.UserName, options.Password)
+                .WithClientId(this.options.ClientId)
+                .WithCredentials(this.options.UserName, this.options.Password)
                 .WithCleanSession(false)
                 .WithProtocolVersion(MqttProtocolVersion.V311);
 
-            if (options.UseTls)
+            if (this.options.UseTls)
             {
                 builder.WithTls();
             }
 
-            if (options.WebSocketParameters is null)
+            if (this.options.WebSocketParameters is null)
             {
-                builder.WithTcpServer(options.BrokerAddress, options.Port);
+                builder.WithTcpServer(this.options.BrokerAddress, this.options.Port);
             }
             else
             {
-                builder.WithWebSocketServer(options.BrokerAddress, options.WebSocketParameters);
+                builder.WithWebSocketServer(this.options.BrokerAddress, this.options.WebSocketParameters);
             }
 
-            if (options.ProxyOptions != null)
+            if (this.options.ProxyOptions != null)
             {
                 builder.WithProxy(
-                    options.ProxyOptions.Address,
-                    options.ProxyOptions.Username,
-                    options.ProxyOptions.Password,
-                    options.ProxyOptions.Domain,
-                    options.ProxyOptions.BypassOnLocal);
+                    this.options.ProxyOptions.Address,
+                    this.options.ProxyOptions.Username,
+                    this.options.ProxyOptions.Password,
+                    this.options.ProxyOptions.Domain,
+                    this.options.ProxyOptions.BypassOnLocal);
             }
 
-            if (willMessage != null)
-            {
-                builder.WithWillMessage(willMessage);
-            }
-
+            builder.WithWillMessage(willMessage);
             this.ClientOptions = builder.Build();
-
-            await this.Client.ConnectAsync(this.ClientOptions, options.CancellationToken.Value);
+            await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
         }
 
         /// <summary>
         /// Publishes data to the MQTT broker.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishInternal(SparkplugDeviceOptions options)
+        private async Task PublishInternal()
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Get the online message and increase the sequence counter.
             var onlineMessage = this.MessageGenerator.GetSparkPlugDeviceBirthMessage(
                 this.NameSpace,
-                options.GroupIdentifier,
-                options.EdgeNodeIdentifier,
-                options.DeviceIdentifier,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
+                this.options.DeviceIdentifier,
                 this.KnownMetrics,
                 this.LastSequenceNumber,
                 LastSessionNumber,
@@ -279,18 +299,22 @@ namespace SparkplugNet.Core.Device
             this.IncrementLastSequenceNumber();
 
             // Publish data
-            options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(onlineMessage, options.CancellationToken.Value);
+            this.options.CancellationToken ??= CancellationToken.None;
+            await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
         }
 
         /// <summary>
         /// Subscribes the client to the device subscribe topic.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task SubscribeInternal(SparkplugDeviceOptions options)
+        private async Task SubscribeInternal()
         {
-            var deviceCommandSubscribeTopic = this.TopicGenerator.GetDeviceCommandSubscribeTopic(this.NameSpace, options.GroupIdentifier, options.EdgeNodeIdentifier, options.DeviceIdentifier);
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+            var deviceCommandSubscribeTopic = this.TopicGenerator.GetDeviceCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier, this.options.DeviceIdentifier);
             await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
         }
     }

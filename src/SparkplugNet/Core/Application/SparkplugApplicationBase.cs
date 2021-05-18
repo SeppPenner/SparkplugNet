@@ -9,6 +9,7 @@
 
 namespace SparkplugNet.Core.Application
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
@@ -33,6 +34,11 @@ namespace SparkplugNet.Core.Application
     /// <seealso cref="SparkplugBase{T}"/>
     public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new()
     {
+        /// <summary>
+        /// The options.
+        /// </summary>
+        private SparkplugApplicationOptions? options;
+
         /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
@@ -56,22 +62,30 @@ namespace SparkplugNet.Core.Application
         /// <summary>
         /// Starts the Sparkplug application.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
+        /// <param name="applicationOptions">The application option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task Start(SparkplugApplicationOptions options)
+        public async Task Start(SparkplugApplicationOptions applicationOptions)
         {
+            // Storing the options.
+            this.options = applicationOptions;
+
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Clear states.
             this.NodeStates.Clear();
             this.DeviceStates.Clear();
 
             // Add handlers.
-            this.AddDisconnectedHandler(options);
+            this.AddDisconnectedHandler();
             this.AddMessageReceivedHandler();
 
             // Connect, subscribe to incoming messages and send a state message.
-            await this.ConnectInternal(options);
+            await this.ConnectInternal();
             await this.SubscribeInternal();
-            await this.PublishInternal(options);
+            await this.PublishInternal();
         }
 
         /// <summary>
@@ -86,12 +100,16 @@ namespace SparkplugNet.Core.Application
         /// <summary>
         /// Adds the disconnected handler and the reconnect functionality to the client.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
-        private void AddDisconnectedHandler(SparkplugApplicationOptions options)
+        private void AddDisconnectedHandler()
         {
             this.Client.UseDisconnectedHandler(
                 async _ =>
                     {
+                        if (this.options is null)
+                        {
+                            throw new ArgumentNullException(nameof(this.options));
+                        }
+
                         // Set all metrics to stale.
                         this.UpdateMetricState(SparkplugMetricStatus.Offline);
 
@@ -99,13 +117,13 @@ namespace SparkplugNet.Core.Application
                         this.OnDisconnected?.Invoke();
 
                         // Wait until the disconnect interval is reached.
-                        await Task.Delay(options.ReconnectInterval);
+                        await Task.Delay(this.options.ReconnectInterval);
 
                         // Connect, subscribe to incoming messages and send a state message.
-                        await this.ConnectInternal(options);
+                        await this.ConnectInternal();
                         this.UpdateMetricState(SparkplugMetricStatus.Online);
                         await this.SubscribeInternal();
-                        await this.PublishInternal(options);
+                        await this.PublishInternal();
                     });
         }
 
@@ -163,82 +181,89 @@ namespace SparkplugNet.Core.Application
         /// <summary>
         /// Connects the Sparkplug application to the MQTT broker.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task ConnectInternal(SparkplugApplicationOptions options)
+        private async Task ConnectInternal()
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Increment the session number.
             this.IncrementLastSessionNumber();
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
-                options.ScadaHostIdentifier,
+                this.options.ScadaHostIdentifier,
                 false);
 
             // Build up the MQTT client and connect.
-            options.CancellationToken ??= CancellationToken.None;
+            this.options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
-                .WithClientId(options.ClientId)
-                .WithCredentials(options.UserName, options.Password)
+                .WithClientId(this.options.ClientId)
+                .WithCredentials(this.options.UserName, this.options.Password)
                 .WithCleanSession(false)
                 .WithProtocolVersion(MqttProtocolVersion.V311);
 
-            if (options.UseTls)
+            if (this.options.UseTls)
             {
                 builder.WithTls();
             }
 
-            if (options.WebSocketParameters is null)
+            if (this.options.WebSocketParameters is null)
             {
-                builder.WithTcpServer(options.BrokerAddress, options.Port);
+                builder.WithTcpServer(this.options.BrokerAddress, this.options.Port);
             }
             else
             {
-                builder.WithWebSocketServer(options.BrokerAddress, options.WebSocketParameters);
+                builder.WithWebSocketServer(this.options.BrokerAddress, this.options.WebSocketParameters);
             }
 
-            if (options.ProxyOptions != null)
+            if (this.options.ProxyOptions != null)
             {
                 builder.WithProxy(
-                    options.ProxyOptions.Address,
-                    options.ProxyOptions.Username,
-                    options.ProxyOptions.Password,
-                    options.ProxyOptions.Domain,
-                    options.ProxyOptions.BypassOnLocal);
+                    this.options.ProxyOptions.Address,
+                    this.options.ProxyOptions.Username,
+                    this.options.ProxyOptions.Password,
+                    this.options.ProxyOptions.Domain,
+                    this.options.ProxyOptions.BypassOnLocal);
             }
 
-            if (willMessage != null && options.IsPrimaryApplication)
+            if (this.options.IsPrimaryApplication)
             {
                 builder.WithWillMessage(willMessage);
             }
 
             this.ClientOptions = builder.Build();
-
-            await this.Client.ConnectAsync(this.ClientOptions, options.CancellationToken.Value);
+            await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
         }
 
         /// <summary>
         /// Publishes data to the MQTT broker.
         /// </summary>
-        /// <param name="options">The configuration option.</param>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishInternal(SparkplugApplicationOptions options)
+        private async Task PublishInternal()
         {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
             // Only send state messages for the primary application.
-            if (options.IsPrimaryApplication)
+            if (this.options.IsPrimaryApplication)
             {
                 // Get the online message and increase the sequence counter.
                 var onlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
                     this.NameSpace,
-                    options.ScadaHostIdentifier,
+                    this.options.ScadaHostIdentifier,
                     true);
                 this.IncrementLastSequenceNumber();
 
                 // Publish data
-                options.CancellationToken ??= CancellationToken.None;
-                await this.Client.PublishAsync(onlineMessage, options.CancellationToken.Value);
+                this.options.CancellationToken ??= CancellationToken.None;
+                await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
             }
         }
 
