@@ -60,15 +60,15 @@ namespace SparkplugNet.Core.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Start(SparkplugApplicationOptions options)
         {
-            // Clear states
+            // Clear states.
             this.NodeStates.Clear();
             this.DeviceStates.Clear();
 
-            // Add handlers
+            // Add handlers.
             this.AddDisconnectedHandler(options);
             this.AddMessageReceivedHandler();
 
-            // Connect, subscribe to incoming messages and send a state message
+            // Connect, subscribe to incoming messages and send a state message.
             await this.ConnectInternal(options);
             await this.SubscribeInternal();
             await this.PublishInternal(options);
@@ -92,16 +92,16 @@ namespace SparkplugNet.Core.Application
             this.Client.UseDisconnectedHandler(
                 async _ =>
                     {
-                        // Set all metrics to stale
+                        // Set all metrics to stale.
                         this.UpdateMetricState(SparkplugMetricStatus.Offline);
 
-                        // Invoke disconnected callback
+                        // Invoke disconnected callback.
                         this.OnDisconnected?.Invoke();
 
-                        // Wait until the disconnect interval is reached
+                        // Wait until the disconnect interval is reached.
                         await Task.Delay(options.ReconnectInterval);
 
-                        // Connect, subscribe to incoming messages and send a state message
+                        // Connect, subscribe to incoming messages and send a state message.
                         await this.ConnectInternal(options);
                         this.UpdateMetricState(SparkplugMetricStatus.Online);
                         await this.SubscribeInternal();

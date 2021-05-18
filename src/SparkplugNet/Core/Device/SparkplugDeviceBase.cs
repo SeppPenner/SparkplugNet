@@ -50,11 +50,11 @@ namespace SparkplugNet.Core.Device
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Start(SparkplugDeviceOptions options)
         {
-            // Add handlers
+            // Add handlers.
             this.AddDisconnectedHandler(options);
             this.AddMessageReceivedHandler();
 
-            // Connect, subscribe to incoming messages and send a state message
+            // Connect, subscribe to incoming messages and send a state message.
             await this.ConnectInternal(options);
             await this.SubscribeInternal(options);
             await this.PublishInternal(options);
@@ -147,13 +147,13 @@ namespace SparkplugNet.Core.Device
             this.Client.UseDisconnectedHandler(
                 async _ =>
                     {
-                        // Invoke disconnected callback
+                        // Invoke disconnected callback.
                         this.OnDisconnected?.Invoke();
 
-                        // Wait until the disconnect interval is reached
+                        // Wait until the disconnect interval is reached.
                         await Task.Delay(options.ReconnectInterval);
 
-                        // Connect, subscribe to incoming messages and send a state message
+                        // Connect, subscribe to incoming messages and send a state message.
                         await this.ConnectInternal(options);
                         await this.SubscribeInternal(options);
                         await this.PublishInternal(options);
@@ -208,15 +208,15 @@ namespace SparkplugNet.Core.Device
             // Increment the session number.
             this.IncrementLastSessionNumber();
 
-            // Get the will message
-            var willMessage = this.MessageGenerator.CreateSparkplugMessage(
+            // Get the will message.
+            var willMessage = this.MessageGenerator.GetSparkPlugDeviceDeathMessage(
                 this.NameSpace,
                 options.GroupIdentifier,
-                SparkplugMessageType.DeviceDeath,
                 options.EdgeNodeIdentifier,
-                options.DeviceIdentifier);
+                options.DeviceIdentifier,
+                this.LastSessionNumber);
 
-            // Build up the MQTT client and connect
+            // Build up the MQTT client and connect.
             options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
@@ -274,6 +274,7 @@ namespace SparkplugNet.Core.Device
                 options.DeviceIdentifier,
                 this.KnownMetrics,
                 this.LastSequenceNumber,
+                LastSessionNumber,
                 DateTimeOffset.Now);
             this.IncrementLastSequenceNumber();
 

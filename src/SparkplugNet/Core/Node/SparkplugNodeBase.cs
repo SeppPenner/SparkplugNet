@@ -62,14 +62,14 @@ namespace SparkplugNet.Core.Node
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Start(SparkplugNodeOptions options)
         {
-            // Clear states
+            // Clear states.
             this.DeviceStates.Clear();
-
-            // Add handlers
+            
+            // Add handlers.
             this.AddDisconnectedHandler(options);
             this.AddMessageReceivedHandler();
 
-            // Connect, subscribe to incoming messages and send a state message
+            // Connect, subscribe to incoming messages and send a state message.
             await this.ConnectInternal(options);
             await this.SubscribeInternal(options);
             await this.PublishInternal(options);
@@ -229,10 +229,10 @@ namespace SparkplugNet.Core.Node
                 options.EdgeNodeIdentifier,
                 this.KnownMetrics,
                 0,
-                DateTimeOffset.Now,
-                this.LastSessionNumber);
+                this.LastSessionNumber,
+                DateTimeOffset.Now);
 
-            // Publish data
+            // Publish data.
             options.CancellationToken ??= CancellationToken.None;
             await this.Client.PublishAsync(onlineMessage, options.CancellationToken.Value);
         }
