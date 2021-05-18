@@ -1,3 +1,25 @@
 Seite 14 und 58
 Überall nochmal die Header checken + Code style
 Doku und Beispiele
+Exceptions überall markieren in Methoden-Köpfen (DOKU), auch "abgeleitet"
+
+alles internal machen, was nicht nach außen soll
+Punkt hinter alle Kommentare!
+
+NBirth: Template-Support!
+DDeath: No idea how the seq number should be used here!
+
+
+Test:
+Tests für NodeBirth-Messages
+Tests für DeviceBirth-Messages
+Tests für NodeDeath-Messages
+Tests für DeviceDeath-Messages
+
+
+
+
+NDATA
+DDATA
+NCMD
+DCMD
