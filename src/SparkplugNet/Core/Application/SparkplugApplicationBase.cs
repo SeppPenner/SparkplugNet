@@ -138,6 +138,7 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentException">The group or edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishNodeCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
         {
@@ -161,24 +162,30 @@ namespace SparkplugNet.Core.Application
                 throw new ArgumentException(nameof(edgeNodeIdentifier));
             }
 
-            if (this.NameSpace == SparkplugNamespace.VersionA)
+            switch (this.NameSpace)
             {
-                if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                case SparkplugNamespace.VersionA:
                 {
-                    throw new Exception("Invalid metric type specified for version A metric.");
+                    if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                    {
+                        throw new Exception("Invalid metric type specified for version A metric.");
+                    }
+
+                    await this.PublishVersionANodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier);
+                    break;
                 }
-
-                await this.PublishVersionANodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier);
-            }
-
-            if (this.NameSpace == SparkplugNamespace.VersionB)
-            {
-                if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                case SparkplugNamespace.VersionB:
                 {
-                    throw new Exception("Invalid metric type specified for version B metric.");
-                }
+                    if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                    {
+                        throw new Exception("Invalid metric type specified for version B metric.");
+                    }
 
-                await this.PublishVersionBNodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier);
+                    await this.PublishVersionBNodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier);
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
             }
         }
 
@@ -192,6 +199,7 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentException">The group or edge node or device identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishDeviceCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
         {
@@ -220,24 +228,30 @@ namespace SparkplugNet.Core.Application
                 throw new ArgumentException(nameof(deviceIdentifier));
             }
 
-            if (this.NameSpace == SparkplugNamespace.VersionA)
+            switch (this.NameSpace)
             {
-                if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                case SparkplugNamespace.VersionA:
                 {
-                    throw new Exception("Invalid metric type specified for version A metric.");
+                    if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                    {
+                        throw new Exception("Invalid metric type specified for version A metric.");
+                    }
+
+                    await this.PublishVersionADeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+                    break;
                 }
-
-                await this.PublishVersionADeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
-            }
-
-            if (this.NameSpace == SparkplugNamespace.VersionB)
-            {
-                if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                case SparkplugNamespace.VersionB:
                 {
-                    throw new Exception("Invalid metric type specified for version B metric.");
-                }
+                    if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                    {
+                        throw new Exception("Invalid metric type specified for version B metric.");
+                    }
 
-                await this.PublishVersionBDeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+                    await this.PublishVersionBDeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
             }
         }
 

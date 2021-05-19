@@ -99,6 +99,7 @@ namespace SparkplugNet.Core.Device
         /// <param name="metrics">The metrics.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishMetrics(List<T> metrics)
         {
@@ -112,24 +113,30 @@ namespace SparkplugNet.Core.Device
                 throw new Exception("The MQTT client is not connected, please try again.");
             }
 
-            if (this.NameSpace == SparkplugNamespace.VersionA)
+            switch (this.NameSpace)
             {
-                if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                case SparkplugNamespace.VersionA:
                 {
-                    throw new Exception("Invalid metric type specified for version A metric.");
-                }
+                    if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                    {
+                        throw new Exception("Invalid metric type specified for version A metric.");
+                    }
                 
-                await this.PublishVersionAMessage(convertedMetrics);
-            }
-
-            if (this.NameSpace == SparkplugNamespace.VersionB)
-            {
-                if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
-                {
-                    throw new Exception("Invalid metric type specified for version B metric.");
+                    await this.PublishVersionAMessage(convertedMetrics);
+                    break;
                 }
+                case SparkplugNamespace.VersionB:
+                {
+                    if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                    {
+                        throw new Exception("Invalid metric type specified for version B metric.");
+                    }
 
-                await this.PublishVersionBMessage(convertedMetrics);
+                    await this.PublishVersionBMessage(convertedMetrics);
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
             }
         }
 
@@ -235,6 +242,7 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Adds the message received handler to handle incoming messages.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         private void AddMessageReceivedHandler()
         {
             this.Client.UseApplicationMessageReceivedHandler(
@@ -270,6 +278,8 @@ namespace SparkplugNet.Core.Device
                                 }
 
                                 break;
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
                         }
                     });
         }
