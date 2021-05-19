@@ -1,9 +1,6 @@
 Überall nochmal Code style checken
 Doku und Beispiele
-
 alles internal machen, was nicht nach außen soll
-
-Callbacks mit T statt einzelne
 BDSEQ-Metrik nicht überschreibbar machen!
 
 NBirth: Template-Support!

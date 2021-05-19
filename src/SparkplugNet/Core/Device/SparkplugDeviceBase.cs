@@ -39,14 +39,9 @@ namespace SparkplugNet.Core.Device
         private SparkplugDeviceOptions? options;
 
         /// <summary>
-        /// The callback for the version A device command received event.
+        /// The callback for the device command received event.
         /// </summary>
-        public readonly Action<VersionAPayload>? VersionADeviceCommandReceived = null;
-
-        /// <summary>
-        /// The callback for the version B device command received event.
-        /// </summary>
-        public readonly Action<VersionBPayload>? VersionBDeviceCommandReceived = null;
+        public readonly Action<T>? DeviceCommandReceived = null;
 
         /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
@@ -242,6 +237,7 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Adds the message received handler to handle incoming messages.
         /// </summary>
+        /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         private void AddMessageReceivedHandler()
         {
@@ -259,7 +255,12 @@ namespace SparkplugNet.Core.Device
 
                                     if (payloadVersionA != null)
                                     {
-                                        this.VersionADeviceCommandReceived?.Invoke(payloadVersionA);
+                                        if (!(payloadVersionA is T convertedPayloadVersionA))
+                                        {
+                                            throw new InvalidCastException("The metric cast didn't work properly.");
+                                        }
+
+                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionA);
                                     }
                                 }
 
@@ -273,7 +274,12 @@ namespace SparkplugNet.Core.Device
 
                                     if (payloadVersionB != null)
                                     {
-                                        this.VersionBDeviceCommandReceived?.Invoke(payloadVersionB);
+                                        if (!(payloadVersionB is T convertedPayloadVersionB))
+                                        {
+                                            throw new InvalidCastException("The metric cast didn't work properly.");
+                                        }
+
+                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionB);
                                     }
                                 }
 

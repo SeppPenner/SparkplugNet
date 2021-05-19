@@ -35,24 +35,14 @@ namespace SparkplugNet.Core.Node
     public class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
     {
         /// <summary>
-        /// The callback for the version A device command received event.
+        /// The callback for the device command received event.
         /// </summary>
-        public readonly Action<VersionAPayload>? VersionADeviceCommandReceived = null;
+        public readonly Action<T>? DeviceCommandReceived = null;
 
         /// <summary>
-        /// The callback for the version B device command received event.
+        /// The callback for the node command received event.
         /// </summary>
-        public readonly Action<VersionBPayload>? VersionBDeviceCommandReceived = null;
-
-        /// <summary>
-        /// The callback for the version A node command received event.
-        /// </summary>
-        public readonly Action<VersionAPayload>? VersionANodeCommandReceived = null;
-
-        /// <summary>
-        /// The callback for the version B node command received event.
-        /// </summary>
-        public readonly Action<VersionBPayload>? VersionBNodeCommandReceived = null;
+        public readonly Action<T>? NodeCommandReceived = null;
 
         /// <summary>
         /// The options.
@@ -256,6 +246,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Adds the message received handler to handle incoming messages.
         /// </summary>
+        /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         private void AddMessageReceivedHandler()
         {
@@ -273,12 +264,22 @@ namespace SparkplugNet.Core.Node
                                 {
                                     if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        this.VersionADeviceCommandReceived?.Invoke(payloadVersionA);
+                                        if (!(payloadVersionA is T convertedPayloadVersionA))
+                                        {
+                                            throw new InvalidCastException("The metric cast didn't work properly.");
+                                        }
+
+                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionA);
                                     }
 
-                                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                                    if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                     {
-                                        this.VersionANodeCommandReceived?.Invoke(payloadVersionA);
+                                        if (!(payloadVersionA is T convertedPayloadVersionA))
+                                        {
+                                            throw new InvalidCastException("The metric cast didn't work properly.");
+                                        }
+
+                                        this.NodeCommandReceived?.Invoke(convertedPayloadVersionA);
                                     }
                                 }
 
@@ -291,12 +292,22 @@ namespace SparkplugNet.Core.Node
                                 {
                                     if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        this.VersionBDeviceCommandReceived?.Invoke(payloadVersionB);
+                                        if (!(payloadVersionB is T convertedPayloadVersionB))
+                                        {
+                                            throw new InvalidCastException("The metric cast didn't work properly.");
+                                        }
+
+                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionB);
                                     }
 
-                                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                                    if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                     {
-                                        this.VersionBNodeCommandReceived?.Invoke(payloadVersionB);
+                                        if (!(payloadVersionB is T convertedPayloadVersionB))
+                                        {
+                                            throw new InvalidCastException("The metric cast didn't work properly.");
+                                        }
+
+                                        this.NodeCommandReceived?.Invoke(convertedPayloadVersionB);
                                     }
                                 }
 
