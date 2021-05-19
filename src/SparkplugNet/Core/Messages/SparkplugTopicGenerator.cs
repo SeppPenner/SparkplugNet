@@ -90,7 +90,7 @@ namespace SparkplugNet.Core.Messages
             string edgeNodeIdentifier,
             string? deviceIdentifier)
         {
-            return deviceIdentifier is null
+            return string.IsNullOrWhiteSpace(deviceIdentifier)
                        ? $"{nameSpace.GetDescription()}/{groupIdentifier}/{messageType.GetDescription()}/{edgeNodeIdentifier}"
                        : $"{nameSpace.GetDescription()}/{groupIdentifier}/{messageType.GetDescription()}/{edgeNodeIdentifier}/{deviceIdentifier}";
         }
