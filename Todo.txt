@@ -3,7 +3,6 @@ Seite 14 und 58
 Doku und Beispiele
 
 alles internal machen, was nicht nach außen soll
-Punkt hinter alle Kommentare!
 
 NBirth: Template-Support!
 DDeath: No idea how the seq number should be used here!

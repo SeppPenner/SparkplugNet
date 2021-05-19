@@ -1159,7 +1159,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionSequenceNumber">The session number.</param>
         private static void AddSessionNumberToMetrics(ICollection<VersionAPayload.KuraMetric> metrics, long sessionSequenceNumber)
         {
-            // Add a BDSEQ metric
+            // Add a BDSEQ metric.
             metrics.Add(new VersionAPayload.KuraMetric
             {
                 Name = Constants.SessionNumberMetricName,
@@ -1175,7 +1175,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionSequenceNumber">The session number.</param>
         private static void AddSessionNumberToMetrics(ICollection<VersionBPayload.Metric> metrics, long sessionSequenceNumber)
         {
-            // Add a BDSEQ metric
+            // Add a BDSEQ metric.
             metrics.Add(new VersionBPayload.Metric
             {
                 Name = Constants.SessionNumberMetricName,

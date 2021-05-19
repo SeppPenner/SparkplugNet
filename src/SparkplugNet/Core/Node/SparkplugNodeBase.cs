@@ -233,13 +233,13 @@ namespace SparkplugNet.Core.Node
                             throw new ArgumentNullException(nameof(this.options));
                         }
 
-                        // Invoke disconnected callback
+                        // Invoke disconnected callback.
                         this.OnDisconnected?.Invoke();
 
-                        // Wait until the disconnect interval is reached
+                        // Wait until the disconnect interval is reached.
                         await Task.Delay(this.options.ReconnectInterval);
 
-                        // Connect, subscribe to incoming messages and send a state message
+                        // Connect, subscribe to incoming messages and send a state message.
                         await this.ConnectInternal();
                         await this.SubscribeInternal();
                         await this.PublishInternal();

@@ -731,7 +731,7 @@ namespace SparkplugNet.Core.Application
                     true);
                 this.IncrementLastSequenceNumber();
 
-                // Publish data
+                // Publish data.
                 this.options.CancellationToken ??= CancellationToken.None;
                 await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
             }
