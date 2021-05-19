@@ -24,7 +24,6 @@ namespace SparkplugNet.Tests
     using VersionAPayload = VersionA.Payload;
     using VersionBPayload = VersionB.Payload;
 
-
     /// <summary>
     /// A class to test the <see cref="SparkplugMessageGenerator"/> class.
     /// </summary>
@@ -220,6 +219,40 @@ namespace SparkplugNet.Tests
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
             Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
+        }
+
+        /// <summary>
+        /// Tests the Sparkplug message generator with a device death message with a version A namespace.
+        /// </summary>
+        [TestMethod]
+        public void TestDeviceDeathMessageNamespaceA()
+        {
+            var message = this.messageGenerator.GetSparkPlugDeviceDeathMessage(SparkplugNamespace.VersionA, "group1", "edge1", "device1", 1);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(message.Payload);
+
+            Assert.AreEqual("spAv1.0/group1/DDEATH/edge1/device1", message.Topic);
+            Assert.IsNotNull(payloadVersionA);
+
+            Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(0).Name);
+            Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(0).LongValue);
+            Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(0).Type);
+        }
+
+        /// <summary>
+        /// Tests the Sparkplug message generator with a device death message with a version B namespace.
+        /// </summary>
+        [TestMethod]
+        public void TestDeviceDeathMessageNamespaceB()
+        {
+            var message = this.messageGenerator.GetSparkPlugDeviceDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", 1);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(message.Payload);
+
+            Assert.AreEqual("spBv1.0/group1/DDEATH/edge1/device1", message.Topic);
+            Assert.IsNotNull(payloadVersionB);
+
+            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
+            Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(0).LongValue);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
         }
     }
 }
