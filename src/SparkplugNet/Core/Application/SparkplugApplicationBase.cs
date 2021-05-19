@@ -435,56 +435,32 @@ namespace SparkplugNet.Core.Application
 
             if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
             {
-                var nodeId = topic.Split('/')[3];
-                var metricState = new MetricState<T>
-                {
-                    MetricStatus = SparkplugMetricStatus.Online
-                };
-
-                foreach (var payloadMetric in payload.Metrics)
-                {
-                    metricState.Metrics.AddOrUpdate(
-                        payloadMetric.Name,
-                        payloadMetric,
-                        (_, _) => payloadMetric);
-                }
-
-                this.NodeStates.AddOrUpdate(nodeId, metricState, (_, _) => metricState);
+                this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
             }
 
             if (topic.Contains(SparkplugMessageType.NodeDeath.GetDescription()))
             {
-
+                this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Offline);
             }
 
             if (topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription()))
             {
-
+                this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
             }
 
             if (topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription()))
             {
-
+                this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Offline);
             }
 
             if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
             {
-
+                this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
             }
 
             if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
             {
-
-            }
-
-            if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
-            {
-
-            }
-
-            if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
-            {
-
+                this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
             }
         }
 
@@ -508,43 +484,121 @@ namespace SparkplugNet.Core.Application
 
             if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
             {
-
+                this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
             }
 
             if (topic.Contains(SparkplugMessageType.NodeDeath.GetDescription()))
             {
-
+                this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Offline);
             }
 
             if (topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription()))
             {
-
+                this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
             }
 
             if (topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription()))
             {
-
+                this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Offline);
             }
 
             if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
             {
-
+                this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
             }
 
             if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
             {
-
+                this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
             }
+        }
 
-            if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+        /// <summary>
+        /// Handles the device message.
+        /// </summary>
+        /// <param name="topic">The topic.</param>
+        /// <param name="payload">The payload.</param>
+        /// <param name="metricStatus">The metric status.</param>
+        private void HandleDeviceMessage(string topic, VersionBPayload payload, SparkplugMetricStatus metricStatus)
+        {
+            var deviceId = topic.Split('/')[4];
+            var metricState = new MetricState<T>
             {
+                MetricStatus = metricStatus
+            };
 
-            }
-
-            if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+            foreach (var payloadMetric in payload.Metrics)
             {
-
+                metricState.Metrics[payloadMetric.Name] = payloadMetric as T;
             }
+
+            this.DeviceStates[deviceId] = metricState;
+        }
+
+        /// <summary>
+        /// Handles the device message.
+        /// </summary>
+        /// <param name="topic">The topic.</param>
+        /// <param name="payload">The payload.</param>
+        /// <param name="metricStatus">The metric status.</param>
+        private void HandleDeviceMessage(string topic, VersionAPayload payload, SparkplugMetricStatus metricStatus)
+        {
+            var deviceId = topic.Split('/')[4];
+            var metricState = new MetricState<T>
+            {
+                MetricStatus = metricStatus
+            };
+
+            foreach (var payloadMetric in payload.Metrics)
+            {
+                metricState.Metrics[payloadMetric.Name] = payloadMetric as T;
+            }
+
+            this.DeviceStates[deviceId] = metricState;
+        }
+
+        /// <summary>
+        /// Handles the node message.
+        /// </summary>
+        /// <param name="topic">The topic.</param>
+        /// <param name="payload">The payload.</param>
+        /// <param name="metricStatus">The metric status.</param>
+        private void HandleNodeMessage(string topic, VersionBPayload payload, SparkplugMetricStatus metricStatus)
+        {
+            var nodeId = topic.Split('/')[3];
+            var metricState = new MetricState<T>
+            {
+                MetricStatus = metricStatus
+            };
+
+            foreach (var payloadMetric in payload.Metrics)
+            {
+                metricState.Metrics[payloadMetric.Name] = payloadMetric as T;
+            }
+
+            this.NodeStates[nodeId] = metricState;
+        }
+
+        /// <summary>
+        /// Handles the node message.
+        /// </summary>
+        /// <param name="topic">The topic.</param>
+        /// <param name="payload">The payload.</param>
+        /// <param name="metricStatus">The metric status.</param>
+        private void HandleNodeMessage(string topic, VersionAPayload payload, SparkplugMetricStatus metricStatus)
+        {
+            var nodeId = topic.Split('/')[3];
+            var metricState = new MetricState<T>
+            {
+                MetricStatus = metricStatus
+            };
+
+            foreach (var payloadMetric in payload.Metrics)
+            {
+                metricState.Metrics[payloadMetric.Name] = payloadMetric as T;
+            }
+
+            this.NodeStates[nodeId] = metricState;
         }
 
         /// <summary>
