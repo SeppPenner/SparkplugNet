@@ -3,6 +3,9 @@ Doku und Beispiele
 
 alles internal machen, was nicht nach außen soll
 
+Callbacks mit T statt einzelne
+SEQ-Metrik nicht überschreibbar machen!
+
 NBirth: Template-Support!
 DDeath: No idea how the seq number should be used here!
 
