@@ -365,6 +365,60 @@ namespace SparkplugNet.Core.Messages
         }
 
         /// <summary>
+        /// Gets a NCMD message.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
+        /// <param name="sessionNumber">The session number.</param>
+        /// <param name="dateTime">The date time.</param>
+        /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
+        public MqttApplicationMessage GetSparkPlugNodeCommandMessage<T>(
+            SparkplugNamespace nameSpace,
+            string groupIdentifier,
+            string edgeNodeIdentifier,
+            List<T> metrics,
+            int sequenceNumber,
+            long sessionNumber,
+            DateTimeOffset dateTime)
+            where T : class, new()
+        {
+            if (!groupIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(groupIdentifier));
+            }
+
+            if (!edgeNodeIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(edgeNodeIdentifier));
+            }
+
+            switch (nameSpace)
+            {
+                case SparkplugNamespace.VersionA:
+                    {
+                        var newMetrics = metrics as List<VersionAPayload.KuraMetric>
+                                         ?? new List<VersionAPayload.KuraMetric>();
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        return this.GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime);
+                    }
+
+                case SparkplugNamespace.VersionB:
+                    {
+                        var newMetrics = metrics as List<VersionBPayload.Metric>
+                                         ?? new List<VersionBPayload.Metric>();
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        return this.GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime);
+                    }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(nameSpace));
+            }
+        }
+
+        /// <summary>
         /// Gets a STATE message with namespace version A.
         /// </summary>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
@@ -846,7 +900,82 @@ namespace SparkplugNet.Core.Messages
                 .Build();
         }
 
+        /// <summary>
+        /// Gets a NCMD message with namespace version A.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="dateTime">The date time.</param>
+        /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
+        private MqttApplicationMessage GetSparkPlugNodeCommandA(
+            SparkplugNamespace nameSpace,
+            string groupIdentifier,
+            string edgeNodeIdentifier,
+            List<VersionAPayload.KuraMetric> metrics,
+            DateTimeOffset dateTime)
+        {
+            var payload = new VersionAPayload
+            {
+                Metrics = metrics,
+                Timestamp = dateTime.ToUnixTimeMilliseconds()
+            };
 
+            var serialized = PayloadHelper.Serialize(payload);
+
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(
+                    this.topicGenerator.GetTopic(
+                        nameSpace,
+                        groupIdentifier,
+                        SparkplugMessageType.NodeCommand,
+                        edgeNodeIdentifier,
+                        string.Empty)).WithPayload(serialized)
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
+        }
+
+        /// <summary>
+        /// Gets a NCMD message with namespace version B.
+        /// </summary>
+        /// <param name="nameSpace">The namespace.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
+        /// <param name="dateTime">The date time.</param>
+        /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
+        private MqttApplicationMessage GetSparkPlugNodeCommandB(
+            SparkplugNamespace nameSpace,
+            string groupIdentifier,
+            string edgeNodeIdentifier,
+            List<VersionBPayload.Metric> metrics,
+            int sequenceNumber,
+            DateTimeOffset dateTime)
+        {
+            var payload = new VersionBPayload
+            {
+                Metrics = metrics,
+                Seq = (ulong)sequenceNumber,
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
+            };
+
+            var serialized = PayloadHelper.Serialize(payload);
+
+            return new MqttApplicationMessageBuilder()
+                .WithTopic(
+                    this.topicGenerator.GetTopic(
+                        nameSpace,
+                        groupIdentifier,
+                        SparkplugMessageType.NodeCommand,
+                        edgeNodeIdentifier,
+                        string.Empty)).WithPayload(serialized)
+                .WithAtLeastOnceQoS()
+                .WithRetainFlag()
+                .Build();
+        }
 
 
 
