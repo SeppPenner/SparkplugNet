@@ -178,6 +178,62 @@ namespace SparkplugNet.Core.Application
         }
 
         /// <summary>
+        /// Publishes a device command.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        public async Task PublishDeviceCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+            if (!this.Client.IsConnected)
+            {
+                throw new Exception("The MQTT client is not connected, please try again.");
+            }
+
+            if (!groupIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(groupIdentifier));
+            }
+
+            if (!edgeNodeIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(edgeNodeIdentifier));
+            }
+
+            if (!deviceIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(deviceIdentifier));
+            }
+
+            if (this.NameSpace == SparkplugNamespace.VersionA)
+            {
+                if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                {
+                    throw new Exception("Invalid metric type specified for version A metric.");
+                }
+
+                await this.PublishVersionADeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+            }
+
+            if (this.NameSpace == SparkplugNamespace.VersionB)
+            {
+                if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                {
+                    throw new Exception("Invalid metric type specified for version B metric.");
+                }
+
+                await this.PublishVersionBDeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+            }
+        }
+
+        /// <summary>
         /// Publishes a version A node command message.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
@@ -238,6 +294,80 @@ namespace SparkplugNet.Core.Application
                 this.NameSpace,
                 groupIdentifier,
                 edgeNodeIdentifier,
+                metrics,
+                this.LastSequenceNumber,
+                LastSessionNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            await this.Client.PublishAsync(dataMessage);
+        }
+
+        /// <summary>
+        /// Publishes a version A device command message.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        private async Task PublishVersionADeviceCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+            if (!(this.KnownMetrics is List<VersionAPayload.KuraMetric> knownMetrics))
+            {
+                throw new Exception("Invalid metric type specified for version A metric.");
+            }
+
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Get the data message and increase the sequence counter.
+            var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(
+                this.NameSpace,
+                groupIdentifier,
+                edgeNodeIdentifier,
+                deviceIdentifier,
+                metrics,
+                this.LastSequenceNumber,
+                LastSessionNumber,
+                DateTimeOffset.Now);
+            this.IncrementLastSequenceNumber();
+
+            await this.Client.PublishAsync(dataMessage);
+        }
+
+        /// <summary>
+        /// Publishes a version B device command message.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        private async Task PublishVersionBDeviceCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+            if (!(this.KnownMetrics is List<VersionBPayload.Metric> knownMetrics))
+            {
+                throw new Exception("Invalid metric type specified for version B metric.");
+            }
+
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Get the data message and increase the sequence counter.
+            var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(
+                this.NameSpace,
+                groupIdentifier,
+                edgeNodeIdentifier,
+                deviceIdentifier,
                 metrics,
                 this.LastSequenceNumber,
                 LastSessionNumber,

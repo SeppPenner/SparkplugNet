@@ -8,10 +8,10 @@
 |Publish|`STATE/scada_host_id`|B|`OFFLINE`|
 |Publish|`STATE/scada_host_id`|A|`ONLINE`|
 |Publish|`STATE/scada_host_id`|B|`ONLINE`|
-|Publish|`spAv1.0/group_id/NCMD/edge_node_id`|A|?|
-|Publish|`spBv1.0/group_id/NCMD/edge_node_id`|B|?|
-|Publish|`spAv1.0/group_id/DCMD/edge_node_id/device_id`|A|?|
-|Publish|`spBv1.0/group_id/DCMD/edge_node_id/device_id`|B|?|
+|Publish|`spAv1.0/group_id/NCMD/edge_node_id`|A|`type: PayloadA`|
+|Publish|`spBv1.0/group_id/NCMD/edge_node_id`|B|`type: PayloadB`|
+|Publish|`spAv1.0/group_id/DCMD/edge_node_id/device_id`|A|`type: PayloadA`|
+|Publish|`spBv1.0/group_id/DCMD/edge_node_id/device_id`|B|`type: PayloadB`|
 |Subscribe|`spAv1.0/#`|A|-|
 |Subscribe|`spBv1.0/#`|B|-|
 
