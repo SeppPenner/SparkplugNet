@@ -10,7 +10,6 @@
 namespace SparkplugNet.Core.Node
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -36,6 +35,26 @@ namespace SparkplugNet.Core.Node
     public class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
     {
         /// <summary>
+        /// The callback for the version A device command received event.
+        /// </summary>
+        public readonly Action<VersionAPayload>? VersionADeviceCommandReceived = null;
+
+        /// <summary>
+        /// The callback for the version B device command received event.
+        /// </summary>
+        public readonly Action<VersionBPayload>? VersionBDeviceCommandReceived = null;
+
+        /// <summary>
+        /// The callback for the version A node command received event.
+        /// </summary>
+        public readonly Action<VersionAPayload>? VersionANodeCommandReceived = null;
+
+        /// <summary>
+        /// The callback for the version B node command received event.
+        /// </summary>
+        public readonly Action<VersionBPayload>? VersionBNodeCommandReceived = null;
+
+        /// <summary>
         /// The options.
         /// </summary>
         private SparkplugNodeOptions? options;
@@ -56,11 +75,6 @@ namespace SparkplugNet.Core.Node
         public readonly Action<string>? StatusMessageReceived = null;
 
         /// <summary>
-        /// Gets the device states.
-        /// </summary>
-        public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new ();
-
-        /// <summary>
         /// Starts the Sparkplug node.
         /// </summary>
         /// <param name="nodeOptions">The node options.</param>
@@ -75,9 +89,6 @@ namespace SparkplugNet.Core.Node
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            // Clear states.
-            this.DeviceStates.Clear();
-            
             // Add handlers.
             this.AddDisconnectedHandler();
             this.AddMessageReceivedHandler();
@@ -214,9 +225,6 @@ namespace SparkplugNet.Core.Node
                             throw new ArgumentNullException(nameof(this.options));
                         }
 
-                        // Set all metrics to stale
-                        this.UpdateMetricState(SparkplugMetricStatus.Offline);
-
                         // Invoke disconnected callback
                         this.OnDisconnected?.Invoke();
 
@@ -226,7 +234,6 @@ namespace SparkplugNet.Core.Node
                         // Connect, subscribe to incoming messages and send a state message
                         await this.ConnectInternal();
                         await this.SubscribeInternal();
-                        this.UpdateMetricState(SparkplugMetricStatus.Online);
                         await this.PublishInternal();
                     });
         }
@@ -241,32 +248,43 @@ namespace SparkplugNet.Core.Node
                     {
                         var topic = e.ApplicationMessage.Topic;
 
-                        if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()) || topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                        switch (this.NameSpace)
                         {
-                            switch (this.NameSpace)
-                            {
-                                case SparkplugNamespace.VersionA:
-                                    var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
+                            case SparkplugNamespace.VersionA:
+                                var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
 
-                                    if (payloadVersionA != null)
+                                if (payloadVersionA != null)
+                                {
+                                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        // Todo: Store metrics for device if metrics are known
-                                        this.VersionAPayloadReceived?.Invoke(payloadVersionA);
+                                        this.VersionADeviceCommandReceived?.Invoke(payloadVersionA);
                                     }
 
-                                    break;
-
-                                case SparkplugNamespace.VersionB:
-                                    var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
-
-                                    if (payloadVersionB != null)
+                                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        // Todo: Store metrics for device if metrics are known
-                                        this.VersionBPayloadReceived?.Invoke(payloadVersionB);
+                                        this.VersionANodeCommandReceived?.Invoke(payloadVersionA);
+                                    }
+                                }
+
+                                break;
+
+                            case SparkplugNamespace.VersionB:
+                                var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
+
+                                if (payloadVersionB != null)
+                                {
+                                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                                    {
+                                        this.VersionBDeviceCommandReceived?.Invoke(payloadVersionB);
                                     }
 
-                                    break;
-                            }
+                                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                                    {
+                                        this.VersionBNodeCommandReceived?.Invoke(payloadVersionB);
+                                    }
+                                }
+
+                                break;
                         }
 
                         if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
@@ -380,20 +398,6 @@ namespace SparkplugNet.Core.Node
 
             var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(this.options.ScadaHostIdentifier);
             await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
-        }
-
-        /// <summary>
-        /// Updates the metric state.
-        /// </summary>
-        /// <param name="metricState">The metric state.</param>
-        private void UpdateMetricState(SparkplugMetricStatus metricState)
-        {
-            var keys = new List<string>(this.DeviceStates.Keys.ToList());
-
-            foreach (string key in keys)
-            {
-                this.DeviceStates[key].MetricStatus = metricState;
-            }
         }
     }
 }
