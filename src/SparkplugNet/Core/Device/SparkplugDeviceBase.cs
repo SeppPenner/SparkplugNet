@@ -62,6 +62,7 @@ namespace SparkplugNet.Core.Device
         /// Starts the Sparkplug device.
         /// </summary>
         /// <param name="deviceOptions">The device options.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Start(SparkplugDeviceOptions deviceOptions)
         {
@@ -96,10 +97,17 @@ namespace SparkplugNet.Core.Device
         /// Publishes some metrics.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or invalid metric type.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishMetrics(List<T> metrics)
         {
-            if(!this.Client.IsConnected)
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+            if (!this.Client.IsConnected)
             {
                 throw new Exception("The MQTT client is not connected, please try again.");
             }
@@ -129,6 +137,8 @@ namespace SparkplugNet.Core.Device
         /// Publishes a version A metric.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">Invalid metric type.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
         {
@@ -163,6 +173,8 @@ namespace SparkplugNet.Core.Device
         /// Publishes a version B metric.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">Invalid metric type.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
         {
@@ -196,6 +208,7 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Adds the disconnected handler and the reconnect functionality to the client.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         private void AddDisconnectedHandler()
         {
             this.Client.UseDisconnectedHandler(
@@ -264,6 +277,7 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Connects the Sparkplug device to the MQTT broker.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task ConnectInternal()
         {
@@ -324,6 +338,7 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Publishes data to the MQTT broker.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishInternal()
         {
@@ -352,6 +367,7 @@ namespace SparkplugNet.Core.Device
         /// <summary>
         /// Subscribes the client to the device subscribe topic.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task SubscribeInternal()
         {

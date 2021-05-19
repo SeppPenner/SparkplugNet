@@ -78,6 +78,7 @@ namespace SparkplugNet.Core.Node
         /// Starts the Sparkplug node.
         /// </summary>
         /// <param name="nodeOptions">The node options.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Start(SparkplugNodeOptions nodeOptions)
         {
@@ -112,6 +113,8 @@ namespace SparkplugNet.Core.Node
         /// Publishes some metrics.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or invalid metric type.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishMetrics(List<T> metrics)
         {
@@ -150,6 +153,8 @@ namespace SparkplugNet.Core.Node
         /// Publishes a version A metric.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">Invalid metric type.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
         {
@@ -183,6 +188,8 @@ namespace SparkplugNet.Core.Node
         /// Publishes a version B metric.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">Invalid metric type.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
         {
@@ -215,6 +222,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Adds the disconnected handler and the reconnect functionality to the client.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         private void AddDisconnectedHandler()
         {
             this.Client.UseDisconnectedHandler(
@@ -297,6 +305,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Connects the Sparkplug node to the MQTT broker.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task ConnectInternal()
         {
@@ -356,6 +365,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Publishes data to the MQTT broker.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishInternal()
         {
@@ -382,6 +392,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Subscribes the client to the node subscribe topics.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task SubscribeInternal()
         {
