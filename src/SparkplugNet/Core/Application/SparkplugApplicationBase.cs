@@ -99,37 +99,6 @@ namespace SparkplugNet.Core.Application
         }
 
         /// <summary>
-        /// Adds the disconnected handler and the reconnect functionality to the client.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">The options are null.</exception>
-        private void AddDisconnectedHandler()
-        {
-            this.Client.UseDisconnectedHandler(
-                async _ =>
-                    {
-                        if (this.options is null)
-                        {
-                            throw new ArgumentNullException(nameof(this.options));
-                        }
-
-                        // Set all metrics to stale.
-                        this.UpdateMetricState(SparkplugMetricStatus.Offline);
-
-                        // Invoke disconnected callback.
-                        this.OnDisconnected?.Invoke();
-
-                        // Wait until the disconnect interval is reached.
-                        await Task.Delay(this.options.ReconnectInterval);
-
-                        // Connect, subscribe to incoming messages and send a state message.
-                        await this.ConnectInternal();
-                        this.UpdateMetricState(SparkplugMetricStatus.Online);
-                        await this.SubscribeInternal();
-                        await this.PublishInternal();
-                    });
-        }
-
-        /// <summary>
         /// Publishes a node command.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
@@ -256,6 +225,37 @@ namespace SparkplugNet.Core.Application
         }
 
         /// <summary>
+        /// Adds the disconnected handler and the reconnect functionality to the client.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        private void AddDisconnectedHandler()
+        {
+            this.Client.UseDisconnectedHandler(
+                async _ =>
+                {
+                    if (this.options is null)
+                    {
+                        throw new ArgumentNullException(nameof(this.options));
+                    }
+
+                    // Set all metrics to stale.
+                    this.UpdateMetricState(SparkplugMetricStatus.Offline);
+
+                    // Invoke disconnected callback.
+                    this.OnDisconnected?.Invoke();
+
+                    // Wait until the disconnect interval is reached.
+                    await Task.Delay(this.options.ReconnectInterval);
+
+                    // Connect, subscribe to incoming messages and send a state message.
+                    await this.ConnectInternal();
+                    this.UpdateMetricState(SparkplugMetricStatus.Online);
+                    await this.SubscribeInternal();
+                    await this.PublishInternal();
+                });
+        }
+
+        /// <summary>
         /// Publishes a version A node command message.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
@@ -276,7 +276,11 @@ namespace SparkplugNet.Core.Application
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
 
+            // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Remove the session number metric if a user might have added it.
+            metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeCommandMessage(
@@ -313,7 +317,11 @@ namespace SparkplugNet.Core.Application
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
 
+            // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Remove the session number metric if a user might have added it.
+            metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeCommandMessage(
@@ -351,7 +359,11 @@ namespace SparkplugNet.Core.Application
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
 
+            // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Remove the session number metric if a user might have added it.
+            metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(
@@ -390,7 +402,11 @@ namespace SparkplugNet.Core.Application
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
 
+            // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Remove the session number metric if a user might have added it.
+            metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(

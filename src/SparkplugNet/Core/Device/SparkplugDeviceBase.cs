@@ -116,7 +116,7 @@ namespace SparkplugNet.Core.Device
                     {
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
-                
+
                     await this.PublishVersionAMessage(convertedMetrics);
                     break;
                 }
@@ -154,7 +154,11 @@ namespace SparkplugNet.Core.Device
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
 
+            // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Remove the session number metric if a user might have added it.
+            metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
@@ -190,7 +194,11 @@ namespace SparkplugNet.Core.Device
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
 
+            // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+
+            // Remove the session number metric if a user might have added it.
+            metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
