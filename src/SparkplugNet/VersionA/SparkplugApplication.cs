@@ -1,4 +1,13 @@
-﻿namespace SparkplugNet.VersionA
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugApplication.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   Defines the SparkplugApplication type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace SparkplugNet.VersionA
 {
     using System.Collections.Generic;
 

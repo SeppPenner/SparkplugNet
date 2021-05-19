@@ -1,4 +1,13 @@
-﻿namespace SparkplugNet.VersionB
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugNode.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   Defines the SparkplugNode type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace SparkplugNet.VersionB
 {
     using System.Collections.Generic;
     

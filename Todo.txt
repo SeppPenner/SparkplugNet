@@ -1,5 +1,5 @@
 Seite 14 und 58
-Überall nochmal die Header checken + Code style
+Überall nochmal Code style checken
 Doku und Beispiele
 Exceptions überall markieren in Methoden-Köpfen (DOKU), auch "abgeleitet"
 
