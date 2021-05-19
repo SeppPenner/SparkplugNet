@@ -142,6 +142,7 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spAv1.0/group1/DBIRTH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
             Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
+            Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
@@ -165,6 +166,7 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spBv1.0/group1/DBIRTH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
             Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
+            Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
@@ -188,6 +190,7 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spAv1.0/group1/NBIRTH/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
             Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
+            Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
@@ -211,6 +214,7 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spBv1.0/group1/NBIRTH/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
             Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
+            Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
@@ -232,6 +236,7 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual("spAv1.0/group1/DDEATH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
+            Assert.AreEqual(1, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(0).LongValue);
@@ -249,6 +254,43 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual("spBv1.0/group1/DDEATH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
+            Assert.AreEqual(1, payloadVersionB.Metrics.Count);
+
+            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
+            Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(0).LongValue);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        }
+
+        /// <summary>
+        /// Tests the Sparkplug message generator with a node death message with a version A namespace.
+        /// </summary>
+        [TestMethod]
+        public void TestNodeDeathMessageNamespaceA()
+        {
+            var message = this.messageGenerator.GetSparkPlugNodeDeathMessage(SparkplugNamespace.VersionA, "group1", "edge1", 1);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(message.Payload);
+
+            Assert.AreEqual("spAv1.0/group1/NDEATH/edge1", message.Topic);
+            Assert.IsNotNull(payloadVersionA);
+            Assert.AreEqual(1, payloadVersionA.Metrics.Count);
+
+            Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(0).Name);
+            Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(0).LongValue);
+            Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(0).Type);
+        }
+
+        /// <summary>
+        /// Tests the Sparkplug message generator with a node death message with a version B namespace.
+        /// </summary>
+        [TestMethod]
+        public void TestNodeDeathMessageNamespaceB()
+        {
+            var message = this.messageGenerator.GetSparkPlugNodeDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", 1);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(message.Payload);
+
+            Assert.AreEqual("spBv1.0/group1/NDEATH/edge1", message.Topic);
+            Assert.IsNotNull(payloadVersionB);
+            Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(0).LongValue);
