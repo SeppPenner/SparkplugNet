@@ -229,30 +229,34 @@ namespace SparkplugNet.Core.Device
                     {
                         var topic = e.ApplicationMessage.Topic;
 
-                        if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                        switch (this.NameSpace)
                         {
-                            switch (this.NameSpace)
-                            {
-                                case SparkplugNamespace.VersionA:
+                            case SparkplugNamespace.VersionA:
+                                if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                                {
                                     var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
 
                                     if (payloadVersionA != null)
                                     {
                                         this.VersionADeviceCommandReceived?.Invoke(payloadVersionA);
                                     }
+                                }
 
-                                    break;
+                                break;
 
-                                case SparkplugNamespace.VersionB:
+                            case SparkplugNamespace.VersionB:
+
+                                if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                                {
                                     var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
 
                                     if (payloadVersionB != null)
                                     {
                                         this.VersionBDeviceCommandReceived?.Invoke(payloadVersionB);
                                     }
+                                }
 
-                                    break;
-                            }
+                                break;
                         }
                     });
         }
