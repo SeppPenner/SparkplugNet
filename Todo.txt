@@ -12,4 +12,3 @@ DDeath: No idea how the seq number should be used here!
 
 Test:
 NCMD
-DCMD
