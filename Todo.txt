@@ -1,7 +1,6 @@
 Seite 14 und 58
 Überall nochmal Code style checken
 Doku und Beispiele
-Exceptions überall markieren in Methoden-Köpfen (DOKU), auch "abgeleitet"
 
 alles internal machen, was nicht nach außen soll
 Punkt hinter alle Kommentare!

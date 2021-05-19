@@ -136,7 +136,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">The MQTT client is not connected or invalid metric type.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentException">The group or edge node identifier is invalid.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishNodeCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
@@ -190,7 +190,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">The MQTT client is not connected or invalid metric type.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentException">The group or edge node or device identifier is invalid.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishDeviceCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
@@ -248,7 +248,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">Invalid metric type.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionANodeCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
         {
@@ -285,7 +285,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">Invalid metric type.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionBNodeCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
         {
@@ -323,7 +323,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">Invalid metric type.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionADeviceCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
         {
@@ -362,7 +362,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">Invalid metric type.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionBDeviceCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
         {
@@ -396,7 +396,7 @@ namespace SparkplugNet.Core.Application
         /// <summary>
         /// Adds the message received handler to handle incoming messages.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">Namespace out of range.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         private void AddMessageReceivedHandler()
         {
             this.Client.UseApplicationMessageReceivedHandler(
@@ -540,7 +540,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="topic">The topic.</param>
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
-        /// <exception cref="InvalidCastException">Metric cast invalid.</exception>
+        /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
         private void HandleDeviceMessage(string topic, VersionBPayload payload, SparkplugMetricStatus metricStatus)
         {
             var deviceId = topic.Split('/')[4];
@@ -568,7 +568,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="topic">The topic.</param>
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
-        /// <exception cref="InvalidCastException">Metric cast invalid.</exception>
+        /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
         private void HandleDeviceMessage(string topic, VersionAPayload payload, SparkplugMetricStatus metricStatus)
         {
             var deviceId = topic.Split('/')[4];
@@ -596,7 +596,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="topic">The topic.</param>
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
-        /// <exception cref="InvalidCastException">Metric cast invalid.</exception>
+        /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
         private void HandleNodeMessage(string topic, VersionBPayload payload, SparkplugMetricStatus metricStatus)
         {
             var nodeId = topic.Split('/')[3];
@@ -624,7 +624,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="topic">The topic.</param>
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
-        /// <exception cref="InvalidCastException">Metric cast invalid.</exception>
+        /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
         private void HandleNodeMessage(string topic, VersionAPayload payload, SparkplugMetricStatus metricStatus)
         {
             var nodeId = topic.Split('/')[3];

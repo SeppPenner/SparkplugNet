@@ -98,7 +98,7 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">The MQTT client is not connected or invalid metric type.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task PublishMetrics(List<T> metrics)
         {
@@ -138,7 +138,7 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">Invalid metric type.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
         {
@@ -174,7 +174,7 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">Invalid metric type.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
         {

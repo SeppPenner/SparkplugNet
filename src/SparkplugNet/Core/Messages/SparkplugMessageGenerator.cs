@@ -36,6 +36,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
         /// <param name="online">A value indicating whether the message sender is online or not.</param>
+        /// <exception cref="ArgumentException">The SCADA host identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkplugStateMessage(
             SparkplugNamespace nameSpace,
@@ -65,6 +67,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugNodeBirthMessage<T>(
             SparkplugNamespace nameSpace,
@@ -118,6 +122,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
+        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceBirthMessage<T>(
             SparkplugNamespace nameSpace,
@@ -138,6 +144,11 @@ namespace SparkplugNet.Core.Messages
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
                 throw new ArgumentException(nameof(edgeNodeIdentifier));
+            }
+
+            if (!deviceIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(deviceIdentifier));
             }
 
             switch (nameSpace)
@@ -169,6 +180,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="sessionNumber">The session number.</param>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugNodeDeathMessage(
             SparkplugNamespace nameSpace,
@@ -215,6 +228,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="sessionNumber">The session number.</param>
+        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceDeathMessage(
             SparkplugNamespace nameSpace,
@@ -231,6 +246,11 @@ namespace SparkplugNet.Core.Messages
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
                 throw new ArgumentException(nameof(edgeNodeIdentifier));
+            }
+
+            if (!deviceIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(deviceIdentifier));
             }
 
             switch (nameSpace)
@@ -264,6 +284,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugNodeDataMessage<T>(
             SparkplugNamespace nameSpace,
@@ -319,6 +341,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
+        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceDataMessage<T>(
             SparkplugNamespace nameSpace,
@@ -339,6 +363,11 @@ namespace SparkplugNet.Core.Messages
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
                 throw new ArgumentException(nameof(edgeNodeIdentifier));
+            }
+
+            if (!deviceIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(deviceIdentifier));
             }
 
             switch (nameSpace)
@@ -374,6 +403,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugNodeCommandMessage<T>(
             SparkplugNamespace nameSpace,
@@ -429,6 +460,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
+        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceCommandMessage<T>(
             SparkplugNamespace nameSpace,
@@ -449,6 +482,11 @@ namespace SparkplugNet.Core.Messages
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
                 throw new ArgumentException(nameof(edgeNodeIdentifier));
+            }
+
+            if (!deviceIdentifier.IsIdentifierValid())
+            {
+                throw new ArgumentException(nameof(deviceIdentifier));
             }
 
             switch (nameSpace)
