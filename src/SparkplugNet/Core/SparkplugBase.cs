@@ -80,10 +80,9 @@ namespace SparkplugNet.Core
         /// Gets or sets the MQTT client options.
         /// </summary>
         protected IMqttClientOptions? ClientOptions { get; set; }
-
-        /// Todo: Move to device only?!
+        
         /// <summary>
-        /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For a DBIRTH message).
+        /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For the device and node relevant only).
         /// </summary>
         protected int LastSequenceNumber { get; private set; }
 
