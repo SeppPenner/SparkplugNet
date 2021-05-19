@@ -38,6 +38,16 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         private SparkplugDeviceOptions? options;
 
+        /// <summary>
+        /// The callback for the version A device command received event.
+        /// </summary>
+        public readonly Action<VersionAPayload>? VersionADeviceCommandReceived = null;
+
+        /// <summary>
+        /// The callback for the version B device command received event.
+        /// </summary>
+        public readonly Action<VersionBPayload>? VersionBDeviceCommandReceived = null;
+
         /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugDeviceBase{T}"/> class.
@@ -228,7 +238,7 @@ namespace SparkplugNet.Core.Device
 
                                     if (payloadVersionA != null)
                                     {
-                                        this.VersionAPayloadReceived?.Invoke(payloadVersionA);
+                                        this.VersionADeviceCommandReceived?.Invoke(payloadVersionA);
                                     }
 
                                     break;
@@ -238,7 +248,7 @@ namespace SparkplugNet.Core.Device
 
                                     if (payloadVersionB != null)
                                     {
-                                        this.VersionBPayloadReceived?.Invoke(payloadVersionB);
+                                        this.VersionBDeviceCommandReceived?.Invoke(payloadVersionB);
                                     }
 
                                     break;

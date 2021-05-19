@@ -29,16 +29,6 @@ namespace SparkplugNet.Core
     public class SparkplugBase<T> where T : class, new()
     {
         /// <summary>
-        /// The callback for the version A payload received event.
-        /// </summary>
-        public readonly Action<VersionAPayload>? VersionAPayloadReceived = null;
-
-        /// <summary>
-        /// The callback for the version B payload received event.
-        /// </summary>
-        public readonly Action<VersionBPayload>? VersionBPayloadReceived = null;
-
-        /// <summary>
         /// The callback for the disconnected event. Indicates that metrics might be stale.
         /// </summary>
         public readonly Action? OnDisconnected = null;
