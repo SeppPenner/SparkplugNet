@@ -792,7 +792,7 @@ namespace SparkplugNet.Core.Messages
                     this.topicGenerator.GetTopic(
                         nameSpace,
                         groupIdentifier,
-                        SparkplugMessageType.DeviceBirth,
+                        SparkplugMessageType.DeviceDeath,
                         edgeNodeIdentifier,
                         deviceIdentifier)).WithPayload(serialized)
                 .WithAtLeastOnceQoS()
@@ -828,7 +828,7 @@ namespace SparkplugNet.Core.Messages
                     this.topicGenerator.GetTopic(
                         nameSpace,
                         groupIdentifier,
-                        SparkplugMessageType.DeviceBirth,
+                        SparkplugMessageType.DeviceDeath,
                         edgeNodeIdentifier,
                         deviceIdentifier)).WithPayload(serialized)
                 .WithAtLeastOnceQoS()
