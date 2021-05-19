@@ -387,48 +387,164 @@ namespace SparkplugNet.Core.Application
                     {
                         var topic = e.ApplicationMessage.Topic;
 
-                        var needsPayloadHanding = topic.Contains(SparkplugMessageType.NodeBirth.GetDescription())
-                                                  || topic.Contains(SparkplugMessageType.NodeDeath.GetDescription())
-                                                  || topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription())
-                                                  || topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription())
-                                                  || topic.Contains(SparkplugMessageType.NodeData.GetDescription())
-                                                  || topic.Contains(SparkplugMessageType.DeviceData.GetDescription())
-                                                  || topic.Contains(SparkplugMessageType.NodeCommand.GetDescription())
-                                                  || topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription());
-
-                        if (needsPayloadHanding)
+                        switch (this.NameSpace)
                         {
-                            switch (this.NameSpace)
-                            {
-                                case SparkplugNamespace.VersionA:
-                                    var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
+                            case SparkplugNamespace.VersionA:
+                                var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
 
-                                    if (payloadVersionA != null)
-                                    {
-                                        // Todo: Store metrics for node if metrics are known
-                                        // Todo: Store metrics for device if metrics are known
-                                        this.VersionAPayloadReceived?.Invoke(payloadVersionA);
-                                    }
+                                if (payloadVersionA != null)
+                                {
+                                    this.HandleMessagesForVersionA(topic, payloadVersionA);
+                                }
 
-                                    break;
+                                break;
 
-                                case SparkplugNamespace.VersionB:
-                                    var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
+                            case SparkplugNamespace.VersionB:
+                                var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
 
-                                    if (payloadVersionB != null)
-                                    {
-                                        // Todo: Store metrics for node if metrics are known
-                                        // Todo: Store metrics for device if metrics are known
-                                        this.VersionBPayloadReceived?.Invoke(payloadVersionB);
-                                    }
+                                if (payloadVersionB != null)
+                                {
+                                    this.HandleMessagesForVersionB(topic, payloadVersionB);
+                                }
 
-                                    break;
+                                break;
 
-                                default:
-                                    throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
-                            }
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
                         }
                     });
+        }
+
+        /// <summary>
+        /// Handles the received messages for payload version A.
+        /// </summary>
+        /// <param name="topic">The topic.</param>
+        /// <param name="payload">The payload.</param>
+        private void HandleMessagesForVersionA(string topic, VersionAPayload payload)
+        {
+            if (!(this.KnownMetrics is List<VersionAPayload.KuraMetric> knownMetrics))
+            {
+                throw new ArgumentNullException(nameof(knownMetrics));
+            }
+
+            // If we have any not valid metric, throw an exception.
+            foreach (var metric in payload.Metrics.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
+            {
+                throw new Exception($"Metric {metric.Name} is an unknown metric.");
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
+            {
+                var nodeId = topic.Split('/')[3];
+                var metricState = new MetricState<T>
+                {
+                    MetricStatus = SparkplugMetricStatus.Online
+                };
+
+                foreach (var payloadMetric in payload.Metrics)
+                {
+                    metricState.Metrics.AddOrUpdate(
+                        payloadMetric.Name,
+                        payloadMetric,
+                        (_, _) => payloadMetric);
+                }
+
+                this.NodeStates.AddOrUpdate(nodeId, metricState, (_, _) => metricState);
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeDeath.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// Handles the received messages for payload version B.
+        /// </summary>
+        /// <param name="topic">The topic.</param>
+        /// <param name="payload">The payload.</param>
+        private void HandleMessagesForVersionB(string topic, VersionBPayload payload)
+        {
+            if (!(this.KnownMetrics is List<VersionBPayload.Metric> knownMetrics))
+            {
+                throw new ArgumentNullException(nameof(knownMetrics));
+            }
+
+            // If we have any not valid metric, throw an exception.
+            foreach (var metric in payload.Metrics.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
+            {
+                throw new Exception($"Metric {metric.Name} is an unknown metric.");
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeDeath.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+            {
+
+            }
+
+            if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+            {
+
+            }
         }
 
         /// <summary>
