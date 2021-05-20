@@ -36,17 +36,17 @@ namespace SparkplugNet.Core
         /// <summary>
         /// The message generator.
         /// </summary>
-        protected readonly SparkplugMessageGenerator MessageGenerator = new ();
+        internal readonly SparkplugMessageGenerator MessageGenerator = new ();
 
         /// <summary>
         /// The topic generator.
         /// </summary>
-        protected readonly SparkplugTopicGenerator TopicGenerator = new ();
+        internal readonly SparkplugTopicGenerator TopicGenerator = new ();
 
         /// <summary>
         /// The MQTT client.
         /// </summary>
-        protected readonly IMqttClient Client;
+        internal readonly IMqttClient Client;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
@@ -69,7 +69,7 @@ namespace SparkplugNet.Core
         /// <summary>
         /// Gets or sets the MQTT client options.
         /// </summary>
-        protected IMqttClientOptions? ClientOptions { get; set; }
+        internal IMqttClientOptions? ClientOptions { get; set; }
         
         /// <summary>
         /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For the device and node relevant only).
@@ -94,7 +94,7 @@ namespace SparkplugNet.Core
         /// <summary>
         /// Increments the last sequence number.
         /// </summary>
-        public void IncrementLastSequenceNumber()
+        internal void IncrementLastSequenceNumber()
         {
             if (this.LastSequenceNumber == 255)
             {
@@ -109,7 +109,7 @@ namespace SparkplugNet.Core
         /// <summary>
         /// Increments the last session number.
         /// </summary>
-        public void IncrementLastSessionNumber()
+        internal void IncrementLastSessionNumber()
         {
             if (this.LastSessionNumber == long.MaxValue)
             {

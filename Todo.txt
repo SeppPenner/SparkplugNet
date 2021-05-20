@@ -1,6 +1,5 @@
 Überall nochmal Code style checken
 Doku und Beispiele
-alles internal machen, was nicht nach außen soll
 
 NBirth: Template-Support!
 DDeath: No idea how the seq number should be used here!
