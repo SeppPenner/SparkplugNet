@@ -1180,7 +1180,7 @@ namespace SparkplugNet.Core.Messages
             {
                 Name = Constants.SessionNumberMetricName,
                 LongValue = (ulong)sessionSequenceNumber,
-                Datatype = 11
+                Datatype = (uint)VersionBPayload.Metric.ValueOneofCase.LongValue
             });
         }
     }

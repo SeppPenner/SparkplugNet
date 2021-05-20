@@ -51,7 +51,7 @@ namespace SparkplugNet.Tests
             new VersionBPayload.Metric
             {
                 Name = "Test",
-                Datatype = 10,
+                Datatype = (uint)VersionBPayload.Metric.ValueOneofCase.IntValue,
                 IntValue = 20
             }
         };
@@ -73,7 +73,7 @@ namespace SparkplugNet.Tests
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = 1,
-            Datatype = 11
+            Datatype = (uint)VersionBPayload.Metric.ValueOneofCase.LongValue
         };
 
         /// <summary>
