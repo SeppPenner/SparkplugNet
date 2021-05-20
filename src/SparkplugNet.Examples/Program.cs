@@ -70,7 +70,7 @@ namespace SparkplugNet.Examples
             try
             {
                 await RunVersionA();
-                //await RunVersionB();
+                // await RunVersionB();
             }
             catch (Exception ex)
             {
@@ -89,19 +89,22 @@ namespace SparkplugNet.Examples
         private static async Task RunVersionA()
         {
             Console.WriteLine("Starting application...");
-            var application = new VersionA.SparkplugApplication(VersionAMetrics);
+            var applicationMetrics = new List<VersionAPayload.KuraMetric>(VersionAMetrics);
+            var application = new VersionA.SparkplugApplication(applicationMetrics);
             var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "application1", "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
             await application.Start(applicationOptions);
             Console.WriteLine("Application started...");
 
             Console.WriteLine("Starting node...");
-            var node = new VersionA.SparkplugNode(VersionAMetrics);
+            var nodeMetrics = new List<VersionAPayload.KuraMetric>(VersionAMetrics);
+            var node = new VersionA.SparkplugNode(nodeMetrics);
             var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
             await node.Start(nodeOptions);
             Console.WriteLine("Node started...");
 
             Console.WriteLine("Starting device...");
-            var device = new VersionA.SparkplugDevice(VersionAMetrics);
+            var deviceMetrics = new List<VersionAPayload.KuraMetric>(VersionAMetrics);
+            var device = new VersionA.SparkplugDevice(deviceMetrics);
             var deviceOptions = new SparkplugDeviceOptions("localhost", 1883, "device 1", "user", "password", false, "scada1", "group1", "node1", "device1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
             await device.Start(deviceOptions);
             Console.WriteLine("Device started...");
@@ -114,19 +117,22 @@ namespace SparkplugNet.Examples
         private static async Task RunVersionB()
         {
             Console.WriteLine("Starting application...");
-            var application = new VersionB.SparkplugApplication(VersionBMetrics);
+            var applicationMetrics = new List<VersionBPayload.Metric>(VersionBMetrics);
+            var application = new VersionB.SparkplugApplication(applicationMetrics);
             var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "application1", "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
             await application.Start(applicationOptions);
             Console.WriteLine("Application started...");
 
             Console.WriteLine("Starting node...");
-            var node = new VersionB.SparkplugNode(VersionBMetrics);
+            var nodeMetrics = new List<VersionBPayload.Metric>(VersionBMetrics);
+            var node = new VersionB.SparkplugNode(nodeMetrics);
             var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
             await node.Start(nodeOptions);
             Console.WriteLine("Node started...");
 
             Console.WriteLine("Starting device...");
-            var device = new VersionB.SparkplugDevice(VersionBMetrics);
+            var deviceMetrics = new List<VersionBPayload.Metric>(VersionBMetrics);
+            var device = new VersionB.SparkplugDevice(deviceMetrics);
             var deviceOptions = new SparkplugDeviceOptions("localhost", 1883, "device 1", "user", "password", false, "scada1", "group1", "node1", "device1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
             await device.Start(deviceOptions);
             Console.WriteLine("Device started...");
