@@ -477,7 +477,9 @@ namespace SparkplugNet.Core.Application
             }
 
             // If we have any not valid metric, throw an exception.
-            foreach (var metric in payload.Metrics.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
+            var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
+
+            foreach (var metric in metricsWithoutSequenceMetric.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
             {
                 throw new Exception($"Metric {metric.Name} is an unknown metric.");
             }
@@ -528,7 +530,9 @@ namespace SparkplugNet.Core.Application
             }
 
             // If we have any not valid metric, throw an exception.
-            foreach (var metric in payload.Metrics.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
+            var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
+
+            foreach (var metric in metricsWithoutSequenceMetric.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
             {
                 throw new Exception($"Metric {metric.Name} is an unknown metric.");
             }
