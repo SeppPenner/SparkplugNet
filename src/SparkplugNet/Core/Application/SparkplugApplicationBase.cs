@@ -434,6 +434,12 @@ namespace SparkplugNet.Core.Application
                     {
                         var topic = e.ApplicationMessage.Topic;
 
+                        // Skip the STATE messages as they're UTF-8 encoded.
+                        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+                        {
+                            return;
+                        }
+
                         switch (this.NameSpace)
                         {
                             case SparkplugNamespace.VersionA:

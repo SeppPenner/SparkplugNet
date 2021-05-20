@@ -263,6 +263,13 @@ namespace SparkplugNet.Core.Node
                     {
                         var topic = e.ApplicationMessage.Topic;
 
+                        // Handle the STATE message before anything else as they're UTF-8 encoded.
+                        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+                        {
+                            this.StatusMessageReceived?.Invoke(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                            return;
+                        }
+
                         switch (this.NameSpace)
                         {
                             case SparkplugNamespace.VersionA:
@@ -322,11 +329,6 @@ namespace SparkplugNet.Core.Node
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
-                        }
-
-                        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
-                        {
-                            this.StatusMessageReceived?.Invoke(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                         }
                     });
         }
