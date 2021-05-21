@@ -34,6 +34,7 @@ namespace SparkplugNet.IntegrationTests
         /// Tests Sparkplug CONNECT requirements (NDEATH, NBIRTH).
         /// </summary>
         [TestMethod]
+        [Ignore]
         public async Task T1_TestEoNNode_VersionB_ConnectBirth()
         {
             var userName = "username";
@@ -55,6 +56,7 @@ namespace SparkplugNet.IntegrationTests
         /// Tests Sparkplug PublishMetrics (NDATA)
         /// </summary>
         [TestMethod]
+        [Ignore]
         public async Task T2_TestEoNNode_VersionB_PublishMetrics()
         {
             // publish metrics with changes
@@ -71,6 +73,7 @@ namespace SparkplugNet.IntegrationTests
         /// Tests MQTT Client Disconnect
         /// </summary>
         [TestMethod]
+        [Ignore]
         public async Task T3_TestEoNNode_VersionB_StopDisconnect()
         {
             // assert IsConnected = true
