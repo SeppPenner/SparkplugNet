@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SparkplugNet.Tests", "Spark
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SparkplugNet.Examples", "SparkplugNet.Examples\SparkplugNet.Examples.csproj", "{5A09589D-FB3F-4967-A104-B15549477202}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SparkplugNet.IntegrationTests", "SparkplugNet.IntegrationTests\SparkplugNet.IntegrationTests.csproj", "{AB0FDEB9-DA26-4D53-9E9E-9BFD416ADB17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5A09589D-FB3F-4967-A104-B15549477202}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A09589D-FB3F-4967-A104-B15549477202}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A09589D-FB3F-4967-A104-B15549477202}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB0FDEB9-DA26-4D53-9E9E-9BFD416ADB17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB0FDEB9-DA26-4D53-9E9E-9BFD416ADB17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB0FDEB9-DA26-4D53-9E9E-9BFD416ADB17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB0FDEB9-DA26-4D53-9E9E-9BFD416ADB17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,12 +15,11 @@ namespace SparkplugNet.Core.Node
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
+    using MQTTnet.Client.Publishing;
     using MQTTnet.Formatter;
     using MQTTnet.Protocol;
-
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
@@ -103,11 +102,11 @@ namespace SparkplugNet.Core.Node
         /// Publishes some metrics.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
-        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishMetrics(List<T> metrics)
+        public async Task<MqttClientPublishResult> PublishMetrics(List<T> metrics)
         {
             if (this.options is null)
             {
@@ -128,8 +127,7 @@ namespace SparkplugNet.Core.Node
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
 
-                    await this.PublishVersionAMessage(convertedMetrics);
-                    break;
+                    return await this.PublishVersionAMessage(convertedMetrics);
                 }
                 case SparkplugNamespace.VersionB:
                 {
@@ -138,8 +136,7 @@ namespace SparkplugNet.Core.Node
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
 
-                    await this.PublishVersionBMessage(convertedMetrics);
-                    break;
+                    return await this.PublishVersionBMessage(convertedMetrics);
                 }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
@@ -150,10 +147,11 @@ namespace SparkplugNet.Core.Node
         /// Publishes a version A metric.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
+        private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
         {
             if (this.options is null)
             {
@@ -166,7 +164,7 @@ namespace SparkplugNet.Core.Node
             }
 
             // Remove all not known metrics.
-            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
 
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
@@ -178,21 +176,26 @@ namespace SparkplugNet.Core.Node
                 this.options.EdgeNodeIdentifier,
                 metrics,
                 this.LastSequenceNumber,
-                LastSessionNumber,
+                this.LastSessionNumber,
                 DateTimeOffset.Now);
+
+            // Debug output.
+            dataMessage.ToOutputWindowJson("NDATA Message");
+
             this.IncrementLastSequenceNumber();
 
-            await this.Client.PublishAsync(dataMessage);
+            return await this.Client.PublishAsync(dataMessage);
         }
 
         /// <summary>
         /// Publishes a version B metric.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
+        /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
+        private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
         {
             if (this.options is null)
             {
@@ -205,7 +208,7 @@ namespace SparkplugNet.Core.Node
             }
 
             // Remove all not known metrics.
-            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) != default);
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
 
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
@@ -217,11 +220,15 @@ namespace SparkplugNet.Core.Node
                 this.options.EdgeNodeIdentifier,
                 metrics,
                 this.LastSequenceNumber,
-                LastSessionNumber,
+                this.LastSessionNumber,
                 DateTimeOffset.Now);
+
+            // Debug output.
+            dataMessage.ToOutputWindowJson("NDATA Message");
+
             this.IncrementLastSequenceNumber();
 
-            await this.Client.PublishAsync(dataMessage);
+            return await this.Client.PublishAsync(dataMessage);
         }
 
         /// <summary>
@@ -348,6 +355,9 @@ namespace SparkplugNet.Core.Node
             // Increment the session number.
             this.IncrementLastSessionNumber();
 
+            // Reset the sequence number.
+            this.ResetLastSequenceNumber();
+
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
                 this.NameSpace,
@@ -390,6 +400,10 @@ namespace SparkplugNet.Core.Node
 
             builder.WithWillMessage(willMessage);
             this.ClientOptions = builder.Build();
+
+            // Debug output.
+            this.ClientOptions.ToOutputWindowJson("CONNECT Message");
+
             await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
         }
 
@@ -411,12 +425,19 @@ namespace SparkplugNet.Core.Node
                 this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier,
                 this.KnownMetrics,
-                0,
+                this.LastSequenceNumber,
                 this.LastSessionNumber,
                 DateTimeOffset.Now);
 
             // Publish data.
             this.options.CancellationToken ??= CancellationToken.None;
+
+            // Debug output.
+            onlineMessage.ToOutputWindowJson("NBIRTH Message");
+
+            // Increment
+            this.IncrementLastSequenceNumber();
+
             await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
         }
 
