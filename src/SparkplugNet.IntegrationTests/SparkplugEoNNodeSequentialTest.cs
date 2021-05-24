@@ -55,7 +55,7 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// Tests Sparkplug PublishMetrics (NDATA)
         /// </summary>
-        [TestMethod]
+        [TestMethod] 
         [Ignore]
         public async Task T2_TestEoNNode_VersionB_PublishMetrics()
         {
@@ -92,9 +92,9 @@ namespace SparkplugNet.IntegrationTests
             var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var metrics = new List<Payload.Metric>
             {
-                new() { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)Payload.Metric.ValueOneofCase.StringValue, StringValue = "Some Name" },
-                new() { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)Payload.Metric.ValueOneofCase.LongValue, LongValue = (ulong)random.Next(0, int.MaxValue) },
-                new() { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)Payload.Metric.ValueOneofCase.LongValue, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new() { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Some Name" },
+                new() { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new() { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
             };
             return metrics;
         }
@@ -107,7 +107,9 @@ namespace SparkplugNet.IntegrationTests
             // add extra metric after NBIRTH
             metrics.Add(new Payload.Metric()
             {
-                Name = "General/Extra Metric", Timestamp = unixUtcNow, Datatype = (uint)Payload.Metric.ValueOneofCase.LongValue,
+                Name = "General/Extra Metric",
+                Timestamp = unixUtcNow,
+                Datatype = (uint)Payload.Metric.ValueOneofCase.LongValue,
                 LongValue = (ulong)random.Next(0, int.MaxValue)
             });
 
@@ -121,31 +123,41 @@ namespace SparkplugNet.IntegrationTests
                 metric.Timestamp = unixUtcNow;
                 switch (metric.Datatype)
                 {
-                    case (uint)Payload.Metric.ValueOneofCase.StringValue:
+                    case (int)SparkplugBDataType.String:
+                    case (int)SparkplugBDataType.Text:
+                    case (int)SparkplugBDataType.Uuid:
                         metric.StringValue = metric.StringValue;
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.IntValue:
+                    case (int)SparkplugBDataType.Int8:
+                    case (int)SparkplugBDataType.UInt8:
+                    case (int)SparkplugBDataType.Int16:
+                    case (int)SparkplugBDataType.UInt16:
+                    case (int)SparkplugBDataType.Int32:
+                    case (int)SparkplugBDataType.UInt32:
                         metric.IntValue = (uint)random.Next(0, int.MaxValue);
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.LongValue:
+                    case (int)SparkplugBDataType.Int64:
+                    case (int)SparkplugBDataType.UInt64:
+                    case (int)SparkplugBDataType.DateTime:
                         metric.LongValue = (ulong)random.Next(0, int.MaxValue);
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.FloatValue:
+                    case (int)SparkplugBDataType.Float:
                         metric.FloatValue = (float)random.Next(0, int.MaxValue);
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.DoubleValue:
+                    case (int)SparkplugBDataType.Double:
                         metric.DoubleValue = (float)random.Next(0, int.MaxValue);
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.BooleanValue:
+                    case (int)SparkplugBDataType.Boolean:
                         metric.BooleanValue = !metric.BooleanValue;
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.BytesValue:
+                    case (int)SparkplugBDataType.Bytes:
+                    case (int)SparkplugBDataType.File:
                         metric.BytesValue = metric.BytesValue;
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.DatasetValue:
+                    case (int)SparkplugBDataType.Dataset:
                         metric.DatasetValue = metric.DatasetValue;
                         break;
-                    case (uint)Payload.Metric.ValueOneofCase.TemplateValue:
+                    case (int)SparkplugBDataType.Template:
                         metric.TemplateValue = metric.TemplateValue;
                         break;
                     default:
