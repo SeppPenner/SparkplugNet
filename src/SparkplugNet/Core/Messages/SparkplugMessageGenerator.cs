@@ -60,6 +60,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// Gets a NBIRTH message.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
@@ -560,6 +561,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("NBIRTH: VersionAPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -600,6 +604,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("NBIRTH: VersionBPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -609,7 +616,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.NodeBirth,
                         edgeNodeIdentifier,
-                        string.Empty)).WithPayload(serialized)
+                        string.Empty))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -639,6 +647,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("DBIRTH: VersionAPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -648,7 +659,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.DeviceBirth,
                         edgeNodeIdentifier,
-                        deviceIdentifier)).WithPayload(serialized)
+                        deviceIdentifier))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -681,6 +693,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("DBIRTH: VersionBPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -690,7 +705,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.DeviceBirth,
                         edgeNodeIdentifier,
-                        deviceIdentifier)).WithPayload(serialized)
+                        deviceIdentifier))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -715,6 +731,9 @@ namespace SparkplugNet.Core.Messages
                 Metrics = metrics
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("NDEATH: VersionAPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -724,7 +743,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.NodeDeath,
                         edgeNodeIdentifier,
-                        string.Empty)).WithPayload(serialized)
+                        string.Empty))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -749,6 +769,9 @@ namespace SparkplugNet.Core.Messages
                 Metrics = metrics
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("NDEATH: VersionBPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -758,7 +781,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.NodeDeath,
                         edgeNodeIdentifier,
-                        string.Empty)).WithPayload(serialized)
+                        string.Empty))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -785,6 +809,9 @@ namespace SparkplugNet.Core.Messages
                 Metrics = metrics
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("DDEATH: VersionAPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -794,7 +821,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.DeviceDeath,
                         edgeNodeIdentifier,
-                        deviceIdentifier)).WithPayload(serialized)
+                        deviceIdentifier))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -821,6 +849,9 @@ namespace SparkplugNet.Core.Messages
                 Metrics = metrics
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("DDEATH: VersionBPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -830,7 +861,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.DeviceDeath,
                         edgeNodeIdentifier,
-                        deviceIdentifier)).WithPayload(serialized)
+                        deviceIdentifier))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -858,6 +890,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("NDATA: VersionAPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -867,7 +902,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.NodeData,
                         edgeNodeIdentifier,
-                        string.Empty)).WithPayload(serialized)
+                        string.Empty))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -898,6 +934,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("NDATA: VersionBPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -907,7 +946,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.NodeData,
                         edgeNodeIdentifier,
-                        string.Empty)).WithPayload(serialized)
+                        string.Empty))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -937,6 +977,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("DDATA: VersionAPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -946,7 +989,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.DeviceData,
                         edgeNodeIdentifier,
-                        deviceIdentifier)).WithPayload(serialized)
+                        deviceIdentifier))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
@@ -979,6 +1023,9 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
+            // Debug output.
+            payload.ToOutputWindowJson("DDATA: VersionBPayload");
+
             var serialized = PayloadHelper.Serialize(payload);
 
             return new MqttApplicationMessageBuilder()
@@ -988,7 +1035,8 @@ namespace SparkplugNet.Core.Messages
                         groupIdentifier,
                         SparkplugMessageType.DeviceData,
                         edgeNodeIdentifier,
-                        deviceIdentifier)).WithPayload(serialized)
+                        deviceIdentifier))
+                .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();

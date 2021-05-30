@@ -70,7 +70,7 @@ namespace SparkplugNet.Core
         /// Gets or sets the MQTT client options.
         /// </summary>
         internal IMqttClientOptions? ClientOptions { get; set; }
-        
+
         /// <summary>
         /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For the device and node relevant only).
         /// </summary>
@@ -87,9 +87,22 @@ namespace SparkplugNet.Core
         protected SparkplugNamespace NameSpace { get; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is connected.
+        /// </summary>
+        public bool IsConnected => this.Client.IsConnected;
+
+        /// <summary>
         /// Gets the known metric names.
         /// </summary>
         public List<T> KnownMetrics { get; }
+
+        /// <summary>
+        /// Resets the last sequence number.
+        /// </summary>
+        public void ResetLastSequenceNumber()
+        {
+            this.LastSequenceNumber = 0;
+        }
 
         /// <summary>
         /// Increments the last sequence number.
