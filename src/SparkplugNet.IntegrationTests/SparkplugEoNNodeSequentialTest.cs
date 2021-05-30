@@ -105,7 +105,7 @@ namespace SparkplugNet.IntegrationTests
             var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             // add extra metric after NBIRTH
-            metrics.Add(new Payload.Metric()
+            metrics.Add(new Payload.Metric
             {
                 Name = "General/Extra Metric",
                 Timestamp = unixUtcNow,
@@ -142,10 +142,10 @@ namespace SparkplugNet.IntegrationTests
                         metric.LongValue = (ulong)random.Next(0, int.MaxValue);
                         break;
                     case (int)SparkplugBDataType.Float:
-                        metric.FloatValue = (float)random.Next(0, int.MaxValue);
+                        metric.FloatValue = random.Next(0, int.MaxValue);
                         break;
                     case (int)SparkplugBDataType.Double:
-                        metric.DoubleValue = (float)random.Next(0, int.MaxValue);
+                        metric.DoubleValue = random.Next(0, int.MaxValue);
                         break;
                     case (int)SparkplugBDataType.Boolean:
                         metric.BooleanValue = !metric.BooleanValue;
