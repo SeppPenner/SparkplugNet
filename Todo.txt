@@ -1,7 +1,9 @@
-Überall nochmal Code style checken
-Doku und Beispiele
+Check code style again
+Doku and Examples
 
 NBirth: Template-Support!
 DDeath: No idea how the seq number should be used here!
 
 Todo: Test with https://www.hivemq.com/extension/sparkplug-influxdb-extension/
+Test Publish with == null checks
+Validate all changes made in PR #2.
