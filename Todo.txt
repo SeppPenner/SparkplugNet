@@ -3,3 +3,5 @@ Doku und Beispiele
 
 NBirth: Template-Support!
 DDeath: No idea how the seq number should be used here!
+
+Todo: Test with https://www.hivemq.com/extension/sparkplug-influxdb-extension/
