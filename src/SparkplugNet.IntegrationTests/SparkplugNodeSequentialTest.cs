@@ -1,9 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugEoNNodeTest.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugNodeSequentialTest.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
 //   A class to test the <see cref="SparkplugNode"/> class with live MQTT Server and Sparkplug Host.
+//   These tests are designed to execute synchronously in alphabetic order. (e.g. T1_xxx, T2_yyy, T3_zzz).
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -24,88 +25,121 @@ namespace SparkplugNet.IntegrationTests
     /// These tests are designed to execute synchronously in alphabetic order. (e.g. T1_xxx, T2_yyy, T3_zzz)
     /// </summary>
     [TestClass]
-    public class SparkplugEoNNodeSequentialTest
+    // ReSharper disable once StyleCop.SA1650
+    public class SparkplugNodeSequentialTest
     {
-        private readonly CancellationTokenSource cts = new CancellationTokenSource();
-        private static SparkplugNode sut;
+        /// <summary>
+        /// The node.
+        /// </summary>
+        private static SparkplugNode node;
+
+        /// <summary>
+        /// The metrics.
+        /// </summary>
         private static List<Payload.Metric> metrics;
 
         /// <summary>
-        /// Tests Sparkplug CONNECT requirements (NDEATH, NBIRTH).
+        /// The cancellation token source.
+        /// </summary>
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+        /// <summary>
+        /// Tests the Sparkplug CONNECT requirements (NDEATH, NBIRTH).
         /// </summary>
         [TestMethod]
         [Ignore]
-        public async Task T1_TestEoNNode_VersionB_ConnectBirth()
+        public async Task T1TestNodeVersionBConnectBirth()
         {
             var userName = "username";
             var password = "password";
             var groupIdentifier = "group1";
             var edgeNodeIdentifier = "node1";
-            var nodeOptions = new SparkplugNodeOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort, MqttServerUnderTest.ClientId, userName,
-                password, false, MqttServerUnderTest.ScadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, TimeSpan.FromSeconds(30), null, null,
-                this.cts.Token);
+            var nodeOptions = new SparkplugNodeOptions(
+                MqttServerUnderTest.ServerAddress,
+                MqttServerUnderTest.ServerPort,
+                MqttServerUnderTest.ClientId,
+                userName,
+                password,
+                false,
+                MqttServerUnderTest.ScadaHostIdentifier,
+                groupIdentifier,
+                edgeNodeIdentifier,
+                TimeSpan.FromSeconds(30),
+                null,
+                null,
+                this.cancellationTokenSource.Token);
             metrics = GetTestMetrics();
 
-            // create and start new instance of SparkplugNode
-            sut = new SparkplugNode(metrics);
-            await sut.Start(nodeOptions);
-            Assert.IsTrue(sut.IsConnected);
+            // Create and start new instance of a Sparkplug node.
+            node = new SparkplugNode(metrics);
+            await node.Start(nodeOptions);
+            Assert.IsTrue(node.IsConnected);
         }
 
         /// <summary>
-        /// Tests Sparkplug PublishMetrics (NDATA)
+        /// Tests the publishing of Sparkplug metrics (NDATA).
         /// </summary>
         [TestMethod] 
         [Ignore]
-        public async Task T2_TestEoNNode_VersionB_PublishMetrics()
+        public async Task T2TestNodeVersionBPublishMetrics()
         {
-            // publish metrics with changes
+            // Publish metrics with changes.
             for (var i = 0; i < 5; i++)
             {
                 await Task.Delay(1000);
                 UpdateTestMetrics(metrics);
-                var result = await sut.PublishMetrics(metrics);
+                var result = await node.PublishMetrics(metrics);
                 Assert.IsTrue(result.ReasonCode == 0);
             }
         }
 
         /// <summary>
-        /// Tests MQTT Client Disconnect
+        /// Tests MQTT client disconnect.
         /// </summary>
         [TestMethod]
         [Ignore]
-        public async Task T3_TestEoNNode_VersionB_StopDisconnect()
+        public async Task T3TestNodeVersionBStopDisconnect()
         {
-            // assert IsConnected = true
-            Assert.IsTrue(sut.IsConnected);
+            // Assert IsConnected == true.
+            Assert.IsTrue(node.IsConnected);
 
-            // stop instance of SparkplugNode
-            await sut.Stop();
+            // Stop instance of SparkplugNode
+            await node.Stop();
 
             // assert IsConnected = false
-            Assert.IsFalse(sut.IsConnected);
+            Assert.IsFalse(node.IsConnected);
         }
 
+        /// <summary>
+        /// Gets the test metrics.
+        /// </summary>
+        /// <returns>A <see cref="List{T}"/> of <see cref="Payload.Metric"/>s.</returns>
         private static List<Payload.Metric> GetTestMetrics()
         {
             var random = new Random();
             var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            var metrics = new List<Payload.Metric>
+
+            var testMetrics = new List<Payload.Metric>
             {
-                new() { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Some Name" },
-                new() { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
-                new() { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new Payload.Metric { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Some Name" },
+                new Payload.Metric { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new Payload.Metric { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
             };
-            return metrics;
+
+            return testMetrics;
         }
 
-        private static void UpdateTestMetrics(List<Payload.Metric> metrics)
+        /// <summary>
+        /// Updates the test metrics.
+        /// </summary>
+        /// <param name="newMetrics">The new metrics.</param>
+        private static void UpdateTestMetrics(List<Payload.Metric> newMetrics)
         {
             var random = new Random();
             var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             // add extra metric after NBIRTH
-            metrics.Add(new Payload.Metric
+            newMetrics.Add(new Payload.Metric
             {
                 Name = "General/Extra Metric",
                 Timestamp = unixUtcNow,
@@ -113,7 +147,7 @@ namespace SparkplugNet.IntegrationTests
                 LongValue = (ulong)random.Next(0, int.MaxValue)
             });
 
-            foreach (var metric in metrics)
+            foreach (var metric in newMetrics)
             {
                 if (metric.Name == Constants.SessionNumberMetricName)
                 {
