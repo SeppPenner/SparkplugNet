@@ -76,7 +76,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// Gets a NBIRTH message.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The type parameter.</typeparam>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
@@ -131,6 +131,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// Gets a DBIRTH message.
         /// </summary>
+        /// <typeparam name="T">The type parameter.</typeparam>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
@@ -294,6 +295,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// Gets a NDATA message.
         /// </summary>
+        /// <typeparam name="T">The type parameter.</typeparam>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
@@ -350,6 +352,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// Gets a DDATA message.
         /// </summary>
+        /// <typeparam name="T">The type parameter.</typeparam>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
@@ -413,6 +416,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// Gets a NCMD message.
         /// </summary>
+        /// <typeparam name="T">The type parameter.</typeparam>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
@@ -469,6 +473,7 @@ namespace SparkplugNet.Core.Messages
         /// <summary>
         /// Gets a DCMD message.
         /// </summary>
+        /// <typeparam name="T">The type parameter.</typeparam>
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
@@ -527,6 +532,38 @@ namespace SparkplugNet.Core.Messages
                 default:
                     throw new ArgumentOutOfRangeException(nameof(nameSpace));
             }
+        }
+
+        /// <summary>
+        /// Adds the session number to the metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="sessionSequenceNumber">The session number.</param>
+        private static void AddSessionNumberToMetrics(ICollection<VersionAPayload.KuraMetric> metrics, long sessionSequenceNumber)
+        {
+            // Add a BDSEQ metric.
+            metrics.Add(new VersionAPayload.KuraMetric
+            {
+                Name = Constants.SessionNumberMetricName,
+                LongValue = sessionSequenceNumber,
+                Type = VersionAPayload.KuraMetric.ValueType.Int64
+            });
+        }
+
+        /// <summary>
+        /// Adds the session number to the metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="sessionSequenceNumber">The session number.</param>
+        private static void AddSessionNumberToMetrics(ICollection<VersionBPayload.Metric> metrics, long sessionSequenceNumber)
+        {
+            // Add a BDSEQ metric.
+            metrics.Add(new VersionBPayload.Metric
+            {
+                Name = Constants.SessionNumberMetricName,
+                LongValue = (ulong)sessionSequenceNumber,
+                Datatype = (uint)VersionBPayload.Metric.ValueOneofCase.LongValue
+            });
         }
 
         /// <summary>
@@ -1214,38 +1251,6 @@ namespace SparkplugNet.Core.Messages
                 .WithAtLeastOnceQoS()
                 .WithRetainFlag()
                 .Build();
-        }
-
-        /// <summary>
-        /// Adds the session number to the metrics.
-        /// </summary>
-        /// <param name="metrics">The metrics.</param>
-        /// <param name="sessionSequenceNumber">The session number.</param>
-        private static void AddSessionNumberToMetrics(ICollection<VersionAPayload.KuraMetric> metrics, long sessionSequenceNumber)
-        {
-            // Add a BDSEQ metric.
-            metrics.Add(new VersionAPayload.KuraMetric
-            {
-                Name = Constants.SessionNumberMetricName,
-                LongValue = sessionSequenceNumber,
-                Type = VersionAPayload.KuraMetric.ValueType.Int64
-            });
-        }
-
-        /// <summary>
-        /// Adds the session number to the metrics.
-        /// </summary>
-        /// <param name="metrics">The metrics.</param>
-        /// <param name="sessionSequenceNumber">The session number.</param>
-        private static void AddSessionNumberToMetrics(ICollection<VersionBPayload.Metric> metrics, long sessionSequenceNumber)
-        {
-            // Add a BDSEQ metric.
-            metrics.Add(new VersionBPayload.Metric
-            {
-                Name = Constants.SessionNumberMetricName,
-                LongValue = (ulong)sessionSequenceNumber,
-                Datatype = (uint)VersionBPayload.Metric.ValueOneofCase.LongValue
-            });
         }
     }
 }
