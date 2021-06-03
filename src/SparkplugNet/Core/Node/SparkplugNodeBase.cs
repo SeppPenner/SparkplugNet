@@ -47,6 +47,11 @@ namespace SparkplugNet.Core.Node
         public readonly Action<T>? NodeCommandReceived = null;
 
         /// <summary>
+        /// The callback for the status message received event.
+        /// </summary>
+        public readonly Action<string>? StatusMessageReceived = null;
+
+        /// <summary>
         /// The options.
         /// </summary>
         private SparkplugNodeOptions? options;
@@ -61,11 +66,6 @@ namespace SparkplugNet.Core.Node
         public SparkplugNodeBase(List<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
-
-        /// <summary>
-        /// The callback for the status message received event.
-        /// </summary>
-        public readonly Action<string>? StatusMessageReceived = null;
 
         /// <summary>
         /// Starts the Sparkplug node.
@@ -106,10 +106,11 @@ namespace SparkplugNet.Core.Node
         /// Publishes some metrics.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
-        /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+        /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
         public async Task<MqttClientPublishResult> PublishMetrics(List<T> metrics)
         {
             if (this.options is null)
@@ -154,7 +155,8 @@ namespace SparkplugNet.Core.Node
         /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
-        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
         private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
         {
             if (this.options is null)
@@ -198,7 +200,8 @@ namespace SparkplugNet.Core.Node
         /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
-        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
         private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
         {
             if (this.options is null)
