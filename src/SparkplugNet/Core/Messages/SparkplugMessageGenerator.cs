@@ -14,6 +14,8 @@ namespace SparkplugNet.Core.Messages
 
     using MQTTnet;
 
+    using Serilog;
+
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
@@ -29,6 +31,20 @@ namespace SparkplugNet.Core.Messages
         /// The topic generator.
         /// </summary>
         private readonly SparkplugTopicGenerator topicGenerator = new ();
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger? logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SparkplugMessageGenerator"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        public SparkplugMessageGenerator(ILogger? logger)
+        {
+            this.logger = logger;
+        }
 
         /// <summary>
         /// Gets a STATE message.
@@ -562,7 +578,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NBIRTH: VersionAPayload");
+            this.logger?.Debug("NBIRTH: VersionAPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -605,7 +621,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NBIRTH: VersionBPayload");
+            this.logger?.Debug("NBIRTH: VersionBPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -648,7 +664,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DBIRTH: VersionAPayload");
+            this.logger?.Debug("DBIRTH: VersionAPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -694,7 +710,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DBIRTH: VersionBPayload");
+            this.logger?.Debug("DBIRTH: VersionBPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -732,7 +748,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDEATH: VersionAPayload");
+            this.logger?.Debug("NDEATH: VersionAPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -770,7 +786,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDEATH: VersionBPayload");
+            this.logger?.Debug("NDEATH: VersionBPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -810,7 +826,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDEATH: VersionAPayload");
+            this.logger?.Debug("DDEATH: VersionAPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -850,7 +866,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDEATH: VersionBPayload");
+            this.logger?.Debug("DDEATH: VersionBPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -891,7 +907,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDATA: VersionAPayload");
+            this.logger?.Debug("NDATA: VersionAPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -935,7 +951,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDATA: VersionBPayload");
+            this.logger?.Debug("NDATA: VersionBPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -978,7 +994,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDATA: VersionAPayload");
+            this.logger?.Debug("DDATA: VersionAPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -1024,7 +1040,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDATA: VersionBPayload");
+            this.logger?.Debug("DDATA: VersionBPayload: {@Payload}", payload);
 
             var serialized = PayloadHelper.Serialize(payload);
 

@@ -16,6 +16,8 @@ namespace SparkplugNet.Core
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
 
+    using Serilog;
+
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Messages;
 
@@ -36,7 +38,7 @@ namespace SparkplugNet.Core
         /// <summary>
         /// The message generator.
         /// </summary>
-        internal readonly SparkplugMessageGenerator MessageGenerator = new ();
+        internal readonly SparkplugMessageGenerator MessageGenerator;
 
         /// <summary>
         /// The topic generator.
@@ -52,7 +54,8 @@ namespace SparkplugNet.Core
         /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
-        public SparkplugBase(List<T> knownMetrics)
+        /// <param name="logger">The logger.</param>
+        public SparkplugBase(List<T> knownMetrics, ILogger? logger = null)
         {
             this.KnownMetrics = knownMetrics;
 
@@ -64,6 +67,9 @@ namespace SparkplugNet.Core
             };
 
             this.Client = new MqttFactory().CreateMqttClient();
+            this.Logger = logger;
+
+            MessageGenerator = new SparkplugMessageGenerator(logger);
         }
 
         /// <summary>
@@ -85,6 +91,11 @@ namespace SparkplugNet.Core
         /// Gets the Sparkplug namespace.
         /// </summary>
         protected SparkplugNamespace NameSpace { get; }
+
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        protected ILogger? Logger { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is connected.

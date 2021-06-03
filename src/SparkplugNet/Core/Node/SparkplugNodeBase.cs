@@ -20,6 +20,9 @@ namespace SparkplugNet.Core.Node
     using MQTTnet.Client.Publishing;
     using MQTTnet.Formatter;
     using MQTTnet.Protocol;
+
+    using Serilog;
+
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
@@ -53,8 +56,9 @@ namespace SparkplugNet.Core.Node
         /// Initializes a new instance of the <see cref="SparkplugNodeBase{T}"/> class.
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
+        /// <param name="logger">The logger.</param>
         /// <seealso cref="SparkplugBase{T}"/>
-        public SparkplugNodeBase(List<T> knownMetrics) : base(knownMetrics)
+        public SparkplugNodeBase(List<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
 
@@ -180,7 +184,7 @@ namespace SparkplugNet.Core.Node
                 DateTimeOffset.Now);
 
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
             this.IncrementLastSequenceNumber();
 
@@ -224,7 +228,7 @@ namespace SparkplugNet.Core.Node
                 DateTimeOffset.Now);
 
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
             this.IncrementLastSequenceNumber();
 
@@ -402,7 +406,7 @@ namespace SparkplugNet.Core.Node
             this.ClientOptions = builder.Build();
 
             // Debug output.
-            this.ClientOptions.ToOutputWindowJson("CONNECT Message");
+            this.Logger?.Debug("CONNECT Message: {@ClientOptions}", this.ClientOptions);
 
             await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
         }
@@ -433,7 +437,7 @@ namespace SparkplugNet.Core.Node
             this.options.CancellationToken ??= CancellationToken.None;
 
             // Debug output.
-            onlineMessage.ToOutputWindowJson("NBIRTH Message");
+            this.Logger?.Debug("NBIRTH Message: {@OnlineMessage}", onlineMessage);
 
             // Increment
             this.IncrementLastSequenceNumber();

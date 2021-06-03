@@ -21,6 +21,8 @@ namespace SparkplugNet.Core.Application
     using MQTTnet.Formatter;
     using MQTTnet.Protocol;
 
+    using Serilog;
+
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
@@ -44,8 +46,9 @@ namespace SparkplugNet.Core.Application
         /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
+        /// <param name="logger">The logger.</param>
         /// <seealso cref="SparkplugBase{T}"/>
-        public SparkplugApplicationBase(List<T> knownMetrics) : base(knownMetrics)
+        public SparkplugApplicationBase(List<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
         
@@ -334,7 +337,7 @@ namespace SparkplugNet.Core.Application
                 DateTimeOffset.Now);
 
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
             this.IncrementLastSequenceNumber();
 
@@ -381,7 +384,7 @@ namespace SparkplugNet.Core.Application
                 DateTimeOffset.Now);
 
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
             this.IncrementLastSequenceNumber();
 

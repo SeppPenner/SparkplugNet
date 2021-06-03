@@ -17,6 +17,8 @@ namespace SparkplugNet.Tests
 
     using MQTTnet;
 
+    using Serilog;
+
     using SparkplugNet.Core;
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Messages;
@@ -79,7 +81,7 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The message generator.
         /// </summary>
-        private readonly SparkplugMessageGenerator messageGenerator = new ();
+        private readonly SparkplugMessageGenerator messageGenerator = new SparkplugMessageGenerator(new LoggerConfiguration().WriteTo.Console().CreateLogger());
 
         /// <summary>
         /// Tests the Sparkplug message generator with a message with a version A namespace and a online state.

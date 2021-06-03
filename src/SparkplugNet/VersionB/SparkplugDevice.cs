@@ -10,7 +10,9 @@
 namespace SparkplugNet.VersionB
 {
     using System.Collections.Generic;
-    
+
+    using Serilog;
+
     using SparkplugNet.Core.Device;
 
     /// <inheritdoc cref="SparkplugDeviceBase{T}"/>
@@ -21,7 +23,8 @@ namespace SparkplugNet.VersionB
         /// Initializes a new instance of the <see cref="SparkplugDevice"/> class.
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
-        public SparkplugDevice(List<Payload.Metric> knownMetrics) : base(knownMetrics)
+        /// <param name="logger">The logger.</param>
+        public SparkplugDevice(List<Payload.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
     }

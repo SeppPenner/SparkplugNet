@@ -20,6 +20,8 @@ namespace SparkplugNet.Core.Device
     using MQTTnet.Formatter;
     using MQTTnet.Protocol;
 
+    using Serilog;
+
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
@@ -48,8 +50,9 @@ namespace SparkplugNet.Core.Device
         /// Initializes a new instance of the <see cref="SparkplugDeviceBase{T}"/> class.
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
+        /// <param name="logger">The logger.</param>
         /// <seealso cref="SparkplugBase{T}"/>
-        public SparkplugDeviceBase(List<T> knownMetrics) : base(knownMetrics)
+        public SparkplugDeviceBase(List<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
 
@@ -358,7 +361,7 @@ namespace SparkplugNet.Core.Device
             this.ClientOptions = builder.Build();
 
             // Debug output.
-            this.ClientOptions.ToOutputWindowJson("CONNECT Message");
+            this.Logger?.Debug("CONNECT Message: {@ClientOptions}", this.ClientOptions);
 
             await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
         }

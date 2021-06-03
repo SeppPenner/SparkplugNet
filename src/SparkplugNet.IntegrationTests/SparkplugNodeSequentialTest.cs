@@ -15,6 +15,9 @@ namespace SparkplugNet.IntegrationTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Serilog;
+
     using SparkplugNet.Core;
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Node;
@@ -50,6 +53,10 @@ namespace SparkplugNet.IntegrationTests
         [Ignore]
         public async Task T1TestNodeVersionBConnectBirth()
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+
             var userName = "username";
             var password = "password";
             var groupIdentifier = "group1";
@@ -71,7 +78,7 @@ namespace SparkplugNet.IntegrationTests
             metrics = GetTestMetrics();
 
             // Create and start new instance of a Sparkplug node.
-            node = new SparkplugNode(metrics);
+            node = new SparkplugNode(metrics, Log.Logger);
             await node.Start(nodeOptions);
             Assert.IsTrue(node.IsConnected);
         }

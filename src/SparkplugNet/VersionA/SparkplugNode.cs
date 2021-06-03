@@ -10,7 +10,9 @@
 namespace SparkplugNet.VersionA
 {
     using System.Collections.Generic;
-    
+
+    using Serilog;
+
     using SparkplugNet.Core.Node;
 
     /// <inheritdoc cref="SparkplugNodeBase{T}"/>
@@ -21,7 +23,8 @@ namespace SparkplugNet.VersionA
         /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
-        public SparkplugNode(List<Payload.KuraMetric> knownMetrics) : base(knownMetrics)
+        /// <param name="logger">The logger.</param>
+        public SparkplugNode(List<Payload.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
     }
