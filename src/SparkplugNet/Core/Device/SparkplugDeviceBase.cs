@@ -155,7 +155,7 @@ namespace SparkplugNet.Core.Device
             }
 
             // Remove all not known metrics.
-            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
 
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
@@ -195,7 +195,7 @@ namespace SparkplugNet.Core.Device
             }
 
             // Remove all not known metrics.
-            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
+            metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
 
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
