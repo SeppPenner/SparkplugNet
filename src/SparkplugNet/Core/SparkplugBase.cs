@@ -74,7 +74,7 @@ namespace SparkplugNet.Core
         /// <summary>
         /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For the device and node relevant only).
         /// </summary>
-        protected int LastSequenceNumber { get; private set; }
+        internal int LastSequenceNumber { get; set; }
 
         /// <summary>
         /// Gets the last session number. Starts at -1 as it is incremented before the connect already.
@@ -107,7 +107,7 @@ namespace SparkplugNet.Core
         /// <summary>
         /// Increments the last sequence number.
         /// </summary>
-        internal void IncrementLastSequenceNumber()
+        internal virtual void IncrementLastSequenceNumber()
         {
             if (this.LastSequenceNumber == 255)
             {

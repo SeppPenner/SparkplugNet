@@ -17,6 +17,6 @@ namespace SparkplugNet.Core
         /// <summary>
         /// The session number metric name.
         /// </summary>
-        public const string SessionNumberMetricName = "BDSEQ";
+        public const string SessionNumberMetricName = "bdSeq";
     }
 }

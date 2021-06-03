@@ -48,7 +48,7 @@ namespace SparkplugNet.Core.Application
         public SparkplugApplicationBase(List<T> knownMetrics) : base(knownMetrics)
         {
         }
-        
+
         /// <summary>
         /// Gets the node states.
         /// </summary>
@@ -95,7 +95,7 @@ namespace SparkplugNet.Core.Application
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Stop()
         {
-            await this.Client.DisconnectAsync();
+            await this.DisconnectInternal();
         }
 
         /// <summary>
@@ -104,12 +104,13 @@ namespace SparkplugNet.Core.Application
         /// <param name="metrics">The metrics.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="qosLevel">The qos level.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentException">The group or edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishNodeCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
+        public async Task PublishNodeCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -140,7 +141,7 @@ namespace SparkplugNet.Core.Application
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
 
-                    await this.PublishVersionANodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier);
+                    await this.PublishVersionANodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, qosLevel);
                     break;
                 }
                 case SparkplugNamespace.VersionB:
@@ -150,7 +151,7 @@ namespace SparkplugNet.Core.Application
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
 
-                    await this.PublishVersionBNodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier);
+                    await this.PublishVersionBNodeCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, qosLevel);
                     break;
                 }
                 default:
@@ -165,12 +166,13 @@ namespace SparkplugNet.Core.Application
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="qosLevel">The qos level.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentException">The group or edge node or device identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task PublishDeviceCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        public async Task PublishDeviceCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -206,7 +208,7 @@ namespace SparkplugNet.Core.Application
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
 
-                    await this.PublishVersionADeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+                    await this.PublishVersionADeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, qosLevel);
                     break;
                 }
                 case SparkplugNamespace.VersionB:
@@ -216,7 +218,7 @@ namespace SparkplugNet.Core.Application
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
 
-                    await this.PublishVersionBDeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+                    await this.PublishVersionBDeviceCommandMessage(convertedMetrics, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, qosLevel);
                     break;
                 }
                 default:
@@ -261,10 +263,11 @@ namespace SparkplugNet.Core.Application
         /// <param name="metrics">The metrics.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="qosLevel">The qos level.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionANodeCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+        private async Task PublishVersionANodeCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -290,7 +293,8 @@ namespace SparkplugNet.Core.Application
                 metrics,
                 this.LastSequenceNumber,
                 LastSessionNumber,
-                DateTimeOffset.Now);
+                DateTimeOffset.Now,
+                qosLevel);
             this.IncrementLastSequenceNumber();
 
             await this.Client.PublishAsync(dataMessage);
@@ -302,10 +306,11 @@ namespace SparkplugNet.Core.Application
         /// <param name="metrics">The metrics.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="qosLevel">The qos level.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBNodeCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+        private async Task PublishVersionBNodeCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -331,7 +336,8 @@ namespace SparkplugNet.Core.Application
                 metrics,
                 this.LastSequenceNumber,
                 LastSessionNumber,
-                DateTimeOffset.Now);
+                DateTimeOffset.Now,
+                qosLevel);
 
             // Debug output.
             dataMessage.ToOutputWindowJson("NDATA Message");
@@ -348,10 +354,11 @@ namespace SparkplugNet.Core.Application
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="qosLevel">The qos level.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionADeviceCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        private async Task PublishVersionADeviceCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -378,7 +385,8 @@ namespace SparkplugNet.Core.Application
                 metrics,
                 this.LastSequenceNumber,
                 LastSessionNumber,
-                DateTimeOffset.Now);
+                DateTimeOffset.Now,
+                qosLevel);
 
             // Debug output.
             dataMessage.ToOutputWindowJson("NDATA Message");
@@ -395,10 +403,11 @@ namespace SparkplugNet.Core.Application
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="qosLevel">The qos level.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBDeviceCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        private async Task PublishVersionBDeviceCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -425,7 +434,8 @@ namespace SparkplugNet.Core.Application
                 metrics,
                 this.LastSequenceNumber,
                 LastSessionNumber,
-                DateTimeOffset.Now);
+                DateTimeOffset.Now,
+                qosLevel);
             this.IncrementLastSequenceNumber();
 
             await this.Client.PublishAsync(dataMessage);
@@ -793,6 +803,36 @@ namespace SparkplugNet.Core.Application
         {
             var topic = this.TopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);
             await this.Client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
+        }
+
+        /// <summary>
+        /// Disconnects from the MQTT broker.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        private async Task DisconnectInternal()
+        {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+            // Only send state messages for the primary application.
+            if (this.options.IsPrimaryApplication)
+            {
+                // Get the online message and increase the sequence counter.
+                var offlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
+                    this.NameSpace,
+                    this.options.ScadaHostIdentifier,
+                    false);
+
+                this.IncrementLastSequenceNumber();
+
+                // Publish STATE offline.
+                this.options.CancellationToken ??= CancellationToken.None;
+                await this.Client.PublishAsync(offlineMessage, this.options.CancellationToken.Value);
+                await this.Client.DisconnectAsync();
+            }
         }
 
         /// <summary>

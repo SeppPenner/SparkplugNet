@@ -51,7 +51,7 @@ namespace SparkplugNet.Tests
             new VersionBPayload.Metric
             {
                 Name = "Test",
-                Datatype = (uint)VersionBPayload.Metric.ValueOneofCase.IntValue,
+                Datatype = (uint)SparkplugBDataType.Int32,
                 IntValue = 20
             }
         };
@@ -63,7 +63,7 @@ namespace SparkplugNet.Tests
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = 1,
-            Type = VersionAPayload.KuraMetric.ValueType.Int64
+            Type = VersionAPayload.KuraMetric.ValueType.Int64,
         };
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace SparkplugNet.Tests
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = 1,
-            Datatype = (uint)VersionBPayload.Metric.ValueOneofCase.LongValue
+            Datatype = (uint)SparkplugBDataType.Int64,
         };
 
         /// <summary>

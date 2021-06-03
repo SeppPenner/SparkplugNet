@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugEoNNodeSequentialTest.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugDeviceSequentialTest.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
@@ -15,6 +15,7 @@ namespace SparkplugNet.IntegrationTests
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using SparkplugNet.Core;
+    using SparkplugNet.Core.Device;
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Node;
     using SparkplugNet.VersionB;
@@ -24,76 +25,148 @@ namespace SparkplugNet.IntegrationTests
     /// These tests are designed to execute synchronously in alphabetic order. (e.g. T1_xxx, T2_yyy, T3_zzz)
     /// </summary>
     [TestClass]
-    public class SparkplugEoNNodeSequentialTest
+    public class SparkplugDeviceSequentialTest
     {
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
-        private static SparkplugNode sut;
-        private static List<Payload.Metric> metrics;
+        private static SparkplugNode nodeUnderTest;
+        private static SparkplugDevice deviceUnderTest;
+        private static List<Payload.Metric> nodeMetrics;
+        private static List<Payload.Metric> deviceMetrics;
 
         /// <summary>
         /// Tests Sparkplug CONNECT requirements (NDEATH, NBIRTH).
         /// </summary>
         [TestMethod]
-        public async Task T1_TestEoNNode_VersionB_ConnectBirth()
+        public async Task T01_Node_VersionB_ConnectBirth()
         {
             var userName = "admin";
             var password = "admin";
             var clientIdentifier = "client1";
-            var scadaHostIdentifier = "scada1";
             var groupIdentifier = "group1";
+            var scadaHostIdentifier = "scada1";
             var edgeNodeIdentifier = "node1";
             var nodeOptions = new SparkplugNodeOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort, clientIdentifier, userName,
                 password, false, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, TimeSpan.FromSeconds(30), null, null,
                 this.cts.Token);
-            metrics = GetTestMetrics();
+            nodeMetrics = GetNodeTestMetrics();
 
             // create and start new instance of SparkplugNode
-            sut = new SparkplugNode(metrics);
-            await sut.Start(nodeOptions);
-            Assert.IsTrue(sut.IsConnected);
+            nodeUnderTest = new SparkplugNode(nodeMetrics);
+            await nodeUnderTest.Start(nodeOptions);
+            Assert.IsTrue(nodeUnderTest.IsConnected);
         }
 
         /// <summary>
         /// Tests Sparkplug PublishMetrics (NDATA)
         /// </summary>
         [TestMethod]
-        public async Task T2_TestEoNNode_VersionB_PublishMetrics()
+        public async Task T02_Node_VersionB_PublishMetrics()
         {
-            // publish metrics with changes
-            for (var i = 0; i < 5; i++)
+            // publish nodeMetrics with changes
+            for (var i = 0; i < 3; i++)
             {
                 await Task.Delay(1000);
-                UpdateTestMetrics(metrics);
-                var result = await sut.PublishMetrics(metrics);
+                UpdateTestMetrics(nodeMetrics);
+                var result = await nodeUnderTest.PublishMetrics(nodeMetrics);
                 Assert.IsTrue(result.ReasonCode == 0);
             }
+        }
+
+        /// <summary>
+        /// Tests Sparkplug DBIRTH requirements (DBIRTH).
+        /// </summary>
+        [TestMethod]
+        public async Task T20_Device_VersionB_DBIRTH()
+        {
+            var userName = "admin";
+            var password = "admin";
+            var clientIdentifier = "client2";
+            var groupIdentifier = "group1";
+            var scadaHostIdentifier = "scada1";
+            var edgeNodeIdentifier = "node1";
+            var deviceIdentifier = "device1";
+            var deviceOptions = new SparkplugDeviceOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort, clientIdentifier, userName,
+                password, false, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, TimeSpan.FromSeconds(30), null, null,
+                this.cts.Token);
+            deviceMetrics = GetDeviceTestMetrics();
+
+            // create and start new instance of SparkplugNode
+            deviceUnderTest = new SparkplugDevice(deviceMetrics);
+            deviceUnderTest.ChildOf = nodeUnderTest;
+            await deviceUnderTest.Start(deviceOptions);
+            Assert.IsTrue(deviceUnderTest.IsConnected);
+        }
+
+        /// <summary>
+        /// Tests Sparkplug Device PublishMetrics (DDATA)
+        /// </summary>
+        [TestMethod]
+        public async Task T28_Device_VersionB_PublishMetrics()
+        {
+            // publish nodeMetrics with changes
+            for (var i = 0; i < 3; i++)
+            {
+                await Task.Delay(1000);
+                UpdateTestMetrics(deviceMetrics);
+                var result = await deviceUnderTest.PublishMetrics(deviceMetrics, 1);
+                Assert.IsTrue(result.ReasonCode == 0);
+            }
+        }
+
+        /// <summary>
+        /// Tests MQTT Device Disconnect
+        /// </summary>
+        [TestMethod]
+        public async Task T29_Device_VersionB_DDEATH()
+        {
+            // assert IsConnected = true
+            Assert.IsTrue(deviceUnderTest.IsConnected);
+
+            // stop instance of SparkplugNode
+            await deviceUnderTest.Stop();
+
+            // assert IsConnected = false
+            Assert.IsFalse(deviceUnderTest.IsConnected);
         }
 
         /// <summary>
         /// Tests MQTT Client Disconnect
         /// </summary>
         [TestMethod]
-        public async Task T99_TestEoNNode_VersionB_StopDisconnect()
+        public async Task T99_Node_VersionB_StopDisconnect()
         {
             // assert IsConnected = true
-            Assert.IsTrue(sut.IsConnected);
+            Assert.IsTrue(nodeUnderTest.IsConnected);
 
             // stop instance of SparkplugNode
-            await sut.Stop();
+            await nodeUnderTest.Stop();
 
             // assert IsConnected = false
-            Assert.IsFalse(sut.IsConnected);
+            Assert.IsFalse(nodeUnderTest.IsConnected);
         }
 
-        private static List<Payload.Metric> GetTestMetrics()
+        private static List<Payload.Metric> GetNodeTestMetrics()
         {
             var random = new Random();
             var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var metrics = new List<Payload.Metric>
             {
-                new() { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Some Name 2" },
-                new() { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
-                new() { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new() { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "EoN Node Name 1" },
+                new() { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int32, IntValue = (uint)random.Next(0, short.MaxValue) },
+                new() { Name = "General/Aggregates/Some Long Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(short.MaxValue, int.MaxValue) },
+            };
+            return metrics;
+        }
+
+        private static List<Payload.Metric> GetDeviceTestMetrics()
+        {
+            var random = new Random();
+            var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var metrics = new List<Payload.Metric>
+            {
+                new() { Name = "Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Device Node Name 1" },
+                new() { Name = "Sub1/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int32, IntValue = (uint)random.Next(0, short.MaxValue), IsHistorical = true, IsTransient = false },
+                new() { Name = "Sub2/Some Long Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(short.MaxValue, int.MaxValue), IsHistorical = true, IsTransient = false },
             };
             return metrics;
         }
@@ -103,7 +176,7 @@ namespace SparkplugNet.IntegrationTests
             var random = new Random();
             var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            ////// add extra metric after NBIRTH
+            // add extra metric after NBIRTH
             ////metrics.Add(new Payload.Metric()
             ////{
             ////    Name = "General/Extra Metric",
@@ -133,12 +206,12 @@ namespace SparkplugNet.IntegrationTests
                     case (int)SparkplugBDataType.UInt16:
                     case (int)SparkplugBDataType.Int32:
                     case (int)SparkplugBDataType.UInt32:
-                        metric.IntValue = (uint)random.Next(0, int.MaxValue);
+                        metric.IntValue = (uint)random.Next(0, short.MaxValue);
                         break;
                     case (int)SparkplugBDataType.Int64:
                     case (int)SparkplugBDataType.UInt64:
                     case (int)SparkplugBDataType.DateTime:
-                        metric.LongValue = (ulong)random.Next(0, int.MaxValue);
+                        metric.LongValue = (ulong)random.Next(short.MaxValue, int.MaxValue);
                         break;
                     case (int)SparkplugBDataType.Float:
                         metric.FloatValue = (float)random.Next(0, int.MaxValue);

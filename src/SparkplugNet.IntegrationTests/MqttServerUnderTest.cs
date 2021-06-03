@@ -17,21 +17,11 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// The server address
         /// </summary>
-        public static string ServerAddress { get; set; } = "server1";
+        public static string ServerAddress { get; set; } = "mqttserver";
 
         /// <summary>
         /// The server port
         /// </summary>
         public static int ServerPort { get; set; } = 1883;
-
-        /// <summary>
-        /// The client identifier
-        /// </summary>
-        public static string ClientId { get; set; } = "client1";
-
-        /// <summary>
-        /// Gets or sets the scada host identifier.
-        /// </summary>
-        public static string ScadaHostIdentifier { get; set; } = "scadaHost1";
     }
 }

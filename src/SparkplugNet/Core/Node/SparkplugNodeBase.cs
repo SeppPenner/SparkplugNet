@@ -95,7 +95,7 @@ namespace SparkplugNet.Core.Node
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Stop()
         {
-            await this.Client.DisconnectAsync();
+            await this.DisconnectInternal();
         }
 
         /// <summary>
@@ -326,10 +326,10 @@ namespace SparkplugNet.Core.Node
                                     {
                                         if (!(payloadVersionB is T convertedPayloadVersionB))
                                         {
-                                            throw new InvalidCastException("The metric cast didn't work properly.");
+                                            //throw new InvalidCastException("The metric cast didn't work properly.");
                                         }
 
-                                        this.NodeCommandReceived?.Invoke(convertedPayloadVersionB);
+                                        //this.NodeCommandReceived?.Invoke(convertedPayloadVersionB);
                                     }
                                 }
 
@@ -363,7 +363,8 @@ namespace SparkplugNet.Core.Node
                 this.NameSpace,
                 this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier,
-                this.LastSessionNumber);
+                this.LastSessionNumber,
+                1);
 
             // Build up the MQTT client and connect.
             this.options.CancellationToken ??= CancellationToken.None;
@@ -429,15 +430,14 @@ namespace SparkplugNet.Core.Node
                 this.LastSessionNumber,
                 DateTimeOffset.Now);
 
-            // Publish data.
-            this.options.CancellationToken ??= CancellationToken.None;
-
             // Debug output.
             onlineMessage.ToOutputWindowJson("NBIRTH Message");
 
             // Increment
             this.IncrementLastSequenceNumber();
 
+            // Publish data.
+            this.options.CancellationToken ??= CancellationToken.None;
             await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
         }
 
@@ -461,6 +461,32 @@ namespace SparkplugNet.Core.Node
 
             var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(this.options.ScadaHostIdentifier);
             await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+        }
+
+        /// <summary>
+        /// Disconnects the Sparkplug device from the MQTT broker.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+        private async Task DisconnectInternal()
+        {
+            if (this.options is null)
+            {
+                throw new ArgumentNullException(nameof(this.options));
+            }
+
+
+            // Get the will message.
+            var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
+                this.NameSpace,
+                this.options.GroupIdentifier,
+                this.options.EdgeNodeIdentifier,
+                this.LastSessionNumber,
+                1);
+
+            this.options.CancellationToken ??= CancellationToken.None;
+            await this.Client.PublishAsync(willMessage, this.options.CancellationToken.Value);
+            await this.Client.DisconnectAsync();
         }
     }
 }
