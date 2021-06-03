@@ -2,8 +2,7 @@ Check code style again
 Doku and Examples
 
 NBirth: Template-Support!
-DDeath: No idea how the seq number should be used here!
+DDeath: No idea how the seq number should be used here! --> Ok, we need to publish all of the messages.
 
 Todo: Test with https://www.hivemq.com/extension/sparkplug-influxdb-extension/
-Test Publish with == null checks
-Validate all changes made in PR #2.
+Validate all changes made in PR #2 --> Files SparkplugADataType.cs, SparkplugBDataType.cs are unclear
