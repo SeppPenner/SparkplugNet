@@ -44,11 +44,12 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// The cancellation token source.
         /// </summary>
-        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource cancellationTokenSource = new ();
 
         /// <summary>
         /// Tests the Sparkplug CONNECT requirements (NDEATH, NBIRTH).
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         [TestMethod]
         [Ignore]
         public async Task T1TestNodeVersionBConnectBirth()
@@ -57,20 +58,20 @@ namespace SparkplugNet.IntegrationTests
                 .WriteTo.Console()
                 .CreateLogger();
 
-            var userName = "username";
-            var password = "password";
-            var groupIdentifier = "group1";
-            var edgeNodeIdentifier = "node1";
+            const string? UserName = "username";
+            const string Password = "password";
+            const string? GroupIdentifier = "group1";
+            const string? EdgeNodeIdentifier = "node1";
             var nodeOptions = new SparkplugNodeOptions(
                 MqttServerUnderTest.ServerAddress,
                 MqttServerUnderTest.ServerPort,
                 MqttServerUnderTest.ClientId,
-                userName,
-                password,
+                UserName,
+                Password,
                 false,
                 MqttServerUnderTest.ScadaHostIdentifier,
-                groupIdentifier,
-                edgeNodeIdentifier,
+                GroupIdentifier,
+                EdgeNodeIdentifier,
                 TimeSpan.FromSeconds(30),
                 null,
                 null,
@@ -86,6 +87,7 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// Tests the publishing of Sparkplug metrics (NDATA).
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         [TestMethod] 
         [Ignore]
         public async Task T2TestNodeVersionBPublishMetrics()
@@ -103,6 +105,7 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// Tests MQTT client disconnect.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         [TestMethod]
         [Ignore]
         public async Task T3TestNodeVersionBStopDisconnect()
@@ -128,9 +131,9 @@ namespace SparkplugNet.IntegrationTests
 
             var testMetrics = new List<Payload.Metric>
             {
-                new Payload.Metric { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Some Name" },
-                new Payload.Metric { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
-                new Payload.Metric { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new () { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Some Name" },
+                new () { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new () { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) }
             };
 
             return testMetrics;
@@ -140,7 +143,7 @@ namespace SparkplugNet.IntegrationTests
         /// Updates the test metrics.
         /// </summary>
         /// <param name="newMetrics">The new metrics.</param>
-        private static void UpdateTestMetrics(List<Payload.Metric> newMetrics)
+        private static void UpdateTestMetrics(ICollection<Payload.Metric> newMetrics)
         {
             var random = new Random();
             var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

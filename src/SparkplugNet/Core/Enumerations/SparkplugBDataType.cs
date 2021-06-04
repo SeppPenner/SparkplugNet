@@ -95,7 +95,7 @@ namespace SparkplugNet.Core.Enumerations
         Uuid = 15,
 
         /// <summary>
-        /// Dataset
+        /// Data set
         /// </summary>
         Dataset = 16,
 
@@ -122,6 +122,6 @@ namespace SparkplugNet.Core.Enumerations
         /// <summary>
         /// PropertySetLIst
         /// </summary>
-        PropertSetList = 21,
+        PropertySetList = 21
     }
 }

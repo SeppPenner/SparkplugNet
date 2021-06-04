@@ -35,7 +35,7 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The metrics for namespace A.
         /// </summary>
-        private readonly List<VersionAPayload.KuraMetric> metricsA = new List<VersionAPayload.KuraMetric>
+        private readonly List<VersionAPayload.KuraMetric> metricsA = new ()
         {
             new VersionAPayload.KuraMetric
             {
@@ -48,7 +48,7 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The metrics for namespace B.
         /// </summary>
-        private readonly List<VersionBPayload.Metric> metricsB = new List<VersionBPayload.Metric>
+        private readonly List<VersionBPayload.Metric> metricsB = new ()
         {
             new VersionBPayload.Metric
             {
@@ -61,7 +61,7 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The SEQ metric for namespace A.
         /// </summary>
-        private readonly VersionAPayload.KuraMetric seqMetricA = new VersionAPayload.KuraMetric
+        private readonly VersionAPayload.KuraMetric seqMetricA = new ()
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = 1,
@@ -71,7 +71,7 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The SEQ metric for namespace B.
         /// </summary>
-        private readonly VersionBPayload.Metric seqMetricB = new VersionBPayload.Metric
+        private readonly VersionBPayload.Metric seqMetricB = new ()
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = 1,

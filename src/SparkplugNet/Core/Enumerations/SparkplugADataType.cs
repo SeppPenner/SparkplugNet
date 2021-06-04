@@ -47,6 +47,6 @@ namespace SparkplugNet.Core.Enumerations
         /// <summary>
         /// UInt16
         /// </summary>
-        Bytes = 6,
+        Bytes = 6
     }
 }

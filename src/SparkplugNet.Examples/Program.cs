@@ -31,18 +31,18 @@ namespace SparkplugNet.Examples
         /// <summary>
         /// The cancellation token source.
         /// </summary>
-        private static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
+        private static readonly CancellationTokenSource CancellationTokenSource = new ();
 
         /// <summary>
         /// The version A metrics.
         /// </summary>
-        private static readonly List<VersionAPayload.KuraMetric> VersionAMetrics = new List<VersionAPayload.KuraMetric>
+        private static readonly List<VersionAPayload.KuraMetric> VersionAMetrics = new ()
         {
-            new VersionAPayload.KuraMetric
+            new ()
             {
                 Name = "Test", Type = VersionAPayload.KuraMetric.ValueType.Double, DoubleValue = 1.20
             },
-            new VersionAPayload.KuraMetric
+            new ()
             {
                 Name = "Test2", Type = VersionAPayload.KuraMetric.ValueType.Bool, BoolValue = true
             }
@@ -51,7 +51,7 @@ namespace SparkplugNet.Examples
         /// <summary>
         /// The version A metrics.
         /// </summary>
-        private static readonly List<VersionBPayload.Metric> VersionBMetrics = new List<VersionBPayload.Metric>
+        private static readonly List<VersionBPayload.Metric> VersionBMetrics = new ()
         {
             new VersionBPayload.Metric
             {
