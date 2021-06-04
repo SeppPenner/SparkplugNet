@@ -329,8 +329,9 @@ namespace SparkplugNet.Core.Device
                 this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier,
                 this.options.DeviceIdentifier,
+                this.ChildOf.LastSequenceNumber,
                 this.LastSessionNumber,
-                1);
+                DateTimeOffset.Now, 1);
 
             // Build up the MQTT client and connect.
             this.options.CancellationToken ??= CancellationToken.None;
@@ -428,8 +429,9 @@ namespace SparkplugNet.Core.Device
                 this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier,
                 this.options.DeviceIdentifier,
+                this.ChildOf.LastSequenceNumber,
                 this.LastSessionNumber,
-                1);
+                DateTimeOffset.Now, 1);
 
             this.options.CancellationToken ??= CancellationToken.None;
             await this.Client.PublishAsync(willMessage, this.options.CancellationToken.Value);

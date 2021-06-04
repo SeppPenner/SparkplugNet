@@ -16,7 +16,6 @@ namespace SparkplugNet.Core.Messages
     using MQTTnet.Protocol;
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
-
     using VersionAPayload = VersionA.Payload;
     using VersionBPayload = VersionB.Payload;
 
@@ -80,7 +79,7 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel = 1)
+            int qosLevel)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -185,7 +184,9 @@ namespace SparkplugNet.Core.Messages
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
+        /// <param name="dateTime"></param>
         /// <param name="qosLevel">The qos level.</param>
         /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
         /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
@@ -194,7 +195,9 @@ namespace SparkplugNet.Core.Messages
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
+            int sequenceNumber,
             long sessionNumber,
+            DateTimeOffset dateTime,
             int qosLevel)
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -213,14 +216,14 @@ namespace SparkplugNet.Core.Messages
                     {
                         var metrics = new List<VersionAPayload.KuraMetric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, metrics, qosLevel);
+                        return this.GetSparkPlugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, metrics, dateTime, qosLevel);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var metrics = new List<VersionBPayload.Metric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, metrics, qosLevel);
+                        return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, sequenceNumber, dateTime, metrics, qosLevel);
                     }
 
                 default:
@@ -235,7 +238,9 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
+        /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
         /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
@@ -245,7 +250,9 @@ namespace SparkplugNet.Core.Messages
             string groupIdentifier,
             string edgeNodeIdentifier,
             string deviceIdentifier,
+            int sequenceNumber,
             long sessionNumber,
+            DateTimeOffset dateTime,
             int qosLevel)
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -269,14 +276,14 @@ namespace SparkplugNet.Core.Messages
                     {
                         var metrics = new List<VersionAPayload.KuraMetric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics, qosLevel);
+                        return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, dateTime, metrics, qosLevel);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var metrics = new List<VersionBPayload.Metric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics, qosLevel);
+                        return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, sequenceNumber, dateTime, metrics, qosLevel);
                     }
 
                 default:
@@ -309,7 +316,7 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel = 1)
+            int qosLevel)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -750,6 +757,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="metrics">The metrics.</param>
+        /// <param name="dateTime"></param>
         /// <param name="qosLevel">The qos level.</param>
         /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
         private MqttApplicationMessage GetSparkPlugNodeDeathA(
@@ -757,11 +765,13 @@ namespace SparkplugNet.Core.Messages
             string groupIdentifier,
             string edgeNodeIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
+            DateTimeOffset dateTime,
             int qosLevel)
         {
             var payload = new VersionAPayload
             {
-                Metrics = metrics
+                Metrics = metrics,
+                Timestamp = dateTime.ToUnixTimeMilliseconds(),
             };
 
             // Debug output.
@@ -789,6 +799,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="nameSpace">The namespace.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
+        /// <param name="dateTime"></param>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
         /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
@@ -796,12 +808,16 @@ namespace SparkplugNet.Core.Messages
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
+            int sequenceNumber,
+            DateTimeOffset dateTime,
             List<VersionBPayload.Metric> metrics,
             int qosLevel)
         {
             var payload = new VersionBPayload
             {
-                Metrics = metrics
+                Metrics = metrics,
+                Seq = (ulong)sequenceNumber,
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
             // Debug output.
@@ -830,6 +846,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="dateTime"></param>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
@@ -838,12 +855,14 @@ namespace SparkplugNet.Core.Messages
             string groupIdentifier,
             string edgeNodeIdentifier,
             string deviceIdentifier,
+            DateTimeOffset dateTime,
             List<VersionAPayload.KuraMetric> metrics,
             int qosLevel)
         {
             var payload = new VersionAPayload
             {
-                Metrics = metrics
+                Metrics = metrics,
+                Timestamp = dateTime.ToUnixTimeMilliseconds(),
             };
 
             // Debug output.
@@ -873,6 +892,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="metrics">The metrics.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
+        /// <param name="dateTime"></param>
         /// <param name="qosLevel">The qos level.</param>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
         private MqttApplicationMessage GetSparkPlugDeviceDeathB(
@@ -880,12 +901,16 @@ namespace SparkplugNet.Core.Messages
             string groupIdentifier,
             string edgeNodeIdentifier,
             string deviceIdentifier,
+            int sequenceNumber,
+            DateTimeOffset dateTime,
             List<VersionBPayload.Metric> metrics,
             int qosLevel)
         {
             var payload = new VersionBPayload
             {
-                Metrics = metrics
+                Metrics = metrics,
+                Seq = (ulong)sequenceNumber,
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
             // Debug output.

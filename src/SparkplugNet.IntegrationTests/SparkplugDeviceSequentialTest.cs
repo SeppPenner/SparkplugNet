@@ -30,7 +30,9 @@ namespace SparkplugNet.IntegrationTests
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private static SparkplugNode nodeUnderTest;
         private static SparkplugDevice deviceUnderTest;
+        private static List<Payload.Metric> nodeKnownMetrics;
         private static List<Payload.Metric> nodeMetrics;
+        private static List<Payload.Metric> deviceKnownMetrics;
         private static List<Payload.Metric> deviceMetrics;
 
         /// <summary>
@@ -48,11 +50,13 @@ namespace SparkplugNet.IntegrationTests
             var nodeOptions = new SparkplugNodeOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort, clientIdentifier, userName,
                 password, false, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, TimeSpan.FromSeconds(30), null, null,
                 this.cts.Token);
-            nodeMetrics = GetNodeTestMetrics();
 
-            // create and start new instance of SparkplugNode
-            nodeUnderTest = new SparkplugNode(nodeMetrics);
+            nodeKnownMetrics = GetNodeTestMetrics();
+            nodeMetrics = GetNodeTestMetrics();
+            nodeUnderTest = new SparkplugNode(nodeKnownMetrics);
+
             await nodeUnderTest.Start(nodeOptions);
+
             Assert.IsTrue(nodeUnderTest.IsConnected);
         }
 
@@ -88,11 +92,12 @@ namespace SparkplugNet.IntegrationTests
             var deviceOptions = new SparkplugDeviceOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort, clientIdentifier, userName,
                 password, false, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, TimeSpan.FromSeconds(30), null, null,
                 this.cts.Token);
-            deviceMetrics = GetDeviceTestMetrics();
 
+            // generate list of known metrics
             // create and start new instance of SparkplugNode
-            deviceUnderTest = new SparkplugDevice(deviceMetrics);
-            deviceUnderTest.ChildOf = nodeUnderTest;
+            deviceKnownMetrics = GetDeviceTestMetrics();
+            deviceMetrics = GetDeviceTestMetrics();
+            deviceUnderTest = new SparkplugDevice(deviceKnownMetrics) { ChildOf = nodeUnderTest };
             await deviceUnderTest.Start(deviceOptions);
             Assert.IsTrue(deviceUnderTest.IsConnected);
         }
@@ -139,6 +144,7 @@ namespace SparkplugNet.IntegrationTests
             Assert.IsTrue(nodeUnderTest.IsConnected);
 
             // stop instance of SparkplugNode
+            await Task.Delay(1000);
             await nodeUnderTest.Stop();
 
             // assert IsConnected = false
@@ -151,9 +157,9 @@ namespace SparkplugNet.IntegrationTests
             var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var metrics = new List<Payload.Metric>
             {
-                new() { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "EoN Node Name 1" },
-                new() { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int32, IntValue = (uint)random.Next(0, short.MaxValue) },
-                new() { Name = "General/Aggregates/Some Long Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(short.MaxValue, int.MaxValue) },
+                new() { Name = "Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "EoN Node Name 1" },
+                new() { Name = "Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int32, IntValue = (uint)random.Next(0, short.MaxValue) },
+                new() { Name = "Aggregates/Some Long Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(short.MaxValue, int.MaxValue) },
             };
             return metrics;
         }
@@ -165,8 +171,8 @@ namespace SparkplugNet.IntegrationTests
             var metrics = new List<Payload.Metric>
             {
                 new() { Name = "Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Device Node Name 1" },
+                new() { Name = "Some Long Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(short.MaxValue, int.MaxValue), IsHistorical = true, IsTransient = false },
                 new() { Name = "Sub1/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int32, IntValue = (uint)random.Next(0, short.MaxValue), IsHistorical = true, IsTransient = false },
-                new() { Name = "Sub2/Some Long Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(short.MaxValue, int.MaxValue), IsHistorical = true, IsTransient = false },
             };
             return metrics;
         }
@@ -177,13 +183,13 @@ namespace SparkplugNet.IntegrationTests
             var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             // add extra metric after NBIRTH
-            ////metrics.Add(new Payload.Metric()
-            ////{
-            ////    Name = "General/Extra Metric",
-            ////    Timestamp = unixUtcNow,
-            ////    Datatype = (uint)Payload.Metric.ValueOneofCase.LongValue,
-            ////    LongValue = (ulong)random.Next(0, int.MaxValue)
-            ////});
+            metrics.Add(new Payload.Metric()
+            {
+                Name = "Extra Metric",
+                Timestamp = unixUtcNow,
+                Datatype = (uint)SparkplugBDataType.Int64,
+                LongValue = (ulong)random.Next(0, int.MaxValue)
+            });
 
             foreach (var metric in metrics)
             {

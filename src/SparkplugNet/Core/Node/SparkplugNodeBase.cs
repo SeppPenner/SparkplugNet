@@ -177,7 +177,8 @@ namespace SparkplugNet.Core.Node
                 metrics,
                 this.LastSequenceNumber,
                 this.LastSessionNumber,
-                DateTimeOffset.Now);
+                DateTimeOffset.Now,
+                1);
 
             // Debug output.
             dataMessage.ToOutputWindowJson("NDATA Message");
@@ -221,7 +222,8 @@ namespace SparkplugNet.Core.Node
                 metrics,
                 this.LastSequenceNumber,
                 this.LastSessionNumber,
-                DateTimeOffset.Now);
+                DateTimeOffset.Now,
+                1);
 
             // Debug output.
             dataMessage.ToOutputWindowJson("NDATA Message");
@@ -363,7 +365,9 @@ namespace SparkplugNet.Core.Node
                 this.NameSpace,
                 this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier,
+                this.LastSequenceNumber,
                 this.LastSessionNumber,
+                DateTimeOffset.Now,
                 1);
 
             // Build up the MQTT client and connect.
@@ -428,7 +432,8 @@ namespace SparkplugNet.Core.Node
                 this.KnownMetrics,
                 this.LastSequenceNumber,
                 this.LastSessionNumber,
-                DateTimeOffset.Now);
+                DateTimeOffset.Now,
+                1);
 
             // Debug output.
             onlineMessage.ToOutputWindowJson("NBIRTH Message");
@@ -481,7 +486,9 @@ namespace SparkplugNet.Core.Node
                 this.NameSpace,
                 this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier,
+                this.LastSequenceNumber,
                 this.LastSessionNumber,
+                DateTimeOffset.Now,
                 1);
 
             this.options.CancellationToken ??= CancellationToken.None;
