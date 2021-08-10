@@ -18,6 +18,7 @@ namespace SparkplugNet.Core.Application
 
     using MQTTnet.Client;
     using MQTTnet.Client.Options;
+    using MQTTnet.Client.Publishing;
     using MQTTnet.Formatter;
     using MQTTnet.Protocol;
 
@@ -267,7 +268,7 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionANodeCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, int qosLevel)
+        private async Task<MqttClientPublishResult> PublishVersionANodeCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -285,6 +286,8 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
+            this.IncrementLastSequenceNumber();
+
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeCommandMessage(
                 this.NameSpace,
@@ -295,9 +298,17 @@ namespace SparkplugNet.Core.Application
                 LastSessionNumber,
                 DateTimeOffset.Now,
                 qosLevel);
-            this.IncrementLastSequenceNumber();
 
-            await this.Client.PublishAsync(dataMessage);
+            var result =  await this.Client.PublishAsync(dataMessage);
+            switch (result.ReasonCode)
+            {
+                case MqttClientPublishReasonCode.Success:
+                case MqttClientPublishReasonCode.NoMatchingSubscribers:
+                    ////this.IncrementLastSequenceNumber();
+                    break;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -310,7 +321,7 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBNodeCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, int qosLevel)
+        private async Task<MqttClientPublishResult> PublishVersionBNodeCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -328,6 +339,8 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
+            this.IncrementLastSequenceNumber();
+
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeCommandMessage(
                 this.NameSpace,
@@ -340,11 +353,18 @@ namespace SparkplugNet.Core.Application
                 qosLevel);
 
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            dataMessage.ToJson();
 
-            this.IncrementLastSequenceNumber();
+            var result =  await this.Client.PublishAsync(dataMessage);
+            switch (result.ReasonCode)
+            {
+                case MqttClientPublishReasonCode.Success:
+                case MqttClientPublishReasonCode.NoMatchingSubscribers:
+                    ////this.IncrementLastSequenceNumber();
+                    break;
+            }
 
-            await this.Client.PublishAsync(dataMessage);
+            return result;
         }
 
         /// <summary>
@@ -358,7 +378,7 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionADeviceCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, int qosLevel)
+        private async Task<MqttClientPublishResult> PublishVersionADeviceCommandMessage(List<VersionAPayload.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -376,6 +396,8 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
+            this.IncrementLastSequenceNumber();
+
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(
                 this.NameSpace,
@@ -389,11 +411,18 @@ namespace SparkplugNet.Core.Application
                 qosLevel);
 
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            dataMessage.ToJson();
 
-            this.IncrementLastSequenceNumber();
+            var result =  await this.Client.PublishAsync(dataMessage);
+            switch (result.ReasonCode)
+            {
+                case MqttClientPublishReasonCode.Success:
+                case MqttClientPublishReasonCode.NoMatchingSubscribers:
+                    ////this.IncrementLastSequenceNumber();
+                    break;
+            }
 
-            await this.Client.PublishAsync(dataMessage);
+            return result;
         }
 
         /// <summary>
@@ -407,7 +436,7 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBDeviceCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, int qosLevel)
+        private async Task<MqttClientPublishResult> PublishVersionBDeviceCommandMessage(List<VersionBPayload.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, int qosLevel)
         {
             if (this.options is null)
             {
@@ -425,6 +454,8 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
+            this.IncrementLastSequenceNumber();
+
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(
                 this.NameSpace,
@@ -436,9 +467,17 @@ namespace SparkplugNet.Core.Application
                 LastSessionNumber,
                 DateTimeOffset.Now,
                 qosLevel);
-            this.IncrementLastSequenceNumber();
 
-            await this.Client.PublishAsync(dataMessage);
+            var result =  await this.Client.PublishAsync(dataMessage);
+            switch (result.ReasonCode)
+            {
+                case MqttClientPublishReasonCode.Success:
+                case MqttClientPublishReasonCode.NoMatchingSubscribers:
+                    ////this.IncrementLastSequenceNumber();
+                    break;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -783,11 +822,12 @@ namespace SparkplugNet.Core.Application
             if (this.options.IsPrimaryApplication)
             {
                 // Get the online message and increase the sequence counter.
+                this.IncrementLastSequenceNumber();
+
                 var onlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
                     this.NameSpace,
                     this.options.ScadaHostIdentifier,
                     true);
-                this.IncrementLastSequenceNumber();
 
                 // Publish data.
                 this.options.CancellationToken ??= CancellationToken.None;
@@ -820,17 +860,27 @@ namespace SparkplugNet.Core.Application
             // Only send state messages for the primary application.
             if (this.options.IsPrimaryApplication)
             {
+                this.IncrementLastSequenceNumber();
+
                 // Get the online message and increase the sequence counter.
                 var offlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
                     this.NameSpace,
                     this.options.ScadaHostIdentifier,
                     false);
 
-                this.IncrementLastSequenceNumber();
-
                 // Publish STATE offline.
                 this.options.CancellationToken ??= CancellationToken.None;
-                await this.Client.PublishAsync(offlineMessage, this.options.CancellationToken.Value);
+                var result = await this.Client.PublishAsync(offlineMessage, this.options.CancellationToken.Value);
+
+                switch (result.ReasonCode)
+                {
+                    case MqttClientPublishReasonCode.Success:
+                    case MqttClientPublishReasonCode.NoMatchingSubscribers:
+                        ////this.IncrementLastSequenceNumber();
+                        break;
+                }
+
+                // Disconnect client.
                 await this.Client.DisconnectAsync();
             }
         }

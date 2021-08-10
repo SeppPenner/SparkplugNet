@@ -17,11 +17,11 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// The server address
         /// </summary>
-        public static string ServerAddress { get; set; } = "mqttserver";
+        public const string ServerAddress = "mqttserverhost";
 
         /// <summary>
         /// The server port
         /// </summary>
-        public static int ServerPort { get; set; } = 1883;
+        public const int ServerPort = 1883;
     }
 }

@@ -335,7 +335,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel);
                     }
 
@@ -343,7 +343,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
                     }
 
@@ -401,7 +401,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugDeviceDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel);
                     }
 
@@ -409,7 +409,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
                     }
 
@@ -460,7 +460,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel);
                     }
 
@@ -468,7 +468,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
                     }
 
@@ -526,7 +526,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber); // removed only required by spec for 16.1 NBIRTH and 16.8 NDEATH
                         return this.GetSparkPlugDeviceCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel);
                     }
 
@@ -534,7 +534,7 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                        ////AddSessionNumberToMetrics(newMetrics, sessionNumber); // removed only required by spec for 16.1 NBIRTH and 16.8 NDEATH
                         return this.GetSparkPlugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
                     }
 
@@ -594,7 +594,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NBIRTH: VersionAPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -639,7 +639,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NBIRTH: VersionBPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -684,7 +684,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DBIRTH: VersionAPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -732,7 +732,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DBIRTH: VersionBPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -775,7 +775,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDEATH: VersionAPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -821,7 +821,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDEATH: VersionBPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -866,7 +866,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDEATH: VersionAPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -914,7 +914,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDEATH: VersionBPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -957,7 +957,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDATA: VersionAPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -999,11 +999,12 @@ namespace SparkplugNet.Core.Messages
             {
                 Metrics = metrics,
                 Seq = (ulong)sequenceNumber,
-                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds(),
+                // REMOVE ME IF STILL HERE //Timestamp = metrics.FirstOrDefault()?.Timestamp ?? (ulong)dateTime.ToUnixTimeMilliseconds(),
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("NDATA: VersionBPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -1048,7 +1049,7 @@ namespace SparkplugNet.Core.Messages
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDATA: VersionAPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -1092,11 +1093,12 @@ namespace SparkplugNet.Core.Messages
             {
                 Metrics = metrics,
                 Seq = (ulong)sequenceNumber,
-                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds(),
+                // REMOVE ME IF STILL HERE //Timestamp = metrics.FirstOrDefault()?.Timestamp ?? (ulong)dateTime.ToUnixTimeMilliseconds(),
             };
 
             // Debug output.
-            payload.ToOutputWindowJson("DDATA: VersionBPayload");
+            payload.ToJson();
 
             var serialized = PayloadHelper.Serialize(payload);
 
@@ -1177,7 +1179,8 @@ namespace SparkplugNet.Core.Messages
             {
                 Metrics = metrics,
                 Seq = (ulong)sequenceNumber,
-                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds(),
+                // REMOVE IF STILL HERE //Timestamp = metrics.FirstOrDefault()?.Timestamp ?? (ulong)dateTime.ToUnixTimeMilliseconds(),
             };
 
             var serialized = PayloadHelper.Serialize(payload);
@@ -1264,7 +1267,8 @@ namespace SparkplugNet.Core.Messages
             {
                 Metrics = metrics,
                 Seq = (ulong)sequenceNumber,
-                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds(),
+                //// DELETE IF STILL HERE //// Timestamp = metrics.FirstOrDefault()?.Timestamp ?? (ulong)dateTime.ToUnixTimeMilliseconds(),
             };
 
             var serialized = PayloadHelper.Serialize(payload);

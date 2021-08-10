@@ -12,6 +12,7 @@ namespace SparkplugNet.Core.Node
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Authentication;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -22,7 +23,6 @@ namespace SparkplugNet.Core.Node
     using MQTTnet.Protocol;
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
-
     using VersionAPayload = VersionA.Payload;
     using VersionBPayload = VersionB.Payload;
 
@@ -34,14 +34,29 @@ namespace SparkplugNet.Core.Node
     public class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
     {
         /// <summary>
+        /// The log message action
+        /// </summary>
+        public Action<string>? LogAction = null;
+
+        /// <summary>
+        /// The exception thrown action
+        /// </summary>
+        public Action<Exception>? OnException = null;
+
+        /// <summary>
         /// The callback for the device command received event.
         /// </summary>
-        public readonly Action<T>? DeviceCommandReceived = null;
+        public Action<string, T>? DeviceCommandReceived = null;
 
         /// <summary>
         /// The callback for the node command received event.
         /// </summary>
-        public readonly Action<T>? NodeCommandReceived = null;
+        public Action<string, T>? NodeCommandReceived = null;
+
+        /// <summary>
+        /// The callback for the status message received event.
+        /// </summary>
+        public Action<string>? StatusMessageReceived = null;
 
         /// <summary>
         /// The options.
@@ -59,17 +74,12 @@ namespace SparkplugNet.Core.Node
         }
 
         /// <summary>
-        /// The callback for the status message received event.
-        /// </summary>
-        public readonly Action<string>? StatusMessageReceived = null;
-
-        /// <summary>
         /// Starts the Sparkplug node.
         /// </summary>
         /// <param name="nodeOptions">The node options.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task Start(SparkplugNodeOptions nodeOptions)
+        public async Task<bool> Start(SparkplugNodeOptions nodeOptions)
         {
             // Storing the options.
             this.options = nodeOptions;
@@ -80,13 +90,29 @@ namespace SparkplugNet.Core.Node
             }
 
             // Add handlers.
+            this.ResetLastSequenceNumber();
+            this.AddConnectedHandler();
             this.AddDisconnectedHandler();
             this.AddMessageReceivedHandler();
 
+            return await this.InitConnection();
+        }
+
+        private async Task<bool> InitConnection()
+        {
             // Connect, subscribe to incoming messages and send a state message.
-            await this.ConnectInternal();
-            await this.SubscribeInternal();
-            await this.PublishInternal();
+            try
+            {
+                await this.ConnectInternal();
+                await this.SubscribeInternal();
+                await this.PublishInternal();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -95,7 +121,19 @@ namespace SparkplugNet.Core.Node
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
         public async Task Stop()
         {
+            if (this.Client.IsConnected)
+            {
+                await this.DisconnectInternal();
+            }
+        }
+
+        /// <summary>
+        /// Closes the Sparkplug node.
+        /// </summary>
+        public async Task Close()
+        {
             await this.DisconnectInternal();
+            this.Client.Dispose();
         }
 
         /// <summary>
@@ -106,7 +144,7 @@ namespace SparkplugNet.Core.Node
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
-        public async Task<MqttClientPublishResult> PublishMetrics(List<T> metrics)
+        public async Task PublishMetrics(List<T> metrics)
         {
             if (this.options is null)
             {
@@ -118,25 +156,27 @@ namespace SparkplugNet.Core.Node
                 throw new Exception("The MQTT client is not connected, please try again.");
             }
 
-            switch (this.NameSpace)
+            switch (metrics)
             {
-                case SparkplugNamespace.VersionA:
+                case List<VersionAPayload.KuraMetric>:
                 {
                     if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
 
-                    return await this.PublishVersionAMessage(convertedMetrics);
+                    await this.PublishVersionAMessage(convertedMetrics);
+                    break;
                 }
-                case SparkplugNamespace.VersionB:
+                case List<VersionBPayload.Metric>:
                 {
                     if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
 
-                    return await this.PublishVersionBMessage(convertedMetrics);
+                    await this.PublishVersionBMessage(convertedMetrics);
+                    break;
                 }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
@@ -163,6 +203,8 @@ namespace SparkplugNet.Core.Node
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
 
+            this.IncrementLastSequenceNumber();
+
             // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
 
@@ -180,12 +222,19 @@ namespace SparkplugNet.Core.Node
                 DateTimeOffset.Now,
                 1);
 
+            // Return early if client not connected or payload is empty
+            //if (!this.Client.IsConnected || PayloadHelper.Deserialize<VersionAPayload>(dataMessage.Payload)?.Metrics?.Count == 0)
+            //{
+            //    return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError, ReasonString = "No modified metrics to publish"};
+            //}
+
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            dataMessage.ToJson();
 
-            this.IncrementLastSequenceNumber();
-
-            return await this.Client.PublishAsync(dataMessage);
+            // Publish data.
+            this.options.CancellationToken ??= CancellationToken.None;
+            return await this.Client.PublishAsync(dataMessage, this.options.CancellationToken.Value);
+            ////this.IncrementLastSequenceNumber();
         }
 
         /// <summary>
@@ -208,6 +257,8 @@ namespace SparkplugNet.Core.Node
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
 
+            this.IncrementLastSequenceNumber();
+
             // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
 
@@ -225,12 +276,27 @@ namespace SparkplugNet.Core.Node
                 DateTimeOffset.Now,
                 1);
 
+            // Return early if client not connected or payload is empty
+            //if (!this.Client.IsConnected || PayloadHelper.Deserialize<VersionBPayload>(dataMessage.Payload)?.Metrics?.Count == 0)
+            //{
+            //    return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError, ReasonString = "No modified metrics to publish"};
+            //}
+
             // Debug output.
-            dataMessage.ToOutputWindowJson("NDATA Message");
+            dataMessage.ToJson();
 
-            this.IncrementLastSequenceNumber();
-
+            // Publish data.
+            this.options.CancellationToken ??= CancellationToken.None;
             return await this.Client.PublishAsync(dataMessage);
+            ////this.IncrementLastSequenceNumber();
+        }
+
+        private void AddConnectedHandler()
+        {
+            this.Client.UseConnectedHandler(_ =>
+            {
+                this.OnConnected?.Invoke();
+;           });
         }
 
         /// <summary>
@@ -240,23 +306,10 @@ namespace SparkplugNet.Core.Node
         private void AddDisconnectedHandler()
         {
             this.Client.UseDisconnectedHandler(
-                async _ =>
+                _ =>
                     {
-                        if (this.options is null)
-                        {
-                            throw new ArgumentNullException(nameof(this.options));
-                        }
-
                         // Invoke disconnected callback.
                         this.OnDisconnected?.Invoke();
-
-                        // Wait until the disconnect interval is reached.
-                        await Task.Delay(this.options.ReconnectInterval);
-
-                        // Connect, subscribe to incoming messages and send a state message.
-                        await this.ConnectInternal();
-                        await this.SubscribeInternal();
-                        await this.PublishInternal();
                     });
         }
 
@@ -288,22 +341,22 @@ namespace SparkplugNet.Core.Node
                                 {
                                     if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionA is T convertedPayloadVersionA))
+                                        if (!(payloadVersionA.Metrics is T convertedPayloadVersionA))
                                         {
                                             throw new InvalidCastException("The metric cast didn't work properly.");
                                         }
 
-                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionA);
+                                        this.DeviceCommandReceived?.Invoke(topic, convertedPayloadVersionA);
                                     }
 
                                     if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionA is T convertedPayloadVersionA))
+                                        if (!(payloadVersionA.Metrics is T convertedPayloadVersionA))
                                         {
                                             throw new InvalidCastException("The metric cast didn't work properly.");
                                         }
 
-                                        this.NodeCommandReceived?.Invoke(convertedPayloadVersionA);
+                                        this.NodeCommandReceived?.Invoke(topic, convertedPayloadVersionA);
                                     }
                                 }
 
@@ -316,22 +369,28 @@ namespace SparkplugNet.Core.Node
                                 {
                                     if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionB is T convertedPayloadVersionB))
+                                        foreach (var metric in payloadVersionB.Metrics)
                                         {
-                                            throw new InvalidCastException("The metric cast didn't work properly.");
-                                        }
+                                            if (!(metric is T convertedPayloadVersionB))
+                                            {
+                                                throw new InvalidCastException("The metric cast didn't work properly.");
+                                            }
 
-                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionB);
+                                            this.DeviceCommandReceived?.Invoke(topic, convertedPayloadVersionB);
+                                        }
                                     }
 
                                     if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionB is T convertedPayloadVersionB))
+                                        foreach (var metric in payloadVersionB.Metrics)
                                         {
-                                            //throw new InvalidCastException("The metric cast didn't work properly.");
-                                        }
+                                            if (!(metric is T convertedPayloadVersionB))
+                                            {
+                                                throw new InvalidCastException("The metric cast didn't work properly.");
+                                            }
 
-                                        //this.NodeCommandReceived?.Invoke(convertedPayloadVersionB);
+                                            this.NodeCommandReceived?.Invoke(topic, convertedPayloadVersionB);
+                                        }
                                     }
                                 }
 
@@ -354,11 +413,19 @@ namespace SparkplugNet.Core.Node
                 throw new ArgumentNullException(nameof(this.options));
             }
 
+            // return early if MQTTNet Client already connected
+            if (this.Client.IsConnected)
+            {
+                await this.Stop();
+            }
+
             // Increment the session number.
             this.IncrementLastSessionNumber();
+            this.LogAction?.Invoke($"Incremented Last Session Number to {this.LastSessionNumber}");
 
             // Reset the sequence number.
             this.ResetLastSequenceNumber();
+            this.LogAction?.Invoke($"Incremented Last Sequence Number to {this.LastSequenceNumber}");
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
@@ -371,17 +438,23 @@ namespace SparkplugNet.Core.Node
                 1);
 
             // Build up the MQTT client and connect.
-            this.options.CancellationToken ??= CancellationToken.None;
-
             var builder = new MqttClientOptionsBuilder()
                 .WithClientId(this.options.ClientId)
                 .WithCredentials(this.options.UserName, this.options.Password)
-                .WithCleanSession(false)
+                .WithCleanSession(true)
                 .WithProtocolVersion(MqttProtocolVersion.V311);
 
             if (this.options.UseTls)
             {
-                builder.WithTls();
+                var tlsOptions = new MqttClientOptionsBuilderTlsParameters
+                {
+                    UseTls = true,
+                    SslProtocol = SslProtocols.Tls12,
+                    AllowUntrustedCertificates = true,
+                    IgnoreCertificateChainErrors = true,
+                    IgnoreCertificateRevocationErrors = true,
+                };
+                builder.WithTls(tlsOptions);
             }
 
             if (this.options.WebSocketParameters is null)
@@ -407,9 +480,17 @@ namespace SparkplugNet.Core.Node
             this.ClientOptions = builder.Build();
 
             // Debug output.
-            this.ClientOptions.ToOutputWindowJson("CONNECT Message");
-
-            await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
+            var json = this.ClientOptions.ToJson();
+            this.LogAction?.Invoke($"Node ConnectAsync attempt\n{json}");
+            try
+            {
+                this.options.CancellationToken ??= CancellationToken.None;
+                await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
+            }
+            catch (Exception e)
+            {
+                this.OnException?.Invoke(e);
+            }
         }
 
         /// <summary>
@@ -436,14 +517,19 @@ namespace SparkplugNet.Core.Node
                 1);
 
             // Debug output.
-            onlineMessage.ToOutputWindowJson("NBIRTH Message");
-
-            // Increment
-            this.IncrementLastSequenceNumber();
+            var json = onlineMessage.ToJson();
+            this.LogAction?.Invoke($"Attempting Node ConnectAsync (NBIRTH)\n{json}");
 
             // Publish data.
-            this.options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
+            try
+            {
+                this.options.CancellationToken ??= CancellationToken.None;
+                await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
+            }
+            catch (Exception e)
+            {
+                this.OnException?.Invoke(e);
+            }
         }
 
         /// <summary>
@@ -458,14 +544,24 @@ namespace SparkplugNet.Core.Node
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
-            await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            try
+            {
+                var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
+                this.LogAction?.Invoke($"Subscribing to Node Commands\n{nodeCommandSubscribeTopic}");
+                await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
 
-            var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
-            await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+                var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
+                this.LogAction?.Invoke($"Subscribing to Device Commands\n{deviceCommandSubscribeTopic}");
+                await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
 
-            var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(this.options.ScadaHostIdentifier);
-            await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+                var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(this.options.ScadaHostIdentifier);
+                this.LogAction?.Invoke($"Subscribing to State Status\n{stateSubscribeTopic}");
+                await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            }
+            catch (Exception e)
+            {
+                this.OnException?.Invoke(e);
+            }
         }
 
         /// <summary>
@@ -480,6 +576,12 @@ namespace SparkplugNet.Core.Node
                 throw new ArgumentNullException(nameof(this.options));
             }
 
+            if (!this.Client.IsConnected)
+            {
+                return;
+            }
+
+            this.IncrementLastSequenceNumber();
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
@@ -491,9 +593,20 @@ namespace SparkplugNet.Core.Node
                 DateTimeOffset.Now,
                 1);
 
-            this.options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(willMessage, this.options.CancellationToken.Value);
-            await this.Client.DisconnectAsync();
+            // Debug output.
+            var json = willMessage.ToJson();
+            this.LogAction?.Invoke($"Attempting Node DisconnectAsync (NDEATH)\n{json}");
+
+            try
+            {
+                this.options.CancellationToken ??= CancellationToken.None;
+                await this.Client.PublishAsync(willMessage, this.options.CancellationToken.Value);
+                await this.Client.DisconnectAsync();
+            }
+            catch (Exception e)
+            {
+                this.OnException?.Invoke(e);
+            }
         }
     }
 }

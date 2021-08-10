@@ -16,12 +16,8 @@ namespace SparkplugNet.Core.Device
     using System.Threading.Tasks;
 
     using MQTTnet.Client;
-    using MQTTnet.Client.Options;
     using MQTTnet.Client.Publishing;
-    using MQTTnet.Formatter;
-    using MQTTnet.Protocol;
 
-    using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
     using SparkplugNet.Core.Node;
     using VersionAPayload = VersionA.Payload;
@@ -34,15 +30,8 @@ namespace SparkplugNet.Core.Device
     /// <seealso cref="SparkplugBase{T}"/>
     public class SparkplugDeviceBase<T> : SparkplugBase<T> where T : class, new()
     {
-        /// <summary>
-        /// The options.
-        /// </summary>
         private SparkplugDeviceOptions? options;
-
-        /// <summary>
-        /// The callback for the device command received event.
-        /// </summary>
-        public readonly Action<T>? DeviceCommandReceived = null;
+        private bool birthCertificateSent;
 
         /// <inheritdoc cref="SparkplugBase{T}"/>
         /// <summary>
@@ -50,14 +39,24 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         /// <param name="knownMetrics">The metric names.</param>
         /// <seealso cref="SparkplugBase{T}"/>
-        public SparkplugDeviceBase(List<T> knownMetrics) : base(knownMetrics)
+        protected SparkplugDeviceBase(List<T> knownMetrics) : base(knownMetrics)
         {
         }
 
         /// <summary>
+        /// Gets or sets the device identifier.
+        /// </summary>
+        public string? DeviceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the device unique identifier.
+        /// </summary>
+        public Guid DeviceGuid { get; set; }
+
+        /// <summary>
         /// Gets or sets the child of node.
         /// </summary>
-        public SparkplugNodeBase<T> ChildOf { get; set; }
+        public SparkplugNodeBase<T>? ChildOf { get; set; }
 
         /// <summary>
         /// Starts the Sparkplug device.
@@ -69,20 +68,18 @@ namespace SparkplugNet.Core.Device
         {
             // Storing the options.
             this.options = deviceOptions;
+            this.DeviceGuid = this.options.DeviceGuid;
 
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            // Add handlers.
-            this.AddDisconnectedHandler();
-            this.AddMessageReceivedHandler();
-
             // Connect, subscribe to incoming messages and send a state message.
-            await this.ConnectInternal();
-            await this.SubscribeInternal();
-            await this.PublishInternal();
+            if (this.ChildOf?.Client?.IsConnected ?? false)
+            {
+                await this.PublishInternal();
+            }
         }
 
         /// <summary>
@@ -103,40 +100,33 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task<MqttClientPublishResult> PublishMetrics(List<T> metrics, int qosLevel)
+        public async Task PublishMetricsAsync(List<T> metrics, int qosLevel)
         {
+            if (!this.birthCertificateSent)
+            {
+                return;
+            }
+
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!this.Client.IsConnected)
+            try
             {
-                throw new Exception("The MQTT client is not connected, please try again.");
+                switch (metrics)
+                {
+                    case List<VersionAPayload.KuraMetric> list:
+                        await this.PublishVersionAMessage(list, qosLevel);
+                        break;
+                    case List<VersionBPayload.Metric> list:
+                        await this.PublishVersionBMessage(list, qosLevel);
+                        break;
+                }
             }
-
-            switch (this.NameSpace)
+            catch (Exception e)
             {
-                case SparkplugNamespace.VersionA:
-                {
-                    if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
-                    {
-                        throw new Exception("Invalid metric type specified for version A metric.");
-                    }
-
-                    return await this.PublishVersionAMessage(convertedMetrics, qosLevel);
-                }
-                case SparkplugNamespace.VersionB:
-                {
-                    if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
-                    {
-                        throw new Exception("Invalid metric type specified for version B metric.");
-                    }
-
-                    return await this.PublishVersionBMessage(convertedMetrics, qosLevel);
-                }
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
+                this.ChildOf?.OnException?.Invoke(e);
             }
         }
 
@@ -148,7 +138,7 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics, int qosLevel)
+        private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics, int qosLevel)
         {
             if (this.options is null)
             {
@@ -160,6 +150,13 @@ namespace SparkplugNet.Core.Device
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
 
+            if (this.ChildOf is null)
+            {
+                throw new InvalidOperationException($"{nameof(this.ChildOf)} cannot be null");
+            }
+
+            this.IncrementLastSequenceNumber();
+
             // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
 
@@ -177,9 +174,19 @@ namespace SparkplugNet.Core.Device
                 LastSessionNumber,
                 DateTimeOffset.Now,
                 qosLevel);
-            this.IncrementLastSequenceNumber();
 
-            return await this.Client.PublishAsync(dataMessage);
+            // Debug output.
+            dataMessage.ToJson();
+
+            // Publish data.
+            try
+            {
+                await this.ChildOf.Client.PublishAsync(dataMessage);
+            }
+            catch (Exception e)
+            {
+                this.ChildOf.OnException?.Invoke(e);
+            }
         }
 
         /// <summary>
@@ -190,7 +197,7 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionBPayload.Metric> metrics, int qosLevel)
+        private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics, int qosLevel)
         {
             if (this.options is null)
             {
@@ -202,6 +209,14 @@ namespace SparkplugNet.Core.Device
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
 
+            if (this.ChildOf is null)
+            {
+                throw new InvalidOperationException($"{nameof(this.ChildOf)} cannot be null");
+            }
+
+            // Increment here?
+            this.IncrementLastSequenceNumber();
+
             // Remove all not known metrics.
             metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == null);
 
@@ -220,159 +235,18 @@ namespace SparkplugNet.Core.Device
                 DateTimeOffset.Now,
                 qosLevel);
 
-            this.IncrementLastSequenceNumber();
-
-            return await this.Client.PublishAsync(dataMessage);
-        }
-
-        /// <summary>
-        /// Adds the disconnected handler and the reconnect functionality to the client.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">The options are null.</exception>
-        private void AddDisconnectedHandler()
-        {
-            this.Client.UseDisconnectedHandler(
-                async _ =>
-                    {
-                        if (this.options is null)
-                        {
-                            throw new ArgumentNullException(nameof(this.options));
-                        }
-
-                        // Invoke disconnected callback.
-                        this.OnDisconnected?.Invoke();
-
-                        // Wait until the disconnect interval is reached.
-                        await Task.Delay(this.options.ReconnectInterval);
-
-                        // Connect, subscribe to incoming messages and send a state message.
-                        await this.ConnectInternal();
-                        await this.SubscribeInternal();
-                        await this.PublishInternal();
-                    });
-        }
-
-        /// <summary>
-        /// Adds the message received handler to handle incoming messages.
-        /// </summary>
-        /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
-        private void AddMessageReceivedHandler()
-        {
-            this.Client.UseApplicationMessageReceivedHandler(
-                e =>
-                    {
-                        var topic = e.ApplicationMessage.Topic;
-
-                        switch (this.NameSpace)
-                        {
-                            case SparkplugNamespace.VersionA:
-                                if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
-                                {
-                                    var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
-
-                                    if (payloadVersionA != null)
-                                    {
-                                        if (!(payloadVersionA is T convertedPayloadVersionA))
-                                        {
-                                            throw new InvalidCastException("The metric cast didn't work properly.");
-                                        }
-
-                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionA);
-                                    }
-                                }
-
-                                break;
-
-                            case SparkplugNamespace.VersionB:
-
-                                if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
-                                {
-                                    var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
-
-                                    if (payloadVersionB != null)
-                                    {
-                                        if (!(payloadVersionB is T convertedPayloadVersionB))
-                                        {
-                                            throw new InvalidCastException("The metric cast didn't work properly.");
-                                        }
-
-                                        this.DeviceCommandReceived?.Invoke(convertedPayloadVersionB);
-                                    }
-                                }
-
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
-                        }
-                    });
-        }
-
-        /// <summary>
-        /// Connects the Sparkplug device to the MQTT broker.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task ConnectInternal()
-        {
-            if (this.options is null)
-            {
-                throw new ArgumentNullException(nameof(this.options));
-            }
-
-            // Increment the session number.
-            this.IncrementLastSessionNumber();
-
-            // Get the will message.
-            var willMessage = this.MessageGenerator.GetSparkPlugDeviceDeathMessage(
-                this.NameSpace,
-                this.options.GroupIdentifier,
-                this.options.EdgeNodeIdentifier,
-                this.options.DeviceIdentifier,
-                this.ChildOf.LastSequenceNumber,
-                this.LastSessionNumber,
-                DateTimeOffset.Now, 1);
-
-            // Build up the MQTT client and connect.
-            this.options.CancellationToken ??= CancellationToken.None;
-
-            var builder = new MqttClientOptionsBuilder()
-                .WithClientId(this.options.ClientId)
-                .WithCredentials(this.options.UserName, this.options.Password)
-                .WithCleanSession(false)
-                .WithProtocolVersion(MqttProtocolVersion.V311);
-
-            if (this.options.UseTls)
-            {
-                builder.WithTls();
-            }
-
-            if (this.options.WebSocketParameters is null)
-            {
-                builder.WithTcpServer(this.options.BrokerAddress, this.options.Port);
-            }
-            else
-            {
-                builder.WithWebSocketServer(this.options.BrokerAddress, this.options.WebSocketParameters);
-            }
-
-            if (this.options.ProxyOptions != null)
-            {
-                builder.WithProxy(
-                    this.options.ProxyOptions.Address,
-                    this.options.ProxyOptions.Username,
-                    this.options.ProxyOptions.Password,
-                    this.options.ProxyOptions.Domain,
-                    this.options.ProxyOptions.BypassOnLocal);
-            }
-
-            builder.WithWillMessage(willMessage);
-            this.ClientOptions = builder.Build();
-
             // Debug output.
-            this.ClientOptions.ToOutputWindowJson("CONNECT Message");
+            dataMessage.ToJson();
 
-            await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
+            // Publish data.
+            try
+            {
+                await this.ChildOf.Client.PublishAsync(dataMessage);
+            }
+            catch (Exception e)
+            {
+                this.ChildOf.OnException?.Invoke(e);
+            }
         }
 
         /// <summary>
@@ -387,6 +261,13 @@ namespace SparkplugNet.Core.Device
                 throw new ArgumentNullException(nameof(this.options));
             }
 
+            if (this.ChildOf is null)
+            {
+                throw new InvalidOperationException($"{nameof(this.ChildOf)} cannot be null");
+            }
+
+            this.IncrementLastSequenceNumber();
+
             // Get the online message and increase the sequence counter.
             var onlineMessage = this.MessageGenerator.GetSparkPlugDeviceBirthMessage(
                 this.NameSpace,
@@ -400,14 +281,27 @@ namespace SparkplugNet.Core.Device
                 1);
 
             // Debug output.
-            onlineMessage.ToOutputWindowJson("DBIRTH Message");
-
-            // Increment
-            this.IncrementLastSequenceNumber();
+            onlineMessage.ToJson();
 
             // Publish data.
             this.options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
+
+            try
+            {
+                var result = await this.ChildOf.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
+                switch (result.ReasonCode)
+                {
+                    case MqttClientPublishReasonCode.Success:
+                    case MqttClientPublishReasonCode.NoMatchingSubscribers:
+                        ////this.IncrementLastSequenceNumber();
+                        this.birthCertificateSent = true;
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                this.ChildOf.OnException?.Invoke(e);
+            }
         }
 
         /// <summary>
@@ -422,6 +316,12 @@ namespace SparkplugNet.Core.Device
                 throw new ArgumentNullException(nameof(this.options));
             }
 
+            if (this.ChildOf == null)
+            {
+                return;
+            }
+
+            this.IncrementLastSequenceNumber();
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugDeviceDeathMessage(
@@ -431,27 +331,18 @@ namespace SparkplugNet.Core.Device
                 this.options.DeviceIdentifier,
                 this.ChildOf.LastSequenceNumber,
                 this.LastSessionNumber,
-                DateTimeOffset.Now, 1);
+                DateTimeOffset.UtcNow, 1);
 
             this.options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(willMessage, this.options.CancellationToken.Value);
-            await this.Client.DisconnectAsync();
-        }
 
-        /// <summary>
-        /// Subscribes the client to the device subscribe topic.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task SubscribeInternal()
-        {
-            if (this.options is null)
+            try
             {
-                throw new ArgumentNullException(nameof(this.options));
+                await this.ChildOf.Client.PublishAsync(willMessage, this.options.CancellationToken.Value);
             }
-
-            var deviceCommandSubscribeTopic = this.TopicGenerator.GetDeviceCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier, this.options.DeviceIdentifier);
-            await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            catch (Exception e)
+            {
+                this.ChildOf.OnException?.Invoke(e);
+            }
         }
 
         /// <summary>
@@ -459,6 +350,11 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         internal override void IncrementLastSequenceNumber()
         {
+            if (this.ChildOf == null)
+            {
+                return;
+            }
+
             if (this.ChildOf.LastSequenceNumber == 255)
             {
                 this.ChildOf.LastSequenceNumber = 0;

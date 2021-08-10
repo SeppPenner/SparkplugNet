@@ -39,7 +39,7 @@ namespace SparkplugNet.Tests
             {
                 Name = "Test",
                 BoolValue = true,
-                Type = VersionAPayload.KuraMetric.ValueType.Bool
+                Type = VersionAPayload.KuraMetric.ValueType.Bool,
             }
         };
 
@@ -52,7 +52,8 @@ namespace SparkplugNet.Tests
             {
                 Name = "Test",
                 Datatype = (uint)SparkplugBDataType.Int32,
-                IntValue = 20
+                IntValue = 20,
+                Timestamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
             }
         };
 
@@ -310,15 +311,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spAv1.0/group1/DDATA/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
             Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
-            Assert.AreEqual(2, payloadVersionA.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
             Assert.AreEqual(this.metricsA.First().Type, payloadVersionA.Metrics.ElementAt(0).Type);
 
-            Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
+            // removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
         }
 
         /// <summary>
@@ -334,15 +336,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spBv1.0/group1/DDATA/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
             Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
-            Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
             Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
-            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
+            // removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -358,15 +361,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spAv1.0/group1/NDATA/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
             Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
-            Assert.AreEqual(2, payloadVersionA.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
             Assert.AreEqual(this.metricsA.First().Type, payloadVersionA.Metrics.ElementAt(0).Type);
 
-            Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
+            // removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
         }
 
         /// <summary>
@@ -382,15 +386,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spBv1.0/group1/NDATA/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
             Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
-            Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
             Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
-            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
+            ////////// removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -406,15 +411,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spAv1.0/group1/DCMD/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
             Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
-            Assert.AreEqual(2, payloadVersionA.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
             Assert.AreEqual(this.metricsA.First().Type, payloadVersionA.Metrics.ElementAt(0).Type);
 
-            Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
+            ////// removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
         }
 
         /// <summary>
@@ -430,15 +436,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spBv1.0/group1/DCMD/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
             Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
-            Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
             Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
-            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
+            // removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -454,15 +461,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spAv1.0/group1/NCMD/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
             Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
-            Assert.AreEqual(2, payloadVersionA.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
             Assert.AreEqual(this.metricsA.First().Type, payloadVersionA.Metrics.ElementAt(0).Type);
 
-            Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
+            // removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricA.Type, payloadVersionA.Metrics.ElementAt(1).Type);
         }
 
         /// <summary>
@@ -478,15 +486,16 @@ namespace SparkplugNet.Tests
             Assert.AreEqual("spBv1.0/group1/NCMD/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
             Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
-            Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+            Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
             Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
-            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-            Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
+            // removed as bdSeq metric is only required by spec in NBIRTH and NDEATH
+            ////Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
+            ////Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
+            ////Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace SparkplugNet.Core.Device
     public class SparkplugDeviceOptions
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugDeviceOptions"/> class.
+        /// Initializes a new instance of the <see cref="SparkplugDeviceOptions" /> class.
         /// </summary>
         /// <param name="brokerAddress">The broker address.</param>
         /// <param name="port">The broker port.</param>
@@ -33,6 +33,7 @@ namespace SparkplugNet.Core.Device
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="deviceGuid">The device unique identifier.</param>
         /// <param name="reconnectInterval">The reconnect interval.</param>
         /// <param name="webSocketParameters">The WebSocket parameters.</param>
         /// <param name="proxyOptions">The proxy options.</param>
@@ -48,6 +49,7 @@ namespace SparkplugNet.Core.Device
             string groupIdentifier,
             string edgeNodeIdentifier,
             string deviceIdentifier,
+            Guid deviceGuid,
             TimeSpan reconnectInterval,
             MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
             MqttClientWebSocketProxyOptions? proxyOptions = null,
@@ -63,6 +65,7 @@ namespace SparkplugNet.Core.Device
             this.GroupIdentifier = groupIdentifier;
             this.EdgeNodeIdentifier = edgeNodeIdentifier;
             this.DeviceIdentifier = deviceIdentifier;
+            this.DeviceGuid = deviceGuid;
             this.ReconnectInterval = reconnectInterval;
             this.WebSocketParameters = webSocketParameters;
             this.ProxyOptions = proxyOptions;
@@ -118,6 +121,11 @@ namespace SparkplugNet.Core.Device
         /// Gets or sets the device identifier.
         /// </summary>
         public string DeviceIdentifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets the device unique identifier.
+        /// </summary>
+        public Guid DeviceGuid { get; set; }
 
         /// <summary>
         /// Gets or sets the reconnect interval.

@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.Core.Extensions
 {
-    using System;
-    using System.Diagnostics;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -18,11 +16,9 @@ namespace SparkplugNet.Core.Extensions
     /// </summary>
     internal static class DebugExtensions
     {
-        internal static void ToOutputWindowJson(this object value, string logTitle)
+        internal static string ToJson(this object value)
         {
-            Debug.WriteLine($"{DateTime.Now} - {logTitle}:");
-            Debug.WriteLine(JsonConvert.SerializeObject(value, Formatting.Indented));
-            Debug.WriteLine("\n");
+            return JsonConvert.SerializeObject(value, Formatting.Indented);
         }
     }
 }

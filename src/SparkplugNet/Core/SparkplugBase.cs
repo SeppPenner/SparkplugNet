@@ -26,12 +26,17 @@ namespace SparkplugNet.Core
     /// A base class for all Sparkplug applications, nodes and devices.
     /// </summary>
     /// <typeparam name="T">The type parameter.</typeparam>
-    public class SparkplugBase<T> where T : class, new()
+    public class SparkplugBase<T> : IDisposable where T : class, new()
     {
         /// <summary>
         /// The callback for the disconnected event. Indicates that metrics might be stale.
         /// </summary>
-        public readonly Action? OnDisconnected = null;
+        public Action? OnDisconnected = null;
+
+        /// <summary>
+        /// The callback for the connected event. Indicates that a new MQTT connection was established and should trigger startup messages.
+        /// </summary>
+        public Action? OnConnected = null;
 
         /// <summary>
         /// The message generator.
@@ -131,6 +136,29 @@ namespace SparkplugNet.Core
             else
             {
                 this.LastSessionNumber++;
+            }
+        }
+
+        /// <summary>
+        /// Disposes this instance.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
+        /// unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.Client?.Dispose();
             }
         }
     }

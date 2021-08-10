@@ -9,6 +9,7 @@
 
 namespace SparkplugNet.VersionB
 {
+    using System;
     using System.Collections.Generic;
     
     using SparkplugNet.Core.Node;
