@@ -9,53 +9,22 @@
 
 namespace SparkplugNet.Core
 {
-    using System;
     using System.Collections.Generic;
-
-    using MQTTnet;
-    using MQTTnet.Client;
-    using MQTTnet.Client.Options;
-
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Messages;
 
-    using VersionAPayload = VersionA.Payload;
-    using VersionBPayload = VersionB.Payload;
-
-    /// <summary>
-    /// A base class for all Sparkplug applications, nodes and devices.
-    /// </summary>
+    /// <summary>A base class for all Sparkplug applications, nodes and devices.</summary>
     /// <typeparam name="T">The type parameter.</typeparam>
-    public class SparkplugBase<T> : IDisposable where T : class, new()
+    public class SparkplugBase<T>
+        where T : class, new()
     {
-        /// <summary>
-        /// The callback for the disconnected event. Indicates that metrics might be stale.
-        /// </summary>
-        public Action? OnDisconnected = null;
+        /// <summary>The message generator.</summary>
+        internal readonly SparkplugMessageGenerator MessageGenerator = new();
 
-        /// <summary>
-        /// The callback for the connected event. Indicates that a new MQTT connection was established and should trigger startup messages.
-        /// </summary>
-        public Action? OnConnected = null;
+        /// <summary>The topic generator.</summary>
+        internal readonly SparkplugTopicGenerator TopicGenerator = new();
 
-        /// <summary>
-        /// The message generator.
-        /// </summary>
-        internal readonly SparkplugMessageGenerator MessageGenerator = new ();
-
-        /// <summary>
-        /// The topic generator.
-        /// </summary>
-        internal readonly SparkplugTopicGenerator TopicGenerator = new ();
-
-        /// <summary>
-        /// The MQTT client.
-        /// </summary>
-        internal readonly IMqttClient Client;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="SparkplugBase{T}" /> class.</summary>
         /// <param name="knownMetrics">The metric names.</param>
         public SparkplugBase(List<T> knownMetrics)
         {
@@ -63,55 +32,31 @@ namespace SparkplugNet.Core
 
             this.NameSpace = this.KnownMetrics switch
             {
-                List<VersionAPayload.KuraMetric> => SparkplugNamespace.VersionA,
-                List<VersionBPayload.Metric> => SparkplugNamespace.VersionB,
-                _ => SparkplugNamespace.VersionB
+                List<VersionA.Payload.KuraMetric> => SparkplugNamespace.VersionA,
+                List<VersionB.Payload.Metric> => SparkplugNamespace.VersionB,
+                _ => SparkplugNamespace.VersionB,
             };
-
-            this.Client = new MqttFactory().CreateMqttClient();
         }
 
-        /// <summary>
-        /// Gets or sets the MQTT client options.
-        /// </summary>
-        internal IMqttClientOptions? ClientOptions { get; set; }
-
-        /// <summary>
-        /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For the device and node relevant only).
-        /// </summary>
-        internal int LastSequenceNumber { get; set; }
-
-        /// <summary>
-        /// Gets the last session number. Starts at -1 as it is incremented before the connect already.
-        /// </summary>
-        protected long LastSessionNumber { get; private set; } = -1;
-
-        /// <summary>
-        /// Gets the Sparkplug namespace.
-        /// </summary>
-        protected SparkplugNamespace NameSpace { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is connected.
-        /// </summary>
-        public bool IsConnected => this.Client.IsConnected;
-
-        /// <summary>
-        /// Gets the known metric names.
-        /// </summary>
+        /// <summary>Gets the known metric names.</summary>
         public List<T> KnownMetrics { get; }
 
-        /// <summary>
-        /// Resets the last sequence number.
-        /// </summary>
-        public void ResetLastSequenceNumber()
+        /// <summary>Gets the last session number. Starts at -1 as it is incremented before the connect already.</summary>
+        protected long LastSessionNumber { get; private set; } = -1;
+
+        /// <summary>Gets the Sparkplug namespace.</summary>
+        protected SparkplugNamespace NameSpace { get; }
+
+        /// <summary>Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For the device and node relevant only).</summary>
+        internal int LastSequenceNumber { get; set; }
+
+        /// <summary>Resets the last sequence number.</summary>
+        internal void ResetLastSequenceNumber()
         {
             this.LastSequenceNumber = 0;
         }
 
-        /// <summary>
-        /// Increments the last sequence number.
-        /// </summary>
+        /// <summary>Increments the last sequence number.</summary>
         internal virtual void IncrementLastSequenceNumber()
         {
             if (this.LastSequenceNumber == 255)
@@ -124,9 +69,7 @@ namespace SparkplugNet.Core
             }
         }
 
-        /// <summary>
-        /// Increments the last session number.
-        /// </summary>
+        /// <summary>Increments the last session number.</summary>
         internal void IncrementLastSessionNumber()
         {
             if (this.LastSessionNumber == long.MaxValue)
@@ -136,29 +79,6 @@ namespace SparkplugNet.Core
             else
             {
                 this.LastSessionNumber++;
-            }
-        }
-
-        /// <summary>
-        /// Disposes this instance.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing">
-        /// <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
-        /// unmanaged resources.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                this.Client?.Dispose();
             }
         }
     }

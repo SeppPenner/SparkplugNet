@@ -33,7 +33,7 @@ namespace SparkplugNet.Core.Application
     /// A class that handles a Sparkplug application.
     /// </summary>
     /// <seealso cref="SparkplugBase{T}"/>
-    public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new()
+    public class SparkplugApplicationBase<T> : SparkplugClientBase<T> where T : class, new()
     {
         /// <summary>
         /// The options.
