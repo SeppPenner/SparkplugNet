@@ -162,14 +162,12 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugDeviceBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var newMetrics = metrics as List<VersionBPayload.Metric> ?? new List<VersionBPayload.Metric>();
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber);
                         return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
                     }
 
@@ -275,14 +273,12 @@ namespace SparkplugNet.Core.Messages
                 case SparkplugNamespace.VersionA:
                     {
                         var metrics = new List<VersionAPayload.KuraMetric>();
-                        AddSessionNumberToMetrics(metrics, sessionNumber);
                         return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, dateTime, metrics, qosLevel);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var metrics = new List<VersionBPayload.Metric>();
-                        AddSessionNumberToMetrics(metrics, sessionNumber);
                         return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, sequenceNumber, dateTime, metrics, qosLevel);
                     }
 
