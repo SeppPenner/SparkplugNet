@@ -617,7 +617,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("NBIRTH: VersionAPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -660,7 +661,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("NBIRTH: VersionBPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -703,7 +705,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("DBIRTH: VersionAPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -749,7 +752,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("DBIRTH: VersionBPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -787,7 +791,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("NDEATH: VersionAPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -825,7 +830,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("NDEATH: VersionBPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -865,7 +871,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("DDEATH: VersionAPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -905,7 +912,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("DDEATH: VersionBPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -946,7 +954,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("NDATA: VersionAPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -990,7 +999,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("NDATA: VersionBPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1033,7 +1043,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("DDATA: VersionAPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1079,7 +1090,8 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             this.logger?.Debug("DDATA: VersionBPayload: {@Payload}", payload);
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1117,7 +1129,8 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1157,7 +1170,8 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1196,7 +1210,8 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1238,7 +1253,8 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload);
+            var serialized = PayloadHelper.Serialize(convertedPayload);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(

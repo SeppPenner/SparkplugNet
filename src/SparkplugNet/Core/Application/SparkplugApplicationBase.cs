@@ -26,8 +26,10 @@ namespace SparkplugNet.Core.Application
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
-    using VersionA = VersionA.Data;
-    using VersionB = VersionB.Data;
+    using VersionAData = VersionA.Data;
+    using VersionAProtoBuf = VersionA.ProtoBuf;
+    using VersionBData = VersionB.Data;
+    using VersionBProtoBuf = VersionB.ProtoBuf;
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -138,7 +140,7 @@ namespace SparkplugNet.Core.Application
             {
                 case SparkplugNamespace.VersionA:
                 {
-                    if (!(metrics is List<VersionA.KuraMetric> convertedMetrics))
+                    if (!(metrics is List<VersionAData.KuraMetric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
@@ -148,7 +150,7 @@ namespace SparkplugNet.Core.Application
                 }
                 case SparkplugNamespace.VersionB:
                 {
-                    if (!(metrics is List<VersionB.Metric> convertedMetrics))
+                    if (!(metrics is List<VersionBData.Metric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
@@ -204,7 +206,7 @@ namespace SparkplugNet.Core.Application
             {
                 case SparkplugNamespace.VersionA:
                 {
-                    if (!(metrics is List<VersionA.KuraMetric> convertedMetrics))
+                    if (!(metrics is List<VersionAData.KuraMetric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
@@ -214,7 +216,7 @@ namespace SparkplugNet.Core.Application
                 }
                 case SparkplugNamespace.VersionB:
                 {
-                    if (!(metrics is List<VersionB.Metric> convertedMetrics))
+                    if (!(metrics is List<VersionBData.Metric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
@@ -267,14 +269,14 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionANodeCommandMessage(List<VersionA.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+        private async Task PublishVersionANodeCommandMessage(List<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionA.KuraMetric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionAData.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
@@ -308,14 +310,14 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBNodeCommandMessage(List<VersionB.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+        private async Task PublishVersionBNodeCommandMessage(List<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionB.Metric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionBData.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
@@ -354,14 +356,14 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionADeviceCommandMessage(List<VersionA.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        private async Task PublishVersionADeviceCommandMessage(List<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionA.KuraMetric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionAData.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
@@ -401,14 +403,14 @@ namespace SparkplugNet.Core.Application
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBDeviceCommandMessage(List<VersionB.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        private async Task PublishVersionBDeviceCommandMessage(List<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionB.Metric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionBData.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
@@ -454,21 +456,23 @@ namespace SparkplugNet.Core.Application
                         switch (this.NameSpace)
                         {
                             case SparkplugNamespace.VersionA:
-                                var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(e.ApplicationMessage.Payload);
+                                var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
 
                                 if (payloadVersionA != null)
                                 {
-                                    this.HandleMessagesForVersionA(topic, payloadVersionA);
+                                    var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
+                                    this.HandleMessagesForVersionA(topic, convertedPayload);
                                 }
 
                                 break;
 
                             case SparkplugNamespace.VersionB:
-                                var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(e.ApplicationMessage.Payload);
+                                var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
 
                                 if (payloadVersionB != null)
                                 {
-                                    this.HandleMessagesForVersionB(topic, payloadVersionB);
+                                    var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+                                    this.HandleMessagesForVersionB(topic, convertedPayload);
                                 }
 
                                 break;
@@ -486,9 +490,9 @@ namespace SparkplugNet.Core.Application
         /// <param name="payload">The payload.</param>
         /// <exception cref="ArgumentNullException">The known metrics are null.</exception>
         /// <exception cref="Exception">The metric is unknown.</exception>
-        private void HandleMessagesForVersionA(string topic, VersionA.Payload payload)
+        private void HandleMessagesForVersionA(string topic, VersionAData.Payload payload)
         {
-            if (!(this.KnownMetrics is List<VersionA.KuraMetric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionAData.KuraMetric> knownMetrics))
             {
                 throw new ArgumentNullException(nameof(knownMetrics));
             }
@@ -539,9 +543,9 @@ namespace SparkplugNet.Core.Application
         /// <param name="payload">The payload.</param>
         /// <exception cref="ArgumentNullException">The known metrics are null.</exception>
         /// <exception cref="Exception">The metric is unknown.</exception>
-        private void HandleMessagesForVersionB(string topic, VersionB.Payload payload)
+        private void HandleMessagesForVersionB(string topic, VersionBData.Payload payload)
         {
-            if (!(this.KnownMetrics is List<VersionB.Metric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionBData.Metric> knownMetrics))
             {
                 throw new ArgumentNullException(nameof(knownMetrics));
             }
@@ -592,7 +596,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
         /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-        private void HandleDeviceMessage(string topic, VersionB.Payload payload, SparkplugMetricStatus metricStatus)
+        private void HandleDeviceMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
         {
             var deviceId = topic.Split('/')[4];
             var metricState = new MetricState<T>
@@ -620,7 +624,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
         /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-        private void HandleDeviceMessage(string topic, VersionA.Payload payload, SparkplugMetricStatus metricStatus)
+        private void HandleDeviceMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus)
         {
             var deviceId = topic.Split('/')[4];
             var metricState = new MetricState<T>
@@ -648,7 +652,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
         /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-        private void HandleNodeMessage(string topic, VersionB.Payload payload, SparkplugMetricStatus metricStatus)
+        private void HandleNodeMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
         {
             var nodeId = topic.Split('/')[3];
             var metricState = new MetricState<T>
@@ -676,7 +680,7 @@ namespace SparkplugNet.Core.Application
         /// <param name="payload">The payload.</param>
         /// <param name="metricStatus">The metric status.</param>
         /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-        private void HandleNodeMessage(string topic, VersionA.Payload payload, SparkplugMetricStatus metricStatus)
+        private void HandleNodeMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus)
         {
             var nodeId = topic.Split('/')[3];
             var metricState = new MetricState<T>

@@ -26,8 +26,10 @@ namespace SparkplugNet.Core.Node
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
-    using VersionA = VersionA.Data;
-    using VersionB = VersionB.Data;
+    using VersionAData = VersionA.Data;
+    using VersionAProtoBuf = VersionA.ProtoBuf;
+    using VersionBData = VersionB.Data;
+    using VersionBProtoBuf = VersionB.ProtoBuf;
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -127,7 +129,7 @@ namespace SparkplugNet.Core.Node
             {
                 case SparkplugNamespace.VersionA:
                 {
-                    if (!(metrics is List<VersionA.KuraMetric> convertedMetrics))
+                    if (!(metrics is List<VersionAData.KuraMetric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
@@ -136,7 +138,7 @@ namespace SparkplugNet.Core.Node
                 }
                 case SparkplugNamespace.VersionB:
                 {
-                    if (!(metrics is List<VersionB.Metric> convertedMetrics))
+                    if (!(metrics is List<VersionBData.Metric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
@@ -157,14 +159,14 @@ namespace SparkplugNet.Core.Node
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionA.KuraMetric> metrics)
+        private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionAData.KuraMetric> metrics)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionA.KuraMetric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionAData.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
@@ -202,14 +204,14 @@ namespace SparkplugNet.Core.Node
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionB.Metric> metrics)
+        private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionBData.Metric> metrics)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionB.Metric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionBData.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
@@ -287,13 +289,15 @@ namespace SparkplugNet.Core.Node
                         switch (this.NameSpace)
                         {
                             case SparkplugNamespace.VersionA:
-                                var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(e.ApplicationMessage.Payload);
+                                var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
 
                                 if (payloadVersionA != null)
                                 {
+                                    var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
+
                                     if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionA is T convertedPayloadVersionA))
+                                        if (!(convertedPayload is T convertedPayloadVersionA))
                                         {
                                             throw new InvalidCastException("The metric cast didn't work properly.");
                                         }
@@ -303,7 +307,7 @@ namespace SparkplugNet.Core.Node
 
                                     if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionA is T convertedPayloadVersionA))
+                                        if (!(convertedPayload is T convertedPayloadVersionA))
                                         {
                                             throw new InvalidCastException("The metric cast didn't work properly.");
                                         }
@@ -315,13 +319,15 @@ namespace SparkplugNet.Core.Node
                                 break;
 
                             case SparkplugNamespace.VersionB:
-                                var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(e.ApplicationMessage.Payload);
+                                var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
 
                                 if (payloadVersionB != null)
                                 {
+                                    var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+
                                     if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionB is T convertedPayloadVersionB))
+                                        if (!(convertedPayload is T convertedPayloadVersionB))
                                         {
                                             throw new InvalidCastException("The metric cast didn't work properly.");
                                         }
@@ -331,7 +337,7 @@ namespace SparkplugNet.Core.Node
 
                                     if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                     {
-                                        if (!(payloadVersionB is T convertedPayloadVersionB))
+                                        if (!(convertedPayload is T convertedPayloadVersionB))
                                         {
                                             throw new InvalidCastException("The metric cast didn't work properly.");
                                         }
