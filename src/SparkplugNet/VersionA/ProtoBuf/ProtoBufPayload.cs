@@ -9,7 +9,7 @@
 namespace SparkplugNet.VersionA.ProtoBuf
 {
     [global::ProtoBuf.ProtoContract()]
-    public partial class ProtoBufPayload : global::ProtoBuf.IExtensible
+    internal partial class ProtoBufPayload : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -42,7 +42,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
         private byte[] __pbn__Body;
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class KuraMetric : global::ProtoBuf.IExtensible
+        internal partial class KuraMetric : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -147,7 +147,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
         }
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class KuraPosition : global::ProtoBuf.IExtensible
+        internal partial class KuraPosition : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)

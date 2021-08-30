@@ -9,7 +9,7 @@
 namespace SparkplugNet.VersionB.ProtoBuf
 {
     [global::ProtoBuf.ProtoContract()]
-    public partial class ProtoBufPayload : global::ProtoBuf.IExtensible
+    internal partial class ProtoBufPayload : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -35,7 +35,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class Template : global::ProtoBuf.IExtensible
+        internal partial class Template : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -62,7 +62,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
             [global::ProtoBuf.ProtoContract()]
-            public partial class Parameter : global::ProtoBuf.IExtensible
+            internal partial class Parameter : global::ProtoBuf.IExtensible
             {
                 private global::ProtoBuf.IExtension __pbn__extensionData;
                 global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -156,7 +156,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 }
 
                 [global::ProtoBuf.ProtoContract()]
-                public partial class ParameterValueExtension : global::ProtoBuf.IExtensible
+                internal partial class ParameterValueExtension : global::ProtoBuf.IExtensible
                 {
                     private global::ProtoBuf.IExtension __pbn__extensionData;
                     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -172,7 +172,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         }
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class DataSet : global::ProtoBuf.IExtensible
+        internal partial class DataSet : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -194,7 +194,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
             [global::ProtoBuf.ProtoContract()]
-            public partial class DataSetValue : global::ProtoBuf.IExtensible
+            internal partial class DataSetValue : global::ProtoBuf.IExtensible
             {
                 private global::ProtoBuf.IExtension __pbn__extensionData;
                 global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -281,7 +281,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 }
 
                 [global::ProtoBuf.ProtoContract()]
-                public partial class DataSetValueExtension : global::ProtoBuf.IExtensible
+                internal partial class DataSetValueExtension : global::ProtoBuf.IExtensible
                 {
                     private global::ProtoBuf.IExtension __pbn__extensionData;
                     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -295,7 +295,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             }
 
             [global::ProtoBuf.ProtoContract()]
-            public partial class Row : global::ProtoBuf.IExtensible
+            internal partial class Row : global::ProtoBuf.IExtensible
             {
                 private global::ProtoBuf.IExtension __pbn__extensionData;
                 global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -312,7 +312,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         }
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class PropertyValue : global::ProtoBuf.IExtensible
+        internal partial class PropertyValue : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -425,7 +425,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             }
 
             [global::ProtoBuf.ProtoContract()]
-            public partial class PropertyValueExtension : global::ProtoBuf.IExtensible
+            internal partial class PropertyValueExtension : global::ProtoBuf.IExtensible
             {
                 private global::ProtoBuf.IExtension __pbn__extensionData;
                 global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -439,7 +439,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         }
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class PropertySet : global::ProtoBuf.IExtensible
+        internal partial class PropertySet : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -457,7 +457,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         }
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class PropertySetList : global::ProtoBuf.IExtensible
+        internal partial class PropertySetList : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -472,7 +472,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         }
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class MetaData : global::ProtoBuf.IExtensible
+        internal partial class MetaData : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -513,7 +513,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         }
 
         [global::ProtoBuf.ProtoContract()]
-        public partial class Metric : global::ProtoBuf.IExtensible
+        internal partial class Metric : global::ProtoBuf.IExtensible
         {
             private global::ProtoBuf.IExtension __pbn__extensionData;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -658,7 +658,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             }
 
             [global::ProtoBuf.ProtoContract()]
-            public partial class MetricValueExtension : global::ProtoBuf.IExtensible
+            internal partial class MetricValueExtension : global::ProtoBuf.IExtensible
             {
                 private global::ProtoBuf.IExtension __pbn__extensionData;
                 global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
