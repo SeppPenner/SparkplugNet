@@ -26,8 +26,8 @@ namespace SparkplugNet.Core.Node
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
-    using VersionAPayload = VersionA.Payload;
-    using VersionBPayload = VersionB.Payload;
+    using VersionA = VersionA.Data;
+    using VersionB = VersionB.Data;
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -127,7 +127,7 @@ namespace SparkplugNet.Core.Node
             {
                 case SparkplugNamespace.VersionA:
                 {
-                    if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                    if (!(metrics is List<VersionA.KuraMetric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
@@ -136,7 +136,7 @@ namespace SparkplugNet.Core.Node
                 }
                 case SparkplugNamespace.VersionB:
                 {
-                    if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                    if (!(metrics is List<VersionB.Metric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
@@ -157,14 +157,14 @@ namespace SparkplugNet.Core.Node
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
+        private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionA.KuraMetric> metrics)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionAPayload.KuraMetric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionA.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
@@ -202,14 +202,14 @@ namespace SparkplugNet.Core.Node
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
+        private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionB.Metric> metrics)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionBPayload.Metric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionB.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
@@ -287,7 +287,7 @@ namespace SparkplugNet.Core.Node
                         switch (this.NameSpace)
                         {
                             case SparkplugNamespace.VersionA:
-                                var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
+                                var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(e.ApplicationMessage.Payload);
 
                                 if (payloadVersionA != null)
                                 {
@@ -315,7 +315,7 @@ namespace SparkplugNet.Core.Node
                                 break;
 
                             case SparkplugNamespace.VersionB:
-                                var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
+                                var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(e.ApplicationMessage.Payload);
 
                                 if (payloadVersionB != null)
                                 {

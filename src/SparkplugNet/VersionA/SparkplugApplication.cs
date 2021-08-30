@@ -14,9 +14,10 @@ namespace SparkplugNet.VersionA
     using Serilog;
 
     using SparkplugNet.Core.Application;
+    using SparkplugNet.VersionA.Data;
 
     /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
-    public class SparkplugApplication : SparkplugApplicationBase<Payload.KuraMetric>
+    public class SparkplugApplication : SparkplugApplicationBase<KuraMetric>
     {
         /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
         /// <summary>
@@ -24,7 +25,7 @@ namespace SparkplugNet.VersionA
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
         /// <param name="logger">The logger.</param>
-        public SparkplugApplication(List<Payload.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+        public SparkplugApplication(List<KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
     }

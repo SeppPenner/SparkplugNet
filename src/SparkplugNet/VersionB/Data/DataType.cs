@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugBDataType.cs" company="Hämmer Electronics">
+// <copyright file="DataType.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
@@ -7,120 +7,120 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Core.Enumerations
+namespace SparkplugNet.VersionB.Data
 {
     /// <summary>
     /// The Sparkplug B data type enumeration.
     /// </summary>
-    public enum SparkplugBDataType
+    public enum DataType
     {
         /// <summary>
-        /// Unknown placeholder for future expansion
+        /// The unknown data type, for future extension.
         /// </summary>
         Unknown = 0,
 
         /// <summary>
-        /// Int8
+        /// The 8 bit integer data type.
         /// </summary>
         Int8 = 1,
 
         /// <summary>
-        /// Int16
+        /// The 16 bit integer data type.
         /// </summary>
         Int16 = 2,
 
         /// <summary>
-        /// Int32
+        /// The 32 bit integer data type.
         /// </summary>
         Int32 = 3,
 
         /// <summary>
-        /// Int64
+        /// The 64 bit integer data type.
         /// </summary>
         Int64 = 4,
 
         /// <summary>
-        /// UInt8
+        /// The unsigned 8 bit integer data type.
         /// </summary>
         UInt8 = 5,
 
         /// <summary>
-        /// UInt16
+        /// The unsigned 16 bit integer data type.
         /// </summary>
         UInt16 = 6,
 
         /// <summary>
-        /// UInt32
+        /// The unsigned 32 bit integer data type.
         /// </summary>
         UInt32 = 7,
 
         /// <summary>
-        /// UInt64
+        /// The unsigned 64 bit integer data type.
         /// </summary>
         UInt64 = 8,
 
         /// <summary>
-        /// Float
+        /// The float data type.
         /// </summary>
         Float = 9,
 
         /// <summary>
-        /// Double
+        /// The double data type.
         /// </summary>
         Double = 10,
 
         /// <summary>
-        /// Boolean
+        /// The boolean data type.
         /// </summary>
         Boolean = 11,
 
         /// <summary>
-        /// String
+        /// The string data type.
         /// </summary>
         String = 12,
 
         /// <summary>
-        /// DateTime
+        /// The date time data type.
         /// </summary>
         DateTime = 13,
 
         /// <summary>
-        /// Text
+        /// The text data type.
         /// </summary>
         Text = 14,
 
         /// <summary>
-        /// Uuid
+        /// The UUID data type.
         /// </summary>
         Uuid = 15,
 
         /// <summary>
-        /// Data set
+        /// The data set data type.
         /// </summary>
-        Dataset = 16,
+        DataSet = 16,
 
         /// <summary>
-        /// Bytes
+        /// The bytes type.
         /// </summary>
         Bytes = 17,
 
         /// <summary>
-        /// File
+        /// The file data type.
         /// </summary>
         File = 18,
 
         /// <summary>
-        /// Template
+        /// The template data type.
         /// </summary>
         Template = 19,
 
         /// <summary>
-        /// PropertySet
+        /// The property set data type.
         /// </summary>
         PropertySet = 20,
 
         /// <summary>
-        /// PropertySetLIst
+        /// The property set list data type.
         /// </summary>
         PropertySetList = 21
     }

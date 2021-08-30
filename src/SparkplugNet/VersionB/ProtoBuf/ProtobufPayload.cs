@@ -6,10 +6,10 @@
 
 #region Designer generated code
 #pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
-namespace SparkplugNet.VersionB
+namespace SparkplugNet.VersionB.ProtoBuf
 {
     [global::ProtoBuf.ProtoContract()]
-    public partial class Payload : global::ProtoBuf.IExtensible
+    public partial class ProtoBufPayload : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
@@ -46,7 +46,7 @@ namespace SparkplugNet.VersionB
             public string Version { get; set; } = "";
 
             [global::ProtoBuf.ProtoMember(2, Name = @"metrics")]
-            public global::System.Collections.Generic.List<Payload.Metric> Metrics { get; set; } = new global::System.Collections.Generic.List<Payload.Metric>();
+            public global::System.Collections.Generic.List<Metric> Metrics { get; set; } = new global::System.Collections.Generic.List<Metric>();
 
             [global::ProtoBuf.ProtoMember(3, Name = @"parameters")]
             public global::System.Collections.Generic.List<Parameter> Parameters { get; set; } = new global::System.Collections.Generic.List<Parameter>();
@@ -302,7 +302,7 @@ namespace SparkplugNet.VersionB
                     => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
                 [global::ProtoBuf.ProtoMember(1, Name = @"elements")]
-                public global::System.Collections.Generic.List<Payload.DataSet.DataSetValue> Elements { get; set; } = new global::System.Collections.Generic.List<Payload.DataSet.DataSetValue>();
+                public global::System.Collections.Generic.List<DataSet.DataSetValue> Elements { get; set; } = new global::System.Collections.Generic.List<DataSet.DataSetValue>();
 
                 [global::ProtoBuf.ProtoMember(2, Name = @"details")]
                 public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
@@ -382,18 +382,18 @@ namespace SparkplugNet.VersionB
             public void ResetStringValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 8);
 
             [global::ProtoBuf.ProtoMember(9, Name = @"propertyset_value")]
-            public Payload.PropertySet PropertysetValue
+            public PropertySet PropertysetValue
             {
-                get => __pbn__value.Is(9) ? ((Payload.PropertySet)__pbn__value.Object) : default;
+                get => __pbn__value.Is(9) ? ((PropertySet)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(9, value);
             }
             public bool ShouldSerializePropertysetValue() => __pbn__value.Is(9);
             public void ResetPropertysetValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 9);
 
             [global::ProtoBuf.ProtoMember(10, Name = @"propertysets_value")]
-            public Payload.PropertySetList PropertysetsValue
+            public PropertySetList PropertysetsValue
             {
-                get => __pbn__value.Is(10) ? ((Payload.PropertySetList)__pbn__value.Object) : default;
+                get => __pbn__value.Is(10) ? ((PropertySetList)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(10, value);
             }
             public bool ShouldSerializePropertysetsValue() => __pbn__value.Is(10);
@@ -449,7 +449,7 @@ namespace SparkplugNet.VersionB
             public global::System.Collections.Generic.List<string> Keys { get; set; } = new global::System.Collections.Generic.List<string>();
 
             [global::ProtoBuf.ProtoMember(2, Name = @"values")]
-            public global::System.Collections.Generic.List<Payload.PropertyValue> Values { get; set; } = new global::System.Collections.Generic.List<Payload.PropertyValue>();
+            public global::System.Collections.Generic.List<PropertyValue> Values { get; set; } = new global::System.Collections.Generic.List<PropertyValue>();
 
             [global::ProtoBuf.ProtoMember(3, Name = @"details")]
             public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
@@ -464,7 +464,7 @@ namespace SparkplugNet.VersionB
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"propertyset")]
-            public global::System.Collections.Generic.List<Payload.PropertySet> Propertysets { get; set; } = new global::System.Collections.Generic.List<Payload.PropertySet>();
+            public global::System.Collections.Generic.List<PropertySet> Propertysets { get; set; } = new global::System.Collections.Generic.List<PropertySet>();
 
             [global::ProtoBuf.ProtoMember(2, Name = @"details")]
             public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
@@ -542,10 +542,10 @@ namespace SparkplugNet.VersionB
             public bool IsNull { get; set; }
 
             [global::ProtoBuf.ProtoMember(8, Name = @"metadata")]
-            public Payload.MetaData Metadata { get; set; }
+            public MetaData Metadata { get; set; }
 
             [global::ProtoBuf.ProtoMember(9, Name = @"properties")]
-            public Payload.PropertySet Properties { get; set; }
+            public PropertySet Properties { get; set; }
 
             [global::ProtoBuf.ProtoMember(10, Name = @"int_value")]
             public uint IntValue
@@ -614,18 +614,18 @@ namespace SparkplugNet.VersionB
             public void ResetBytesValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 16);
 
             [global::ProtoBuf.ProtoMember(17, Name = @"dataset_value")]
-            public Payload.DataSet DatasetValue
+            public DataSet DatasetValue
             {
-                get => __pbn__value.Is(17) ? ((Payload.DataSet)__pbn__value.Object) : default;
+                get => __pbn__value.Is(17) ? ((DataSet)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(17, value);
             }
             public bool ShouldSerializeDatasetValue() => __pbn__value.Is(17);
             public void ResetDatasetValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 17);
 
             [global::ProtoBuf.ProtoMember(18, Name = @"template_value")]
-            public Payload.Template TemplateValue
+            public Template TemplateValue
             {
-                get => __pbn__value.Is(18) ? ((Payload.Template)__pbn__value.Object) : default;
+                get => __pbn__value.Is(18) ? ((Template)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(18, value);
             }
             public bool ShouldSerializeTemplateValue() => __pbn__value.Is(18);

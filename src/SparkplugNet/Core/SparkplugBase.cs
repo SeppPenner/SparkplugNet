@@ -21,8 +21,8 @@ namespace SparkplugNet.Core
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Messages;
 
-    using VersionAPayload = VersionA.Payload;
-    using VersionBPayload = VersionB.Payload;
+    using VersionA = VersionA.Data;
+    using VersionB = VersionB.Data;
 
     /// <summary>
     /// A base class for all Sparkplug applications, nodes and devices.
@@ -61,8 +61,8 @@ namespace SparkplugNet.Core
 
             this.NameSpace = this.KnownMetrics switch
             {
-                List<VersionAPayload.KuraMetric> => SparkplugNamespace.VersionA,
-                List<VersionBPayload.Metric> => SparkplugNamespace.VersionB,
+                List<VersionA.KuraMetric> => SparkplugNamespace.VersionA,
+                List<VersionB.Metric> => SparkplugNamespace.VersionB,
                 _ => SparkplugNamespace.VersionB
             };
 

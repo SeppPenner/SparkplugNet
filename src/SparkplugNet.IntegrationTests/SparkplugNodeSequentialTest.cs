@@ -19,9 +19,9 @@ namespace SparkplugNet.IntegrationTests
     using Serilog;
 
     using SparkplugNet.Core;
-    using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Node;
     using SparkplugNet.VersionB;
+    using SparkplugNet.VersionB.Data;
 
     /// <summary>
     /// A class to test the <see cref="SparkplugNode" /> class with live MQTT Server and Sparkplug Host.
@@ -39,7 +39,7 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// The metrics.
         /// </summary>
-        private static List<Payload.Metric> metrics;
+        private static List<Metric> metrics;
 
         /// <summary>
         /// The cancellation token source.
@@ -123,17 +123,17 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// Gets the test metrics.
         /// </summary>
-        /// <returns>A <see cref="List{T}"/> of <see cref="Payload.Metric"/>s.</returns>
-        private static List<Payload.Metric> GetTestMetrics()
+        /// <returns>A <see cref="List{T}"/> of <see cref="Metric"/>s.</returns>
+        private static List<Metric> GetTestMetrics()
         {
             var random = new Random();
             var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            var testMetrics = new List<Payload.Metric>
+            var testMetrics = new List<Metric>
             {
-                new () { Name = "General/Name", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.String, StringValue = "Some Name" },
-                new () { Name = "General/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
-                new () { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, Datatype = (uint)SparkplugBDataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) }
+                new () { Name = "General/Name", Timestamp = unixNow, DataType = (uint)DataType.String, StringValue = "Some Name" },
+                new () { Name = "General/Some Int Value", Timestamp = unixNow, DataType = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+                new () { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, DataType = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) }
             };
 
             return testMetrics;
@@ -143,17 +143,17 @@ namespace SparkplugNet.IntegrationTests
         /// Updates the test metrics.
         /// </summary>
         /// <param name="newMetrics">The new metrics.</param>
-        private static void UpdateTestMetrics(ICollection<Payload.Metric> newMetrics)
+        private static void UpdateTestMetrics(ICollection<Metric> newMetrics)
         {
             var random = new Random();
             var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             // add extra metric after NBIRTH
-            newMetrics.Add(new Payload.Metric
+            newMetrics.Add(new Metric
             {
                 Name = "General/Extra Metric",
                 Timestamp = unixUtcNow,
-                Datatype = (uint)Payload.Metric.ValueOneofCase.LongValue,
+                DataType = (uint)DataType.Int64,
                 LongValue = (ulong)random.Next(0, int.MaxValue)
             });
 
@@ -165,43 +165,43 @@ namespace SparkplugNet.IntegrationTests
                 }
 
                 metric.Timestamp = unixUtcNow;
-                switch (metric.Datatype)
+                switch (metric.DataType)
                 {
-                    case (int)SparkplugBDataType.String:
-                    case (int)SparkplugBDataType.Text:
-                    case (int)SparkplugBDataType.Uuid:
+                    case (int)DataType.String:
+                    case (int)DataType.Text:
+                    case (int)DataType.Uuid:
                         metric.StringValue = metric.StringValue;
                         break;
-                    case (int)SparkplugBDataType.Int8:
-                    case (int)SparkplugBDataType.UInt8:
-                    case (int)SparkplugBDataType.Int16:
-                    case (int)SparkplugBDataType.UInt16:
-                    case (int)SparkplugBDataType.Int32:
-                    case (int)SparkplugBDataType.UInt32:
+                    case (int)DataType.Int8:
+                    case (int)DataType.UInt8:
+                    case (int)DataType.Int16:
+                    case (int)DataType.UInt16:
+                    case (int)DataType.Int32:
+                    case (int)DataType.UInt32:
                         metric.IntValue = (uint)random.Next(0, int.MaxValue);
                         break;
-                    case (int)SparkplugBDataType.Int64:
-                    case (int)SparkplugBDataType.UInt64:
-                    case (int)SparkplugBDataType.DateTime:
+                    case (int)DataType.Int64:
+                    case (int)DataType.UInt64:
+                    case (int)DataType.DateTime:
                         metric.LongValue = (ulong)random.Next(0, int.MaxValue);
                         break;
-                    case (int)SparkplugBDataType.Float:
+                    case (int)DataType.Float:
                         metric.FloatValue = random.Next(0, int.MaxValue);
                         break;
-                    case (int)SparkplugBDataType.Double:
+                    case (int)DataType.Double:
                         metric.DoubleValue = random.Next(0, int.MaxValue);
                         break;
-                    case (int)SparkplugBDataType.Boolean:
+                    case (int)DataType.Boolean:
                         metric.BooleanValue = !metric.BooleanValue;
                         break;
-                    case (int)SparkplugBDataType.Bytes:
-                    case (int)SparkplugBDataType.File:
+                    case (int)DataType.Bytes:
+                    case (int)DataType.File:
                         metric.BytesValue = metric.BytesValue;
                         break;
-                    case (int)SparkplugBDataType.Dataset:
-                        metric.DatasetValue = metric.DatasetValue;
+                    case (int)DataType.DataSet:
+                        metric.DataSetValue = metric.DataSetValue;
                         break;
-                    case (int)SparkplugBDataType.Template:
+                    case (int)DataType.Template:
                         metric.TemplateValue = metric.TemplateValue;
                         break;
                     default:

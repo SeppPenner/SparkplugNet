@@ -25,8 +25,8 @@ namespace SparkplugNet.Core.Device
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Extensions;
 
-    using VersionAPayload = VersionA.Payload;
-    using VersionBPayload = VersionB.Payload;
+    using VersionA = VersionA.Data;
+    using VersionB = VersionB.Data;
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -115,7 +115,7 @@ namespace SparkplugNet.Core.Device
             {
                 case SparkplugNamespace.VersionA:
                 {
-                    if (!(metrics is List<VersionAPayload.KuraMetric> convertedMetrics))
+                    if (!(metrics is List<VersionA.KuraMetric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version A metric.");
                     }
@@ -125,7 +125,7 @@ namespace SparkplugNet.Core.Device
                 }
                 case SparkplugNamespace.VersionB:
                 {
-                    if (!(metrics is List<VersionBPayload.Metric> convertedMetrics))
+                    if (!(metrics is List<VersionB.Metric> convertedMetrics))
                     {
                         throw new Exception("Invalid metric type specified for version B metric.");
                     }
@@ -145,14 +145,14 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionAMessage(List<VersionAPayload.KuraMetric> metrics)
+        private async Task PublishVersionAMessage(List<VersionA.KuraMetric> metrics)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionAPayload.KuraMetric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionA.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
@@ -185,14 +185,14 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBMessage(List<VersionBPayload.Metric> metrics)
+        private async Task PublishVersionBMessage(List<VersionB.Metric> metrics)
         {
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionBPayload.Metric> knownMetrics))
+            if (!(this.KnownMetrics is List<VersionB.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
@@ -262,7 +262,7 @@ namespace SparkplugNet.Core.Device
                             case SparkplugNamespace.VersionA:
                                 if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                 {
-                                    var payloadVersionA = PayloadHelper.Deserialize<VersionAPayload>(e.ApplicationMessage.Payload);
+                                    var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(e.ApplicationMessage.Payload);
 
                                     if (payloadVersionA != null)
                                     {
@@ -281,7 +281,7 @@ namespace SparkplugNet.Core.Device
 
                                 if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                 {
-                                    var payloadVersionB = PayloadHelper.Deserialize<VersionBPayload>(e.ApplicationMessage.Payload);
+                                    var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(e.ApplicationMessage.Payload);
 
                                     if (payloadVersionB != null)
                                     {

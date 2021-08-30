@@ -1,51 +1,51 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugADataType.cs" company="Hämmer Electronics">
+// <copyright file="DataType.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   The Sparkplug A data type enumeration.
+//   The externally used Sparkplug A data type enumeration.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Core.Enumerations
+namespace SparkplugNet.VersionA.Data
 {
     /// <summary>
-    /// The Sparkplug A data type enumeration.
+    /// The externally used Sparkplug A data type enumeration.
     /// </summary>
-    public enum SparkplugADataType
+    public enum DataType
     {
         /// <summary>
-        /// Unknown placeholder for future expansion
+        /// The double data type.
         /// </summary>
         Double = 0,
 
         /// <summary>
-        /// Int8
+        /// The float data type.
         /// </summary>
         Float = 1,
 
         /// <summary>
-        /// Int16
+        /// The 64 bit integer data type.
         /// </summary>
         Int64 = 2,
 
         /// <summary>
-        /// Int32
+        /// The 32 bit integer data type.
         /// </summary>
         Int32 = 3,
 
         /// <summary>
-        /// Int64
+        /// The boolean data type.
         /// </summary>
         Bool = 4,
 
         /// <summary>
-        /// UInt8
+        /// The string data type.
         /// </summary>
         String = 5,
 
         /// <summary>
-        /// UInt16
+        /// The bytes data type.
         /// </summary>
         Bytes = 6
     }
