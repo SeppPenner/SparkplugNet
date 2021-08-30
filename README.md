@@ -46,7 +46,7 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 
 ## Recommended brokers
 [MQTTnet.Server](https://github.com/chkr1011/MQTTnet.Server) for simple MQTT testing.
-[HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Sparkplug InfluxDB Extension](https://www.hivemq.com/extension/sparkplug-influxdb-extension/) for Sparkplug testing.
+[HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Sparkplug InfluxDB Extension](https://github.com/hivemq/hivemq-sparkplug-influxdb-extension/) for Sparkplug testing.
 
 ## Supported Sparkplug standards
 * Version 2.2, spAv1.0 and spBv1.0.
