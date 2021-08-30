@@ -1,7 +1,7 @@
-Check code style again
-Doku and Examples
-
-NBirth: Template-Support!
-DDeath: No idea how the seq number should be used here! --> Ok, we need to publish all of the messages.
-
-Todo: Test with https://www.hivemq.com/extension/sparkplug-influxdb-extension/
+Template support on NBIRTH
+DDEATH SEQ number, correct handling
+Check code style
+Add documentation to Readme
+Add more examples in the example project
+Remove current single MQTT connection for the device(s) and add logic to the node
+Test with https://www.hivemq.com/extension/sparkplug-influxdb-extension/
