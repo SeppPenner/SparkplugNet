@@ -24,12 +24,12 @@ namespace SparkplugNet.VersionB.Data
         /// <summary>
         /// Gets or sets the columns.
         /// </summary>
-        public List<string> Columns { get; set; } = new List<string>();
+        public List<string> Columns { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the types.
         /// </summary>
-        public uint[] Types { get; set; }
+        public uint[] Types { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the rows.
