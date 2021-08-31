@@ -40,6 +40,8 @@ namespace SparkplugNet.Core.Node
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         public async Task<MqttClientPublishResult> PublishDeviceBirthMessage(List<T> knownMetrics, string deviceIdentifier)
         {
@@ -81,7 +83,7 @@ namespace SparkplugNet.Core.Node
         /// <param name="metrics">The metrics.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or the device is unknown.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         public async Task<MqttClientPublishResult> PublishDeviceData(List<T> metrics, string deviceIdentifier)
@@ -94,6 +96,11 @@ namespace SparkplugNet.Core.Node
             if (!this.Client.IsConnected)
             {
                 throw new Exception("The MQTT client is not connected, please try again.");
+            }
+
+            if (!this.KnownDevices.ContainsKey(deviceIdentifier))
+            {
+                throw new Exception("The device is unknown, please publish a device birth message first.");
             }
 
             switch (this.NameSpace)
@@ -125,6 +132,8 @@ namespace SparkplugNet.Core.Node
         /// Publishes a device death message to the MQTT broker.
         /// </summary>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <exception cref="ArgumentNullException">The options are null.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or the device is unknown.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         public async Task<MqttClientPublishResult> PublishDeviceDeathMessage(string deviceIdentifier)
         {
@@ -138,6 +147,11 @@ namespace SparkplugNet.Core.Node
                 throw new Exception("The MQTT client is not connected, please try again.");
             }
 
+            if (!this.KnownDevices.ContainsKey(deviceIdentifier))
+            {
+                throw new Exception("The device is unknown, please publish a device birth message first.");
+            }
+
             // Get the device death message.
             var deviceDeathMessage = this.MessageGenerator.GetSparkPlugDeviceDeathMessage(
                 this.NameSpace,
@@ -146,8 +160,13 @@ namespace SparkplugNet.Core.Node
                 deviceIdentifier,
                 this.LastSessionNumber);
 
+            // Todo: Check sequence number here?!
             // Increment the sequence number.
             this.IncrementLastSequenceNumber();
+
+            // Todo: Check if correct or metrics set to stale?!
+            // Removed the device from the known devices.
+            this.KnownDevices.TryRemove(deviceIdentifier, out _);
 
             // Publish the message.
             this.options.CancellationToken ??= CancellationToken.None;
@@ -160,17 +179,23 @@ namespace SparkplugNet.Core.Node
         /// <param name="metrics">The metrics.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">An invalid metric type was specified.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified or the device is unknown.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         private async Task<MqttClientPublishResult> PublishVersionAMessageForDevice(List<VersionAData.KuraMetric> metrics, string deviceIdentifier)
         {
-            // Todo: Check metrics per device
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionAData.KuraMetric> knownMetrics))
+            if (!this.KnownDevices.ContainsKey(deviceIdentifier))
+            {
+                throw new Exception("The device is unknown, please publish a device birth message first.");
+            }
+
+            var deviceMetrics = this.KnownDevices[deviceIdentifier];
+
+            if (!(deviceMetrics is List<VersionAData.KuraMetric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version A metric.");
             }
@@ -205,17 +230,23 @@ namespace SparkplugNet.Core.Node
         /// <param name="metrics">The metrics.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">An invalid metric type was specified.</exception>
+        /// <exception cref="Exception">An invalid metric type was specified or the device is unknown.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         private async Task<MqttClientPublishResult> PublishVersionBMessageForDevice(List<VersionBData.Metric> metrics, string deviceIdentifier)
         {
-            // Todo: Check metrics per device
             if (this.options is null)
             {
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            if (!(this.KnownMetrics is List<VersionBData.Metric> knownMetrics))
+            if (!this.KnownDevices.ContainsKey(deviceIdentifier))
+            {
+                throw new Exception("The device is unknown, please publish a device birth message first.");
+            }
+
+            var deviceMetrics = this.KnownDevices[deviceIdentifier];
+
+            if (!(deviceMetrics is List<VersionBData.Metric> knownMetrics))
             {
                 throw new Exception("Invalid metric type specified for version B metric.");
             }
