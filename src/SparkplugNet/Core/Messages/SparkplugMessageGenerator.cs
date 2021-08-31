@@ -140,7 +140,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
-        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier or the device identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceBirthMessage<T>(
@@ -248,7 +248,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
-        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier or the device identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceDeathMessage(
@@ -365,7 +365,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
-        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier or the device identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceDataMessage<T>(
@@ -486,7 +486,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
-        /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
+        /// <exception cref="ArgumentException">The group identifier or the edge node identifier or the device identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
         public MqttApplicationMessage GetSparkPlugDeviceCommandMessage<T>(

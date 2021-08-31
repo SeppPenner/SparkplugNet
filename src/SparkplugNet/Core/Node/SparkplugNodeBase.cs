@@ -154,7 +154,6 @@ namespace SparkplugNet.Core.Node
         /// Publishes version A metrics for a node.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
-        /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
@@ -201,7 +200,6 @@ namespace SparkplugNet.Core.Node
         /// Publishes version B metrics for a node.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
-        /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>

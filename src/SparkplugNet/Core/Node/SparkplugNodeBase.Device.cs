@@ -96,7 +96,7 @@ namespace SparkplugNet.Core.Node
         /// <param name="metrics">The metrics.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">The MQTT client is not connected or the device is unknown.</exception>
+        /// <exception cref="Exception">The MQTT client is not connected or the device is unknown or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         public async Task<MqttClientPublishResult> PublishDeviceData(List<T> metrics, string deviceIdentifier)
@@ -192,7 +192,7 @@ namespace SparkplugNet.Core.Node
         /// <param name="metrics">The metrics.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">An invalid metric type was specified or the device is unknown.</exception>
+        /// <exception cref="Exception">The device is unknown or an invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         private async Task<MqttClientPublishResult> PublishVersionAMessageForDevice(List<VersionAData.KuraMetric> metrics, string deviceIdentifier)
         {
@@ -243,7 +243,7 @@ namespace SparkplugNet.Core.Node
         /// <param name="metrics">The metrics.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
-        /// <exception cref="Exception">An invalid metric type was specified or the device is unknown.</exception>
+        /// <exception cref="Exception">The device is unknown or an invalid metric type was specified.</exception>
         /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
         private async Task<MqttClientPublishResult> PublishVersionBMessageForDevice(List<VersionBData.Metric> metrics, string deviceIdentifier)
         {
