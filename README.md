@@ -41,11 +41,7 @@ Sparkplug distinguishes between 5 different types of logical parts:
 |Non MQTT-enabled devices|Sensors that push data to nodes where the nodes publish their data to MQTT on their behalf.|
 
 ## Basic usage
-```csharp
-//Todo
-```
-
-The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/).
+For basic usage, see the [How to use file](./HowToUse.md) or the [example project](https://github.com/SeppPenner/SparkplugNet/blob/master/src/SparkplugNet.Examples/Program.cs).
 
 ## Requirements
 * MQTT broker that implements 100% of the MQTT 3.1.1 specification

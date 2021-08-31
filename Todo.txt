@@ -1,2 +1,1 @@
 Template support on NBIRTH
-Add more examples in the example project + Readme
