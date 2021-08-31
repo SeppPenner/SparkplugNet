@@ -472,13 +472,13 @@ namespace SparkplugNet.Core.Node
             }
 
             var nodeCommandSubscribeTopic = this.TopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
-            await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, (MqttQualityOfServiceLevel) SparkplugQualityOfServiceLevel.AtLeastOnce);
 
             var deviceCommandSubscribeTopic = this.TopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
-            await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel) SparkplugQualityOfServiceLevel.AtLeastOnce);
 
             var stateSubscribeTopic = this.TopicGenerator.GetStateSubscribeTopic(this.options.ScadaHostIdentifier);
-            await this.Client.SubscribeAsync(stateSubscribeTopic, MqttQualityOfServiceLevel.AtLeastOnce);
+            await this.Client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel) SparkplugQualityOfServiceLevel.AtLeastOnce);
         }
     }
 }

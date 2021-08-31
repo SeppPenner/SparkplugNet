@@ -811,7 +811,7 @@ namespace SparkplugNet.Core.Application
         private async Task SubscribeInternal()
         {
             var topic = this.TopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);
-            await this.Client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
+            await this.Client.SubscribeAsync(topic, (MqttQualityOfServiceLevel) SparkplugQualityOfServiceLevel.AtLeastOnce);
         }
 
         /// <summary>
