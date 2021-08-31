@@ -29,8 +29,18 @@ The assembly was written and tested in .Net 5.0.
 * https://dotnet.microsoft.com/download/dotnet-core
 * https://dotnet.microsoft.com/download/dotnet/5.0
 
-## Basic usage
+## Structure
+Sparkplug distinguishes between 5 different types of logical parts:
 
+|Part|Description|
+|-|-|
+|Primary application|The main application that needs to be always available to work with the data and store metrics.|
+|Applications|Other applications that work with the sent data and metrics.|
+|EoN nodes (Later only called nodes)|Logical devices that bundle data from end-of-network devices and publish their data.|
+|MQTT enabled devices|Sensors that work as a "hybrid" version of a node and a device and publish metrics and data.|
+|Non MQTT-enabled devices|Sensors that push data to nodes where the nodes publish their data to MQTT on their behalf.|
+
+## Basic usage
 ```csharp
 //Todo
 ```
@@ -45,14 +55,14 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 * MQTT broker with a flexible security system
 
 ## Recommended brokers
-[MQTTnet.Server](https://github.com/chkr1011/MQTTnet.Server) for simple MQTT testing.
-[HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Sparkplug InfluxDB Extension](https://github.com/hivemq/hivemq-sparkplug-influxdb-extension/) for Sparkplug testing.
+* [MQTTnet.Server](https://github.com/chkr1011/MQTTnet.Server) for simple MQTT testing.
+* [HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Sparkplug InfluxDB Extension](https://github.com/hivemq/hivemq-sparkplug-influxdb-extension/) for Sparkplug testing.
+* [Ignition](https://inductiveautomation.com/ignition/) for Sparkplug testing.
 
 ## Supported Sparkplug standards
 * Version 2.2, spAv1.0 and spBv1.0.
 
 ## Further resources
-
 * https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf
 * https://documents.opto22.com/2357_Industrial_Strength_MQTT_Sparkplug_B.pdf
 * https://github.com/eclipse/tahu
@@ -60,6 +70,7 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 * https://github.com/eclipse/tahu/blob/master/sparkplug_b/sparkplug_b_c_sharp.proto
 * https://protogen.marcgravell.com/
 * https://stackoverflow.com/questions/66199386/protobuf-net-how-to-use-the-any-data-type
+* http://www.steves-internet-guide.com/spsparkplug-payloads-and-messages/
 
 Change history
 --------------
