@@ -23,9 +23,6 @@ namespace SparkplugNet.Tests
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Messages;
 
-    using VersionA = VersionA.Data;
-    using VersionB = VersionB.Data;
-
     /// <summary>
     /// A class to test the <see cref="SparkplugMessageGenerator"/> class.
     /// </summary>
@@ -35,25 +32,25 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The metrics for namespace A.
         /// </summary>
-        private readonly List<VersionA.KuraMetric> metricsA = new ()
+        private readonly List<VersionAProtoBufPayload.KuraMetric> metricsA = new ()
         {
-            new VersionA.KuraMetric
+            new VersionAProtoBufPayload.KuraMetric
             {
                 Name = "Test",
                 BoolValue = true,
-                Type = VersionA.DataType.Bool
+                Type = VersionAProtoBufPayload.KuraMetric.ValueType.Bool
             }
         };
 
         /// <summary>
         /// The metrics for namespace B.
         /// </summary>
-        private readonly List<VersionB.Metric> metricsB = new ()
+        private readonly List<VersionBProtoBufPayload.Metric> metricsB = new ()
         {
-            new VersionB.Metric
+            new VersionBProtoBufPayload.Metric
             {
                 Name = "Test",
-                DataType = (uint)VersionB.DataType.Int32,
+                Datatype = (uint)VersionBProtoBufPayload.Metric.ValueOneofCase.IntValue,
                 IntValue = 20
             }
         };
@@ -61,21 +58,21 @@ namespace SparkplugNet.Tests
         /// <summary>
         /// The SEQ metric for namespace A.
         /// </summary>
-        private readonly VersionA.KuraMetric seqMetricA = new ()
+        private readonly VersionAProtoBufPayload.KuraMetric seqMetricA = new ()
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = 1,
-            Type = VersionA.DataType.Int64
+            Type = VersionAProtoBufPayload.KuraMetric.ValueType.Int64
         };
 
         /// <summary>
         /// The SEQ metric for namespace B.
         /// </summary>
-        private readonly VersionB.Metric seqMetricB = new ()
+        private readonly VersionBProtoBufPayload.Metric seqMetricB = new ()
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = 1,
-            DataType = (uint)VersionB.DataType.Int64
+            Datatype = (uint)VersionAProtoBufPayload.KuraMetric.ValueType.Int64
         };
 
         /// <summary>
@@ -139,7 +136,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceBirthMessage(SparkplugNamespace.VersionA, "group1", "edge1", "device1", this.metricsA, 0, 1, dateTime);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/DBIRTH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -163,7 +160,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceBirthMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/DBIRTH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -172,11 +169,11 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-            Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -187,7 +184,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugNodeBirthMessage(SparkplugNamespace.VersionA, "group1", "edge1", this.metricsA, 0, 1, dateTime);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/NBIRTH/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -211,7 +208,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugNodeBirthMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/NBIRTH/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -220,11 +217,11 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-            Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -235,7 +232,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceDeathMessage(SparkplugNamespace.VersionA, "group1", "edge1", "device1", 0, 1, dateTime);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/DDEATH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -255,7 +252,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", 0, 1, dateTime);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/DDEATH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -264,7 +261,7 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(0).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
         }
 
         /// <summary>
@@ -274,7 +271,7 @@ namespace SparkplugNet.Tests
         public void TestNodeDeathMessageNamespaceA()
         {
             var message = this.messageGenerator.GetSparkPlugNodeDeathMessage(SparkplugNamespace.VersionA, "group1", "edge1", 1);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/NDEATH/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -292,7 +289,7 @@ namespace SparkplugNet.Tests
         public void TestNodeDeathMessageNamespaceB()
         {
             var message = this.messageGenerator.GetSparkPlugNodeDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", 1);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/NDEATH/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -300,7 +297,7 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(0).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
         }
 
         /// <summary>
@@ -311,7 +308,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceDataMessage(SparkplugNamespace.VersionA, "group1", "edge1", "device1", this.metricsA, 0, 1, dateTime);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/DDATA/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -335,7 +332,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/DDATA/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -344,11 +341,11 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-            Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -359,7 +356,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugNodeDataMessage(SparkplugNamespace.VersionA, "group1", "edge1", this.metricsA, 0, 1, dateTime);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/NDATA/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -383,7 +380,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugNodeDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/NDATA/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -392,11 +389,11 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-            Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -407,7 +404,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceCommandMessage(SparkplugNamespace.VersionA, "group1", "edge1", "device1", this.metricsA, 0, 1, dateTime);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/DCMD/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -431,7 +428,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/DCMD/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -440,11 +437,11 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-            Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
 
         /// <summary>
@@ -455,7 +452,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugNodeCommandMessage(SparkplugNamespace.VersionA, "group1", "edge1", this.metricsA, 0, 1, dateTime);
-            var payloadVersionA = PayloadHelper.Deserialize<VersionA.Payload>(message.Payload);
+            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spAv1.0/group1/NCMD/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
@@ -479,7 +476,7 @@ namespace SparkplugNet.Tests
         {
             var dateTime = DateTimeOffset.Now;
             var message = this.messageGenerator.GetSparkPlugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
-            var payloadVersionB = PayloadHelper.Deserialize<VersionB.Payload>(message.Payload);
+            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
             Assert.AreEqual("spBv1.0/group1/NCMD/edge1", message.Topic);
             Assert.IsNotNull(payloadVersionB);
@@ -488,11 +485,11 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
             Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-            Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
+            Assert.AreEqual(this.metricsB.First().Datatype, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+            Assert.AreEqual(this.seqMetricB.Datatype, payloadVersionB.Metrics.ElementAt(1).Datatype);
         }
     }
 }
