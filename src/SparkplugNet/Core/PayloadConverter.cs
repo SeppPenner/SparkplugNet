@@ -146,7 +146,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="ProtoBufPayload.KuraMetric.ValueType"/>.</param>
         /// <returns>The <see cref="VersionAData.DataType"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionAData.DataType ConvertVersionADataType(ProtoBufPayload.KuraMetric.ValueType type)
+        public static VersionAData.DataType ConvertVersionADataType(ProtoBufPayload.KuraMetric.ValueType type)
         {
             return type switch
             {
@@ -167,7 +167,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionAData.DataType"/>.</param>
         /// <returns>The <see cref="ProtoBufPayload.KuraMetric.ValueType"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static ProtoBufPayload.KuraMetric.ValueType ConvertVersionADataType(VersionAData.DataType type)
+        public static ProtoBufPayload.KuraMetric.ValueType ConvertVersionADataType(VersionAData.DataType type)
         {
             return type switch
             {
@@ -188,7 +188,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase"/>.</param>
         /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBData.DataType ConvertVersionBDataTypeDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase type)
+        public static VersionBData.DataType ConvertVersionBDataTypeDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase type)
         {
             return type switch
             {
@@ -210,7 +210,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase ConvertVersionBDataTypeDataSetValue(VersionBData.DataType type)
+        public static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase ConvertVersionBDataTypeDataSetValue(VersionBData.DataType type)
         {
             return type switch
             {
@@ -246,7 +246,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase"/>.</param>
         /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBData.DataType ConvertVersionBDataTypeMetric(VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase type)
+        public static VersionBData.DataType ConvertVersionBDataTypeMetric(VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase type)
         {
             return type switch
             {
@@ -268,7 +268,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase ConvertVersionBDataTypeMetric(VersionBData.DataType type)
+        public static VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase ConvertVersionBDataTypeMetric(VersionBData.DataType type)
         {
             return type switch
             {
@@ -304,7 +304,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase"/>.</param>
         /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBData.DataType ConvertVersionBDataTypeParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase type)
+        public static VersionBData.DataType ConvertVersionBDataTypeParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase type)
         {
             return type switch
             {
@@ -326,7 +326,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase ConvertVersionBDataTypeParameter(VersionBData.DataType type)
+        public static VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase ConvertVersionBDataTypeParameter(VersionBData.DataType type)
         {
             return type switch
             {
@@ -362,7 +362,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase"/>.</param>
         /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBData.DataType ConvertVersionBDataTypePropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase type)
+        public static VersionBData.DataType ConvertVersionBDataTypePropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase type)
         {
             return type switch
             {
@@ -384,7 +384,7 @@ namespace SparkplugNet.Core
         /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase"/>.</returns>
         // ReSharper disable once StyleCop.SA1650
-        private static VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase ConvertVersionBDataTypePropertyValue(VersionBData.DataType type)
+        public static VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase ConvertVersionBDataTypePropertyValue(VersionBData.DataType type)
         {
             return type switch
             {
