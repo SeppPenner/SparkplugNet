@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugNode.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugNodeBase.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
@@ -36,7 +36,7 @@ namespace SparkplugNet.Core.Node
     /// A class that handles a Sparkplug node.
     /// </summary>
     /// <seealso cref="SparkplugBase{T}"/>
-    public class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
+    public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
     {
         /// <summary>
         /// The callback for the device command received event.
@@ -151,7 +151,7 @@ namespace SparkplugNet.Core.Node
         }
 
         /// <summary>
-        /// Publishes a version A metric.
+        /// Publishes version A metrics for a node.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
@@ -177,7 +177,7 @@ namespace SparkplugNet.Core.Node
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
-            // Get the data message and increase the sequence counter.
+            // Get the data message.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(
                 this.NameSpace,
                 this.options.GroupIdentifier,
@@ -190,13 +190,15 @@ namespace SparkplugNet.Core.Node
             // Debug output.
             this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
+            // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
+            // Publish the message.
             return await this.Client.PublishAsync(dataMessage);
         }
 
         /// <summary>
-        /// Publishes a version B metric.
+        /// Publishes version B metrics for a node.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <returns>A <see cref="Task" /> representing any asynchronous operation with result of MqttClientPublishResult</returns>
@@ -222,7 +224,7 @@ namespace SparkplugNet.Core.Node
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
-            // Get the data message and increase the sequence counter.
+            // Get the data message.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(
                 this.NameSpace,
                 this.options.GroupIdentifier,
@@ -235,8 +237,10 @@ namespace SparkplugNet.Core.Node
             // Debug output.
             this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
+            // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
+            // Publish the message.
             return await this.Client.PublishAsync(dataMessage);
         }
 
@@ -432,7 +436,7 @@ namespace SparkplugNet.Core.Node
                 throw new ArgumentNullException(nameof(this.options));
             }
 
-            // Get the online message and increase the sequence counter.
+            // Get the online message.
             var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage(
                 this.NameSpace,
                 this.options.GroupIdentifier,
@@ -448,9 +452,10 @@ namespace SparkplugNet.Core.Node
             // Debug output.
             this.Logger?.Debug("NBIRTH Message: {@OnlineMessage}", onlineMessage);
 
-            // Increment
+            // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
+            // Publish the message.
             await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
         }
 

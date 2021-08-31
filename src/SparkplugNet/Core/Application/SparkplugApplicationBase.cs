@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugApplication.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugApplicationBase.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
@@ -287,7 +287,7 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
-            // Get the data message and increase the sequence counter.
+            // Get the data message.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeCommandMessage(
                 this.NameSpace,
                 groupIdentifier,
@@ -296,8 +296,11 @@ namespace SparkplugNet.Core.Application
                 this.LastSequenceNumber,
                 LastSessionNumber,
                 DateTimeOffset.Now);
+
+            // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
+            // Publish the message.
             await this.Client.PublishAsync(dataMessage);
         }
 
@@ -328,7 +331,7 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
-            // Get the data message and increase the sequence counter.
+            // Get the data message.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeCommandMessage(
                 this.NameSpace,
                 groupIdentifier,
@@ -341,8 +344,10 @@ namespace SparkplugNet.Core.Application
             // Debug output.
             this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
+            // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
+            // Publish the message.
             await this.Client.PublishAsync(dataMessage);
         }
 
@@ -374,7 +379,7 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
-            // Get the data message and increase the sequence counter.
+            // Get the data message.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(
                 this.NameSpace,
                 groupIdentifier,
@@ -388,8 +393,10 @@ namespace SparkplugNet.Core.Application
             // Debug output.
             this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
+            // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
+            // Publish the message.
             await this.Client.PublishAsync(dataMessage);
         }
 
@@ -421,7 +428,7 @@ namespace SparkplugNet.Core.Application
             // Remove the session number metric if a user might have added it.
             metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
-            // Get the data message and increase the sequence counter.
+            // Get the data message.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceCommandMessage(
                 this.NameSpace,
                 groupIdentifier,
@@ -431,8 +438,11 @@ namespace SparkplugNet.Core.Application
                 this.LastSequenceNumber,
                 LastSessionNumber,
                 DateTimeOffset.Now);
+
+            // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
+            // Publish the message.
             await this.Client.PublishAsync(dataMessage);
         }
 
@@ -779,14 +789,16 @@ namespace SparkplugNet.Core.Application
             // Only send state messages for the primary application.
             if (this.options.IsPrimaryApplication)
             {
-                // Get the online message and increase the sequence counter.
+                // Get the online message.
                 var onlineMessage = this.MessageGenerator.GetSparkplugStateMessage(
                     this.NameSpace,
                     this.options.ScadaHostIdentifier,
                     true);
+
+                // Increment the sequence number.
                 this.IncrementLastSequenceNumber();
 
-                // Publish data.
+                // Publish message.
                 this.options.CancellationToken ??= CancellationToken.None;
                 await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
             }
