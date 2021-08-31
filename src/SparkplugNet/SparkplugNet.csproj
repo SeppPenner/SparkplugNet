@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Version 0.2.0.0 (2021-05-20): 0.2 alpha release (Smaller logical changes as some things didn't work properly).</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 0.3.0.0 (2021-08-31): 0.3 alpha release (Bigger changes, espescially internal and external data formats and removed devices).</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
