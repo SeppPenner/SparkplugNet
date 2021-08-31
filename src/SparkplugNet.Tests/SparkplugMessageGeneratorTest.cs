@@ -23,6 +23,9 @@ namespace SparkplugNet.Tests
     using SparkplugNet.Core.Enumerations;
     using SparkplugNet.Core.Messages;
 
+    using VersionAProtoBufPayload = VersionA.ProtoBuf.ProtoBufPayload;
+    using VersionBProtoBufPayload = VersionB.ProtoBuf.ProtoBufPayload;
+
     /// <summary>
     /// A class to test the <see cref="SparkplugMessageGenerator"/> class.
     /// </summary>

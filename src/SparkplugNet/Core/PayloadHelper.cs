@@ -7,6 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("SparkplugNet.Tests")]
 namespace SparkplugNet.Core
 {
     using System.IO;
