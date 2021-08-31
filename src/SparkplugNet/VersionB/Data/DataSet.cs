@@ -29,7 +29,7 @@ namespace SparkplugNet.VersionB.Data
         /// <summary>
         /// Gets or sets the types.
         /// </summary>
-        public uint[] Types { get; set; } = new ();
+        public uint[] Types { get; set; } = new uint[]{};
 
         /// <summary>
         /// Gets or sets the rows.

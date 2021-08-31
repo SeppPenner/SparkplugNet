@@ -34,7 +34,7 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// The node.
         /// </summary>
-        private static SparkplugNode node = new ();
+        private static SparkplugNode? node;
 
         /// <summary>
         /// The metrics.
