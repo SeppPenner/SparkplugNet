@@ -1,4 +1,3 @@
 Template support on NBIRTH
 Check code style: Exceptions in code doc? MQTTResult / Task properly documented? Nullables, Code style and erorrs
 Add more examples in the example project + Readme
-Test with https://www.hivemq.com/extension/sparkplug-influxdb-extension/
