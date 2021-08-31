@@ -156,8 +156,8 @@ namespace SparkplugNet.VersionB.Data
         }
 
         /// <summary>
-        /// Gets the value case.
+        /// Gets or sets the value case.
         /// </summary>
-        public DataType ValueCase { get; private set; }
+        public DataType ValueCase { get; set; }
     }
 }

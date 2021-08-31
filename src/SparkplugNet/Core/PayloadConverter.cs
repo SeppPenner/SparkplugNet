@@ -183,6 +183,238 @@ namespace SparkplugNet.Core
         }
 
         /// <summary>
+        /// Gets the version B data type from the version B ProtoBuf value type for data set values.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase"/>.</param>
+        /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBData.DataType ConvertVersionBDataTypeDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase type)
+        {
+            return type switch
+            {
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None => VersionBData.DataType.Unknown,
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue => VersionBData.DataType.Int32,
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue => VersionBData.DataType.Int64,
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.FloatValue => VersionBData.DataType.Float,
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.DoubleValue => VersionBData.DataType.Double,
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.BooleanValue => VersionBData.DataType.Boolean,
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.StringValue => VersionBData.DataType.String,
+                VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.ExtensionValue => VersionBData.DataType.Unknown,
+                _ => VersionBData.DataType.String
+            };
+        }
+
+        /// <summary>
+        /// Gets the version B ProtoBuf value type from the version B data type for data set values.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
+        /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase ConvertVersionBDataTypeDataSetValue(VersionBData.DataType type)
+        {
+            return type switch
+            {
+                VersionBData.DataType.Unknown => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Int8 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int16 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int32 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int64 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue,
+                VersionBData.DataType.UInt8 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt16 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt32 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt64 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue,
+                VersionBData.DataType.Float => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.FloatValue,
+                VersionBData.DataType.Double => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.DoubleValue,
+                VersionBData.DataType.Boolean => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.BooleanValue,
+                VersionBData.DataType.String => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.StringValue,
+                VersionBData.DataType.DateTime => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue,
+                VersionBData.DataType.Text => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.StringValue,
+                VersionBData.DataType.Uuid => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.StringValue,
+                VersionBData.DataType.DataSet => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None,
+                VersionBData.DataType.Bytes => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.File => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Template => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None,
+                VersionBData.DataType.PropertySet => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None,
+                VersionBData.DataType.PropertySetList => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None,
+                _ => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None
+            };
+        }
+
+        /// <summary>
+        /// Gets the version B data type from the version B ProtoBuf value type for metrics.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase"/>.</param>
+        /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBData.DataType ConvertVersionBDataTypeMetric(VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase type)
+        {
+            return type switch
+            {
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None => VersionBData.DataType.Unknown,
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue => VersionBData.DataType.Int32,
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue => VersionBData.DataType.Int64,
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.FloatValue => VersionBData.DataType.Float,
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.DoubleValue => VersionBData.DataType.Double,
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.BooleanValue => VersionBData.DataType.Boolean,
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue => VersionBData.DataType.String,
+                VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.ExtensionValue => VersionBData.DataType.Unknown,
+                _ => VersionBData.DataType.String
+            };
+        }
+
+        /// <summary>
+        /// Gets the version B ProtoBuf value type from the version B data type for metrics.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
+        /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase ConvertVersionBDataTypeMetric(VersionBData.DataType type)
+        {
+            return type switch
+            {
+                VersionBData.DataType.Unknown => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Int8 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int16 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int32 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int64 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue,
+                VersionBData.DataType.UInt8 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt16 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt32 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt64 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue,
+                VersionBData.DataType.Float => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.FloatValue,
+                VersionBData.DataType.Double => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.DoubleValue,
+                VersionBData.DataType.Boolean => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.BooleanValue,
+                VersionBData.DataType.String => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue,
+                VersionBData.DataType.DateTime => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue,
+                VersionBData.DataType.Text => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue,
+                VersionBData.DataType.Uuid => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue,
+                VersionBData.DataType.DataSet => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None,
+                VersionBData.DataType.Bytes => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.File => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Template => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None,
+                VersionBData.DataType.PropertySet => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None,
+                VersionBData.DataType.PropertySetList => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None,
+                _ => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None
+            };
+        }
+
+        /// <summary>
+        /// Gets the version B data type from the version B ProtoBuf value type for parameters.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase"/>.</param>
+        /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBData.DataType ConvertVersionBDataTypeParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase type)
+        {
+            return type switch
+            {
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None => VersionBData.DataType.Unknown,
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue => VersionBData.DataType.Int32,
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue => VersionBData.DataType.Int64,
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.FloatValue => VersionBData.DataType.Float,
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.DoubleValue => VersionBData.DataType.Double,
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.BooleanValue => VersionBData.DataType.Boolean,
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.StringValue => VersionBData.DataType.String,
+                VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.ExtensionValue => VersionBData.DataType.Unknown,
+                _ => VersionBData.DataType.String
+            };
+        }
+
+        /// <summary>
+        /// Gets the version B ProtoBuf value type from the version B data type for parameters.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
+        /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase ConvertVersionBDataTypeParameter(VersionBData.DataType type)
+        {
+            return type switch
+            {
+                VersionBData.DataType.Unknown => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Int8 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int16 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int32 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int64 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue,
+                VersionBData.DataType.UInt8 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt16 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt32 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt64 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue,
+                VersionBData.DataType.Float => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.FloatValue,
+                VersionBData.DataType.Double => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.DoubleValue,
+                VersionBData.DataType.Boolean => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.BooleanValue,
+                VersionBData.DataType.String => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.StringValue,
+                VersionBData.DataType.DateTime => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue,
+                VersionBData.DataType.Text => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.StringValue,
+                VersionBData.DataType.Uuid => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.StringValue,
+                VersionBData.DataType.DataSet => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None,
+                VersionBData.DataType.Bytes => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.File => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Template => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None,
+                VersionBData.DataType.PropertySet => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None,
+                VersionBData.DataType.PropertySetList => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None,
+                _ => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None
+            };
+        }
+
+        /// <summary>
+        /// Gets the version B data type from the version B ProtoBuf value type for property values.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase"/>.</param>
+        /// <returns>The <see cref="VersionBData.DataType"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBData.DataType ConvertVersionBDataTypePropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase type)
+        {
+            return type switch
+            {
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None => VersionBData.DataType.Unknown,
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue => VersionBData.DataType.Int32,
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue => VersionBData.DataType.Int64,
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.FloatValue => VersionBData.DataType.Float,
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.DoubleValue => VersionBData.DataType.Double,
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.BooleanValue => VersionBData.DataType.Boolean,
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.StringValue => VersionBData.DataType.String,
+                VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.ExtensionValue => VersionBData.DataType.Unknown,
+                _ => VersionBData.DataType.String
+            };
+        }
+
+        /// <summary>
+        /// Gets the version B ProtoBuf value type from the version B data type for property values.
+        /// </summary>
+        /// <param name="type">The <see cref="VersionBData.DataType"/>.</param>
+        /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase"/>.</returns>
+        // ReSharper disable once StyleCop.SA1650
+        private static VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase ConvertVersionBDataTypePropertyValue(VersionBData.DataType type)
+        {
+            return type switch
+            {
+                VersionBData.DataType.Unknown => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Int8 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int16 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int32 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.Int64 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue,
+                VersionBData.DataType.UInt8 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt16 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt32 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
+                VersionBData.DataType.UInt64 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue,
+                VersionBData.DataType.Float => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.FloatValue,
+                VersionBData.DataType.Double => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.DoubleValue,
+                VersionBData.DataType.Boolean => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.BooleanValue,
+                VersionBData.DataType.String => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.StringValue,
+                VersionBData.DataType.DateTime => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue,
+                VersionBData.DataType.Text => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.StringValue,
+                VersionBData.DataType.Uuid => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.StringValue,
+                VersionBData.DataType.DataSet => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None,
+                VersionBData.DataType.Bytes => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.File => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.ExtensionValue,
+                VersionBData.DataType.Template => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None,
+                VersionBData.DataType.PropertySet => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None,
+                VersionBData.DataType.PropertySetList => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None,
+                _ => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None
+            };
+        }
+
+        /// <summary>
         /// Gets the version B data set from the version B ProtoBuf data set.
         /// </summary>
         /// <param name="dataSet">The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet"/>.</param>
@@ -234,7 +466,8 @@ namespace SparkplugNet.Core
                 FloatValue = dataSetValue.FloatValue,
                 IntValue = dataSetValue.IntValue,
                 LongValue = dataSetValue.LongValue,
-                StringValue = dataSetValue.StringValue
+                StringValue = dataSetValue.StringValue,
+                ValueCase = ConvertVersionBDataTypeDataSetValue(dataSetValue.ValueCase)
             };
         }
 
@@ -386,7 +619,8 @@ namespace SparkplugNet.Core
                 LongValue = parameter.LongValue,
                 Name = parameter.Name,
                 StringValue = parameter.StringValue,
-                Type = parameter.Type
+                Type = parameter.Type,
+                ValueCase = ConvertVersionBDataTypeParameter(parameter.ValueCase)
             };
         }
 
@@ -444,7 +678,8 @@ namespace SparkplugNet.Core
                 Properties = ConvertVersionBPropertySet(metric.Properties),
                 StringValue = metric.StringValue,
                 Timestamp = metric.Timestamp,
-                TemplateValue = ConvertVersionBTemplate(metric.TemplateValue)
+                TemplateValue = ConvertVersionBTemplate(metric.TemplateValue),
+                ValueCase = ConvertVersionBDataTypeMetric(metric.ValueCase)
             };
         }
 
@@ -562,7 +797,8 @@ namespace SparkplugNet.Core
                 LongValue = propertyValue.LongValue,
                 PropertySetValue = ConvertVersionBPropertySet(propertyValue.PropertysetValue),
                 StringValue = propertyValue.StringValue,
-                Type = propertyValue.Type
+                Type = propertyValue.Type,
+                ValueCase = ConvertVersionBDataTypePropertyValue(propertyValue.ValueCase)
             };
         }
 
