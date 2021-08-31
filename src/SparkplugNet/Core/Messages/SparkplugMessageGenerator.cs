@@ -245,7 +245,9 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
+        /// <param name="dateTime">The date time.</param>
         /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
@@ -254,7 +256,9 @@ namespace SparkplugNet.Core.Messages
             string groupIdentifier,
             string edgeNodeIdentifier,
             string deviceIdentifier,
-            long sessionNumber)
+            int sequenceNumber,
+            long sessionNumber,
+            DateTimeOffset dateTime)
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
@@ -277,14 +281,14 @@ namespace SparkplugNet.Core.Messages
                     {
                         var metrics = new List<VersionA.KuraMetric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
+                        return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics, dateTime);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var metrics = new List<VersionB.Metric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
+                        return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics, sequenceNumber, dateTime);
                     }
 
                 default:
@@ -855,17 +859,20 @@ namespace SparkplugNet.Core.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="metrics">The metrics.</param>
+        /// <param name="dateTime">The date time.</param>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
         private MqttApplicationMessage GetSparkPlugDeviceDeathA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
             string deviceIdentifier,
-            List<VersionA.KuraMetric> metrics)
+            List<VersionA.KuraMetric> metrics,
+            DateTimeOffset dateTime)
         {
             var payload = new VersionA.Payload
             {
-                Metrics = metrics
+                Metrics = metrics,
+                Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
             // Debug output.
@@ -896,17 +903,23 @@ namespace SparkplugNet.Core.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="metrics">The metrics.</param>
+        /// <param name="sequenceNumber">The sequence number.</param>
+        /// <param name="dateTime">The date time.</param>
         /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
         private MqttApplicationMessage GetSparkPlugDeviceDeathB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
             string deviceIdentifier,
-            List<VersionB.Metric> metrics)
+            List<VersionB.Metric> metrics,
+            int sequenceNumber,
+            DateTimeOffset dateTime)
         {
             var payload = new VersionB.Payload
             {
-                Metrics = metrics
+                Metrics = metrics,
+                Seq = (ulong)sequenceNumber,
+                Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
             };
 
             // Debug output.
