@@ -34,12 +34,12 @@ namespace SparkplugNet.IntegrationTests
         /// <summary>
         /// The node.
         /// </summary>
-        private static SparkplugNode node;
+        private static SparkplugNode node = new ();
 
         /// <summary>
         /// The metrics.
         /// </summary>
-        private static List<Metric> metrics;
+        private static List<Metric> metrics = new ();
 
         /// <summary>
         /// The cancellation token source.
@@ -113,10 +113,10 @@ namespace SparkplugNet.IntegrationTests
             // Assert IsConnected == true.
             Assert.IsTrue(node.IsConnected);
 
-            // Stop instance of SparkplugNode
+            // Stop the instance of the Sparkplug node.
             await node.Stop();
 
-            // assert IsConnected = false
+            // Assert IsConnected = false.
             Assert.IsFalse(node.IsConnected);
         }
 
@@ -148,7 +148,7 @@ namespace SparkplugNet.IntegrationTests
             var random = new Random();
             var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            // add extra metric after NBIRTH
+            // Add extra metric after NBIRTH.
             newMetrics.Add(new Metric
             {
                 Name = "General/Extra Metric",
