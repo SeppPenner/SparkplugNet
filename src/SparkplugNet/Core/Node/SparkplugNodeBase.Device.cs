@@ -36,6 +36,16 @@ namespace SparkplugNet.Core.Node
         public ConcurrentDictionary<string, List<T>> KnownDevices { get; } = new ConcurrentDictionary<string,List<T>>();
 
         /// <summary>
+        /// The callback for the device birth received event.
+        /// </summary>
+        public readonly Action<KeyValuePair<string, List<T>>>? DeviceBirthReceived = null;
+
+        /// <summary>
+        /// The callback for the device death received event.
+        /// </summary>
+        public readonly Action<string>? DeviceDeathReceived = null;
+
+        /// <summary>
         /// Publishes a device birth message to the MQTT broker.
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
@@ -71,6 +81,9 @@ namespace SparkplugNet.Core.Node
 
             // Add the known metrics to the known devices.
             this.KnownDevices.TryAdd(deviceIdentifier, knownMetrics);
+
+            // Invoke the device birth event.
+            this.DeviceBirthReceived?.Invoke(new KeyValuePair<string, List<T>>(deviceIdentifier, knownMetrics));
 
             // Publish the message.
             this.options.CancellationToken ??= CancellationToken.None;
@@ -158,15 +171,15 @@ namespace SparkplugNet.Core.Node
                 this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier,
                 deviceIdentifier,
-                this.LastSessionNumber);
+                this.LastSequenceNumber,
+                this.LastSessionNumber,
+                DateTimeOffset.Now);
 
-            // Todo: Check sequence number here?!
             // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
-            // Todo: Check if correct or metrics set to stale?!
-            // Removed the device from the known devices.
-            this.KnownDevices.TryRemove(deviceIdentifier, out _);
+            // Invoke the device death event.
+            this.DeviceDeathReceived?.Invoke(deviceIdentifier);
 
             // Publish the message.
             this.options.CancellationToken ??= CancellationToken.None;
