@@ -62,6 +62,10 @@ The project can be found on [nuget](https://www.nuget.org/packages/SparkplugNet/
 ## Supported Sparkplug standards
 * Version 2.2, spAv1.0 and spBv1.0.
 
+## Special notes
+* Although it's not required to publish a **BDSEQ** metric with all messages according to the specification,
+this library includes it in any `spBv1.0` message except the state messages because I think it's useful.
+
 ## Further resources
 * https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf
 * https://documents.opto22.com/2357_Industrial_Strength_MQTT_Sparkplug_B.pdf
