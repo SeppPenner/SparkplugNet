@@ -156,7 +156,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public PropertySet PropertySetValue
         {
-            get => this.propertySetValue ?? default;
+            get => this.propertySetValue ?? new ();
             set
             {
                 this.propertySetValue = value;
@@ -169,7 +169,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public PropertySetList PropertySetsValue
         {
-            get => this.propertySetListValue ?? default;
+            get => this.propertySetListValue ?? new ();
             set
             {
                 this.propertySetListValue = value;
@@ -182,7 +182,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public PropertyValueExtension ExtensionValue
         {
-            get => this.extensionValue ?? default;
+            get => this.extensionValue ?? new ();
             set
             {
                 this.extensionValue = value;

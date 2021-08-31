@@ -106,12 +106,12 @@ namespace SparkplugNet.VersionB.Data
         /// <summary>
         /// Gets or sets the meta data.
         /// </summary>
-        public MetaData Metadata { get; set; }
+        public MetaData Metadata { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the properties.
         /// </summary>
-        public PropertySet Properties { get; set; }
+        public PropertySet Properties { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the integer value.
@@ -198,7 +198,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public byte[] BytesValue
         {
-            get => this.bytesValue ?? default;
+            get => this.bytesValue ?? new byte[]{};
             set
             {
                 this.bytesValue = value;
@@ -211,7 +211,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public DataSet DataSetValue
         {
-            get => this.dataSetValue ?? default;
+            get => this.dataSetValue ?? new ();
             set
             {
                 this.dataSetValue = value;
@@ -224,7 +224,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public Template TemplateValue
         {
-            get => this.templateValue ?? default;
+            get => this.templateValue ?? new ();
             set
             {
                 this.templateValue = value;
@@ -237,7 +237,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public MetricValueExtension ExtensionValue
         {
-            get => this.extensionValue ?? default;
+            get => this.extensionValue ?? new ();
             set
             {
                 this.extensionValue = value;

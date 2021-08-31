@@ -136,7 +136,7 @@ namespace SparkplugNet.VersionB.Data
         /// </summary>
         public DataSetValueExtension ExtensionValue
         {
-            get => this.extensionValue ?? default;
+            get => this.extensionValue ?? new ();
             set
             {
                 this.extensionValue = value;

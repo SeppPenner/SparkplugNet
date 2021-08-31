@@ -649,7 +649,10 @@ namespace SparkplugNet.Core.Application
                     throw new InvalidCastException("The metric cast didn't work properly.");
                 }
 
-                metricState.Metrics[payloadMetric.Name] = convertedMetric;
+                if (payloadMetric.Name != null)
+                {
+                    metricState.Metrics[payloadMetric.Name] = convertedMetric;
+                }
             }
 
             this.DeviceStates[deviceId] = metricState;
@@ -705,7 +708,10 @@ namespace SparkplugNet.Core.Application
                     throw new InvalidCastException("The metric cast didn't work properly.");
                 }
 
-                metricState.Metrics[payloadMetric.Name] = convertedMetric;
+                if (payloadMetric.Name != null)
+                {
+                    metricState.Metrics[payloadMetric.Name] = convertedMetric;
+                }
             }
 
             this.NodeStates[nodeId] = metricState;
