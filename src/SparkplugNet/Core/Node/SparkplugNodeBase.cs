@@ -39,21 +39,6 @@ namespace SparkplugNet.Core.Node
     public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
     {
         /// <summary>
-        /// The callback for the device command received event.
-        /// </summary>
-        public readonly Action<T>? DeviceCommandReceived = null;
-
-        /// <summary>
-        /// The callback for the node command received event.
-        /// </summary>
-        public readonly Action<T>? NodeCommandReceived = null;
-
-        /// <summary>
-        /// The callback for the status message received event.
-        /// </summary>
-        public readonly Action<string>? StatusMessageReceived = null;
-
-        /// <summary>
         /// The options.
         /// </summary>
         private SparkplugNodeOptions? options;
@@ -68,6 +53,21 @@ namespace SparkplugNet.Core.Node
         public SparkplugNodeBase(List<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
         {
         }
+
+        /// <summary>
+        /// Gets or sets the callback for the device command received event.
+        /// </summary>
+        public Action<T>? DeviceCommandReceived { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the callback for the node command received event.
+        /// </summary>
+        public Action<T>? NodeCommandReceived { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the callback for the status message received event.
+        /// </summary>
+        public Action<string>? StatusMessageReceived { get; set; } = null;
 
         /// <summary>
         /// Starts the Sparkplug node.

@@ -31,11 +31,6 @@ namespace SparkplugNet.Core
     public class SparkplugBase<T> where T : class, new()
     {
         /// <summary>
-        /// The callback for the disconnected event. Indicates that metrics might be stale.
-        /// </summary>
-        public readonly Action? OnDisconnected = null;
-
-        /// <summary>
         /// The message generator.
         /// </summary>
         internal readonly SparkplugMessageGenerator MessageGenerator;
@@ -108,9 +103,14 @@ namespace SparkplugNet.Core
         public List<T> KnownMetrics { get; }
 
         /// <summary>
+        /// Gets or sets the callback for the disconnected event. Indicates that metrics might be stale.
+        /// </summary>
+        public Action? OnDisconnected { get; set; } = null;
+
+        /// <summary>
         /// Resets the last sequence number.
         /// </summary>
-        public void ResetLastSequenceNumber()
+        internal void ResetLastSequenceNumber()
         {
             this.LastSequenceNumber = 0;
         }

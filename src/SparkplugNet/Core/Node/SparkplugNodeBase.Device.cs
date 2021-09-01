@@ -36,14 +36,14 @@ namespace SparkplugNet.Core.Node
         public ConcurrentDictionary<string, List<T>> KnownDevices { get; } = new ConcurrentDictionary<string,List<T>>();
 
         /// <summary>
-        /// The callback for the device birth received event.
+        /// Gets or sets the callback for the device birth received event.
         /// </summary>
-        public readonly Action<KeyValuePair<string, List<T>>>? DeviceBirthReceived = null;
+        public Action<KeyValuePair<string, List<T>>>? DeviceBirthReceived { get; set; } = null;
 
         /// <summary>
-        /// The callback for the device death received event.
+        /// Gets or sets the callback for the device death received event.
         /// </summary>
-        public readonly Action<string>? DeviceDeathReceived = null;
+        public Action<string>? DeviceDeathReceived { get; set; } = null;
 
         /// <summary>
         /// Publishes a device birth message to the MQTT broker.
