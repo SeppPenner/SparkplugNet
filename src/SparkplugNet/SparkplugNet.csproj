@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Version 0.4.0.0 (2021-09-01): 0.4 beta release (Fixed conversion issues between internal and external data formats, adjusted tests).</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 0.4.0.0 (2021-09-01): 0.4 beta release (Fixed conversion issues between internal and external data formats, adjusted tests, updated how to use section and example project, fixed not accessible callback functions).</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
