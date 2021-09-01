@@ -61,6 +61,7 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 ## Special notes
 * Although it's not required to publish a **BDSEQ** metric with all messages according to the specification,
 this library includes it in any `spBv1.0` message except the state messages because I think it's useful.
+* The library uses [Serilog](https://serilog.net/) for logging purposes because it's very extendable (`Log.Logger` or similar stuff in the examples refers to the Serilog library).
 
 ## Further resources
 * https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf
