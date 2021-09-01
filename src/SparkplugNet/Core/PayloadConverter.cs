@@ -478,18 +478,124 @@ namespace SparkplugNet.Core
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue"/>.</returns>
         private static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue ConvertVersionBDataSetValue(VersionBData.DataSetValue dataSetValue)
         {
-            return new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+            return dataSetValue.ValueCase switch
             {
-                DoubleValue = dataSetValue.DoubleValue,
-                BooleanValue = dataSetValue.BooleanValue,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                VersionBData.DataType.Unknown => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
                 {
-                    Details = dataSetValue.ExtensionValue.Details
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
                 },
-                FloatValue = dataSetValue.FloatValue,
-                IntValue = dataSetValue.IntValue,
-                LongValue = dataSetValue.LongValue,
-                StringValue = dataSetValue.StringValue
+                VersionBData.DataType.Int8 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    IntValue = dataSetValue.IntValue
+                },
+                VersionBData.DataType.Int16 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    IntValue = dataSetValue.IntValue
+                },
+                VersionBData.DataType.Int32 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    IntValue = dataSetValue.IntValue
+                },
+                VersionBData.DataType.Int64 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    LongValue = dataSetValue.LongValue
+                },
+                VersionBData.DataType.UInt8 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    IntValue = dataSetValue.IntValue
+                },
+                VersionBData.DataType.UInt16 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    IntValue = dataSetValue.IntValue
+                },
+                VersionBData.DataType.UInt32 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    IntValue = dataSetValue.IntValue
+                },
+                VersionBData.DataType.UInt64 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    LongValue = dataSetValue.LongValue
+                },
+                VersionBData.DataType.Float => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    FloatValue = dataSetValue.FloatValue
+                },
+                VersionBData.DataType.Double => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    DoubleValue = dataSetValue.DoubleValue
+                },
+                VersionBData.DataType.Boolean => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    BooleanValue = dataSetValue.BooleanValue
+                },
+                VersionBData.DataType.String => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    StringValue = dataSetValue.StringValue
+                },
+                VersionBData.DataType.DateTime => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    LongValue = dataSetValue.LongValue
+                },
+                VersionBData.DataType.Text => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    StringValue = dataSetValue.StringValue
+                },
+                VersionBData.DataType.Uuid => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    StringValue = dataSetValue.StringValue
+                },
+                VersionBData.DataType.DataSet => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
+                },
+                VersionBData.DataType.Bytes => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
+                },
+                VersionBData.DataType.File => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
+                },
+                VersionBData.DataType.Template => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
+                },
+                VersionBData.DataType.PropertySet => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
+                },
+                VersionBData.DataType.PropertySetList => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
+                },
+                _ => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                        Details = dataSetValue.ExtensionValue.Details
+                    }
+                }
             };
         }
 
@@ -631,20 +737,177 @@ namespace SparkplugNet.Core
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter"/>.</returns>
         private static VersionBProtoBuf.ProtoBufPayload.Template.Parameter ConvertVersionBParameter(VersionBData.Parameter parameter)
         {
-            return new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+            return parameter.ValueCase switch
             {
-                DoubleValue = parameter.DoubleValue,
-                BooleanValue = parameter.BooleanValue,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                VersionBData.DataType.Unknown => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
                 {
-                    Extensions = parameter.ExtensionValue.Extensions
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    Type = parameter.Type
                 },
-                FloatValue = parameter.FloatValue,
-                IntValue = parameter.IntValue,
-                LongValue = parameter.LongValue,
-                Name = parameter.Name,
-                StringValue = parameter.StringValue,
-                Type = parameter.Type
+                VersionBData.DataType.Int8 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    IntValue = parameter.IntValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Int16 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    IntValue = parameter.IntValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Int32 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    IntValue = parameter.IntValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Int64 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    LongValue = parameter.LongValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.UInt8 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    IntValue = parameter.IntValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.UInt16 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    IntValue = parameter.IntValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.UInt32 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    IntValue = parameter.IntValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.UInt64 => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    LongValue = parameter.LongValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Float => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    FloatValue = parameter.FloatValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Double => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    DoubleValue = parameter.DoubleValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Boolean => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    BooleanValue = parameter.BooleanValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.String => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    StringValue = parameter.StringValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.DateTime => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    LongValue = parameter.LongValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Text => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    StringValue = parameter.StringValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Uuid => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    StringValue = parameter.StringValue,
+                    Name = parameter.Name,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.DataSet => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    StringValue = parameter.StringValue,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Bytes => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    StringValue = parameter.StringValue,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.File => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    StringValue = parameter.StringValue,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.Template => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    StringValue = parameter.StringValue,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.PropertySet => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    StringValue = parameter.StringValue,
+                    Type = parameter.Type
+                },
+                VersionBData.DataType.PropertySetList => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    StringValue = parameter.StringValue,
+                    Type = parameter.Type
+                },
+                _ => new VersionBProtoBuf.ProtoBufPayload.Template.Parameter
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                    {
+                        Extensions = parameter.ExtensionValue.Extensions
+                    },
+                    Name = parameter.Name,
+                    StringValue = parameter.StringValue,
+                    Type = parameter.Type
+                }
             };
         }
 
@@ -690,30 +953,325 @@ namespace SparkplugNet.Core
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</returns>
         private static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(VersionBData.Metric metric)
         {
-            return new VersionBProtoBuf.ProtoBufPayload.Metric
+            return metric.ValueCase switch
             {
-                DoubleValue = metric.DoubleValue,
-                Alias = metric.Alias,
-                BooleanValue = metric.BooleanValue,
-                BytesValue = metric.BytesValue,
-                DatasetValue = ConvertVersionBDataSet(metric.DataSetValue),
-                Datatype = metric.DataType,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                VersionBData.DataType.Unknown => new VersionBProtoBuf.ProtoBufPayload.Metric
                 {
-                    Details = metric.ExtensionValue.Details
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                    {
+                        Details = metric.ExtensionValue.Details
+                    },
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
                 },
-                FloatValue = metric.FloatValue,
-                IntValue = metric.IntValue,
-                IsHistorical = metric.IsHistorical,
-                IsNull = metric.IsNull,
-                IsTransient = metric.IsTransient,
-                LongValue = metric.LongValue,
-                Metadata = ConvertVersionBMetaData(metric.Metadata),
-                Name = metric.Name,
-                Properties = ConvertVersionBPropertySet(metric.Properties),
-                StringValue = metric.StringValue,
-                Timestamp = metric.Timestamp,
-                TemplateValue = ConvertVersionBTemplate(metric.TemplateValue)
+                VersionBData.DataType.Int8 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IntValue = metric.IntValue,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Int16 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IntValue = metric.IntValue,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Int32 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IntValue = metric.IntValue,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Int64 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    LongValue = metric.LongValue,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.UInt8 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IntValue = metric.IntValue,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.UInt16 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IntValue = metric.IntValue,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.UInt32 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IntValue = metric.IntValue,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.UInt64 => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    LongValue = metric.LongValue,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Float => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    FloatValue = metric.FloatValue,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Double => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    DoubleValue = metric.DoubleValue,
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Boolean => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    BooleanValue = metric.BooleanValue,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.String => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    StringValue = metric.StringValue,
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.DateTime => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    LongValue = metric.LongValue,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Text => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    StringValue = metric.StringValue,
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Uuid => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    StringValue = metric.StringValue,
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.DataSet => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    DatasetValue = ConvertVersionBDataSet(metric.DataSetValue),
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Bytes => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                    {
+                        Details = metric.ExtensionValue.Details
+                    },
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.File => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                    {
+                        Details = metric.ExtensionValue.Details
+                    },
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.Template => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp,
+                    TemplateValue = ConvertVersionBTemplate(metric.TemplateValue)
+                },
+                VersionBData.DataType.PropertySet => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                    {
+                        Details = metric.ExtensionValue.Details
+                    },
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                VersionBData.DataType.PropertySetList => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                    {
+                        Details = metric.ExtensionValue.Details
+                    },
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                },
+                _ => new VersionBProtoBuf.ProtoBufPayload.Metric
+                {
+                    Alias = metric.Alias,
+                    Datatype = metric.DataType,
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                    {
+                        Details = metric.ExtensionValue.Details
+                    },
+                    IsHistorical = metric.IsHistorical,
+                    IsNull = metric.IsNull,
+                    IsTransient = metric.IsTransient,
+                    Metadata = ConvertVersionBMetaData(metric.Metadata),
+                    Name = metric.Name,
+                    Properties = ConvertVersionBPropertySet(metric.Properties),
+                    Timestamp = metric.Timestamp
+                }
             };
         }
 
@@ -809,22 +1367,164 @@ namespace SparkplugNet.Core
         /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue"/>.</returns>
         private static VersionBProtoBuf.ProtoBufPayload.PropertyValue ConvertVersionBPropertyValue(VersionBData.PropertyValue propertyValue)
         {
-            return new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+            return propertyValue.ValueCase switch
             {
-                DoubleValue = propertyValue.DoubleValue,
-                PropertysetsValue = ConvertVersionBPropertySetList(propertyValue.PropertySetsValue),
-                BooleanValue = propertyValue.BooleanValue,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                VersionBData.DataType.Unknown => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
                 {
-                    Details = propertyValue.ExtensionValue.Details
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                    {
+                        Details = propertyValue.ExtensionValue.Details
+                    },
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
                 },
-                FloatValue = propertyValue.FloatValue,
-                IntValue = propertyValue.IntValue,
-                IsNull = propertyValue.IsNull,
-                LongValue = propertyValue.LongValue,
-                PropertysetValue = ConvertVersionBPropertySet(propertyValue.PropertySetValue),
-                StringValue = propertyValue.StringValue,
-                Type = propertyValue.Type
+                VersionBData.DataType.Int8 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IntValue = propertyValue.IntValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Int16 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IntValue = propertyValue.IntValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Int32 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IntValue = propertyValue.IntValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Int64 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IsNull = propertyValue.IsNull,
+                    LongValue = propertyValue.LongValue,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.UInt8 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IntValue = propertyValue.IntValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.UInt16 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IntValue = propertyValue.IntValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.UInt32 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IntValue = propertyValue.IntValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.UInt64 => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IsNull = propertyValue.IsNull,
+                    LongValue = propertyValue.LongValue,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Float => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    FloatValue = propertyValue.FloatValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Double => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    DoubleValue = propertyValue.DoubleValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Boolean => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    BooleanValue = propertyValue.BooleanValue,
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.String => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IsNull = propertyValue.IsNull,
+                    StringValue = propertyValue.StringValue,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.DateTime => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IsNull = propertyValue.IsNull,
+                    LongValue = propertyValue.LongValue,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Text => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IsNull = propertyValue.IsNull,
+                    StringValue = propertyValue.StringValue,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Uuid => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IsNull = propertyValue.IsNull,
+                    StringValue = propertyValue.StringValue,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.DataSet => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                    {
+                        Details = propertyValue.ExtensionValue.Details
+                    },
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Bytes => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                    {
+                        Details = propertyValue.ExtensionValue.Details
+                    },
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.File => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                    {
+                        Details = propertyValue.ExtensionValue.Details
+                    },
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.Template => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                    {
+                        Details = propertyValue.ExtensionValue.Details
+                    },
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.PropertySet => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    IsNull = propertyValue.IsNull,
+                    PropertysetValue = ConvertVersionBPropertySet(propertyValue.PropertySetValue),
+                    Type = propertyValue.Type
+                },
+                VersionBData.DataType.PropertySetList => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    PropertysetsValue = ConvertVersionBPropertySetList(propertyValue.PropertySetsValue),
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                },
+                _ => new VersionBProtoBuf.ProtoBufPayload.PropertyValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                    {
+                        Details = propertyValue.ExtensionValue.Details
+                    },
+                    IsNull = propertyValue.IsNull,
+                    Type = propertyValue.Type
+                }
             };
         }
     }

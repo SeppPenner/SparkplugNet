@@ -239,7 +239,7 @@ namespace SparkplugNet.Tests
 
             Assert.AreEqual("spAv1.0/group1/DDEATH/edge1/device1", message.Topic);
             Assert.IsNotNull(payloadVersionA);
-            Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
+            Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payloadVersionA.Timestamp);
             Assert.AreEqual(1, payloadVersionA.Metrics.Count);
 
             Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(0).Name);
