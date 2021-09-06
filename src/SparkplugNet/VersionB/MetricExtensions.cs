@@ -54,6 +54,27 @@
         }
 
         /// <summary>
+        /// Sets the metric.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="metricName">Name of the metric.</param>
+        /// <param name="timestamp">The timestamp.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="isTransient">if set to <c>true</c> [is transient].</param>
+        /// <param name="isHistorical">if set to <c>true</c> [is historical].</param>
+        public static void SetMetric(
+            this List<Payload.Metric> metrics,
+            string metricName,
+            ulong timestamp,
+            object value,
+            bool isTransient,
+            bool isHistorical)
+        {
+            SetMetric(metrics, metricName, timestamp, value, isNull: false, isTransient: isTransient, isHistorical: isHistorical);
+        }
+
+
+        /// <summary>
         /// Sets the metric historical.
         /// </summary>
         /// <param name="metrics">The metrics.</param>

@@ -16,7 +16,7 @@ namespace SparkplugNet.Core
     /// <summary>
     /// A helper class for the payload classes.
     /// </summary>
-    internal static class PayloadHelper
+    public static class PayloadHelper
     {
         /// <summary>
         /// Serializes the data from a proto payload.

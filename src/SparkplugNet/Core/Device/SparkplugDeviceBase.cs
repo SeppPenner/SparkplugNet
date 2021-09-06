@@ -83,11 +83,11 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
-        public async Task PublishMetricsAsync(List<T> metrics, int qosLevel)
+        public async Task<MqttClientPublishResult> PublishMetricsAsync(List<T> metrics, int qosLevel)
         {
             if (!this.birthCertificateSent)
             {
-                return;
+                return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError };
             }
 
             if (this.options is null)
@@ -100,16 +100,19 @@ namespace SparkplugNet.Core.Device
                 switch (metrics)
                 {
                     case List<VersionA.Payload.KuraMetric> list:
-                        await this.PublishVersionAMessage(list, qosLevel);
+                        return await this.PublishVersionAMessage(list, qosLevel);
                         break;
                     case List<VersionB.Payload.Metric> list:
-                        await this.PublishVersionBMessage(list, qosLevel);
+                        return await this.PublishVersionBMessage(list, qosLevel);
                         break;
+                    default:
+                        return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError };
                 }
             }
             catch (Exception e)
             {
                 this.ChildOf?.OnException?.Invoke(e);
+                return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError };
             }
         }
 
@@ -137,7 +140,7 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
-        private async Task PublishVersionAMessage(List<VersionA.Payload.KuraMetric> metrics, int qosLevel)
+        private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionA.Payload.KuraMetric> metrics, int qosLevel)
         {
             if (this.options is null)
             {
@@ -172,11 +175,12 @@ namespace SparkplugNet.Core.Device
             // Publish data.
             try
             {
-                await this.ChildOf.Client.PublishAsync(dataMessage);
+                return await this.ChildOf.Client.PublishAsync(dataMessage);
             }
             catch (Exception e)
             {
                 this.ChildOf.OnException?.Invoke(e);
+                return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError };
             }
         }
 
@@ -186,7 +190,7 @@ namespace SparkplugNet.Core.Device
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
         /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
-        private async Task PublishVersionBMessage(List<VersionB.Payload.Metric> metrics, int qosLevel)
+        private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionB.Payload.Metric> metrics, int qosLevel)
         {
             if (this.options is null)
             {
@@ -222,11 +226,12 @@ namespace SparkplugNet.Core.Device
             // Publish data.
             try
             {
-                await this.ChildOf.Client.PublishAsync(dataMessage);
+                return await this.ChildOf.Client.PublishAsync(dataMessage);
             }
             catch (Exception e)
             {
                 this.ChildOf.OnException?.Invoke(e);
+                return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError };
             }
         }
 
