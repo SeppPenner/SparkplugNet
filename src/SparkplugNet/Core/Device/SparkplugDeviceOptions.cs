@@ -37,6 +37,7 @@ namespace SparkplugNet.Core.Device
         /// <param name="reconnectInterval">The reconnect interval.</param>
         /// <param name="webSocketParameters">The WebSocket parameters.</param>
         /// <param name="proxyOptions">The proxy options.</param>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         public SparkplugDeviceOptions(
             string brokerAddress,
@@ -53,6 +54,7 @@ namespace SparkplugNet.Core.Device
             TimeSpan reconnectInterval,
             MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
             MqttClientWebSocketProxyOptions? proxyOptions = null,
+            bool convertPayloadToJson = false,
             CancelToken? cancellationToken = null)
         {
             this.BrokerAddress = brokerAddress;
@@ -69,6 +71,7 @@ namespace SparkplugNet.Core.Device
             this.ReconnectInterval = reconnectInterval;
             this.WebSocketParameters = webSocketParameters;
             this.ProxyOptions = proxyOptions;
+            this.ConvertPayloadToJson = convertPayloadToJson;
             this.CancellationToken = cancellationToken ?? CancelToken.None;
         }
 
@@ -141,6 +144,11 @@ namespace SparkplugNet.Core.Device
         /// Gets or sets the proxy options.
         /// </summary>
         public MqttClientWebSocketProxyOptions? ProxyOptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [convert payload to json].
+        /// </summary>
+        public bool ConvertPayloadToJson { get; set; }
 
         /// <summary>
         /// Gets or sets the cancellation token.

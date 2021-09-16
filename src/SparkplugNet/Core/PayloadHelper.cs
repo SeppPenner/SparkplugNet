@@ -9,8 +9,10 @@
 
 namespace SparkplugNet.Core
 {
+    using System;
     using System.IO;
-
+    using System.Text;
+    using Newtonsoft.Json;
     using ProtoBuf;
 
     /// <summary>
@@ -23,17 +25,27 @@ namespace SparkplugNet.Core
         /// </summary>
         /// <typeparam name="T">The type.</typeparam>
         /// <param name="record">The record.</param>
-        /// <returns>The <see cref="T:byte[]?"/> value as serialized data.</returns>
-        public static byte[]? Serialize<T>(T? record) where T : class
+        /// <param name="convertToJson">if set to <c>true</c> [convert to json].</param>
+        /// <returns>The <see cref="T:byte[]?" /> value as serialized data.</returns>
+        public static byte[]? Serialize<T>(T? record, bool convertToJson) where T : class
         {
             if (record is null)
             {
                 return null;
             }
 
-            using var stream = new MemoryStream();
-            Serializer.Serialize(stream, record);
-            return stream.ToArray();
+            if (convertToJson)
+            {
+                var json = JsonConvert.SerializeObject(record);
+                using var stream = new MemoryStream(Encoding.Default.GetBytes(json));
+                return stream.ToArray();
+            }
+            else
+            {
+                using var stream = new MemoryStream();
+                Serializer.Serialize(stream, record);
+                return stream.ToArray();
+            }
         }
 
         /// <summary>

@@ -45,6 +45,16 @@ namespace SparkplugNet.Core.Node
         {
         }
 
+        /// <summary>
+        /// Gets or sets the node identifier.
+        /// </summary>
+        public string NodeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the node unique identifier.
+        /// </summary>
+        public Guid NodeGuid { get; set; }
+
         /// <summary>Starts the Sparkplug node.</summary>
         /// <param name="nodeOptions">The node options.</param>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
@@ -189,7 +199,7 @@ namespace SparkplugNet.Core.Node
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier,
-                metrics, this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1);
+                metrics, this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1, this.options.ConvertPayloadToJson);
 
             // Return early if client not connected or payload is empty
             //if (!this.Client.IsConnected || PayloadHelper.Deserialize<VersionAPayload>(dataMessage.Payload)?.Metrics?.Count == 0)
@@ -234,7 +244,7 @@ namespace SparkplugNet.Core.Node
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier,
-                metrics, this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1);
+                metrics, this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1, this.options.ConvertPayloadToJson);
 
             // Return early if client not connected or payload is empty
             //if (!this.Client.IsConnected || PayloadHelper.Deserialize<VersionBPayload>(dataMessage.Payload)?.Metrics?.Count == 0)
@@ -382,7 +392,7 @@ namespace SparkplugNet.Core.Node
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier,
-                this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1);
+                this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1, this.options.ConvertPayloadToJson);
 
             // Build up the MQTT client and connect.
             var builder = new MqttClientOptionsBuilder().WithClientId(this.options.ClientId).WithCredentials(this.options.UserName, this.options.Password)
@@ -445,7 +455,7 @@ namespace SparkplugNet.Core.Node
 
             // Get the online message and increase the sequence counter.
             var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage(this.NameSpace, this.options.GroupIdentifier,
-                this.options.EdgeNodeIdentifier, this.KnownMetrics, this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1);
+                this.options.EdgeNodeIdentifier, this.KnownMetrics, this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1, this.options.ConvertPayloadToJson);
 
             // Debug output.
             var json = onlineMessage.ToJson();
@@ -514,7 +524,7 @@ namespace SparkplugNet.Core.Node
 
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier,
-                this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1);
+                this.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, 1, this.options.ConvertPayloadToJson);
 
             // Debug output.
             var json = willMessage.ToJson();

@@ -18,6 +18,7 @@ namespace SparkplugNet.Core.Device
     using MQTTnet.Client.Publishing;
     using SparkplugNet.Core.Extensions;
     using SparkplugNet.Core.Node;
+    using SparkplugNet.VersionB;
 
     /// <inheritdoc cref="SparkplugBase{T}" />
     /// <summary>A class that handles a Sparkplug device.</summary>
@@ -76,13 +77,18 @@ namespace SparkplugNet.Core.Device
             await this.DisconnectInternal();
         }
 
-        /// <summary>Publishes some metrics.</summary>
+        /// <summary>
+        /// Publishes some metrics.
+        /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A <see cref="Task" /> representing any asynchronous operation.
+        /// </returns>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
-        /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
         public async Task<MqttClientPublishResult> PublishMetricsAsync(List<T> metrics, int qosLevel)
         {
             if (!this.birthCertificateSent)
@@ -134,12 +140,20 @@ namespace SparkplugNet.Core.Device
             }
         }
 
-        /// <summary>Publishes a version A metric.</summary>
+        /// <summary>
+        /// Publishes a version A message.
+        /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A <see cref="Task" /> representing any asynchronous operation.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">options</exception>
+        /// <exception cref="System.Exception">Invalid metric type specified for version A metric.</exception>
+        /// <exception cref="System.InvalidOperationException"></exception>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
-        /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
         private async Task<MqttClientPublishResult> PublishVersionAMessage(List<VersionA.Payload.KuraMetric> metrics, int qosLevel)
         {
             if (this.options is null)
@@ -167,10 +181,7 @@ namespace SparkplugNet.Core.Device
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier,
-                this.options.DeviceIdentifier, metrics, this.ChildOf.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, qosLevel);
-
-            // Debug output.
-            dataMessage.ToJson();
+                this.options.DeviceIdentifier, metrics, this.ChildOf.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, qosLevel, this.options.ConvertPayloadToJson);
 
             // Publish data.
             try
@@ -184,12 +195,19 @@ namespace SparkplugNet.Core.Device
             }
         }
 
-        /// <summary>Publishes a version B metric.</summary>
+        /// <summary>
+        /// Publishes a version B message.
+        /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
+        /// <returns>
+        /// A <see cref="Task" /> representing any asynchronous operation.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">options</exception>
+        /// <exception cref="System.Exception">Invalid metric type specified for version B metric.</exception>
+        /// <exception cref="System.InvalidOperationException"></exception>
         /// <exception cref="ArgumentNullException">The options are null.</exception>
         /// <exception cref="Exception">An invalid metric type was specified.</exception>
-        /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
         private async Task<MqttClientPublishResult> PublishVersionBMessage(List<VersionB.Payload.Metric> metrics, int qosLevel)
         {
             if (this.options is null)
@@ -218,10 +236,7 @@ namespace SparkplugNet.Core.Device
 
             // Get the data message and increase the sequence counter.
             var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier,
-                this.options.DeviceIdentifier, metrics, this.ChildOf.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, qosLevel);
-
-            // Debug output.
-            dataMessage.ToJson();
+                this.options.DeviceIdentifier, metrics, this.ChildOf.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.Now, qosLevel, this.options.ConvertPayloadToJson);
 
             // Publish data.
             try
@@ -255,7 +270,7 @@ namespace SparkplugNet.Core.Device
             // Get the online message and increase the sequence counter.
             var onlineMessage = this.MessageGenerator.GetSparkPlugDeviceBirthMessage(this.NameSpace, this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier, this.options.DeviceIdentifier, this.KnownMetrics, this.ChildOf.LastSequenceNumber, this.LastSessionNumber,
-                DateTimeOffset.Now, 1);
+                DateTimeOffset.Now, 1, this.options.ConvertPayloadToJson);
 
             // Debug output.
             onlineMessage.ToJson();
@@ -301,7 +316,7 @@ namespace SparkplugNet.Core.Device
             // Get the will message.
             var willMessage = this.MessageGenerator.GetSparkPlugDeviceDeathMessage(this.NameSpace, this.options.GroupIdentifier,
                 this.options.EdgeNodeIdentifier, this.options.DeviceIdentifier, this.ChildOf.LastSequenceNumber, this.LastSessionNumber, DateTimeOffset.UtcNow,
-                1);
+                1, this.options.ConvertPayloadToJson);
 
             this.options.CancellationToken ??= CancellationToken.None;
 

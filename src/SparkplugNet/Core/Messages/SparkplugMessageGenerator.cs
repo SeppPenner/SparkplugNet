@@ -68,7 +68,16 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NBIRTH <see cref="MqttApplicationMessage" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// groupIdentifier
+        /// or
+        /// edgeNodeIdentifier
+        /// </exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugNodeBirthMessage<T>(
@@ -79,7 +88,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -98,14 +108,14 @@ namespace SparkplugNet.Core.Messages
                 {
                     var newMetrics = metrics as List<VersionAPayload.KuraMetric> ?? new List<VersionAPayload.KuraMetric>();
                     AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel);
+                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel, convertPayloadToJson);
                 }
 
                 case SparkplugNamespace.VersionB:
                 {
                     var newMetrics = metrics as List<VersionBPayload.Metric> ?? new List<VersionBPayload.Metric>();
                     AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
+                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel, convertPayloadToJson);
                 }
 
                 default:
@@ -126,7 +136,18 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DBIRTH <see cref="MqttApplicationMessage" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// groupIdentifier
+        /// or
+        /// edgeNodeIdentifier
+        /// or
+        /// deviceIdentifier
+        /// </exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugDeviceBirthMessage<T>(
@@ -138,7 +159,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -162,13 +184,13 @@ namespace SparkplugNet.Core.Messages
                     {
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
-                        return this.GetSparkPlugDeviceBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel);
+                        return this.GetSparkPlugDeviceBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var newMetrics = metrics as List<VersionBPayload.Metric> ?? new List<VersionBPayload.Metric>();
-                        return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
+                        return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 default:
@@ -184,9 +206,18 @@ namespace SparkplugNet.Core.Messages
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="sessionNumber">The session number.</param>
-        /// <param name="dateTime"></param>
+        /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NDEATH <see cref="MqttApplicationMessage" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// groupIdentifier
+        /// or
+        /// edgeNodeIdentifier
+        /// </exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugNodeDeathMessage(
@@ -196,7 +227,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
@@ -214,14 +246,14 @@ namespace SparkplugNet.Core.Messages
                     {
                         var metrics = new List<VersionAPayload.KuraMetric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, metrics, dateTime, qosLevel);
+                        return this.GetSparkPlugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, metrics, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var metrics = new List<VersionBPayload.Metric>();
                         AddSessionNumberToMetrics(metrics, sessionNumber);
-                        return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, sequenceNumber, dateTime, metrics, qosLevel);
+                        return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, sequenceNumber, dateTime, metrics, qosLevel, convertPayloadToJson);
                     }
 
                 default:
@@ -240,7 +272,18 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DDEATH <see cref="MqttApplicationMessage" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// groupIdentifier
+        /// or
+        /// edgeNodeIdentifier
+        /// or
+        /// deviceIdentifier
+        /// </exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugDeviceDeathMessage(
@@ -251,7 +294,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
@@ -273,13 +317,13 @@ namespace SparkplugNet.Core.Messages
                 case SparkplugNamespace.VersionA:
                     {
                         var metrics = new List<VersionAPayload.KuraMetric>();
-                        return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, dateTime, metrics, qosLevel);
+                        return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, dateTime, metrics, qosLevel, convertPayloadToJson);
                     }
 
                 case SparkplugNamespace.VersionB:
                     {
                         var metrics = new List<VersionBPayload.Metric>();
-                        return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, sequenceNumber, dateTime, metrics, qosLevel);
+                        return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, sequenceNumber, dateTime, metrics, qosLevel, convertPayloadToJson);
                     }
 
                 default:
@@ -299,9 +343,16 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
         /// <returns>
         /// A new NDATA <see cref="MqttApplicationMessage" />.
         /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// groupIdentifier
+        /// or
+        /// edgeNodeIdentifier
+        /// </exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugNodeDataMessage<T>(
@@ -312,7 +363,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -332,7 +384,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                        return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel);
+                        return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 case SparkplugNamespace.VersionB:
@@ -340,7 +392,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                        return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
+                        return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 default:
@@ -361,7 +413,11 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DDATA <see cref="MqttApplicationMessage" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugDeviceDataMessage<T>(
@@ -373,7 +429,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -398,7 +455,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                        return this.GetSparkPlugDeviceDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel);
+                        return this.GetSparkPlugDeviceDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 case SparkplugNamespace.VersionB:
@@ -406,7 +463,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                        return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
+                        return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 default:
@@ -426,7 +483,16 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NCMD <see cref="MqttApplicationMessage" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// groupIdentifier
+        /// or
+        /// edgeNodeIdentifier
+        /// </exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugNodeCommandMessage<T>(
@@ -437,7 +503,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -457,7 +524,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                        return this.GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel);
+                        return this.GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 case SparkplugNamespace.VersionB:
@@ -465,7 +532,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                        return this.GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
+                        return this.GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 default:
@@ -486,7 +553,18 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sessionNumber">The session number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DCMD <see cref="MqttApplicationMessage" />.
+        /// </returns>
+        /// <exception cref="System.ArgumentException">
+        /// groupIdentifier
+        /// or
+        /// edgeNodeIdentifier
+        /// or
+        /// deviceIdentifier
+        /// </exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">nameSpace</exception>
         /// <exception cref="ArgumentException">The group identifier or the device identifier or the edge node identifier is invalid.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
         public MqttApplicationMessage GetSparkPlugDeviceCommandMessage<T>(
@@ -498,7 +576,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             long sessionNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
             where T : class, new()
         {
             if (!groupIdentifier.IsIdentifierValid())
@@ -523,7 +602,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionAPayload.KuraMetric>
                                          ?? new List<VersionAPayload.KuraMetric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber); // removed only required by spec for 16.1 NBIRTH and 16.8 NDEATH
-                        return this.GetSparkPlugDeviceCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel);
+                        return this.GetSparkPlugDeviceCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 case SparkplugNamespace.VersionB:
@@ -531,7 +610,7 @@ namespace SparkplugNet.Core.Messages
                         var newMetrics = metrics as List<VersionBPayload.Metric>
                                          ?? new List<VersionBPayload.Metric>();
                         ////AddSessionNumberToMetrics(newMetrics, sessionNumber); // removed only required by spec for 16.1 NBIRTH and 16.8 NDEATH
-                        return this.GetSparkPlugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel);
+                        return this.GetSparkPlugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, qosLevel, convertPayloadToJson);
                     }
 
                 default:
@@ -574,14 +653,18 @@ namespace SparkplugNet.Core.Messages
         /// <param name="metrics">The metrics.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NBIRTH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeBirthA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -592,7 +675,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -617,7 +700,10 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NBIRTH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeBirthB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -625,7 +711,8 @@ namespace SparkplugNet.Core.Messages
             List<VersionBPayload.Metric> metrics,
             int sequenceNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -637,7 +724,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -663,7 +750,10 @@ namespace SparkplugNet.Core.Messages
         /// <param name="metrics">The metrics.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DBIRTH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugDeviceBirthA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -671,7 +761,8 @@ namespace SparkplugNet.Core.Messages
             string deviceIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -682,7 +773,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -709,7 +800,10 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DBIRTH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugDeviceBirthB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -718,7 +812,8 @@ namespace SparkplugNet.Core.Messages
             List<VersionBPayload.Metric> metrics,
             int sequenceNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -730,7 +825,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -753,16 +848,20 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="metrics">The metrics.</param>
-        /// <param name="dateTime"></param>
+        /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NDEATH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeDeathA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -773,7 +872,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -796,10 +895,13 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="sequenceNumber">The sequence number.</param>
-        /// <param name="dateTime"></param>
+        /// <param name="dateTime">The date time.</param>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NDEATH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeDeathB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -807,7 +909,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             DateTimeOffset dateTime,
             List<VersionBPayload.Metric> metrics,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -819,7 +922,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -842,10 +945,13 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
-        /// <param name="dateTime"></param>
+        /// <param name="dateTime">The date time.</param>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DDEATH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugDeviceDeathA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -853,7 +959,8 @@ namespace SparkplugNet.Core.Messages
             string deviceIdentifier,
             DateTimeOffset dateTime,
             List<VersionAPayload.KuraMetric> metrics,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -864,7 +971,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -887,11 +994,14 @@ namespace SparkplugNet.Core.Messages
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
-        /// <param name="metrics">The metrics.</param>
         /// <param name="sequenceNumber">The sequence number.</param>
-        /// <param name="dateTime"></param>
+        /// <param name="dateTime">The date time.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DDEATH <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugDeviceDeathB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -900,7 +1010,8 @@ namespace SparkplugNet.Core.Messages
             int sequenceNumber,
             DateTimeOffset dateTime,
             List<VersionBPayload.Metric> metrics,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -912,7 +1023,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -937,14 +1048,18 @@ namespace SparkplugNet.Core.Messages
         /// <param name="metrics">The metrics.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NDATA <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeDataA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -955,7 +1070,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -981,7 +1096,10 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NDATA <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeDataB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -989,7 +1107,8 @@ namespace SparkplugNet.Core.Messages
             List<VersionBPayload.Metric> metrics,
             int sequenceNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -1002,7 +1121,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1028,7 +1147,10 @@ namespace SparkplugNet.Core.Messages
         /// <param name="metrics">The metrics.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DDATA <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugDeviceDataA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -1036,7 +1158,8 @@ namespace SparkplugNet.Core.Messages
             string deviceIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -1047,7 +1170,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1074,7 +1197,8 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>A new DDATA <see cref="MqttApplicationMessage" />.</returns>
         private MqttApplicationMessage GetSparkPlugDeviceDataB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -1083,7 +1207,8 @@ namespace SparkplugNet.Core.Messages
             List<VersionBPayload.Metric> metrics,
             int sequenceNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -1096,7 +1221,7 @@ namespace SparkplugNet.Core.Messages
             // Debug output.
             payload.ToJson();
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1121,14 +1246,18 @@ namespace SparkplugNet.Core.Messages
         /// <param name="metrics">The metrics.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NCMD <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeCommandA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
             string edgeNodeIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -1136,7 +1265,7 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1161,7 +1290,10 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new NCMD <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugNodeCommandB(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -1169,7 +1301,8 @@ namespace SparkplugNet.Core.Messages
             List<VersionBPayload.Metric> metrics,
             int sequenceNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -1179,7 +1312,7 @@ namespace SparkplugNet.Core.Messages
                 // REMOVE IF STILL HERE //Timestamp = metrics.FirstOrDefault()?.Timestamp ?? (ulong)dateTime.ToUnixTimeMilliseconds(),
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1204,7 +1337,10 @@ namespace SparkplugNet.Core.Messages
         /// <param name="metrics">The metrics.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
+        /// <returns>
+        /// A new DCMD <see cref="MqttApplicationMessage" />.
+        /// </returns>
         private MqttApplicationMessage GetSparkPlugDeviceCommandA(
             SparkplugNamespace nameSpace,
             string groupIdentifier,
@@ -1212,7 +1348,8 @@ namespace SparkplugNet.Core.Messages
             string deviceIdentifier,
             List<VersionAPayload.KuraMetric> metrics,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionAPayload
             {
@@ -1220,7 +1357,7 @@ namespace SparkplugNet.Core.Messages
                 Timestamp = dateTime.ToUnixTimeMilliseconds()
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
@@ -1246,6 +1383,7 @@ namespace SparkplugNet.Core.Messages
         /// <param name="sequenceNumber">The sequence number.</param>
         /// <param name="dateTime">The date time.</param>
         /// <param name="qosLevel">The qos level.</param>
+        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
         /// <returns>
         /// A new DCMD <see cref="MqttApplicationMessage" />.
         /// </returns>
@@ -1257,7 +1395,8 @@ namespace SparkplugNet.Core.Messages
             List<VersionBPayload.Metric> metrics,
             int sequenceNumber,
             DateTimeOffset dateTime,
-            int qosLevel)
+            int qosLevel,
+            bool convertPayloadToJson = false)
         {
             var payload = new VersionBPayload
             {
@@ -1267,7 +1406,7 @@ namespace SparkplugNet.Core.Messages
                 //// DELETE IF STILL HERE //// Timestamp = metrics.FirstOrDefault()?.Timestamp ?? (ulong)dateTime.ToUnixTimeMilliseconds(),
             };
 
-            var serialized = PayloadHelper.Serialize(payload);
+            var serialized = PayloadHelper.Serialize(payload, convertPayloadToJson);
 
             return new MqttApplicationMessageBuilder()
                 .WithTopic(
