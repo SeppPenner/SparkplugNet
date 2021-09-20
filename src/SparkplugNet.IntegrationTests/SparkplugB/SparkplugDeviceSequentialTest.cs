@@ -49,8 +49,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
             var edgeNodeIdentifier = "node1";
             var useTls = false;
             var nodeOptions = new SparkplugNodeOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort, clientIdentifier,
-                userName, password, useTls, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, TimeSpan.FromSeconds(30), null, null,
-                this.cts.Token);
+                userName, password, useTls, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, TimeSpan.FromSeconds(30), null, null, false);
 
             nodeKnownMetrics = GetNodeTestMetrics();
             nodeMetrics = GetNodeTestMetrics();
@@ -95,7 +94,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
             var useTls = false;
             var deviceOptions = new SparkplugDeviceOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort,
                 clientIdentifier, userName, password, useTls, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, deviceGuid,
-                TimeSpan.FromSeconds(30), null, null, this.cts.Token);
+                TimeSpan.FromSeconds(30), null, null, false);
 
             // generate list of known metrics
             // create and start new instance of SparkplugNode
@@ -151,7 +150,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
             var useTls = false;
             var deviceOptions = new SparkplugDeviceOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort,
                 clientIdentifier, userName, password, useTls, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, deviceGuid,
-                TimeSpan.FromSeconds(30), null, null, this.cts.Token);
+                TimeSpan.FromSeconds(30), null, null, false);
 
             await deviceUnderTest.Start(deviceOptions);
             //Assert.IsTrue(deviceUnderTest.IsConnected);

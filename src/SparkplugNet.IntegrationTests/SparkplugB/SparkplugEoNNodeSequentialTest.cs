@@ -43,8 +43,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
             var groupIdentifier = "group1";
             var edgeNodeIdentifier = "node1";
             var nodeOptions = new SparkplugNodeOptions(MqttServerUnderTest.ServerAddress, MqttServerUnderTest.ServerPort, clientIdentifier, userName,
-                password, false, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, TimeSpan.FromSeconds(30), null, null,
-                this.cts.Token);
+                password, false, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, TimeSpan.FromSeconds(30), null, null, false);
             metrics = GetTestMetrics();
 
             // create and start new instance of SparkplugNode
