@@ -1,7 +1,4 @@
 SparkplugNet
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ====================================
 
 SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in .Net. It uses [MQTTnet](https://github.com/chkr1011/MQTTnet) in the background.
@@ -15,6 +12,10 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 [![NuGet Downloads](https://img.shields.io/nuget/dt/SparkplugNet.svg)](https://www.nuget.org/packages/SparkplugNet/)
 [![Known Vulnerabilities](https://snyk.io/test/github/SeppPenner/SparkplugNet/badge.svg)](https://snyk.io/test/github/SeppPenner/SparkplugNet)
 [![Gitter](https://badges.gitter.im/SparkplugNet/community.svg)](https://gitter.im/SparkplugNet/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Available for
 * NetFramework 4.6.2
