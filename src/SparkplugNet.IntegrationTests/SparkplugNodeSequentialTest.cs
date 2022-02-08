@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SparkplugNodeSequentialTest.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -97,6 +97,10 @@ namespace SparkplugNet.IntegrationTests
             {
                 await Task.Delay(1000);
                 UpdateTestMetrics(metrics);
+
+                // Assert that the node is not null.
+                Assert.IsNotNull(node);
+
                 var result = await node.PublishMetrics(metrics);
                 Assert.IsTrue(result.ReasonCode == 0);
             }
@@ -110,6 +114,9 @@ namespace SparkplugNet.IntegrationTests
         [Ignore]
         public async Task T3TestNodeVersionBStopDisconnect()
         {
+            // Assert that the node is not null.
+            Assert.IsNotNull(node);
+
             // Assert IsConnected == true.
             Assert.IsTrue(node.IsConnected);
 
