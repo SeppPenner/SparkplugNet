@@ -2,7 +2,6 @@ SparkplugNet
 ====================================
 
 SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in .Net. It uses [MQTTnet](https://github.com/chkr1011/MQTTnet) in the background.
-The assembly was written and tested in .Net 5.0.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/w6pu8fcav4n7651t?svg=true)](https://ci.appveyor.com/project/SeppPenner/sparkplugnet)
 [![GitHub issues](https://img.shields.io/github/issues/SeppPenner/SparkplugNet.svg)](https://github.com/SeppPenner/SparkplugNet/issues)
@@ -23,11 +22,12 @@ The assembly was written and tested in .Net 5.0.
 * NetStandard 2.1
 * NetCore 3.1
 * Net 5.0
+* Net 6.0
 
 ## Net Core and Net Framework latest and LTS versions
 * https://dotnet.microsoft.com/download/dotnet-framework
 * https://dotnet.microsoft.com/download/dotnet-core
-* https://dotnet.microsoft.com/download/dotnet/5.0
+* https://dotnet.microsoft.com/download/dotnet
 
 ## Structure
 Sparkplug distinguishes between 5 different types of logical parts:
