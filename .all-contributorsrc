@@ -1,0 +1,29 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "SeppPenner",
+      "name": "HansM",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9639361?v=4",
+      "profile": "https://franzhuber23.blogspot.de/",
+      "contributions": [
+        "code",
+        "doc",
+        "example",
+        "maintenance",
+        "projectManagement",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "SparkplugNet",
+  "projectOwner": "SeppPenner",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
