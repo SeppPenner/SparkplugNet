@@ -18,6 +18,15 @@
         "projectManagement",
         "test"
       ]
+    },
+    {
+      "login": "insightdocs",
+      "name": "insightdocs",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23101485?v=4",
+      "profile": "https://github.com/insightdocs",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
