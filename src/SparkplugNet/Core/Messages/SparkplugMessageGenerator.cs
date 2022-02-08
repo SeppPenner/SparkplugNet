@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SparkplugMessageGenerator.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -633,7 +633,6 @@ namespace SparkplugNet.Core.Messages
                         edgeNodeIdentifier,
                         string.Empty)).WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -678,7 +677,6 @@ namespace SparkplugNet.Core.Messages
                         string.Empty))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -722,7 +720,6 @@ namespace SparkplugNet.Core.Messages
                         deviceIdentifier))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -769,7 +766,6 @@ namespace SparkplugNet.Core.Messages
                         deviceIdentifier))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -808,7 +804,6 @@ namespace SparkplugNet.Core.Messages
                         string.Empty))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -847,7 +842,6 @@ namespace SparkplugNet.Core.Messages
                         string.Empty))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -891,7 +885,6 @@ namespace SparkplugNet.Core.Messages
                         deviceIdentifier))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -938,7 +931,6 @@ namespace SparkplugNet.Core.Messages
                         deviceIdentifier))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -980,7 +972,6 @@ namespace SparkplugNet.Core.Messages
                         string.Empty))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -1025,7 +1016,6 @@ namespace SparkplugNet.Core.Messages
                         string.Empty))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -1069,7 +1059,6 @@ namespace SparkplugNet.Core.Messages
                         deviceIdentifier))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -1116,7 +1105,6 @@ namespace SparkplugNet.Core.Messages
                         deviceIdentifier))
                 .WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -1154,7 +1142,6 @@ namespace SparkplugNet.Core.Messages
                         edgeNodeIdentifier,
                         string.Empty)).WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -1195,7 +1182,6 @@ namespace SparkplugNet.Core.Messages
                         edgeNodeIdentifier,
                         string.Empty)).WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -1235,7 +1221,6 @@ namespace SparkplugNet.Core.Messages
                         edgeNodeIdentifier,
                         deviceIdentifier)).WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
 
@@ -1278,7 +1263,6 @@ namespace SparkplugNet.Core.Messages
                         edgeNodeIdentifier,
                         deviceIdentifier)).WithPayload(serialized)
                 .WithAtLeastOnceQoS()
-                .WithRetainFlag()
                 .Build();
         }
     }
