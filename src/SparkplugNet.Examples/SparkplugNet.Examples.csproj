@@ -5,10 +5,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.8.1">
+    <PackageReference Include="GitVersion.MsBuild" Version="5.8.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

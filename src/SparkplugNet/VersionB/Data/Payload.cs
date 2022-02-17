@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Payload.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,44 +7,41 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.VersionB.Data
+namespace SparkplugNet.VersionB.Data;
+
+/// <summary>
+/// The externally used Sparkplug B payload class.
+/// </summary>
+public class Payload
 {
-    using System.Collections.Generic;
+    /// <summary>
+    /// Gets or sets the timestamp.
+    /// </summary>
+    public ulong Timestamp { get; set; }
 
     /// <summary>
-    /// The externally used Sparkplug B payload class.
+    /// Gets or sets the metrics.
     /// </summary>
-    public class Payload
-    {
-        /// <summary>
-        /// Gets or sets the timestamp.
-        /// </summary>
-        public ulong Timestamp { get; set; }
+    public List<Metric> Metrics { get; set; } = new();
 
-        /// <summary>
-        /// Gets or sets the metrics.
-        /// </summary>
-        public List<Metric> Metrics { get; set; } = new List<Metric>();
+    /// <summary>
+    /// Gets or sets the SEQ number.
+    /// </summary>
+    public ulong Seq { get; set; }
 
-        /// <summary>
-        /// Gets or sets the SEQ number.
-        /// </summary>
-        public ulong Seq { get; set; }
+    /// <summary>
+    /// Gets or sets the UUID.
+    /// </summary>
+    [DefaultValue("")]
+    public string Uuid { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Gets or sets the UUID.
-        /// </summary>
-        [System.ComponentModel.DefaultValue("")]
-        public string Uuid { get; set; } = string.Empty;
+    /// <summary>
+    /// Get sor sets the body.
+    /// </summary>
+    public byte[]? Body { get; set; }
 
-        /// <summary>
-        /// Get sor sets the body.
-        /// </summary>
-        public byte[]? Body { get; set; }
-
-        /// <summary>
-        /// Gets or sets the details.
-        /// </summary>
-        public List<byte> Details { get; set; } = new List<byte>();
-    }
+    /// <summary>
+    /// Gets or sets the details.
+    /// </summary>
+    public List<byte> Details { get; set; } = new();
 }

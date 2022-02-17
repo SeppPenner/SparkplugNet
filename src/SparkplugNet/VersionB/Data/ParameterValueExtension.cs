@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ParameterValueExtension.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,18 +7,15 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.VersionB.Data
-{
-    using System.Collections.Generic;
+namespace SparkplugNet.VersionB.Data;
 
+/// <summary>
+/// The externally used Sparkplug B parameter value extension class.
+/// </summary>
+public class ParameterValueExtension
+{
     /// <summary>
-    /// The externally used Sparkplug B parameter value extension class.
+    /// Gets or sets the extensions.
     /// </summary>
-    public class ParameterValueExtension
-    {
-        /// <summary>
-        /// Gets or sets the extensions.
-        /// </summary>
-        public List<byte> Extensions { get; set; } = new List<byte>();
-    }
+    public List<byte> Extensions { get; set; } = new();
 }

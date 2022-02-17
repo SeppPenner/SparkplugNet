@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MQTTServerUnderTest.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,31 +7,30 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.IntegrationTests
+namespace SparkplugNet.IntegrationTests;
+
+/// <summary>
+/// A class to define a MQTT Server for reuse throughout integration tests.
+/// </summary>
+public static class MqttServerUnderTest
 {
     /// <summary>
-    /// A class to define a MQTT Server for reuse throughout integration tests.
+    /// Gets or sets the server address.
     /// </summary>
-    public static class MqttServerUnderTest
-    {
-        /// <summary>
-        /// Gets or sets the server address.
-        /// </summary>
-        public static string ServerAddress { get; set; } = "server1";
+    public static string ServerAddress { get; set; } = "server1";
 
-        /// <summary>
-        /// Gets or sets the server port.
-        /// </summary>
-        public static int ServerPort { get; set; } = 1883;
+    /// <summary>
+    /// Gets or sets the server port.
+    /// </summary>
+    public static int ServerPort { get; set; } = 1883;
 
-        /// <summary>
-        /// Gets or sets the client identifier.
-        /// </summary>
-        public static string ClientId { get; set; } = "client1";
+    /// <summary>
+    /// Gets or sets the client identifier.
+    /// </summary>
+    public static string ClientId { get; set; } = "client1";
 
-        /// <summary>
-        /// Gets or sets the scada host identifier.
-        /// </summary>
-        public static string ScadaHostIdentifier { get; set; } = "scadaHost1";
-    }
+    /// <summary>
+    /// Gets or sets the scada host identifier.
+    /// </summary>
+    public static string ScadaHostIdentifier { get; set; } = "scadaHost1";
 }

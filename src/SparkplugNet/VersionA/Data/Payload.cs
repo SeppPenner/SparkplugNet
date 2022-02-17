@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Payload.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,42 +7,39 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.VersionA.Data
+namespace SparkplugNet.VersionA.Data;
+
+/// <summary>
+/// The externally used Sparkplug A payload class.
+/// </summary>
+public class Payload
 {
-    using System.Collections.Generic;
+    /// <summary>
+    /// The timestamp.
+    /// </summary>
+    private long? timestamp;
 
     /// <summary>
-    /// The externally used Sparkplug A payload class.
+    /// Gets or sets the timestamp.
     /// </summary>
-    public class Payload
+    public long Timestamp
     {
-        /// <summary>
-        /// The timestamp.
-        /// </summary>
-        private long? timestamp;
-
-        /// <summary>
-        /// Gets or sets the timestamp.
-        /// </summary>
-        public long Timestamp
-        {
-            get => this.timestamp.GetValueOrDefault();
-            set => this.timestamp = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the position.
-        /// </summary>
-        public KuraPosition? Position { get; set; }
-
-        /// <summary>
-        /// Gets or sets the metrics.
-        /// </summary>
-        public List<KuraMetric> Metrics { get; set; } = new List<KuraMetric>();
-
-        /// <summary>
-        /// Gets or sets the body.
-        /// </summary>
-        public byte[]? Body { get; set; }
+        get => this.timestamp.GetValueOrDefault();
+        set => this.timestamp = value;
     }
+
+    /// <summary>
+    /// Gets or sets the position.
+    /// </summary>
+    public KuraPosition? Position { get; set; }
+
+    /// <summary>
+    /// Gets or sets the metrics.
+    /// </summary>
+    public List<KuraMetric> Metrics { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the body.
+    /// </summary>
+    public byte[]? Body { get; set; }
 }

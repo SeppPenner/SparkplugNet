@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SparkplugNamespace.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,25 +7,22 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Core.Enumerations
+namespace SparkplugNet.Core.Enumerations;
+
+/// <summary>
+/// The Sparkplug namespace enumeration.
+/// </summary>
+public enum SparkplugNamespace
 {
-    using System.ComponentModel;
+    /// <summary>
+    /// The version A namespace.
+    /// </summary>
+    [Description("spAv1.0")]
+    VersionA,
 
     /// <summary>
-    /// The Sparkplug namespace enumeration.
+    /// The version B namespace.
     /// </summary>
-    public enum SparkplugNamespace
-    {
-        /// <summary>
-        /// The version A namespace.
-        /// </summary>
-        [Description("spAv1.0")]
-        VersionA,
-
-        /// <summary>
-        /// The version B namespace.
-        /// </summary>
-        [Description("spBv1.0")]
-        VersionB
-    }
+    [Description("spBv1.0")]
+    VersionB
 }

@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="DataSetValueExtension.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,18 +7,15 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.VersionB.Data
-{
-    using System.Collections.Generic;
+namespace SparkplugNet.VersionB.Data;
 
+/// <summary>
+/// The externally used Sparkplug B data set extension class.
+/// </summary>
+public class DataSetValueExtension
+{
     /// <summary>
-    /// The externally used Sparkplug B data set extension class.
+    /// Gets or sets the details.
     /// </summary>
-    public class DataSetValueExtension
-    {
-        /// <summary>
-        /// Gets or sets the details.
-        /// </summary>
-        public List<byte> Details { get; set; } = new List<byte>();
-    }
+    public List<byte> Details { get; set; } = new();
 }

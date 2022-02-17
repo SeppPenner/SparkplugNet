@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30517.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SparkplugNet", "SparkplugNet\SparkplugNet.csproj", "{8CD41BF4-028E-41D4-8C19-F07F9D37080B}"
 EndProject
@@ -10,6 +10,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SparkplugNet.Examples", "SparkplugNet.Examples\SparkplugNet.Examples.csproj", "{5A09589D-FB3F-4967-A104-B15549477202}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SparkplugNet.IntegrationTests", "SparkplugNet.IntegrationTests\SparkplugNet.IntegrationTests.csproj", "{AB0FDEB9-DA26-4D53-9E9E-9BFD416ADB17}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8CDAFEAC-5345-40C1-978E-C6826F4F6F09}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

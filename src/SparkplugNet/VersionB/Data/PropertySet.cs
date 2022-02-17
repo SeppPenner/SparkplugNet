@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PropertySet.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,28 +7,25 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.VersionB.Data
+namespace SparkplugNet.VersionB.Data;
+
+/// <summary>
+/// The externally used Sparkplug B property set class.
+/// </summary>
+public class PropertySet
 {
-    using System.Collections.Generic;
+    /// <summary>
+    /// Gets or sets the keys.
+    /// </summary>
+    public List<string> Keys { get; set; } = new();
 
     /// <summary>
-    /// The externally used Sparkplug B property set class.
+    /// Gets or sets the values.
     /// </summary>
-    public class PropertySet
-    {
-        /// <summary>
-        /// Gets or sets the keys.
-        /// </summary>
-        public List<string> Keys { get; set; } = new List<string>();
+    public List<PropertyValue> Values { get; set; } = new();
 
-        /// <summary>
-        /// Gets or sets the values.
-        /// </summary>
-        public List<PropertyValue> Values { get; set; } = new List<PropertyValue>();
-
-        /// <summary>
-        /// Gets or sets the details.
-        /// </summary>
-        public List<byte> Details { get; set; } = new List<byte>();
-    }
+    /// <summary>
+    /// Gets or sets the details.
+    /// </summary>
+    public List<byte> Details { get; set; } = new();
 }

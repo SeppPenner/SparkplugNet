@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SparkplugMetricStatus.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
@@ -7,26 +7,25 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Core.Enumerations
+namespace SparkplugNet.Core.Enumerations;
+
+/// <summary>
+/// The Sparkplug metric status enumeration.
+/// </summary>
+public enum SparkplugMetricStatus
 {
     /// <summary>
-    /// The Sparkplug metric status enumeration.
+    /// The unknown Sparkplug connection status.
     /// </summary>
-    public enum SparkplugMetricStatus
-    {
-        /// <summary>
-        /// The unknown Sparkplug connection status.
-        /// </summary>
-        Unknown,
+    Unknown,
 
-        /// <summary>
-        /// The online Sparkplug connection status.
-        /// </summary>
-        Online,
+    /// <summary>
+    /// The online Sparkplug connection status.
+    /// </summary>
+    Online,
 
-        /// <summary>
-        /// The offline Sparkplug connection status.
-        /// </summary>
-        Offline
-    }
+    /// <summary>
+    /// The offline Sparkplug connection status.
+    /// </summary>
+    Offline
 }
