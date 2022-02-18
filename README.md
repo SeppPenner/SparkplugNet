@@ -55,6 +55,9 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * [HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Sparkplug InfluxDB Extension](https://github.com/hivemq/hivemq-sparkplug-influxdb-extension/) for Sparkplug testing.
 * [Ignition](https://inductiveautomation.com/ignition/) for Sparkplug testing.
 
+## Recommended clients
+* [MQTT.fx](http://www.mqttfx.jensd.de/) has a Sparkplug data decoder. The binaries for version 1.7.1 can also be taken from https://github.com/SeppPenner/mqttfx171-backup (The software is now under development by a company and requires a license for version 1.7.1+).
+
 ## Supported Sparkplug standards
 * Version 2.2, spAv1.0 and spBv1.0.
 
