@@ -38,15 +38,15 @@ internal static class PayloadConverter
             }).ToList(),
             Position = new VersionAData.KuraPosition
             {
-                Timestamp = payload.Position.Timestamp,
-                Altitude = payload.Position.Altitude,
-                Heading = payload.Position.Heading,
-                Latitude = payload.Position.Latitude,
-                Longitude = payload.Position.Longitude,
-                Precision = payload.Position.Precision,
-                Satellites = payload.Position.Satellites,
-                Speed = payload.Position.Speed,
-                Status = payload.Position.Status
+                Timestamp = payload.Position?.Timestamp ?? default,
+                Altitude = payload.Position?.Altitude ?? default,
+                Heading = payload.Position?.Heading ?? default,
+                Latitude = payload.Position?.Latitude ?? default,
+                Longitude = payload.Position?.Longitude ?? default,
+                Precision = payload.Position?.Precision ?? default,
+                Satellites = payload.Position?.Satellites ?? default,
+                Speed = payload.Position?.Speed ?? default,
+                Status = payload.Position?.Status ?? default
             },
             Timestamp = payload.Timestamp
         };
@@ -117,7 +117,7 @@ internal static class PayloadConverter
     {
         return new VersionBProtoBuf.ProtoBufPayload
         {
-            Body = payload.Body,
+            Body = payload.Body ?? Array.Empty<byte>(),
             Details = payload.Details,
             Metrics = payload.Metrics.Select(ConvertVersionBMetric).ToList(),
             Seq = payload.Seq,

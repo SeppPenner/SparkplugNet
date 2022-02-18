@@ -62,7 +62,7 @@ public class KuraPosition
     /// <summary>
     /// Gets or sets the altitude.
     /// </summary>
-    public double Altitude
+    public double? Altitude
     {
         get => this.altitude.GetValueOrDefault();
         set => this.altitude = value;
@@ -71,7 +71,7 @@ public class KuraPosition
     /// <summary>
     /// Gets or sets the precision.
     /// </summary>
-    public double Precision
+    public double? Precision
     {
         get => this.precision.GetValueOrDefault();
         set => this.precision = value;
@@ -80,7 +80,7 @@ public class KuraPosition
     /// <summary>
     /// Gets or sets the heading.
     /// </summary>
-    public double Heading
+    public double? Heading
     {
         get => this.heading.GetValueOrDefault();
         set => this.heading = value;
@@ -89,7 +89,7 @@ public class KuraPosition
     /// <summary>
     /// Gets or sets the speed.
     /// </summary>
-    public double Speed
+    public double? Speed
     {
         get => this.speed.GetValueOrDefault();
         set => this.speed = value;
@@ -98,7 +98,7 @@ public class KuraPosition
     /// <summary>
     /// Gets or sets the timestamp.
     /// </summary>
-    public long Timestamp
+    public long? Timestamp
     {
         get => this.timestamp.GetValueOrDefault();
         set => this.timestamp = value;
@@ -107,7 +107,7 @@ public class KuraPosition
     /// <summary>
     /// Gets or sets the satellites.
     /// </summary>
-    public int Satellites
+    public int? Satellites
     {
         get => this.satellites.GetValueOrDefault();
         set => this.satellites = value;
@@ -116,7 +116,7 @@ public class KuraPosition
     /// <summary>
     /// Gets or sets the status.
     /// </summary>
-    public int Status
+    public int? Status
     {
         get => this.status.GetValueOrDefault();
         set => this.status = value;

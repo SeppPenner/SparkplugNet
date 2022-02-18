@@ -22,7 +22,7 @@ public class Payload
     /// <summary>
     /// Gets or sets the timestamp.
     /// </summary>
-    public long Timestamp
+    public long? Timestamp
     {
         get => this.timestamp.GetValueOrDefault();
         set => this.timestamp = value;
@@ -41,5 +41,5 @@ public class Payload
     /// <summary>
     /// Gets or sets the body.
     /// </summary>
-    public byte[]? Body { get; set; }
+    public byte[] Body { get; set; } = Array.Empty<byte>();
 }

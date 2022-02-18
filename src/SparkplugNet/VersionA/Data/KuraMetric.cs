@@ -47,7 +47,7 @@ public class KuraMetric
     /// <summary>
     /// Gets or sets the name.
     /// </summary>
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the type.
@@ -57,7 +57,7 @@ public class KuraMetric
     /// <summary>
     /// Gets or sets the double value.
     /// </summary>
-    public double DoubleValue
+    public double? DoubleValue
     {
         get => this.doubleValue.GetValueOrDefault();
         set => this.doubleValue = value;
@@ -66,7 +66,7 @@ public class KuraMetric
     /// <summary>
     /// Gets or sets the float value.
     /// </summary>
-    public float FloatValue
+    public float? FloatValue
     {
         get => this.floatValue.GetValueOrDefault();
         set => this.floatValue = value;
@@ -75,7 +75,7 @@ public class KuraMetric
     /// <summary>
     /// Gets or sets the long value.
     /// </summary>
-    public long LongValue
+    public long? LongValue
     {
         get => this.longValue.GetValueOrDefault();
         set => this.longValue = value;
@@ -84,7 +84,7 @@ public class KuraMetric
     /// <summary>
     /// Gets or sets the integer value.
     /// </summary>
-    public int IntValue
+    public int? IntValue
     {
         get => this.intValue.GetValueOrDefault();
         set => this.intValue = value;
@@ -93,7 +93,7 @@ public class KuraMetric
     /// <summary>
     /// Gets or sets the boolean value.
     /// </summary>
-    public bool BoolValue
+    public bool? BoolValue
     {
         get => this.boolValue.GetValueOrDefault();
         set => this.boolValue = value;
@@ -103,7 +103,7 @@ public class KuraMetric
     /// Gets or sets the string value.
     /// </summary>
     [DefaultValue("")]
-    public string StringValue
+    public string? StringValue
     {
         get => this.stringValue ?? string.Empty;
         set => this.stringValue = value;
