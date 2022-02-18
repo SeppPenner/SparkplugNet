@@ -16,6 +16,7 @@ FOR /d /r . %%d in (bin,obj) DO (
 
 @ECHO on
 @ECHO.Building solution...
+cd .\SparkplugNet
 @dotnet build -c Release -o bin/publish
 @ECHO.Deleting *.pdb files...
 @cd bin/publish
