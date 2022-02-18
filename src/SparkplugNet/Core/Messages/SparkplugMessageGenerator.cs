@@ -12,7 +12,7 @@ namespace SparkplugNet.Core.Messages;
 /// <summary>
 /// The Sparkplug message generator.
 /// </summary>
-public class SparkplugMessageGenerator
+internal class SparkplugMessageGenerator
 {
     /// <summary>
     /// The logger.

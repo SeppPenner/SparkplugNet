@@ -12,7 +12,7 @@ namespace SparkplugNet.Core.Messages;
 /// <summary>
 /// The Sparkplug topic generator.
 /// </summary>
-public static class SparkplugTopicGenerator
+internal static class SparkplugTopicGenerator
 {
     /// <summary>
     /// Gets the wildcard namespace subscription topic.
