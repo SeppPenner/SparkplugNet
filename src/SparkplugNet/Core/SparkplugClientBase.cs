@@ -76,20 +76,25 @@ namespace SparkplugNet.Core
 
         /// <summary>Stops the Sparkplug node.</summary>
         /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
+#pragma warning disable 1998
         public virtual async Task Stop()
+#pragma warning restore 1998
         {
         }
 
         /// <summary>Closes the Sparkplug node.</summary>
+#pragma warning disable 1998
         public virtual async Task Close()
+#pragma warning restore 1998
         {
             this.Client.Dispose();
         }
 
         /// <summary>Disposes this instance.</summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>Releases unmanaged and - optionally - managed resources.</summary>

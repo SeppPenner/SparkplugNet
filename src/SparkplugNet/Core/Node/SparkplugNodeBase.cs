@@ -30,7 +30,7 @@ namespace SparkplugNet.Core.Node
     /// <inheritdoc cref="SparkplugBase{T}" />
     /// <summary>A class that handles a Sparkplug node.</summary>
     /// <seealso cref="SparkplugBase{T}" />
-    public class SparkplugNodeBase<T> : SparkplugClientBase<T>, IDisposable
+    public class SparkplugNodeBase<T> : SparkplugClientBase<T>
         where T : class, new()
     {
         /// <summary>The options.</summary>
@@ -48,7 +48,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Gets or sets the node identifier.
         /// </summary>
-        public string NodeId { get; set; }
+        public string NodeId { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the node unique identifier.
@@ -80,19 +80,22 @@ namespace SparkplugNet.Core.Node
 
         /// <summary>Stops the Sparkplug node.</summary>
         /// <returns>A <see cref="Task" /> representing any asynchronous operation.</returns>
-        public async Task Stop()
+        public override async Task Stop()
         {
             if (this.Client.IsConnected)
             {
                 await this.DisconnectInternal();
             }
+
+            await base.Stop();
         }
 
         /// <summary>Closes the Sparkplug node.</summary>
-        public async Task Close()
+        public override async Task Close()
         {
             await this.DisconnectInternal();
             this.Client.Dispose();
+            await base.Close();
         }
 
         /// <summary>Publishes some metrics.</summary>
@@ -139,14 +142,14 @@ namespace SparkplugNet.Core.Node
         }
 
         /// <summary>Disposes this instance.</summary>
-        public void Dispose()
+        public override void Dispose()
         {
             this.Dispose(true);
         }
 
         /// <summary>Releases unmanaged and - optionally - managed resources.</summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {

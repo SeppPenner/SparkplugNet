@@ -18,7 +18,6 @@ namespace SparkplugNet.Core.Device
     using MQTTnet.Client.Publishing;
     using SparkplugNet.Core.Extensions;
     using SparkplugNet.Core.Node;
-    using SparkplugNet.VersionB;
 
     /// <inheritdoc cref="SparkplugBase{T}" />
     /// <summary>A class that handles a Sparkplug device.</summary>
@@ -82,7 +81,6 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
         /// <returns>
         /// A <see cref="Task" /> representing any asynchronous operation.
         /// </returns>
@@ -107,10 +105,8 @@ namespace SparkplugNet.Core.Device
                 {
                     case List<VersionA.Payload.KuraMetric> list:
                         return await this.PublishVersionAMessage(list, qosLevel);
-                        break;
                     case List<VersionB.Payload.Metric> list:
                         return await this.PublishVersionBMessage(list, qosLevel);
-                        break;
                     default:
                         return new MqttClientPublishResult { ReasonCode = MqttClientPublishReasonCode.UnspecifiedError };
                 }
@@ -145,7 +141,6 @@ namespace SparkplugNet.Core.Device
         /// </summary>
         /// <param name="metrics">The metrics.</param>
         /// <param name="qosLevel">The qos level.</param>
-        /// <param name="convertPayloadToJson">if set to <c>true</c> [convert payload to json].</param>
         /// <returns>
         /// A <see cref="Task" /> representing any asynchronous operation.
         /// </returns>

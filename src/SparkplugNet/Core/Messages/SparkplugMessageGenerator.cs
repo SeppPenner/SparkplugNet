@@ -94,12 +94,12 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifer not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Edge node identifer not valid", nameof(edgeNodeIdentifier));
             }
 
             switch (nameSpace)
@@ -165,17 +165,17 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifer not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Edge node identifer not valid", nameof(edgeNodeIdentifier));
             }
 
             if (!deviceIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(deviceIdentifier));
+                throw new ArgumentException("Device identifer not valid", nameof(deviceIdentifier));
             }
 
             switch (nameSpace)
@@ -232,12 +232,12 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifer not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Group identifer not valid", nameof(edgeNodeIdentifier));
             }
 
             switch (nameSpace)
@@ -299,17 +299,17 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifer not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Edge node identifer not valid", nameof(edgeNodeIdentifier));
             }
 
             if (!deviceIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(deviceIdentifier));
+                throw new ArgumentException("Device identifer not valid", nameof(deviceIdentifier));
             }
 
             switch (nameSpace)
@@ -369,12 +369,12 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifer not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Edge node identifer not valid", nameof(edgeNodeIdentifier));
             }
 
             switch (nameSpace)
@@ -435,17 +435,17 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifier not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Edge node identifier not valid", nameof(edgeNodeIdentifier));
             }
 
             if (!deviceIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(deviceIdentifier));
+                throw new ArgumentException("Device identifier not valid", nameof(deviceIdentifier));
             }
 
             switch (nameSpace)
@@ -509,12 +509,12 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifer not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Edge node identifer not valid", nameof(edgeNodeIdentifier));
             }
 
             switch (nameSpace)
@@ -582,17 +582,17 @@ namespace SparkplugNet.Core.Messages
         {
             if (!groupIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(groupIdentifier));
+                throw new ArgumentException("Group identifier not valid", nameof(groupIdentifier));
             }
 
             if (!edgeNodeIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(edgeNodeIdentifier));
+                throw new ArgumentException("Edge node identifier not valid", nameof(edgeNodeIdentifier));
             }
 
             if (!deviceIdentifier.IsIdentifierValid())
             {
-                throw new ArgumentException(nameof(deviceIdentifier));
+                throw new ArgumentException("Device identifier not valid", nameof(deviceIdentifier));
             }
 
             switch (nameSpace)

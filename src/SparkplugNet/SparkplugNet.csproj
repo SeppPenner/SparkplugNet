@@ -49,6 +49,11 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="C:\Source\Repos\Centerpoint.Desktop.Contemporary\submodules\SparkplugNet\src\SparkplugNet\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Source\Repos\Centerpoint.Desktop.Contemporary\submodules\SparkplugNet\src\SparkplugNet\.editorconfig" />
   </ItemGroup>
 
 </Project>

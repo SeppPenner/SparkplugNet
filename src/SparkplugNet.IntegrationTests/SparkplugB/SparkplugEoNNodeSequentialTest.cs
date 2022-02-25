@@ -26,9 +26,8 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
     [TestClass]
     public class SparkplugEoNNodeSequentialTest
     {
-        private readonly CancellationTokenSource cts = new CancellationTokenSource();
-        private static SparkplugNode sut;
-        private static List<Payload.Metric> metrics;
+        private static SparkplugNode? sut;
+        private static List<Payload.Metric>? metrics;
 
         /// <summary>
         /// Tests Sparkplug CONNECT requirements (NDEATH, NBIRTH).
@@ -58,12 +57,22 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         [TestMethod]
         public async Task T2_TestEoNNode_VersionB_PublishMetrics()
         {
+            if (sut == null)
+            {
+                throw new Exception($"{nameof(sut)} cannot be null");
+            }
+
+            if (metrics == null)
+            {
+                throw new Exception($"{nameof(metrics)} cannot be null");
+            }
+
             // publish metrics with changes
             for (var i = 0; i < 5; i++)
             {
                 await Task.Delay(1000);
                 UpdateTestMetrics(metrics);
-                sut.PublishMetrics(metrics);
+                await sut.PublishMetrics(metrics);
                 ////Assert.IsTrue(result.ReasonCode == 0);
             }
         }
@@ -74,6 +83,11 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         [TestMethod]
         public async Task T99_TestEoNNode_VersionB_StopDisconnect()
         {
+            if (sut == null)
+            {
+                throw new Exception($"{nameof(sut)} cannot be null");
+            }
+
             // assert IsConnected = true
             Assert.IsTrue(sut.IsConnected);
 
