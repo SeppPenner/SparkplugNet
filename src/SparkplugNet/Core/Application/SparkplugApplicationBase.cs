@@ -94,9 +94,10 @@ namespace SparkplugNet.Core.Application
         /// Stops the Sparkplug application.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-        public async Task Stop()
+        public override async Task Stop()
         {
             await this.DisconnectInternal();
+            await base.Stop();
         }
 
         /// <summary>

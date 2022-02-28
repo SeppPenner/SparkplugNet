@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using SparkplugNet.Core.Enumerations;
 
@@ -254,7 +255,7 @@
                     {
                         metric.DatasetValue = isNull ? null :(Payload.DataSet)value;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }

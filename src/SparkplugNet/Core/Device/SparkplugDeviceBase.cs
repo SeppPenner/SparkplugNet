@@ -18,7 +18,6 @@ namespace SparkplugNet.Core.Device
     using MQTTnet.Client.Publishing;
     using SparkplugNet.Core.Extensions;
     using SparkplugNet.Core.Node;
-    using SparkplugNet.VersionB;
 
     /// <inheritdoc cref="SparkplugBase{T}" />
     /// <summary>A class that handles a Sparkplug device.</summary>

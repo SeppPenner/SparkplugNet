@@ -7,19 +7,19 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SparkplugNet.Core;
+using SparkplugNet.Core.Device;
+using SparkplugNet.Core.Enumerations;
+using SparkplugNet.Core.Node;
+using SparkplugNet.VersionB;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace SparkplugNet.IntegrationTests.SparkplugB
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using SparkplugNet.Core;
-    using SparkplugNet.Core.Device;
-    using SparkplugNet.Core.Enumerations;
-    using SparkplugNet.Core.Node;
-    using SparkplugNet.VersionB;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// A class to test the <see cref="SparkplugNode" /> class with live MQTT Server and Sparkplug Host.
     /// These tests are designed to execute synchronously in alphabetic order. (e.g. T1_xxx, T2_yyy, T3_zzz)
@@ -27,18 +27,18 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
     [TestClass]
     public class SparkplugDeviceSequentialTest
     {
-        private static SparkplugNode nodeUnderTest;
-        private static SparkplugDevice deviceUnderTest;
-        private static List<Payload.Metric> nodeKnownMetrics;
-        private static List<Payload.Metric> nodeMetrics;
-        private static List<Payload.Metric> deviceKnownMetrics;
-        private static List<Payload.Metric> deviceMetrics;
+        private static SparkplugNode? nodeUnderTest;
+        private static SparkplugDevice? deviceUnderTest;
+        private static List<Payload.Metric>? nodeKnownMetrics;
+        private static List<Payload.Metric>? nodeMetrics;
+        private static List<Payload.Metric>? deviceKnownMetrics;
+        private static List<Payload.Metric>? deviceMetrics;
 
         /// <summary>
         /// Tests Sparkplug CONNECT requirements (NDEATH, NBIRTH).
         /// </summary>
         [TestMethod]
-        public async Task T001_Node_ConnectBirth()
+        public async Task T001NodeConnectBirth()
         {
             var userName = "admin";
             var password = "admin";
@@ -63,14 +63,24 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         /// Tests Sparkplug PublishMetricsAsync (NDATA)
         /// </summary>
         [TestMethod]
-        public async Task T002_Node_PublishMetrics()
+        public async Task T002NodePublishMetrics()
         {
+            if (nodeUnderTest == null)
+            {
+                throw new Exception($"{nameof(nodeUnderTest)} cannot be null");
+            }
+
+            if (nodeMetrics == null)
+            {
+                throw new Exception($"{nameof(nodeMetrics)} cannot be null");
+            }
+
             // publish nodeMetrics with changes
             for (var i = 0; i < 3; i++)
             {
                 await Task.Delay(1000);
                 RandomUpdateTestMetrics(nodeMetrics);
-                nodeUnderTest.PublishMetrics(nodeMetrics);
+                await nodeUnderTest.PublishMetrics(nodeMetrics);
                 ////var result = await nodeUnderTest.PublishMetricsAsync(nodeMetrics);
                 ////Assert.IsTrue(result.ReasonCode is (MqttClientPublishReasonCode)0 or (MqttClientPublishReasonCode)16);
             }
@@ -80,7 +90,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         /// Tests Sparkplug DBIRTH requirements (DBIRTH).
         /// </summary>
         [TestMethod]
-        public async Task T010_Device_DBIRTH()
+        public async Task T010DeviceDBIRTH()
         {
             var userName = "admin";
             var password = "admin";
@@ -108,7 +118,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         /// Tests Welding Events
         /// </summary>
         [TestMethod]
-        public async Task T011_Device_SimulateTransientMetrics()
+        public async Task T011DeviceSimulateTransientMetrics()
         {
             // publish nodeMetrics with changes
             for (var i = 0; i < 2; i++)
@@ -122,8 +132,13 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         /// Tests MQTT Device Disconnect
         /// </summary>
         [TestMethod]
-        public async Task T012_Device_DDEATH()
+        public async Task T012DeviceDDEATH()
         {
+            if (deviceUnderTest == null)
+            {
+                throw new Exception("deviceUnderTest cannot be null");
+            }
+
             // stop instance of SparkplugNode
             await Task.Delay(100);
             await deviceUnderTest.Stop();
@@ -136,7 +151,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         /// Tests Sparkplug DBIRTH requirements (DBIRTH).
         /// </summary>
         [TestMethod]
-        public async Task T020_Device_DBIRTH()
+        public async Task T020DeviceDBIRTH()
         {
             var userName = "admin";
             var password = "admin";
@@ -151,7 +166,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
                 clientIdentifier, userName, password, useTls, scadaHostIdentifier, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, deviceGuid,
                 TimeSpan.FromSeconds(30), null, null, false);
 
-            await deviceUnderTest.Start(deviceOptions);
+            await deviceUnderTest?.Start(deviceOptions)!;
             //Assert.IsTrue(deviceUnderTest.IsConnected);
         }
 
@@ -159,7 +174,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         /// Tests Welding Events
         /// </summary>
         [TestMethod]
-        public async Task T021_Device_SimulateTransientMetrics()
+        public async Task T021DeviceSimulateTransientMetrics()
         {
             // publish nodeMetrics with changes
             for (var i = 0; i < 3; i++)
@@ -173,20 +188,30 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
         /// Tests MQTT Device Disconnect
         /// </summary>
         [TestMethod]
-        public async Task T022_Device_DDEATH()
+        public async Task T022DeviceDDEATH()
         {
+            if (deviceUnderTest == null)
+            {
+                throw new Exception($"{nameof(deviceUnderTest)} cannot be null");
+            }
+
             // stop instance of SparkplugNode
-            await deviceUnderTest.Stop();
+            await deviceUnderTest.Stop().ConfigureAwait(false);
         }
 
         /// <summary>
         /// Tests MQTT Client Disconnect
         /// </summary>
         [TestMethod]
-        public async Task T099_Node_StopDisconnect()
+        public async Task T099NodeStopDisconnect()
         {
+            if (nodeUnderTest == null)
+            {
+                throw new Exception($"{nameof(nodeUnderTest)} cannot be null");
+            }
+
             // assert IsConnected = true
-            Assert.IsTrue(nodeUnderTest.IsConnected);
+            Assert.IsTrue(nodeUnderTest is { IsConnected: true });
 
             // stop instance of SparkplugNode
             await Task.Delay(1000);
@@ -249,6 +274,11 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
 
         private static async Task SimulateTransientMetrics(int durationMs, int frequencyMs)
         {
+            if (deviceUnderTest == null)
+            {
+                throw new Exception($"{nameof(deviceUnderTest)} cannot be null");
+            }
+
             var metrics = deviceUnderTest.KnownMetrics;
             var messageCount = durationMs / frequencyMs;
             var random = new Random();
@@ -267,7 +297,7 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
                 // publish
                 var changedMetrics = metrics.GetChangedMetrics(now);
                 //var result = deviceUnderTest.PublishMetricsAsync(changedMetrics, 1);
-                deviceUnderTest.PublishMetricsAsync(changedMetrics, 1);
+                await deviceUnderTest.PublishMetricsAsync(changedMetrics, 1);
                 //Assert.IsTrue(result.ReasonCode == 0);
             }
         }
