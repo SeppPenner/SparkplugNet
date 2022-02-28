@@ -159,7 +159,7 @@
                         if (metric.StringValue == stringValue) { return; }
                         metric.StringValue = stringValue;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -178,7 +178,7 @@
                         if (metric.IntValue == intValue) { return; }
                         metric.IntValue = intValue;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -193,7 +193,7 @@
                         if (metric.LongValue == longValue) { return; }
                         metric.LongValue = longValue;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -206,7 +206,7 @@
                         if (Math.Abs(metric.FloatValue - floatValue) < .001) { return; }
                         metric.FloatValue = floatValue;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -219,7 +219,7 @@
                         if (Math.Abs(metric.DoubleValue - doubleValue) < .001) { return; }
                         metric.DoubleValue = doubleValue;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -232,7 +232,7 @@
                         if (metric.BooleanValue == booleanValue) { return; }
                         metric.BooleanValue = booleanValue;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -244,7 +244,7 @@
                     {
                         metric.BytesValue = value is null || isNull ? null : (byte[])value;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }
@@ -266,7 +266,7 @@
                         metric.TemplateValue = isNull ? null :(Payload.Template)value;
 
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         return;
                     }

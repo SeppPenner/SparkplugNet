@@ -27,7 +27,6 @@ namespace SparkplugNet.IntegrationTests.SparkplugB
     [TestClass]
     public class SparkplugDeviceSequentialTest
     {
-        private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private static SparkplugNode nodeUnderTest;
         private static SparkplugDevice deviceUnderTest;
         private static List<Payload.Metric> nodeKnownMetrics;
