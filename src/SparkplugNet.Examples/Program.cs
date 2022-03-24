@@ -112,6 +112,15 @@ public class Program
         await application.Start(applicationOptions);
         Log.Information("Application started...");
 
+        // Handle the application's disconnected event.
+        application.OnDisconnected += OnVersionAApplicationDisconnected;
+
+        // Handle the application's node data received event.
+        application.OnNodeDataReceived += OnVersionANodeDataReceived;
+
+        // Handle the application's device data received event.
+        application.OnDeviceDataReceived += OnVersionADeviceDataReceived;
+
         // Publish node commands.
         Log.Information("Publishing a node command ...");
         await application.PublishNodeCommand(applicationMetrics, "group1", "edge1");
@@ -131,9 +140,6 @@ public class Program
 
         // Check whether an application is connected.
         var isApplicationConnected = application.IsConnected;
-
-        // Handle the application's disconnected event.
-        application.OnDisconnected += OnVersionAApplicationDisconnected;
 
         // Stopping an application.
         await application.Stop();
@@ -218,6 +224,15 @@ public class Program
         await application.Start(applicationOptions);
         Log.Information("Application started...");
 
+        // Handle the application's disconnected event.
+        application.OnDisconnected += OnVersionBApplicationDisconnected;
+
+        // Handle the application's node data received event.
+        application.OnNodeDataReceived += OnVersionBNodeDataReceived;
+
+        // Handle the application's device data received event.
+        application.OnDeviceDataReceived += OnVersionBDeviceDataReceived;
+
         // Publish node commands.
         Log.Information("Publishing a node command ...");
         await application.PublishNodeCommand(applicationMetrics, "group1", "edge1");
@@ -237,9 +252,6 @@ public class Program
 
         // Check whether an application is connected.
         var isApplicationConnected = application.IsConnected;
-
-        // Handle the application's disconnected event.
-        application.OnDisconnected += OnVersionBApplicationDisconnected;
 
         // Stopping an application.
         await application.Stop();
@@ -321,6 +333,38 @@ public class Program
     /// Handles the disconnected callback for version B applications.
     /// </summary>
     private static void OnVersionBApplicationDisconnected()
+    {
+        // Do something.
+    }
+
+    /// <summary>
+    /// Handles the node data callback for version A applications.
+    /// </summary>
+    private static void OnVersionANodeDataReceived(VersionAData.KuraMetric _)
+    {
+        // Do something.
+    }
+
+    /// <summary>
+    /// Handles the node data callback for version B applications.
+    /// </summary>
+    private static void OnVersionBNodeDataReceived(VersionBData.Metric _)
+    {
+        // Do something.
+    }
+
+    /// <summary>
+    /// Handles the device data callback for version A applications.
+    /// </summary>
+    private static void OnVersionADeviceDataReceived(VersionAData.KuraMetric _)
+    {
+        // Do something.
+    }
+
+    /// <summary>
+    /// Handles the device data callback for version B applications.
+    /// </summary>
+    private static void OnVersionBDeviceDataReceived(VersionBData.Metric _)
     {
         // Do something.
     }
