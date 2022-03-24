@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Version 0.6.0.0 (2022-02-18): 0.6 beta release: Added nullable checks, added editorconfig, added file scoped namespaces, added global usings, removed native support for Net Framework (Breaking change), fixes https://github.com/SeppPenner/SparkplugNet/issues/7.</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 0.7.0.0 (2022-03-24): 0.7 beta release: Added callbacks for the application to handle node data and device data received metrics, updated NuGet packages, fixes https://github.com/SeppPenner/SparkplugNet/issues/14.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.8.2">
+    <PackageReference Include="GitVersion.MsBuild" Version="5.9.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
