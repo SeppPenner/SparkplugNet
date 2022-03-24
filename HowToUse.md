@@ -22,6 +22,15 @@ var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "app
 // Start an application.
 await application.Start(applicationOptions);
 
+// Handle the application's disconnected event.
+application.OnDisconnected += OnApplicationDisconnected;
+
+// Handle the application's node data received event.
+application.OnNodeDataReceived += OnVersionANodeDataReceived;
+
+// Handle the application's device data received event.
+application.OnDeviceDataReceived += OnVersionADeviceDataReceived;
+
 // Publish node commands.
 await application.PublishNodeCommand(applicationMetrics, "group1", "edge1");
 
@@ -40,10 +49,17 @@ var currentNodeStates = application.NodeStates;
 // Check whether an application is connected.
 var isApplicationConnected = application.IsConnected;
 
-// Handle the application's disconnected event.
-application.OnDisconnected += OnApplicationDisconnected;
-
 private void OnApplicationDisconnected()
+{
+	// Do something.
+}
+
+private static void OnVersionANodeDataReceived(KuraMetric metric)
+{
+	// Do something.
+}
+
+private static void OnVersionADeviceDataReceived(KuraMetric metric)
 {
 	// Do something.
 }
@@ -173,6 +189,15 @@ var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "app
 // Start an application.
 await application.Start(applicationOptions);
 
+// Handle the application's disconnected event.
+application.OnDisconnected += OnApplicationDisconnected;
+
+// Handle the application's node data received event.
+application.OnNodeDataReceived += OnVersionBNodeDataReceived;
+
+// Handle the application's device data received event.
+application.OnDeviceDataReceived += OnVersionBDeviceDataReceived;
+
 // Publish node commands.
 await application.PublishNodeCommand(applicationMetrics, "group1", "edge1");
 
@@ -191,10 +216,17 @@ var currentNodeStates = application.NodeStates;
 // Check whether an application is connected.
 var isApplicationConnected = application.IsConnected;
 
-// Handle the application's disconnected event.
-application.OnDisconnected += OnApplicationDisconnected;
-
 private void OnApplicationDisconnected()
+{
+	// Do something.
+}
+
+private static void OnVersionBNodeDataReceived(Metric metric)
+{
+	// Do something.
+}
+
+private static void OnVersionBDeviceDataReceived(Metric metric)
 {
 	// Do something.
 }
