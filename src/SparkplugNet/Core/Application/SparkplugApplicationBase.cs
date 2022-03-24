@@ -45,12 +45,12 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <summary>
     /// Gets or sets the callback for the device data received event.
     /// </summary>
-    public Action<T>? DeviceDataReceived { get; set; } = null;
+    public Action<T>? OnDeviceDataReceived { get; set; } = null;
 
     /// <summary>
     /// Gets or sets the callback for the node data received event.
     /// </summary>
-    public Action<T>? NodeDataReceived { get; set; } = null;
+    public Action<T>? OnNodeDataReceived { get; set; } = null;
 
     /// <summary>
     /// Starts the Sparkplug application.
@@ -525,14 +525,12 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
 
         if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
         {
-            this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
-            this.HandleNodeDataCallback(payload);
+            this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online, true);
         }
 
         if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
         {
-            this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
-            this.HandleDeviceDataCallback(payload);
+            this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online, true);
         }
     }
 
@@ -580,14 +578,12 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
 
         if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
         {
-            this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
-            this.HandleNodeDataCallback(payload);
+            this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online, true);
         }
 
         if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
         {
-            this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
-            this.HandleDeviceDataCallback(payload);
+            this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online, true);
         }
     }
 
@@ -597,8 +593,9 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
+    /// <param name="invokeDeviceDataCallback">A value indicating whether the device data callback is invoked or not.</param>
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-    private void HandleDeviceMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
+    private void HandleDeviceMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeDeviceDataCallback = false)
     {
         var deviceId = topic.Split('/')[4];
         var metricState = new MetricState<T>
@@ -614,6 +611,11 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
             }
 
             metricState.Metrics[payloadMetric.Name] = convertedMetric;
+
+            if (invokeDeviceDataCallback)
+            {
+                this.OnDeviceDataReceived?.Invoke(convertedMetric);
+            }
         }
 
         this.DeviceStates[deviceId] = metricState;
@@ -625,8 +627,9 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
+    /// <param name="invokeDeviceDataCallback">A value indicating whether the device data callback is invoked or not.</param>
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-    private void HandleDeviceMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus)
+    private void HandleDeviceMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeDeviceDataCallback = false)
     {
         var deviceId = topic.Split('/')[4];
         var metricState = new MetricState<T>
@@ -645,6 +648,11 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
             {
                 metricState.Metrics[payloadMetric.Name] = convertedMetric;
             }
+
+            if (invokeDeviceDataCallback)
+            {
+                this.OnDeviceDataReceived?.Invoke(convertedMetric);
+            }
         }
 
         this.DeviceStates[deviceId] = metricState;
@@ -656,8 +664,9 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
+    /// <param name="invokeNodeDataCallback">A value indicating whether the node data callback is invoked or not.</param>
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-    private void HandleNodeMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
+    private void HandleNodeMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeNodeDataCallback = false)
     {
         var nodeId = topic.Split('/')[3];
         var metricState = new MetricState<T>
@@ -673,6 +682,11 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
             }
 
             metricState.Metrics[payloadMetric.Name] = convertedMetric;
+
+            if (invokeNodeDataCallback)
+            {
+                this.OnNodeDataReceived?.Invoke(convertedMetric);
+            }
         }
 
         this.NodeStates[nodeId] = metricState;
@@ -684,8 +698,9 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
+    /// <param name="invokeNodeDataCallback">A value indicating whether the node data callback is invoked or not.</param>
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-    private void HandleNodeMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus)
+    private void HandleNodeMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeNodeDataCallback = false)
     {
         var nodeId = topic.Split('/')[3];
         var metricState = new MetricState<T>
@@ -704,69 +719,14 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
             {
                 metricState.Metrics[payloadMetric.Name] = convertedMetric;
             }
+
+            if (invokeNodeDataCallback)
+            {
+                this.OnNodeDataReceived?.Invoke(convertedMetric);
+            }
         }
 
         this.NodeStates[nodeId] = metricState;
-    }
-
-    /// <summary>
-    /// Handles the node data callback.
-    /// </summary>
-    /// <param name="payload">The payload.</param>
-    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
-    private void HandleNodeDataCallback(VersionBData.Payload payload)
-    {
-        if (payload is not T convertedPayload)
-        {
-            throw new InvalidCastException("The payload cast didn't work properly.");
-        }
-
-        this.NodeDataReceived?.Invoke(convertedPayload);
-    }
-
-    /// <summary>
-    /// Handles the node data callback.
-    /// </summary>
-    /// <param name="payload">The payload.</param>
-    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
-    private void HandleNodeDataCallback(VersionAData.Payload payload)
-    {
-        if (payload is not T convertedPayload)
-        {
-            throw new InvalidCastException("The payload cast didn't work properly.");
-        }
-
-        this.NodeDataReceived?.Invoke(convertedPayload);
-    }
-
-    /// <summary>
-    /// Handles the device data callback.
-    /// </summary>
-    /// <param name="payload">The payload.</param>
-    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
-    private void HandleDeviceDataCallback(VersionBData.Payload payload)
-    {
-        if (payload is not T convertedPayload)
-        {
-            throw new InvalidCastException("The payload cast didn't work properly.");
-        }
-
-        this.DeviceDataReceived?.Invoke(convertedPayload);
-    }
-
-    /// <summary>
-    /// Handles the device data callback.
-    /// </summary>
-    /// <param name="payload">The payload.</param>
-    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
-    private void HandleDeviceDataCallback(VersionAData.Payload payload)
-    {
-        if (payload is not T convertedPayload)
-        {
-            throw new InvalidCastException("The payload cast didn't work properly.");
-        }
-
-        this.DeviceDataReceived?.Invoke(convertedPayload);
     }
 
     /// <summary>
