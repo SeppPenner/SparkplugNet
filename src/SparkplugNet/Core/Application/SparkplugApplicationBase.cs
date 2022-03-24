@@ -43,6 +43,16 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     public ConcurrentDictionary<string, MetricState<T>> DeviceStates{ get; } = new ();
 
     /// <summary>
+    /// Gets or sets the callback for the device data received event.
+    /// </summary>
+    public Action<T>? DeviceDataReceived { get; set; } = null;
+
+    /// <summary>
+    /// Gets or sets the callback for the node data received event.
+    /// </summary>
+    public Action<T>? NodeDataReceived { get; set; } = null;
+
+    /// <summary>
     /// Starts the Sparkplug application.
     /// </summary>
     /// <param name="applicationOptions">The application option.</param>
@@ -516,11 +526,13 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
         if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
         {
             this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
+            this.HandleNodeDataCallback(payload);
         }
 
         if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
         {
             this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
+            this.HandleDeviceDataCallback(payload);
         }
     }
 
@@ -569,11 +581,13 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
         if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
         {
             this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
+            this.HandleNodeDataCallback(payload);
         }
 
         if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
         {
             this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
+            this.HandleDeviceDataCallback(payload);
         }
     }
 
@@ -693,6 +707,66 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
         }
 
         this.NodeStates[nodeId] = metricState;
+    }
+
+    /// <summary>
+    /// Handles the node data callback.
+    /// </summary>
+    /// <param name="payload">The payload.</param>
+    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
+    private void HandleNodeDataCallback(VersionBData.Payload payload)
+    {
+        if (payload is not T convertedPayload)
+        {
+            throw new InvalidCastException("The payload cast didn't work properly.");
+        }
+
+        this.NodeDataReceived?.Invoke(convertedPayload);
+    }
+
+    /// <summary>
+    /// Handles the node data callback.
+    /// </summary>
+    /// <param name="payload">The payload.</param>
+    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
+    private void HandleNodeDataCallback(VersionAData.Payload payload)
+    {
+        if (payload is not T convertedPayload)
+        {
+            throw new InvalidCastException("The payload cast didn't work properly.");
+        }
+
+        this.NodeDataReceived?.Invoke(convertedPayload);
+    }
+
+    /// <summary>
+    /// Handles the device data callback.
+    /// </summary>
+    /// <param name="payload">The payload.</param>
+    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
+    private void HandleDeviceDataCallback(VersionBData.Payload payload)
+    {
+        if (payload is not T convertedPayload)
+        {
+            throw new InvalidCastException("The payload cast didn't work properly.");
+        }
+
+        this.DeviceDataReceived?.Invoke(convertedPayload);
+    }
+
+    /// <summary>
+    /// Handles the device data callback.
+    /// </summary>
+    /// <param name="payload">The payload.</param>
+    /// <exception cref="InvalidCastException">The payload cast is invalid.</exception>
+    private void HandleDeviceDataCallback(VersionAData.Payload payload)
+    {
+        if (payload is not T convertedPayload)
+        {
+            throw new InvalidCastException("The payload cast didn't work properly.");
+        }
+
+        this.DeviceDataReceived?.Invoke(convertedPayload);
     }
 
     /// <summary>
