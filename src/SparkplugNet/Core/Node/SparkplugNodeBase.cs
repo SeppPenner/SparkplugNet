@@ -304,22 +304,34 @@ public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, ne
 
                                 if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                 {
-                                    if (convertedPayload is not T convertedPayloadVersionB)
+                                    if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
                                     {
                                         throw new InvalidCastException("The metric cast didn't work properly.");
                                     }
 
-                                    this.DeviceCommandReceived?.Invoke(convertedPayloadVersionB);
+                                    foreach (var metric in convertedPayloadVersionB.Metrics)
+                                    {
+                                        if (metric is T covertedMetric)
+                                        {
+                                            this.DeviceCommandReceived?.Invoke(covertedMetric);
+                                        }
+                                    }
                                 }
 
                                 if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                 {
-                                    if (convertedPayload is not T convertedPayloadVersionB)
+                                    if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
                                     {
                                         throw new InvalidCastException("The metric cast didn't work properly.");
                                     }
 
-                                    this.NodeCommandReceived?.Invoke(convertedPayloadVersionB);
+                                    foreach (var metric in convertedPayloadVersionB.Metrics)
+                                    {
+                                        if (metric is T covertedMetric)
+                                        {
+                                            this.NodeCommandReceived?.Invoke(covertedMetric);
+                                        }
+                                    }
                                 }
                             }
 
