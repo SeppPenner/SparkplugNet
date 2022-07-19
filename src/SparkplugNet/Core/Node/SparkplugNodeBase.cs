@@ -311,9 +311,9 @@ public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, ne
 
                                     foreach (var metric in convertedPayloadVersionB.Metrics)
                                     {
-                                        if (metric is T covertedMetric)
+                                        if (metric is T convertedMetric)
                                         {
-                                            this.DeviceCommandReceived?.Invoke(covertedMetric);
+                                            this.DeviceCommandReceived?.Invoke(convertedMetric);
                                         }
                                     }
                                 }
@@ -327,9 +327,9 @@ public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, ne
 
                                     foreach (var metric in convertedPayloadVersionB.Metrics)
                                     {
-                                        if (metric is T covertedMetric)
+                                        if (metric is T convertedMetric)
                                         {
-                                            this.NodeCommandReceived?.Invoke(covertedMetric);
+                                            this.NodeCommandReceived?.Invoke(convertedMetric);
                                         }
                                     }
                                 }
