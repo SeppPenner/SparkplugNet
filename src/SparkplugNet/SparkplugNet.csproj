@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Version 0.7.0.0 (2022-03-24): 0.7 beta release: Added callbacks for the application to handle node data and device data received metrics, updated NuGet packages, fixes https://github.com/SeppPenner/SparkplugNet/issues/14.</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 1.0.0.0 (2022-08-03): 1.0 release: Switched to MqttNet 4, some bugfixes with node command and device command invocation (Thanks to @OffTravel).</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
