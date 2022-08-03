@@ -27,6 +27,16 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "OffTravel",
+      "name": "OffTravel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19183574?v=4",
+      "profile": "https://github.com/OffTravel",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
