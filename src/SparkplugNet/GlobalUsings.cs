@@ -5,8 +5,6 @@ global using System.Text;
 
 global using MQTTnet;
 global using MQTTnet.Client;
-global using MQTTnet.Client.Options;
-global using MQTTnet.Client.Publishing;
 global using MQTTnet.Formatter;
 global using MQTTnet.Protocol;
 

@@ -50,7 +50,7 @@ public class SparkplugBase<T> where T : class, new()
     /// <summary>
     /// Gets or sets the MQTT client options.
     /// </summary>
-    internal IMqttClientOptions? ClientOptions { get; set; }
+    internal MqttClientOptions? ClientOptions { get; set; }
 
     /// <summary>
     /// Gets the last sequence number. Starts at 0 as it is incremented after the publishing (For the device and node relevant only).

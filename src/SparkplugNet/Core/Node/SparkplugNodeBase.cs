@@ -223,25 +223,32 @@ public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, ne
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     private void AddDisconnectedHandler()
     {
-        this.Client.UseDisconnectedHandler(
-            async _ =>
-                {
-                    if (this.options is null)
-                    {
-                        throw new ArgumentNullException(nameof(this.options));
-                    }
+        this.Client.DisconnectedAsync += this.OnClientDisconnected;
+    }
 
-                    // Invoke disconnected callback.
-                    this.OnDisconnected?.Invoke();
+    /// <summary>
+    /// Handles the client disconnection.
+    /// </summary>
+    /// <param name="args">The arguments.</param>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
+    {
+        if (this.options is null)
+        {
+            throw new ArgumentNullException(nameof(this.options));
+        }
 
-                    // Wait until the disconnect interval is reached.
-                    await Task.Delay(this.options.ReconnectInterval);
+        // Invoke disconnected callback.
+        this.OnDisconnected?.Invoke();
 
-                    // Connect, subscribe to incoming messages and send a state message.
-                    await this.ConnectInternal();
-                    await this.SubscribeInternal();
-                    await this.PublishInternal();
-                });
+        // Wait until the disconnect interval is reached.
+        await Task.Delay(this.options.ReconnectInterval);
+
+        // Connect, subscribe to incoming messages and send a state message.
+        await this.ConnectInternal();
+        await this.SubscribeInternal();
+        await this.PublishInternal();
     }
 
     /// <summary>
@@ -251,107 +258,115 @@ public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, ne
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
     private void AddMessageReceivedHandler()
     {
-        this.Client.UseApplicationMessageReceivedHandler(
-            e =>
+        this.Client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
+    }
+
+    /// <summary>
+    /// Handles the message received handler.
+    /// </summary>
+    /// <param name="args">The arguments.</param>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+    private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
+    {
+        var topic = args.ApplicationMessage.Topic;
+
+        // Handle the STATE message before anything else as they're UTF-8 encoded.
+        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+        {
+            this.StatusMessageReceived?.Invoke(Encoding.UTF8.GetString(args.ApplicationMessage.Payload));
+            return Task.CompletedTask;
+        }
+
+        switch (this.NameSpace)
+        {
+            case SparkplugNamespace.VersionA:
+                var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(args.ApplicationMessage.Payload);
+
+                if (payloadVersionA is not null)
                 {
-                    var topic = e.ApplicationMessage.Topic;
+                    var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
 
-                    // Handle the STATE message before anything else as they're UTF-8 encoded.
-                    if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                     {
-                        this.StatusMessageReceived?.Invoke(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                        return;
+                        if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
+                        {
+                            throw new InvalidCastException("The metric cast didn't work properly.");
+                        }
+
+                        foreach (var metric in convertedPayloadVersionA.Metrics)
+                        {
+                            if (metric is T convertedMetric)
+                            {
+                                this.DeviceCommandReceived?.Invoke(convertedMetric);
+                            }
+                        }
                     }
 
-                    switch (this.NameSpace)
+                    if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                     {
-                        case SparkplugNamespace.VersionA:
-                            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
+                        if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
+                        {
+                            throw new InvalidCastException("The metric cast didn't work properly.");
+                        }
 
-                            if (payloadVersionA is not null)
+                        foreach (var metric in convertedPayloadVersionA.Metrics)
+                        {
+                            if (metric is T convertedMetric)
                             {
-                                var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
-
-                                if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
-                                {
-                                    if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
-                                    {
-                                        throw new InvalidCastException("The metric cast didn't work properly.");
-                                    }
-
-                                    foreach (var metric in convertedPayloadVersionA.Metrics)
-                                    {
-                                        if (metric is T convertedMetric)
-                                        {
-                                            this.DeviceCommandReceived?.Invoke(convertedMetric);
-                                        }
-                                    }
-                                }
-
-                                if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
-                                {
-                                    if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
-                                    {
-                                        throw new InvalidCastException("The metric cast didn't work properly.");
-                                    }
-
-                                    foreach (var metric in convertedPayloadVersionA.Metrics)
-                                    {
-                                        if (metric is T convertedMetric)
-                                        {
-                                            this.NodeCommandReceived?.Invoke(convertedMetric);
-                                        }
-                                    }
-                                }
+                                this.NodeCommandReceived?.Invoke(convertedMetric);
                             }
-
-                            break;
-
-                        case SparkplugNamespace.VersionB:
-                            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
-
-                            if (payloadVersionB is not null)
-                            {
-                                var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
-
-                                if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
-                                {
-                                    if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
-                                    {
-                                        throw new InvalidCastException("The metric cast didn't work properly.");
-                                    }
-
-                                    foreach (var metric in convertedPayloadVersionB.Metrics)
-                                    {
-                                        if (metric is T convertedMetric)
-                                        {
-                                            this.DeviceCommandReceived?.Invoke(convertedMetric);
-                                        }
-                                    }
-                                }
-
-                                if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
-                                {
-                                    if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
-                                    {
-                                        throw new InvalidCastException("The metric cast didn't work properly.");
-                                    }
-
-                                    foreach (var metric in convertedPayloadVersionB.Metrics)
-                                    {
-                                        if (metric is T convertedMetric)
-                                        {
-                                            this.NodeCommandReceived?.Invoke(convertedMetric);
-                                        }
-                                    }
-                                }
-                            }
-
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
+                        }
                     }
-                });
+                }
+
+                return Task.CompletedTask;
+
+            case SparkplugNamespace.VersionB:
+                var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(args.ApplicationMessage.Payload);
+
+                if (payloadVersionB is not null)
+                {
+                    var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+
+                    if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+                    {
+                        if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
+                        {
+                            throw new InvalidCastException("The metric cast didn't work properly.");
+                        }
+
+                        foreach (var metric in convertedPayloadVersionB.Metrics)
+                        {
+                            if (metric is T convertedMetric)
+                            {
+                                this.DeviceCommandReceived?.Invoke(convertedMetric);
+                            }
+                        }
+                    }
+
+                    if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+                    {
+                        if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
+                        {
+                            throw new InvalidCastException("The metric cast didn't work properly.");
+                        }
+
+                        foreach (var metric in convertedPayloadVersionB.Metrics)
+                        {
+                            if (metric is T convertedMetric)
+                            {
+                                this.NodeCommandReceived?.Invoke(convertedMetric);
+                            }
+                        }
+                    }
+                }
+
+                return Task.CompletedTask;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
+        }
     }
 
     /// <summary>
@@ -412,7 +427,22 @@ public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, ne
                 this.options.ProxyOptions.BypassOnLocal);
         }
 
-        builder.WithWillMessage(willMessage);
+        // Add the will message data.
+        builder.WithWillContentType(willMessage.ContentType);
+        builder.WithWillCorrelationData(willMessage.CorrelationData);
+        builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
+        builder.WithWillPayload(willMessage.Payload);
+        builder.WithWillPayloadFormatIndicator(willMessage.PayloadFormatIndicator);
+        builder.WithWillQualityOfServiceLevel(willMessage.QualityOfServiceLevel);
+        builder.WithWillResponseTopic(willMessage.ResponseTopic);
+        builder.WithWillRetain(willMessage.Retain);
+        builder.WithWillTopic(willMessage.Topic);
+
+        foreach (var userProperty in willMessage.UserProperties)
+        {
+            builder.WithWillUserProperty(userProperty.Name, userProperty.Value);
+        }
+
         this.ClientOptions = builder.Build();
 
         // Debug output.

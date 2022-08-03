@@ -223,29 +223,36 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     private void AddDisconnectedHandler()
     {
-        this.Client.UseDisconnectedHandler(
-            async _ =>
-            {
-                if (this.options is null)
-                {
-                    throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
-                }
+        this.Client.DisconnectedAsync += this.OnClientDisconnected;
+    }
 
-                // Set all metrics to stale.
-                this.UpdateMetricState(SparkplugMetricStatus.Offline);
+    /// <summary>
+    /// Handles the client disconnection.
+    /// </summary>
+    /// <param name="args">The arguments.</param>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
+    {
+        if (this.options is null)
+        {
+            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+        }
 
-                // Invoke disconnected callback.
-                this.OnDisconnected?.Invoke();
+        // Set all metrics to stale.
+        this.UpdateMetricState(SparkplugMetricStatus.Offline);
 
-                // Wait until the disconnect interval is reached.
-                await Task.Delay(this.options.ReconnectInterval);
+        // Invoke disconnected callback.
+        this.OnDisconnected?.Invoke();
 
-                // Connect, subscribe to incoming messages and send a state message.
-                await this.ConnectInternal();
-                this.UpdateMetricState(SparkplugMetricStatus.Online);
-                await this.SubscribeInternal();
-                await this.PublishInternal();
-            });
+        // Wait until the disconnect interval is reached.
+        await Task.Delay(this.options.ReconnectInterval);
+
+        // Connect, subscribe to incoming messages and send a state message.
+        await this.ConnectInternal();
+        this.UpdateMetricState(SparkplugMetricStatus.Online);
+        await this.SubscribeInternal();
+        await this.PublishInternal();
     }
 
     /// <summary>
@@ -440,45 +447,52 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
     private void AddMessageReceivedHandler()
     {
-        this.Client.UseApplicationMessageReceivedHandler(
-            e =>
+        this.Client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
+    }
+
+    /// <summary>
+    /// Handles the message received handler.
+    /// </summary>
+    /// <param name="args">The arguments.</param>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+    private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
+    {
+        var topic = args.ApplicationMessage.Topic;
+
+        // Skip the STATE messages as they're UTF-8 encoded.
+        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+        {
+            return Task.CompletedTask;
+        }
+
+        switch (this.NameSpace)
+        {
+            case SparkplugNamespace.VersionA:
+                var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(args.ApplicationMessage.Payload);
+
+                if (payloadVersionA != null)
                 {
-                    var topic = e.ApplicationMessage.Topic;
+                    var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
+                    this.HandleMessagesForVersionA(topic, convertedPayload);
+                }
 
-                    // Skip the STATE messages as they're UTF-8 encoded.
-                    if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
-                    {
-                        return;
-                    }
+                return Task.CompletedTask;
 
-                    switch (this.NameSpace)
-                    {
-                        case SparkplugNamespace.VersionA:
-                            var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
+            case SparkplugNamespace.VersionB:
+                var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(args.ApplicationMessage.Payload);
 
-                            if (payloadVersionA != null)
-                            {
-                                var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
-                                this.HandleMessagesForVersionA(topic, convertedPayload);
-                            }
+                if (payloadVersionB != null)
+                {
+                    var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+                    this.HandleMessagesForVersionB(topic, convertedPayload);
+                }
 
-                            break;
+                return Task.CompletedTask;
 
-                        case SparkplugNamespace.VersionB:
-                            var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(e.ApplicationMessage.Payload);
-
-                            if (payloadVersionB != null)
-                            {
-                                var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
-                                this.HandleMessagesForVersionB(topic, convertedPayload);
-                            }
-
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
-                    }
-                });
+            default:
+                throw new ArgumentOutOfRangeException(nameof(this.NameSpace));
+        }
     }
 
     /// <summary>
@@ -785,7 +799,20 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
 
         if (this.options.IsPrimaryApplication)
         {
-            builder.WithWillMessage(willMessage);
+            builder.WithWillContentType(willMessage.ContentType);
+            builder.WithWillCorrelationData(willMessage.CorrelationData);
+            builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
+            builder.WithWillPayload(willMessage.Payload);
+            builder.WithWillPayloadFormatIndicator(willMessage.PayloadFormatIndicator);
+            builder.WithWillQualityOfServiceLevel(willMessage.QualityOfServiceLevel);
+            builder.WithWillResponseTopic(willMessage.ResponseTopic);
+            builder.WithWillRetain(willMessage.Retain);
+            builder.WithWillTopic(willMessage.Topic);
+
+            foreach (var userProperty in willMessage.UserProperties)
+            {
+                builder.WithWillUserProperty(userProperty.Name, userProperty.Value);
+            }
         }
 
         this.ClientOptions = builder.Build();

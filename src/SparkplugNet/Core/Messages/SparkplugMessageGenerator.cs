@@ -566,7 +566,7 @@ internal class SparkplugMessageGenerator
     {
         return new MqttApplicationMessageBuilder()
             .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
-            .WithPayload(online ? "ONLINE" : "OFFLINE").WithAtLeastOnceQoS().WithRetainFlag().Build();
+            .WithPayload(online ? "ONLINE" : "OFFLINE").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce).WithRetainFlag().Build();
     }
 
     /// <summary>
@@ -579,7 +579,7 @@ internal class SparkplugMessageGenerator
     {
         return new MqttApplicationMessageBuilder()
             .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
-            .WithPayload(online ? "ONLINE" : "OFFLINE").WithAtLeastOnceQoS().WithRetainFlag().Build();
+            .WithPayload(online ? "ONLINE" : "OFFLINE").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce).WithRetainFlag().Build();
     }
 
     /// <summary>
@@ -618,7 +618,7 @@ internal class SparkplugMessageGenerator
                     SparkplugMessageType.NodeBirth,
                     edgeNodeIdentifier,
                     string.Empty)).WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -662,7 +662,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -705,7 +705,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -751,7 +751,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -789,7 +789,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -827,7 +827,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -870,7 +870,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -916,7 +916,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -957,7 +957,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -1001,7 +1001,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -1044,7 +1044,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -1090,7 +1090,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -1127,7 +1127,7 @@ internal class SparkplugMessageGenerator
                     SparkplugMessageType.NodeCommand,
                     edgeNodeIdentifier,
                     string.Empty)).WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -1167,7 +1167,7 @@ internal class SparkplugMessageGenerator
                     SparkplugMessageType.NodeCommand,
                     edgeNodeIdentifier,
                     string.Empty)).WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -1206,7 +1206,7 @@ internal class SparkplugMessageGenerator
                     SparkplugMessageType.DeviceCommand,
                     edgeNodeIdentifier,
                     deviceIdentifier)).WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 
@@ -1248,7 +1248,7 @@ internal class SparkplugMessageGenerator
                     SparkplugMessageType.DeviceCommand,
                     edgeNodeIdentifier,
                     deviceIdentifier)).WithPayload(serialized)
-            .WithAtLeastOnceQoS()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .Build();
     }
 }
