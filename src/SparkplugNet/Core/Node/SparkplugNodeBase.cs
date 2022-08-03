@@ -274,22 +274,34 @@ public partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, ne
 
                                 if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
                                 {
-                                    if (convertedPayload is not T convertedPayloadVersionA)
+                                    if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
                                     {
                                         throw new InvalidCastException("The metric cast didn't work properly.");
                                     }
 
-                                    this.DeviceCommandReceived?.Invoke(convertedPayloadVersionA);
+                                    foreach (var metric in convertedPayloadVersionA.Metrics)
+                                    {
+                                        if (metric is T convertedMetric)
+                                        {
+                                            this.DeviceCommandReceived?.Invoke(convertedMetric);
+                                        }
+                                    }
                                 }
 
                                 if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
                                 {
-                                    if (convertedPayload is not T convertedPayloadVersionA)
+                                    if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
                                     {
                                         throw new InvalidCastException("The metric cast didn't work properly.");
                                     }
 
-                                    this.NodeCommandReceived?.Invoke(convertedPayloadVersionA);
+                                    foreach (var metric in convertedPayloadVersionA.Metrics)
+                                    {
+                                        if (metric is T convertedMetric)
+                                        {
+                                            this.NodeCommandReceived?.Invoke(convertedMetric);
+                                        }
+                                    }
                                 }
                             }
 
