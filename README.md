@@ -14,7 +14,7 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 [![Gitter](https://badges.gitter.im/SparkplugNet/community.svg)](https://gitter.im/SparkplugNet/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Available for
@@ -92,6 +92,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://franzhuber23.blogspot.de/"><img src="https://avatars.githubusercontent.com/u/9639361?v=4?s=100" width="100px;" alt=""/><br /><sub><b>HansM</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Documentation">📖</a> <a href="#example-SeppPenner" title="Examples">💡</a> <a href="#maintenance-SeppPenner" title="Maintenance">🚧</a> <a href="#projectManagement-SeppPenner" title="Project Management">📆</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/insightdocs"><img src="https://avatars.githubusercontent.com/u/23101485?v=4?s=100" width="100px;" alt=""/><br /><sub><b>insightdocs</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=insightdocs" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/OffTravel"><img src="https://avatars.githubusercontent.com/u/19183574?v=4?s=100" width="100px;" alt=""/><br /><sub><b>OffTravel</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
