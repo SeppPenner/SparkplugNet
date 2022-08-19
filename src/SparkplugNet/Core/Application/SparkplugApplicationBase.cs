@@ -45,12 +45,12 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <summary>
     /// Gets or sets the callback for the device data received event.
     /// </summary>
-    public Action<T>? OnDeviceDataReceived { get; set; } = null;
+    public Action<string, string, string, T>? OnDeviceDataReceived { get; set; } = null;
 
     /// <summary>
     /// Gets or sets the callback for the node data received event.
     /// </summary>
-    public Action<T>? OnNodeDataReceived { get; set; } = null;
+    public Action<string, string, T>? OnNodeDataReceived { get; set; } = null;
 
     /// <summary>
     /// Starts the Sparkplug application.
@@ -611,7 +611,16 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
     private void HandleDeviceMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeDeviceDataCallback = false)
     {
-        var deviceId = topic.Split('/')[4];
+        var splitTopic = topic.Split('/');
+        if (splitTopic.Length != 5)
+        {
+            return;
+        }
+
+        var groupId = splitTopic[1];
+        var nodeId = splitTopic[3];
+        var deviceId = splitTopic[4];
+
         var metricState = new MetricState<T>
         {
             MetricStatus = metricStatus
@@ -628,7 +637,7 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
 
             if (invokeDeviceDataCallback)
             {
-                this.OnDeviceDataReceived?.Invoke(convertedMetric);
+                this.OnDeviceDataReceived?.Invoke(groupId, nodeId, deviceId, convertedMetric);
             }
         }
 
@@ -645,7 +654,16 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
     private void HandleDeviceMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeDeviceDataCallback = false)
     {
-        var deviceId = topic.Split('/')[4];
+        var splitTopic = topic.Split('/');
+        if (splitTopic.Length != 5)
+        {
+            return;
+        }
+
+        var groupId = splitTopic[1];
+        var nodeId = splitTopic[3];
+        var deviceId = splitTopic[4];
+
         var metricState = new MetricState<T>
         {
             MetricStatus = metricStatus
@@ -665,7 +683,7 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
 
             if (invokeDeviceDataCallback)
             {
-                this.OnDeviceDataReceived?.Invoke(convertedMetric);
+                this.OnDeviceDataReceived?.Invoke(groupId, nodeId, deviceId, convertedMetric);
             }
         }
 
@@ -682,7 +700,15 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
     private void HandleNodeMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeNodeDataCallback = false)
     {
-        var nodeId = topic.Split('/')[3];
+        var splitTopic = topic.Split('/');
+        if (splitTopic.Length != 4)
+        {
+            return;
+        }
+
+        var groupId = splitTopic[1];
+        var nodeId = splitTopic[3];
+
         var metricState = new MetricState<T>
         {
             MetricStatus = metricStatus
@@ -699,7 +725,7 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
 
             if (invokeNodeDataCallback)
             {
-                this.OnNodeDataReceived?.Invoke(convertedMetric);
+                this.OnNodeDataReceived?.Invoke(groupId, nodeId, convertedMetric);
             }
         }
 
@@ -716,7 +742,15 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
     private void HandleNodeMessage(string topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeNodeDataCallback = false)
     {
-        var nodeId = topic.Split('/')[3];
+        var splitTopic = topic.Split('/');
+        if (splitTopic.Length != 4)
+        {
+            return;
+        }
+
+        var groupId = splitTopic[1];
+        var nodeId = splitTopic[3];
+
         var metricState = new MetricState<T>
         {
             MetricStatus = metricStatus
@@ -736,7 +770,7 @@ public class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new
 
             if (invokeNodeDataCallback)
             {
-                this.OnNodeDataReceived?.Invoke(convertedMetric);
+                this.OnNodeDataReceived?.Invoke(groupId, nodeId, convertedMetric);
             }
         }
 

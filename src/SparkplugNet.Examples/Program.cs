@@ -340,7 +340,7 @@ public class Program
     /// <summary>
     /// Handles the node data callback for version A applications.
     /// </summary>
-    private static void OnVersionANodeDataReceived(VersionAData.KuraMetric _)
+    private static void OnVersionANodeDataReceived(string groupId, string nodeId, VersionAData.KuraMetric _)
     {
         // Do something.
     }
@@ -348,7 +348,7 @@ public class Program
     /// <summary>
     /// Handles the node data callback for version B applications.
     /// </summary>
-    private static void OnVersionBNodeDataReceived(VersionBData.Metric _)
+    private static void OnVersionBNodeDataReceived(string groupId, string nodeId, VersionBData.Metric _)
     {
         // Do something.
     }
@@ -356,7 +356,7 @@ public class Program
     /// <summary>
     /// Handles the device data callback for version A applications.
     /// </summary>
-    private static void OnVersionADeviceDataReceived(VersionAData.KuraMetric _)
+    private static void OnVersionADeviceDataReceived(string groupId, string nodeId, string deviceId, VersionAData.KuraMetric _)
     {
         // Do something.
     }
@@ -364,7 +364,7 @@ public class Program
     /// <summary>
     /// Handles the device data callback for version B applications.
     /// </summary>
-    private static void OnVersionBDeviceDataReceived(VersionBData.Metric _)
+    private static void OnVersionBDeviceDataReceived(string groupId, string nodeId, string deviceId, VersionBData.Metric _)
     {
         // Do something.
     }
