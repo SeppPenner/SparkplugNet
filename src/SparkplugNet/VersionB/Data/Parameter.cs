@@ -144,7 +144,7 @@ public class Parameter
     /// </summary>
     public ParameterValueExtension ExtensionValue
     {
-        get => this.extensionValue ?? new ();
+        get => this.extensionValue ?? new();
         set
         {
             this.extensionValue = value;

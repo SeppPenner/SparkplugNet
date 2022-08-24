@@ -133,7 +133,7 @@ public class DataSetValue
     /// </summary>
     public DataSetValueExtension ExtensionValue
     {
-        get => this.extensionValue ?? new ();
+        get => this.extensionValue ?? new();
         set
         {
             this.extensionValue = value;
