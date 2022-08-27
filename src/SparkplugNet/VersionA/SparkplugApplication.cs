@@ -25,6 +25,15 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The known metrics storage.</param>
+    /// <param name="logger">The logger.</param>
+    public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    {
+    }
+
+    /// <summary>
     /// Publishes a version A node command message.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
@@ -50,7 +59,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
-            this.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -90,7 +99,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             groupIdentifier,
             edgeNodeIdentifier,
             deviceIdentifier,
-            this.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -143,7 +152,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
 
-        this.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
+        this.KnownMetricsStorage.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
 
         if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
         {

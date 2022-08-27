@@ -35,6 +35,16 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="logger">The logger.</param>
+    /// /// <seealso cref="SparkplugBase{T}"/>
+    public SparkplugApplicationBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    {
+    }
+
+    /// <summary>
     /// Gets the node states.
     /// </summary>
     public ConcurrentDictionary<string, MetricState<T>> NodeStates { get; } = new();

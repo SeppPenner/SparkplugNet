@@ -30,7 +30,16 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
-    public SparkplugNodeBase(List<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugNodeBase(IEnumerable<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugNodeBase{T}"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The known metrics storage.</param>
+    /// <param name="logger">The logger.</param>
+    public SparkplugNodeBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
     {
     }
 

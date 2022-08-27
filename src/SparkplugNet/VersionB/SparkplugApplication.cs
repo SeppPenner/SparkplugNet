@@ -25,6 +25,16 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="logger">The logger.</param>
+    /// /// <seealso cref="SparkplugApplicationBase{T}"/>
+    public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    {
+    }
+
+    /// <summary>
     /// Publishes a version B node command message.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
@@ -50,7 +60,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
-            this.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -93,7 +103,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             groupIdentifier,
             edgeNodeIdentifier,
             deviceIdentifier,
-            this.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -143,7 +153,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
 
-        this.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
+        this.KnownMetricsStorage.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
 
         if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
         {

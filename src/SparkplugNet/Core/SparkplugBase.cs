@@ -35,7 +35,7 @@ public interface ISparkplugConnection
 /// A base class for all Sparkplug applications, nodes and devices.
 /// </summary>
 /// <typeparam name="T">The type parameter.</typeparam>
-public class SparkplugBase<T> : ISparkplugConnection
+public partial class SparkplugBase<T> : ISparkplugConnection
     where T : IMetric, new()
 {
     /// <summary>
@@ -51,7 +51,7 @@ public class SparkplugBase<T> : ISparkplugConnection
     /// <summary>
     /// The knonw metrics by Name
     /// </summary>
-    protected Dictionary<string, T> _knonwMetrics = new Dictionary<string, T>(StringComparer.InvariantCultureIgnoreCase);
+    protected KnownMetricStorage _knonwMetrics;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
@@ -59,48 +59,31 @@ public class SparkplugBase<T> : ISparkplugConnection
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="logger">The logger.</param>
     public SparkplugBase(IEnumerable<T> knownMetrics, ILogger? logger = null)
-    {
-        this._knonwMetrics = knownMetrics.ToDictionary(metric => metric.Name);
+        : this(new KnownMetricStorage(knownMetrics), logger)
+    { }
 
-        this.NameSpace = this.KnownMetrics switch
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The known metrics storage.</param>
+    /// <param name="logger">The logger.</param>
+    public SparkplugBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null)
+    {
+        this._knonwMetrics = knownMetricsStorage;
+
+        if (typeof(T).IsAssignableFrom(typeof(VersionAData.KuraMetric)))
         {
-            IEnumerable<VersionAData.KuraMetric> => SparkplugNamespace.VersionA,
-            IEnumerable<VersionBData.Metric> => SparkplugNamespace.VersionB,
-            _ => SparkplugNamespace.VersionB
-        };
+            this.NameSpace = SparkplugNamespace.VersionA;
+        }
+        else
+        {
+            this.NameSpace = SparkplugNamespace.VersionB;
+        }
 
         this.Client = new MqttFactory().CreateMqttClient();
         this.Logger = logger;
 
         this.MessageGenerator = new SparkplugMessageGenerator(logger);
-    }
-
-    /// <summary>
-    /// Filters the outgoing metrics.
-    /// </summary>
-    /// <param name="metrics">The metric.</param>
-    /// <returns></returns>
-    protected virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metrics)
-    {
-        return metrics.Where(m =>
-            // Remove the session number metric if a user might have added it.
-            !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
-            // Remove all not known metrics.
-            this._knonwMetrics.ContainsKey(m.Name)
-        );
-    }
-
-    /// <summary>
-    /// Validates the incomming metrics.
-    /// </summary>
-    /// <param name="metrics">The metrics.</param>
-    /// <exception cref="System.Exception">Metric {metric.Name} is an unknown metric.</exception>
-    protected virtual void ValidateIncommingMetrics(IEnumerable<T> metrics)
-    {
-        foreach (var metric in metrics.Where(metric => !this._knonwMetrics.ContainsKey(metric.Name)))
-        {
-            throw new Exception($"Metric {metric.Name} is an unknown metric.");
-        }
     }
 
     /// <summary>
@@ -137,6 +120,14 @@ public class SparkplugBase<T> : ISparkplugConnection
     /// Gets the known metric names.
     /// </summary>
     public IEnumerable<T> KnownMetrics => this._knonwMetrics.Values;
+
+    /// <summary>
+    /// Gets the known metrics storage.
+    /// </summary>
+    /// <value>
+    /// The known metrics storage.
+    /// </value>
+    public KnownMetricStorage KnownMetricsStorage => this._knonwMetrics;
 
     /// <summary>
     /// Gets the known metric names.

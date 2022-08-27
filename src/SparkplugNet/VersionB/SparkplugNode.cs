@@ -25,6 +25,16 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="logger">The logger.</param>
+    /// /// <seealso cref="SparkplugNodeBase{T}"/>
+    public SparkplugNode(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    {
+    }
+
+    /// <summary>
     /// Publishes version B metrics for a node.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
