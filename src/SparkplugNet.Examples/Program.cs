@@ -17,12 +17,12 @@ public class Program
     /// <summary>
     /// The cancellation token source.
     /// </summary>
-    private static readonly CancellationTokenSource CancellationTokenSource = new ();
+    private static readonly CancellationTokenSource CancellationTokenSource = new();
 
     /// <summary>
     /// The version A metrics.
     /// </summary>
-    private static readonly List<VersionAData.KuraMetric> VersionAMetrics = new ()
+    private static readonly List<VersionAData.KuraMetric> VersionAMetrics = new()
     {
         new ()
         {
@@ -37,7 +37,7 @@ public class Program
     /// <summary>
     /// The version A metrics.
     /// </summary>
-    private static readonly List<VersionBData.Metric> VersionBMetrics = new ()
+    private static readonly List<VersionBData.Metric> VersionBMetrics = new()
     {
         new VersionBData.Metric
         {
@@ -62,8 +62,8 @@ public class Program
                 .WriteTo.Console()
                 .CreateLogger();
 
-            await RunVersionA();
-            // await RunVersionB();
+            //await RunVersionA();
+            await RunVersionB();
 
             Log.Information("Simulation is done.");
         }
@@ -105,7 +105,7 @@ public class Program
     {
         var applicationMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
         var application = new VersionA.SparkplugApplication(applicationMetrics, Log.Logger);
-        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "application1", "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
+        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionAApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -154,7 +154,7 @@ public class Program
     {
         var nodeMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
         var node = new VersionA.SparkplugNode(nodeMetrics, Log.Logger);
-        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
+        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1A", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
 
         // Start a node.
         Log.Information("Starting node...");
@@ -172,7 +172,7 @@ public class Program
 
         // Handle the node's disconnected event.
         node.OnDisconnected += OnVersionANodeDisconnected;
-        
+
         // Handle the node's node command received event.
         node.NodeCommandReceived += OnVersionANodeNodeCommandReceived;
 
@@ -217,7 +217,7 @@ public class Program
     {
         var applicationMetrics = new List<VersionBData.Metric>(VersionBMetrics);
         var application = new VersionB.SparkplugApplication(applicationMetrics, Log.Logger);
-        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "application1", "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
+        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionBApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -266,7 +266,7 @@ public class Program
     {
         var nodeMetrics = new List<VersionBData.Metric>(VersionBMetrics);
         var node = new VersionB.SparkplugNode(nodeMetrics, Log.Logger);
-        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
+        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1B", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
 
         // Start a node.
         Log.Information("Starting node...");

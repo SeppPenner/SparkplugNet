@@ -224,7 +224,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         if (this.options.UseTls)
         {
-            if(this.options.TlsParameters != null)
+            if (this.options.TlsParameters != null)
             {
                 builder.WithTls(this.options.TlsParameters);
             }

@@ -78,16 +78,29 @@ public class SparkplugBase<T> : ISparkplugConnection
     /// <summary>
     /// Filters the outgoing metrics.
     /// </summary>
-    /// <param name="metric">The metric.</param>
+    /// <param name="metrics">The metric.</param>
     /// <returns></returns>
-    protected virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metric)
+    protected virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metrics)
     {
-        return metric.Where(m =>
+        return metrics.Where(m =>
             // Remove the session number metric if a user might have added it.
             !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
             // Remove all not known metrics.
             this._knonwMetrics.ContainsKey(m.Name)
         );
+    }
+
+    /// <summary>
+    /// Validates the incomming metrics.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <exception cref="System.Exception">Metric {metric.Name} is an unknown metric.</exception>
+    protected virtual void ValidateIncommingMetrics(IEnumerable<T> metrics)
+    {
+        foreach (var metric in metrics.Where(metric => !this._knonwMetrics.ContainsKey(metric.Name)))
+        {
+            throw new Exception($"Metric {metric.Name} is an unknown metric.");
+        }
     }
 
     /// <summary>
@@ -134,7 +147,6 @@ public class SparkplugBase<T> : ISparkplugConnection
     /// Gets or sets the callback for the disconnected event. Indicates that metrics might be stale.
     /// </summary>
     public Action? OnDisconnected { get; set; } = null;
-
 
     /// <summary>
     /// Resets the last sequence number.

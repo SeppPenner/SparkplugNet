@@ -96,14 +96,14 @@ internal class SparkplugMessageGenerator
             case SparkplugNamespace.VersionA:
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric> ?? new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
                     var newMetrics = metrics as IEnumerable<VersionBData.Metric> ?? new List<VersionBData.Metric>();
-                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -166,7 +166,7 @@ internal class SparkplugMessageGenerator
             case SparkplugNamespace.VersionB:
                 {
                     var newMetrics = metrics as IEnumerable<VersionBData.Metric> ?? new List<VersionBData.Metric>();
-                    
+
                     return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
@@ -321,7 +321,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                    return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
@@ -442,7 +442,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    return GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                    return GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
@@ -450,7 +450,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
-                    
+
                     return GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
@@ -534,7 +534,7 @@ internal class SparkplugMessageGenerator
     private static IEnumerable<VersionAData.KuraMetric> AddSessionNumberToMetrics(IEnumerable<VersionAData.KuraMetric> metrics, long sessionSequenceNumber)
     {
         // Add a BDSEQ metric.
-       return metrics.Concat(new VersionAData.KuraMetric[] { new VersionAData.KuraMetric
+        return metrics.Concat(new VersionAData.KuraMetric[] { new VersionAData.KuraMetric
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = sessionSequenceNumber,
@@ -1150,7 +1150,7 @@ internal class SparkplugMessageGenerator
         IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
-    {   
+    {
         var payload = new VersionBData.Payload
         {
             Metrics = metrics,

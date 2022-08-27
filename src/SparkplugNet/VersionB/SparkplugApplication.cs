@@ -20,7 +20,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
-    public SparkplugApplication(List<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplication(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
@@ -33,7 +33,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishNodeCommandMessage(List<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+    protected override async Task PublishNodeCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.options is null)
         {
@@ -45,18 +45,12 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             throw new Exception("Invalid metric type specified for version B metric.");
         }
 
-        // Remove all not known metrics.
-        metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
-
-        // Remove the session number metric if a user might have added it.
-        metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
-
         // Get the data message.
         var dataMessage = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
-            metrics,
+            this.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -81,7 +75,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishDeviceCommandMessage(List<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+    protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         if (this.options is null)
         {
@@ -93,19 +87,13 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             throw new Exception("Invalid metric type specified for version B metric.");
         }
 
-        // Remove all not known metrics.
-        metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
-
-        // Remove the session number metric if a user might have added it.
-        metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
-
         // Get the data message.
         var dataMessage = SparkplugMessageGenerator.GetSparkPlugDeviceCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
             deviceIdentifier,
-            metrics,
+            this.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -155,10 +143,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
 
-        foreach (var metric in metricsWithoutSequenceMetric.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
-        {
-            throw new Exception($"Metric {metric.Name} is an unknown metric.");
-        }
+        this.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
 
         if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
         {

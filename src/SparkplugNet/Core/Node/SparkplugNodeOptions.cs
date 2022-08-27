@@ -120,7 +120,6 @@ public class SparkplugNodeOptions
     /// </summary>
     public MqttClientWebSocketProxyOptions? ProxyOptions { get; set; }
 
-
     /// <summary>
     /// Gets or sets the TLS parameters.
     /// </summary>

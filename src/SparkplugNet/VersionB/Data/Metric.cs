@@ -9,6 +9,7 @@
 
 namespace SparkplugNet.VersionB.Data;
 
+using SparkplugNet.Core;
 using SparkplugNet.Core.Data;
 
 /// <summary>
@@ -248,5 +249,63 @@ public class Metric : IMetric
     /// </summary>
     public DataType ValueCase { get; set; }
 
-    object? IMetric.Value => throw new NotImplementedException();
+    /// <summary>
+    /// Gets the value.
+    /// </summary>
+    /// <value>
+    /// The value.
+    /// </value>
+    object? IMetric.Value
+    {
+        get
+        {
+            switch (this.ValueCase)
+            {
+                case VersionBDataTypeEnum.PropertySetList:
+                case VersionBDataTypeEnum.Unknown:
+                default:
+                    return null;
+                case VersionBDataTypeEnum.Int8:
+                    return (sbyte)this.IntValue;
+                case VersionBDataTypeEnum.Int16:
+                    return (Int16)this.IntValue;
+                case VersionBDataTypeEnum.Int32:
+                    return (Int32)this.IntValue;
+                case VersionBDataTypeEnum.Int64:
+                    return (Int64)this.LongValue;
+                case VersionBDataTypeEnum.UInt8:
+                    return (byte)this.IntValue;
+                case VersionBDataTypeEnum.UInt16:
+                    return (UInt16)this.IntValue;
+                case VersionBDataTypeEnum.UInt32:
+                    return (UInt32)this.IntValue;
+                case VersionBDataTypeEnum.UInt64:
+                    return (UInt64)this.LongValue;
+                case VersionBDataTypeEnum.Float:
+                    return (float)this.FloatValue;
+                case VersionBDataTypeEnum.Double:
+                    return (double)this.DoubleValue;
+                case VersionBDataTypeEnum.Boolean:
+                    return this.BooleanValue;
+                case VersionBDataTypeEnum.String:
+                    return this.StringValue;
+                case VersionBDataTypeEnum.DateTime:
+                    return Constants.Epoch.AddMilliseconds(this.LongValue);
+                case VersionBDataTypeEnum.Text:
+                    return this.StringValue;
+                case VersionBDataTypeEnum.Uuid:
+                    return Guid.Parse(this.StringValue);
+                case VersionBDataTypeEnum.DataSet:
+                    return this.DataSetValue;
+                case VersionBDataTypeEnum.Bytes:
+                    return this.BytesValue;
+                case VersionBDataTypeEnum.File:
+                    return this.BytesValue;
+                case VersionBDataTypeEnum.Template:
+                    return this.TemplateValue;
+                case VersionBDataTypeEnum.PropertySet:
+                    return this.Properties;
+            }
+        }
+    }
 }

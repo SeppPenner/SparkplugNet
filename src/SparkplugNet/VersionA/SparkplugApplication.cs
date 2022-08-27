@@ -20,7 +20,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
-    public SparkplugApplication(List<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplication(IEnumerable<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
@@ -33,7 +33,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishNodeCommandMessage(List<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+    protected override async Task PublishNodeCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.options is null)
         {
@@ -72,7 +72,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishDeviceCommandMessage(List<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+    protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         if (this.options is null)
         {
@@ -143,10 +143,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
 
-        foreach (var metric in metricsWithoutSequenceMetric.Where(metric => knownMetrics.FirstOrDefault(m => m.Name == metric.Name) == default))
-        {
-            throw new Exception($"Metric {metric.Name} is an unknown metric.");
-        }
+        this.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
 
         if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
         {
