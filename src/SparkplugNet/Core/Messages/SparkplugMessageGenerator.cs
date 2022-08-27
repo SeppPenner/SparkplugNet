@@ -75,7 +75,7 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<T> metrics,
+        IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
@@ -95,16 +95,16 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionA:
                 {
-                    var newMetrics = metrics as List<VersionAData.KuraMetric> ?? new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime);
+                    var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric> ?? new List<VersionAData.KuraMetric>();
+                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as List<VersionBData.Metric> ?? new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime);
+                    var newMetrics = metrics as IEnumerable<VersionBData.Metric> ?? new List<VersionBData.Metric>();
+                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -132,7 +132,7 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<T> metrics,
+        IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
@@ -157,17 +157,18 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionA:
                 {
-                    var newMetrics = metrics as List<VersionAData.KuraMetric>
+                    var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugDeviceBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime);
+                    return this.GetSparkPlugDeviceBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as List<VersionBData.Metric> ?? new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
+                    var newMetrics = metrics as IEnumerable<VersionBData.Metric> ?? new List<VersionBData.Metric>();
+                    
+                    return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -206,15 +207,15 @@ internal class SparkplugMessageGenerator
             case SparkplugNamespace.VersionA:
                 {
                     var metrics = new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(metrics, sessionNumber);
-                    return this.GetSparkPlugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, metrics);
+                    return this.GetSparkPlugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                        AddSessionNumberToMetrics(metrics, sessionNumber));
                 }
 
             case SparkplugNamespace.VersionB:
                 {
                     var metrics = new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(metrics, sessionNumber);
-                    return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, metrics);
+                    return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                        AddSessionNumberToMetrics(metrics, sessionNumber));
                 }
 
             default:
@@ -264,15 +265,15 @@ internal class SparkplugMessageGenerator
             case SparkplugNamespace.VersionA:
                 {
                     var metrics = new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(metrics, sessionNumber);
-                    return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics, dateTime);
+                    return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                        AddSessionNumberToMetrics(metrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
                     var metrics = new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(metrics, sessionNumber);
-                    return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics, sequenceNumber, dateTime);
+                    return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                        AddSessionNumberToMetrics(metrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -298,7 +299,7 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<T> metrics,
+        IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
@@ -318,18 +319,18 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionA:
                 {
-                    var newMetrics = metrics as List<VersionAData.KuraMetric>
+                    var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime);
+                    return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as List<VersionBData.Metric>
+                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime);
+                    return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -357,7 +358,7 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<T> metrics,
+        IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
@@ -382,18 +383,18 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionA:
                 {
-                    var newMetrics = metrics as List<VersionAData.KuraMetric>
+                    var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugDeviceDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime);
+                    return this.GetSparkPlugDeviceDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as List<VersionBData.Metric>
+                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                    return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
+                    return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -419,7 +420,7 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<T> metrics,
+        IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
@@ -439,20 +440,19 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionA:
                 {
-                    var newMetrics = metrics as List<VersionAData.KuraMetric>
+                    var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-
-                    return GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime);
+                    return GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, 
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as List<VersionBData.Metric>
+                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
-
-                    return GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime);
+                    
+                    return GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -480,7 +480,7 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<T> metrics,
+        IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
@@ -505,18 +505,18 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionA:
                 {
-                    var newMetrics = metrics as List<VersionAData.KuraMetric>
+                    var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                    newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
                     return GetSparkPlugDeviceCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as List<VersionBData.Metric>
+                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
-                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                    newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
                     return GetSparkPlugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
                 }
@@ -531,15 +531,15 @@ internal class SparkplugMessageGenerator
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="sessionSequenceNumber">The session number.</param>
-    private static void AddSessionNumberToMetrics(ICollection<VersionAData.KuraMetric> metrics, long sessionSequenceNumber)
+    private static IEnumerable<VersionAData.KuraMetric> AddSessionNumberToMetrics(IEnumerable<VersionAData.KuraMetric> metrics, long sessionSequenceNumber)
     {
         // Add a BDSEQ metric.
-        metrics.Add(new VersionAData.KuraMetric
+       return metrics.Concat(new VersionAData.KuraMetric[] { new VersionAData.KuraMetric
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = sessionSequenceNumber,
             Type = VersionAData.DataType.Int64
-        });
+        } });
     }
 
     /// <summary>
@@ -547,15 +547,15 @@ internal class SparkplugMessageGenerator
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="sessionSequenceNumber">The session number.</param>
-    private static void AddSessionNumberToMetrics(ICollection<VersionBData.Metric> metrics, long sessionSequenceNumber)
+    private static IEnumerable<VersionBData.Metric> AddSessionNumberToMetrics(IEnumerable<VersionBData.Metric> metrics, long sessionSequenceNumber)
     {
         // Add a BDSEQ metric.
-        metrics.Add(new VersionBData.Metric
+        return metrics.Concat(new VersionBData.Metric[] { new VersionBData.Metric
         {
             Name = Constants.SessionNumberMetricName,
             LongValue = (ulong)sessionSequenceNumber,
             DataType = (uint)VersionBData.DataType.Int64
-        });
+        } });
     }
 
     /// <summary>
@@ -597,12 +597,12 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionAData.KuraMetric> metrics,
+        IEnumerable<VersionAData.KuraMetric> metrics,
         DateTimeOffset dateTime)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics,
+            Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
@@ -638,7 +638,7 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionBData.Metric> metrics,
+        IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
@@ -683,12 +683,12 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionAData.KuraMetric> metrics,
+        IEnumerable<VersionAData.KuraMetric> metrics,
         DateTimeOffset dateTime)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics,
+            Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
@@ -727,7 +727,7 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionBData.Metric> metrics,
+        IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
@@ -769,11 +769,11 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionAData.KuraMetric> metrics)
+        IEnumerable<VersionAData.KuraMetric> metrics)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics
+            Metrics = metrics.ToList()
         };
 
         // Debug output.
@@ -807,7 +807,7 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionBData.Metric> metrics)
+        IEnumerable<VersionBData.Metric> metrics)
     {
         var payload = new VersionBData.Payload
         {
@@ -848,12 +848,12 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionAData.KuraMetric> metrics,
+        IEnumerable<VersionAData.KuraMetric> metrics,
         DateTimeOffset dateTime)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics,
+            Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
@@ -892,7 +892,7 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionBData.Metric> metrics,
+        IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
@@ -935,12 +935,12 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionAData.KuraMetric> metrics,
+        IEnumerable<VersionAData.KuraMetric> metrics,
         DateTimeOffset dateTime)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics,
+            Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
@@ -977,7 +977,7 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionBData.Metric> metrics,
+        IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
@@ -1022,12 +1022,12 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionAData.KuraMetric> metrics,
+        IEnumerable<VersionAData.KuraMetric> metrics,
         DateTimeOffset dateTime)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics,
+            Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
@@ -1066,7 +1066,7 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionBData.Metric> metrics,
+        IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
@@ -1109,12 +1109,12 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionAData.KuraMetric> metrics,
+        IEnumerable<VersionAData.KuraMetric> metrics,
         DateTimeOffset dateTime)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics,
+            Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
@@ -1147,10 +1147,10 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        List<VersionBData.Metric> metrics,
+        IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
-    {
+    {   
         var payload = new VersionBData.Payload
         {
             Metrics = metrics,
@@ -1188,12 +1188,12 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionAData.KuraMetric> metrics,
+        IEnumerable<VersionAData.KuraMetric> metrics,
         DateTimeOffset dateTime)
     {
         var payload = new VersionAData.Payload
         {
-            Metrics = metrics,
+            Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
@@ -1228,7 +1228,7 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        List<VersionBData.Metric> metrics,
+        IEnumerable<VersionBData.Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {

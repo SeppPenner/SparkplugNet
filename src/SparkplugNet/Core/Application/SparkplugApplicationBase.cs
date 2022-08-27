@@ -11,11 +11,6 @@ namespace SparkplugNet.Core.Application;
 
 using SparkplugNet.Core.Data;
 
-public interface ISparkplugApplication
-{
-
-}
-
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug application.

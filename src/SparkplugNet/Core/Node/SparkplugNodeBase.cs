@@ -224,7 +224,14 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         if (this.options.UseTls)
         {
-            builder.WithTls();
+            if(this.options.TlsParameters != null)
+            {
+                builder.WithTls(this.options.TlsParameters);
+            }
+            else
+            {
+                builder.WithTls();
+            }
         }
 
         if (this.options.WebSocketParameters is null)
@@ -286,7 +293,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         // Get the online message.
-        var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage(
+        var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage<T>(
             this.NameSpace,
             this.options.GroupIdentifier,
             this.options.EdgeNodeIdentifier,

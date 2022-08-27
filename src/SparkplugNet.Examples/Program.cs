@@ -172,7 +172,7 @@ public class Program
 
         // Handle the node's disconnected event.
         node.OnDisconnected += OnVersionANodeDisconnected;
-
+        
         // Handle the node's node command received event.
         node.NodeCommandReceived += OnVersionANodeNodeCommandReceived;
 

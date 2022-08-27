@@ -38,7 +38,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not List<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
         {
             throw new Exception("Invalid metric type specified for version B metric.");
         }

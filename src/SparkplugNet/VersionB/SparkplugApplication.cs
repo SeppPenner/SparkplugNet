@@ -40,7 +40,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             throw new ArgumentNullException(nameof(this.options), "The options arent't set properly.");
         }
 
-        if (this.KnownMetrics is not List<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
         {
             throw new Exception("Invalid metric type specified for version B metric.");
         }
@@ -88,7 +88,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not List<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
         {
             throw new Exception("Invalid metric type specified for version B metric.");
         }
@@ -147,7 +147,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="Exception">The metric is unknown.</exception>
     private void HandleMessagesForVersionB(string topic, VersionBData.Payload payload)
     {
-        if (this.KnownMetrics is not List<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
         {
             throw new ArgumentNullException(nameof(knownMetrics), "The known metrics are invalid.");
         }

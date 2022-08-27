@@ -40,23 +40,17 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not List<VersionAData.KuraMetric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionAData.KuraMetric> knownMetrics)
         {
             throw new Exception("Invalid metric type specified for version A metric.");
         }
-
-        // Remove all not known metrics.
-        metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
-
-        // Remove the session number metric if a user might have added it.
-        metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
         // Get the data message.
         var dataMessage = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
-            metrics,
+            this.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -85,16 +79,10 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not List<VersionAData.KuraMetric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionAData.KuraMetric> knownMetrics)
         {
             throw new Exception("Invalid metric type specified for version A metric.");
         }
-
-        // Remove all not known metrics.
-        metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
-
-        // Remove the session number metric if a user might have added it.
-        metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
 
         // Get the data message.
         var dataMessage = SparkplugMessageGenerator.GetSparkPlugDeviceCommandMessage(
@@ -102,7 +90,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             groupIdentifier,
             edgeNodeIdentifier,
             deviceIdentifier,
-            metrics,
+            this.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -147,7 +135,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <exception cref="Exception">The metric is unknown.</exception>
     private void HandleMessagesForVersionA(string topic, VersionAData.Payload payload)
     {
-        if (this.KnownMetrics is not List<VersionAData.KuraMetric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionAData.KuraMetric> knownMetrics)
         {
             throw new ArgumentNullException(nameof(knownMetrics), "The known metrics are invalid.");
         }

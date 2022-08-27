@@ -49,18 +49,23 @@ public class SparkplugBase<T> : ISparkplugConnection
     internal readonly IMqttClient Client;
 
     /// <summary>
+    /// The knonw metrics by Name
+    /// </summary>
+    protected Dictionary<string, T> _knonwMetrics = new Dictionary<string, T>(StringComparer.InvariantCultureIgnoreCase);
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="logger">The logger.</param>
-    public SparkplugBase(List<T> knownMetrics, ILogger? logger = null)
+    public SparkplugBase(IEnumerable<T> knownMetrics, ILogger? logger = null)
     {
-        this.KnownMetrics = knownMetrics;
+        this._knonwMetrics = knownMetrics.ToDictionary(metric => metric.Name);
 
         this.NameSpace = this.KnownMetrics switch
         {
-            List<VersionAData.KuraMetric> => SparkplugNamespace.VersionA,
-            List<VersionBData.Metric> => SparkplugNamespace.VersionB,
+            IEnumerable<VersionAData.KuraMetric> => SparkplugNamespace.VersionA,
+            IEnumerable<VersionBData.Metric> => SparkplugNamespace.VersionB,
             _ => SparkplugNamespace.VersionB
         };
 
@@ -68,6 +73,21 @@ public class SparkplugBase<T> : ISparkplugConnection
         this.Logger = logger;
 
         this.MessageGenerator = new SparkplugMessageGenerator(logger);
+    }
+
+    /// <summary>
+    /// Filters the outgoing metrics.
+    /// </summary>
+    /// <param name="metric">The metric.</param>
+    /// <returns></returns>
+    protected virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metric)
+    {
+        return metric.Where(m =>
+            // Remove the session number metric if a user might have added it.
+            !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
+            // Remove all not known metrics.
+            this._knonwMetrics.ContainsKey(m.Name)
+        );
     }
 
     /// <summary>
@@ -103,7 +123,7 @@ public class SparkplugBase<T> : ISparkplugConnection
     /// <summary>
     /// Gets the known metric names.
     /// </summary>
-    public List<T> KnownMetrics { get; }
+    public IEnumerable<T> KnownMetrics => this._knonwMetrics.Values;
 
     /// <summary>
     /// Gets the known metric names.

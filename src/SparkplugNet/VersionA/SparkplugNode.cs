@@ -38,7 +38,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not List<VersionAData.KuraMetric> knownMetrics)
+        if (this.KnownMetrics is not IEnumerable<VersionAData.KuraMetric> knownMetrics)
         {
             throw new Exception("Invalid metric type specified for version A metric.");
         }
