@@ -9,11 +9,13 @@
 
 namespace SparkplugNet.Core;
 
+using SparkplugNet.Core.Data;
+
 /// <summary>
 /// The metric state class.
 /// </summary>
 /// <typeparam name="T">The type parameter.</typeparam>
-public class MetricState<T> where T : class, new()
+public class MetricState<T> where T : IMetric, new()
 {
     /// <summary>
     /// Gets or sets the metric status.

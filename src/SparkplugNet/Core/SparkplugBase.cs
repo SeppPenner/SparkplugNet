@@ -9,11 +9,34 @@
 
 namespace SparkplugNet.Core;
 
+using SparkplugNet.Core.Data;
+
+/// <summary>
+/// A base interface for all Sparkplug applications, nodes and devices.
+/// </summary>
+public interface ISparkplugConnection
+{
+    /// <summary>
+    /// Gets the known metric names.
+    /// </summary>
+    IEnumerable<IMetric> KnownMetrics { get; }
+    /// <summary>
+    /// Gets a value indicating whether this instance is connected.
+    /// </summary>
+    bool IsConnected { get; }
+
+    /// <summary>
+    /// Gets or sets the callback for the disconnected event. Indicates that metrics might be stale.
+    /// </summary>
+    Action? OnDisconnected { get; set; }
+}
+
 /// <summary>
 /// A base class for all Sparkplug applications, nodes and devices.
 /// </summary>
 /// <typeparam name="T">The type parameter.</typeparam>
-public class SparkplugBase<T> where T : class, new()
+public class SparkplugBase<T> : ISparkplugConnection
+    where T : IMetric, new()
 {
     /// <summary>
     /// The message generator.
@@ -83,9 +106,15 @@ public class SparkplugBase<T> where T : class, new()
     public List<T> KnownMetrics { get; }
 
     /// <summary>
+    /// Gets the known metric names.
+    /// </summary>
+    IEnumerable<IMetric> ISparkplugConnection.KnownMetrics => this.KnownMetrics.Cast<IMetric>();
+
+    /// <summary>
     /// Gets or sets the callback for the disconnected event. Indicates that metrics might be stale.
     /// </summary>
     public Action? OnDisconnected { get; set; } = null;
+
 
     /// <summary>
     /// Resets the last sequence number.

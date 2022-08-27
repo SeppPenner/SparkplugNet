@@ -9,10 +9,12 @@
 
 namespace SparkplugNet.VersionB.Data;
 
+using SparkplugNet.Core.Data;
+
 /// <summary>
 /// The externally used Sparkplug B metric class.
 /// </summary>
-public class Metric
+public class Metric : IMetric
 {
     /// <summary>
     /// The integer value.
@@ -245,4 +247,6 @@ public class Metric
     /// Gets or sets the value case.
     /// </summary>
     public DataType ValueCase { get; set; }
+
+    object? IMetric.Value => throw new NotImplementedException();
 }

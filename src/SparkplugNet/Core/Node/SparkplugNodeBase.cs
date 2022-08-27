@@ -9,12 +9,14 @@
 
 namespace SparkplugNet.Core.Node;
 
+using SparkplugNet.Core.Data;
+
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug node.
 /// </summary>
 /// <seealso cref="SparkplugBase{T}"/>
-public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : class, new()
+public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
     /// <summary>
     /// The options.

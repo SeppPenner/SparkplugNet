@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.Core.Messages;
 
+using SparkplugNet.Core.Data;
+
 /// <summary>
 /// The Sparkplug message generator.
 /// </summary>
@@ -77,7 +79,7 @@ internal class SparkplugMessageGenerator
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
-        where T : class, new()
+        where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
         {
@@ -134,7 +136,7 @@ internal class SparkplugMessageGenerator
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
-        where T : class, new()
+        where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
         {
@@ -300,7 +302,7 @@ internal class SparkplugMessageGenerator
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
-        where T : class, new()
+        where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
         {
@@ -359,7 +361,7 @@ internal class SparkplugMessageGenerator
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
-        where T : class, new()
+        where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
         {
@@ -421,7 +423,7 @@ internal class SparkplugMessageGenerator
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
-        where T : class, new()
+        where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
         {
@@ -482,7 +484,7 @@ internal class SparkplugMessageGenerator
         int sequenceNumber,
         long sessionNumber,
         DateTimeOffset dateTime)
-        where T : class, new()
+        where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
         {

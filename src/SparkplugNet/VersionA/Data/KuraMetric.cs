@@ -9,10 +9,12 @@
 
 namespace SparkplugNet.VersionA.Data;
 
+using SparkplugNet.Core.Data;
+
 /// <summary>
 /// The externally used Sparkplug A Kura metric class.
 /// </summary>
-public class KuraMetric
+public class KuraMetric : IMetric
 {
     /// <summary>
     /// The double value.
@@ -113,4 +115,37 @@ public class KuraMetric
     /// Gets or sets the bytes value.
     /// </summary>
     public byte[]? BytesValue { get; set; }
+
+    /// <summary>
+    /// Gets the value.
+    /// </summary>
+    /// <value>
+    /// The value.
+    /// </value>
+    /// <exception cref="System.NotImplementedException">Type {this.Type} is not supported yet</exception>
+    object? IMetric.Value
+    {
+        get
+        {
+            switch (this.Type)
+            {
+                case DataType.Double:
+                    return this.DoubleValue;
+                case DataType.Float:
+                    return this.FloatValue;
+                case DataType.Int64:
+                    return this.LongValue;
+                case DataType.Int32:
+                    return this.IntValue;
+                case DataType.Bool:
+                    return this.BoolValue;
+                case DataType.String:
+                    return this.StringValue;
+                case DataType.Bytes:
+                    return this.BytesValue;
+                default:
+                    throw new NotImplementedException($"Type {this.Type} is not supported yet");
+            }
+        }
+    }
 }

@@ -9,12 +9,19 @@
 
 namespace SparkplugNet.Core.Application;
 
+using SparkplugNet.Core.Data;
+
+public interface ISparkplugApplication
+{
+
+}
+
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug application.
 /// </summary>
 /// <seealso cref="SparkplugBase{T}"/>
-public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new()
+public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
     /// <summary>
     /// The options.
