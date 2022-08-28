@@ -19,7 +19,7 @@ public partial class SparkplugNodeBase<T>
     /// <summary>
     /// Gets the known devices.
     /// </summary>
-    public ConcurrentDictionary<string, List<T>> KnownDevices { get; } = new ConcurrentDictionary<string,List<T>>();
+    public ConcurrentDictionary<string, List<T>> KnownDevices { get; } = new ConcurrentDictionary<string, List<T>>();
 
     /// <summary>
     /// Gets or sets the callback for the device birth received event.

@@ -25,12 +25,12 @@ public class SparkplugNodeSequentialTest
     /// <summary>
     /// The metrics.
     /// </summary>
-    private static List<Metric> metrics = new ();
+    private static List<Metric> metrics = new();
 
     /// <summary>
     /// The cancellation token source.
     /// </summary>
-    private readonly CancellationTokenSource cancellationTokenSource = new ();
+    private readonly CancellationTokenSource cancellationTokenSource = new();
 
     /// <summary>
     /// Tests the Sparkplug CONNECT requirements (NDEATH, NBIRTH).
@@ -74,7 +74,7 @@ public class SparkplugNodeSequentialTest
     /// Tests the publishing of Sparkplug metrics (NDATA).
     /// </summary>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    [TestMethod] 
+    [TestMethod]
     [Ignore]
     public async Task T2TestNodeVersionBPublishMetrics()
     {

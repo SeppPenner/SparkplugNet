@@ -22,7 +22,7 @@ public class DataSet
     /// <summary>
     /// Gets or sets the columns.
     /// </summary>
-    public List<string> Columns { get; set; } = new ();
+    public List<string> Columns { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the types.

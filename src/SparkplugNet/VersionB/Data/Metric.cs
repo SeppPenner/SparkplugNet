@@ -103,12 +103,12 @@ public class Metric
     /// <summary>
     /// Gets or sets the meta data.
     /// </summary>
-    public MetaData Metadata { get; set; } = new ();
+    public MetaData Metadata { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the properties.
     /// </summary>
-    public PropertySet Properties { get; set; } = new ();
+    public PropertySet Properties { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the integer value.
@@ -207,7 +207,7 @@ public class Metric
     /// </summary>
     public DataSet DataSetValue
     {
-        get => this.dataSetValue ?? new ();
+        get => this.dataSetValue ?? new();
         set
         {
             this.dataSetValue = value;
@@ -220,7 +220,7 @@ public class Metric
     /// </summary>
     public Template TemplateValue
     {
-        get => this.templateValue ?? new ();
+        get => this.templateValue ?? new();
         set
         {
             this.templateValue = value;
@@ -233,7 +233,7 @@ public class Metric
     /// </summary>
     public MetricValueExtension ExtensionValue
     {
-        get => this.extensionValue ?? new ();
+        get => this.extensionValue ?? new();
         set
         {
             this.extensionValue = value;

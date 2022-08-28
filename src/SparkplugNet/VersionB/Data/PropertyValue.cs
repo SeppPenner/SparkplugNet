@@ -153,7 +153,7 @@ public class PropertyValue
     /// </summary>
     public PropertySet PropertySetValue
     {
-        get => this.propertySetValue ?? new ();
+        get => this.propertySetValue ?? new();
         set
         {
             this.propertySetValue = value;
@@ -166,7 +166,7 @@ public class PropertyValue
     /// </summary>
     public PropertySetList PropertySetsValue
     {
-        get => this.propertySetListValue ?? new ();
+        get => this.propertySetListValue ?? new();
         set
         {
             this.propertySetListValue = value;
@@ -179,7 +179,7 @@ public class PropertyValue
     /// </summary>
     public PropertyValueExtension ExtensionValue
     {
-        get => this.extensionValue ?? new ();
+        get => this.extensionValue ?? new();
         set
         {
             this.extensionValue = value;

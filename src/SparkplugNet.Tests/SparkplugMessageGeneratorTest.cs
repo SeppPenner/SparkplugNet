@@ -18,7 +18,7 @@ public class SparkplugMessageGeneratorTest
     /// <summary>
     /// The metrics for namespace A.
     /// </summary>
-    private readonly List<VersionA.Data.KuraMetric> metricsA = new ()
+    private readonly List<VersionA.Data.KuraMetric> metricsA = new()
     {
         new VersionA.Data.KuraMetric
         {
@@ -31,7 +31,7 @@ public class SparkplugMessageGeneratorTest
     /// <summary>
     /// The metrics for namespace B.
     /// </summary>
-    private readonly List<VersionB.Data.Metric> metricsB = new ()
+    private readonly List<VersionB.Data.Metric> metricsB = new()
     {
         new VersionB.Data.Metric
         {
@@ -44,7 +44,7 @@ public class SparkplugMessageGeneratorTest
     /// <summary>
     /// The SEQ metric for namespace A.
     /// </summary>
-    private readonly VersionA.Data.KuraMetric seqMetricA = new ()
+    private readonly VersionA.Data.KuraMetric seqMetricA = new()
     {
         Name = Constants.SessionNumberMetricName,
         LongValue = 1,
@@ -54,7 +54,7 @@ public class SparkplugMessageGeneratorTest
     /// <summary>
     /// The SEQ metric for namespace B.
     /// </summary>
-    private readonly VersionB.Data.Metric seqMetricB = new ()
+    private readonly VersionB.Data.Metric seqMetricB = new()
     {
         Name = Constants.SessionNumberMetricName,
         LongValue = 1,

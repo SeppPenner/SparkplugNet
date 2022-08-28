@@ -23,5 +23,5 @@ public class MetricState<T> where T : class, new()
     /// <summary>
     /// Gets or sets the metrics.
     /// </summary>
-    public ConcurrentDictionary<string, T> Metrics { get; set; } = new ();
+    public ConcurrentDictionary<string, T> Metrics { get; set; } = new();
 }

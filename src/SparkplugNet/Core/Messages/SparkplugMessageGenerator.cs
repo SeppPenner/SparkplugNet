@@ -92,18 +92,18 @@ internal class SparkplugMessageGenerator
         switch (nameSpace)
         {
             case SparkplugNamespace.VersionA:
-            {
-                var newMetrics = metrics as List<VersionAData.KuraMetric> ?? new List<VersionAData.KuraMetric>();
-                AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime);
-            }
+                {
+                    var newMetrics = metrics as List<VersionAData.KuraMetric> ?? new List<VersionAData.KuraMetric>();
+                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, dateTime);
+                }
 
             case SparkplugNamespace.VersionB:
-            {
-                var newMetrics = metrics as List<VersionBData.Metric> ?? new List<VersionBData.Metric>();
-                AddSessionNumberToMetrics(newMetrics, sessionNumber);
-                return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime);
-            }
+                {
+                    var newMetrics = metrics as List<VersionBData.Metric> ?? new List<VersionBData.Metric>();
+                    AddSessionNumberToMetrics(newMetrics, sessionNumber);
+                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, newMetrics, sequenceNumber, dateTime);
+                }
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(nameSpace));
