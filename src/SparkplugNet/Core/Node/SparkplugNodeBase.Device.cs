@@ -85,7 +85,7 @@ public partial class SparkplugNodeBase<T>
     /// <exception cref="Exception">The MQTT client is not connected or the device is unknown or an invalid metric type was specified.</exception>
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public async Task<MqttClientPublishResult> PublishDeviceData(List<T> metrics, string deviceIdentifier)
+    public Task<MqttClientPublishResult> PublishDeviceData(IEnumerable<T> metrics, string deviceIdentifier)
     {
         if (this.options is null)
         {
@@ -102,30 +102,16 @@ public partial class SparkplugNodeBase<T>
             throw new Exception("The device is unknown, please publish a device birth message first.");
         }
 
-        switch (this.NameSpace)
-        {
-            case SparkplugNamespace.VersionA:
-                {
-                    if (metrics is not List<VersionAData.KuraMetric> convertedMetrics)
-                    {
-                        throw new Exception("Invalid metric type specified for version A metric.");
-                    }
-
-                    return await this.PublishVersionAMessageForDevice(convertedMetrics, deviceIdentifier);
-                }
-            case SparkplugNamespace.VersionB:
-                {
-                    if (metrics is not List<VersionBData.Metric> convertedMetrics)
-                    {
-                        throw new Exception("Invalid metric type specified for version B metric.");
-                    }
-
-                    return await this.PublishVersionBMessageForDevice(convertedMetrics, deviceIdentifier);
-                }
-            default:
-                throw new ArgumentOutOfRangeException(nameof(this.NameSpace), "The namespace is invalid.");
-        }
+        return this.PublishMessageForDevice(metrics, deviceIdentifier);
     }
+
+    /// <summary>
+    /// Publishes the message for device.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <returns></returns>
+    protected abstract Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<T> metrics, string deviceIdentifier);
 
     /// <summary>
     /// Publishes a device death message to the MQTT broker.
@@ -170,107 +156,5 @@ public partial class SparkplugNodeBase<T>
         // Publish the message.
         this.options.CancellationToken ??= CancellationToken.None;
         return await this.Client.PublishAsync(deviceDeathMessage, this.options.CancellationToken.Value);
-    }
-
-    /// <summary>
-    /// Publishes version A metrics for a device.
-    /// </summary>
-    /// <param name="metrics">The metrics.</param>
-    /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The device is unknown or an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    private async Task<MqttClientPublishResult> PublishVersionAMessageForDevice(List<VersionAData.KuraMetric> metrics, string deviceIdentifier)
-    {
-        if (this.options is null)
-        {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
-        }
-
-        if (!this.KnownDevices.ContainsKey(deviceIdentifier))
-        {
-            throw new Exception("The device is unknown, please publish a device birth message first.");
-        }
-
-        var deviceMetrics = this.KnownDevices[deviceIdentifier];
-
-        if (deviceMetrics is not List<VersionAData.KuraMetric> knownMetrics)
-        {
-            throw new Exception("Invalid metric type specified for version A metric.");
-        }
-
-        // Remove all not known metrics.
-        metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
-
-        // Remove the session number metric if a user might have added it.
-        metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
-
-        // Get the data message.
-        var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
-            this.NameSpace,
-            this.options.GroupIdentifier,
-            this.options.EdgeNodeIdentifier,
-            deviceIdentifier,
-            metrics,
-            this.LastSequenceNumber,
-            this.LastSessionNumber,
-            DateTimeOffset.Now);
-
-        // Increment the sequence number.
-        this.IncrementLastSequenceNumber();
-
-        // Publish the message.
-        return await this.Client.PublishAsync(dataMessage);
-    }
-
-    /// <summary>
-    /// Publishes version B metrics for a device.
-    /// </summary>
-    /// <param name="metrics">The metrics.</param>
-    /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The device is unknown or an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    private async Task<MqttClientPublishResult> PublishVersionBMessageForDevice(List<VersionBData.Metric> metrics, string deviceIdentifier)
-    {
-        if (this.options is null)
-        {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
-        }
-
-        if (!this.KnownDevices.ContainsKey(deviceIdentifier))
-        {
-            throw new Exception("The device is unknown, please publish a device birth message first.");
-        }
-
-        var deviceMetrics = this.KnownDevices[deviceIdentifier];
-
-        if (deviceMetrics is not List<VersionBData.Metric> knownMetrics)
-        {
-            throw new Exception("Invalid metric type specified for version B metric.");
-        }
-
-        // Remove all not known metrics.
-        metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
-
-        // Remove the session number metric if a user might have added it.
-        metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
-
-        // Get the data message.
-        var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
-            this.NameSpace,
-            this.options.GroupIdentifier,
-            this.options.EdgeNodeIdentifier,
-            deviceIdentifier,
-            metrics,
-            this.LastSequenceNumber,
-            this.LastSessionNumber,
-            DateTimeOffset.Now);
-
-        // Increment the sequence number.
-        this.IncrementLastSequenceNumber();
-
-        // Publish the message.
-        return await this.Client.PublishAsync(dataMessage);
     }
 }

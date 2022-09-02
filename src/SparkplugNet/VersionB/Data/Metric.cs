@@ -9,13 +9,12 @@
 
 namespace SparkplugNet.VersionB.Data;
 
-using SparkplugNet.Core;
 using SparkplugNet.Core.Data;
 
 /// <summary>
 /// The externally used Sparkplug B metric class.
 /// </summary>
-public class Metric : IMetric
+public class Metric : MetricBase<DataType>
 {
     /// <summary>
     /// The integer value.
@@ -68,12 +67,6 @@ public class Metric : IMetric
     private MetricValueExtension? extensionValue;
 
     /// <summary>
-    /// Gets or sets the name.
-    /// </summary>
-    [DefaultValue("")]
-    public string Name { get; set; } = string.Empty;
-
-    /// <summary>
     /// Gets or sets the alias.
     /// </summary>
     public ulong Alias { get; set; }
@@ -86,7 +79,10 @@ public class Metric : IMetric
     /// <summary>
     /// Gets or sets the data type.
     /// </summary>
-    public uint DataType { get; set; }
+    public uint DataType { 
+        get { return (uint)this.Type; }
+        set { this.Type = (DataType)value; }
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether the metric is historical or not.
@@ -122,7 +118,7 @@ public class Metric : IMetric
         set
         {
             this.integerValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Int32;
+            this.Type = VersionBDataTypeEnum.Int32;
         }
     }
 
@@ -135,7 +131,7 @@ public class Metric : IMetric
         set
         {
             this.longValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Int64;
+            this.Type = VersionBDataTypeEnum.Int64;
         }
     }
 
@@ -148,7 +144,7 @@ public class Metric : IMetric
         set
         {
             this.floatValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Float;
+            this.Type = VersionBDataTypeEnum.Float;
         }
     }
 
@@ -161,7 +157,7 @@ public class Metric : IMetric
         set
         {
             this.doubleValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Double;
+            this.Type = VersionBDataTypeEnum.Double;
         }
     }
 
@@ -174,7 +170,7 @@ public class Metric : IMetric
         set
         {
             this.booleanValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Boolean;
+            this.Type = VersionBDataTypeEnum.Boolean;
         }
     }
 
@@ -188,7 +184,7 @@ public class Metric : IMetric
         set
         {
             this.stringValue = value;
-            this.ValueCase = VersionBDataTypeEnum.String;
+            this.Type = VersionBDataTypeEnum.String;
         }
     }
 
@@ -201,7 +197,7 @@ public class Metric : IMetric
         set
         {
             this.bytesValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Bytes;
+            this.Type = VersionBDataTypeEnum.Bytes;
         }
     }
 
@@ -214,7 +210,7 @@ public class Metric : IMetric
         set
         {
             this.dataSetValue = value;
-            this.ValueCase = VersionBDataTypeEnum.DataSet;
+            this.Type = VersionBDataTypeEnum.DataSet;
         }
     }
 
@@ -227,7 +223,7 @@ public class Metric : IMetric
         set
         {
             this.templateValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Template;
+            this.Type = VersionBDataTypeEnum.Template;
         }
     }
 
@@ -240,14 +236,108 @@ public class Metric : IMetric
         set
         {
             this.extensionValue = value;
-            this.ValueCase = VersionBDataTypeEnum.Unknown;
+            this.Type = VersionBDataTypeEnum.Unknown;
         }
     }
 
     /// <summary>
-    /// Gets or sets the value case.
+    /// Initializes a new instance of the <see cref="Metric"/> class.
     /// </summary>
-    public DataType ValueCase { get; set; }
+    public Metric()
+    {
+
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    /// <param name="strName">Name of the string.</param>
+    /// <param name="dataType">Type of the data.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="timestamp">The timestamp.</param>
+    public Metric(string strName, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    {
+        this.Name = strName;
+        this.SetValue(dataType, value);
+        if (timestamp != null)
+        {
+            this.Timestamp = (ulong)(timestamp.Value.ToUnixTimeMilliseconds());
+        }
+    }
+
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    /// <param name="dataType">Type of the data.</param>
+    /// <param name="value">The value.</param>
+    /// <returns></returns>
+    public override MetricBase<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object value)
+    {
+        switch (dataType)
+        {
+            case VersionBDataTypeEnum.PropertySetList:
+            case VersionBDataTypeEnum.Unknown:
+            default:
+            case VersionBDataTypeEnum.Int8:
+                this.IntValue = this.ConvertValue<uint>(value);
+                break;
+            case VersionBDataTypeEnum.Int16:
+                this.IntValue = this.ConvertValue<uint>(value);
+                break;
+            case VersionBDataTypeEnum.Int32:
+                this.IntValue = this.ConvertValue<uint>(value);
+                break;
+            case VersionBDataTypeEnum.Int64:
+                this.LongValue = this.ConvertValue<ulong>(value);
+                break;
+            case VersionBDataTypeEnum.UInt8:
+                this.IntValue = this.ConvertValue<uint>(value);
+                break;
+            case VersionBDataTypeEnum.UInt16:
+                this.IntValue = this.ConvertValue<uint>(value);
+                break;
+            case VersionBDataTypeEnum.UInt32:
+                this.IntValue = this.ConvertValue<uint>(value);
+                break;
+            case VersionBDataTypeEnum.UInt64:
+                this.LongValue = this.ConvertValue<ulong>(value);
+                break;
+            case VersionBDataTypeEnum.Float:
+                this.FloatValue = this.ConvertValue<float>(value);
+                break;
+            case VersionBDataTypeEnum.Double:
+                this.DoubleValue = this.ConvertValue<double>(value);
+                break;
+            case VersionBDataTypeEnum.Boolean:
+                this.BooleanValue = this.ConvertValue<bool>(value);
+                break;
+            case VersionBDataTypeEnum.String:
+            case VersionBDataTypeEnum.Text:
+            case VersionBDataTypeEnum.Uuid:
+                this.StringValue = this.ConvertValue<string>(value)!;
+                break;
+            case VersionBDataTypeEnum.DateTime:
+                this.LongValue = (ulong)new DateTimeOffset(this.ConvertValue<DateTime>(value)).ToUnixTimeMilliseconds();
+                break;
+            case VersionBDataTypeEnum.DataSet:
+                this.DataSetValue = this.ConvertValue<DataSet>(value) ?? new();
+                break;
+            case VersionBDataTypeEnum.Bytes:
+            case VersionBDataTypeEnum.File:
+                this.BytesValue = this.ConvertValue<byte[]>(value) ?? Array.Empty<byte>();
+                break;
+            case VersionBDataTypeEnum.Template:
+                this.TemplateValue = this.ConvertValue<Template>(value) ?? new();
+                break;
+            case VersionBDataTypeEnum.PropertySet:
+                this.Properties = this.ConvertValue<PropertySet>(value) ?? new();
+                break;
+        }
+        this.Type = dataType;
+        this.IsNull = value == null;
+
+        return this;
+    }
 
     /// <summary>
     /// Gets the value.
@@ -255,11 +345,11 @@ public class Metric : IMetric
     /// <value>
     /// The value.
     /// </value>
-    object? IMetric.Value
+    public override object? Value
     {
         get
         {
-            switch (this.ValueCase)
+            switch (this.Type)
             {
                 case VersionBDataTypeEnum.PropertySetList:
                 case VersionBDataTypeEnum.Unknown:
@@ -290,7 +380,7 @@ public class Metric : IMetric
                 case VersionBDataTypeEnum.String:
                     return this.StringValue;
                 case VersionBDataTypeEnum.DateTime:
-                    return Constants.Epoch.AddMilliseconds(this.LongValue);
+                    return DateTimeOffset.FromUnixTimeMilliseconds((long)this.LongValue).DateTime;
                 case VersionBDataTypeEnum.Text:
                     return this.StringValue;
                 case VersionBDataTypeEnum.Uuid:

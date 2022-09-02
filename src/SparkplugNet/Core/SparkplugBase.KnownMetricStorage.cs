@@ -21,9 +21,12 @@ namespace SparkplugNet.Core
             public KnownMetricStorage(IEnumerable<T> knownMetrics)
                 : base(StringComparer.InvariantCultureIgnoreCase)
             {
-                foreach (var metric in knownMetrics)
+                if (knownMetrics != null)
                 {
-                    this[metric.Name] = metric;
+                    foreach (var metric in knownMetrics)
+                    {
+                        this[metric.Name] = metric;
+                    }
                 }
             }
 

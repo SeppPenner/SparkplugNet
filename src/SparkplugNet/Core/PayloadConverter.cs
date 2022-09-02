@@ -918,7 +918,7 @@ internal static class PayloadConverter
             StringValue = metric.StringValue,
             Timestamp = metric.Timestamp,
             TemplateValue = ConvertVersionBTemplate(metric.TemplateValue),
-            ValueCase = ConvertVersionBDataTypeMetric(metric.ValueCase)
+            Type = ConvertVersionBDataTypeMetric(metric.ValueCase)
         };
     }
 
@@ -929,7 +929,7 @@ internal static class PayloadConverter
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</returns>
     private static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(VersionBData.Metric metric)
     {
-        return metric.ValueCase switch
+        return metric.Type switch
         {
             VersionBData.DataType.Unknown => new VersionBProtoBuf.ProtoBufPayload.Metric
             {

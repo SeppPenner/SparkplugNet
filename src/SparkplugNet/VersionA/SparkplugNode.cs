@@ -20,7 +20,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
-    public SparkplugNode(List<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugNode(IEnumerable<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
@@ -41,7 +41,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    protected override async Task<MqttClientPublishResult> PublishMessage(List<VersionAData.KuraMetric> metrics)
+    protected override async Task<MqttClientPublishResult> PublishMessage(IEnumerable<VersionAData.KuraMetric> metrics)
     {
         if (this.options is null)
         {
@@ -53,18 +53,12 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             throw new Exception("Invalid metric type specified for version A metric.");
         }
 
-        // Remove all not known metrics.
-        metrics.RemoveAll(m => knownMetrics.FirstOrDefault(m2 => m2.Name == m.Name) == default);
-
-        // Remove the session number metric if a user might have added it.
-        metrics.RemoveAll(m => m.Name == Constants.SessionNumberMetricName);
-
         // Get the data message.
         var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(
             this.NameSpace,
             this.options.GroupIdentifier,
             this.options.EdgeNodeIdentifier,
-            metrics,
+            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -130,5 +124,50 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
         }
 
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Publishes version A metrics for a device.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="Exception">The device is unknown or an invalid metric type was specified.</exception>
+    /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
+    protected override async Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<VersionAData.KuraMetric> metrics, string deviceIdentifier)
+    {
+        if (this.options is null)
+        {
+            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+        }
+
+        if (!this.KnownDevices.ContainsKey(deviceIdentifier))
+        {
+            throw new Exception("The device is unknown, please publish a device birth message first.");
+        }
+
+        var deviceMetrics = this.KnownDevices[deviceIdentifier];
+
+        if (deviceMetrics is not List<VersionAData.KuraMetric> knownMetrics)
+        {
+            throw new Exception("Invalid metric type specified for version A metric.");
+        }
+
+        // Get the data message.
+        var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
+            this.NameSpace,
+            this.options.GroupIdentifier,
+            this.options.EdgeNodeIdentifier,
+            deviceIdentifier,
+            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.LastSequenceNumber,
+            this.LastSessionNumber,
+            DateTimeOffset.Now);
+
+        // Increment the sequence number.
+        this.IncrementLastSequenceNumber();
+
+        // Publish the message.
+        return await this.Client.PublishAsync(dataMessage);
     }
 }

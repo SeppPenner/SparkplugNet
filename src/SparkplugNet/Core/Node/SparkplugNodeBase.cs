@@ -101,7 +101,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public async Task<MqttClientPublishResult> PublishMetrics(List<T> metrics)
+    public async Task<MqttClientPublishResult> PublishMetrics(IEnumerable<T> metrics)
     {
         if (this.options is null)
         {
@@ -123,7 +123,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    protected abstract Task<MqttClientPublishResult> PublishMessage(List<T> metrics);
+    protected abstract Task<MqttClientPublishResult> PublishMessage(IEnumerable<T> metrics);
 
     /// <summary>
     /// Adds the disconnected handler and the reconnect functionality to the client.

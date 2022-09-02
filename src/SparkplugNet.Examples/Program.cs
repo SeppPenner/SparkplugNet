@@ -62,8 +62,8 @@ public class Program
                 .WriteTo.Console()
                 .CreateLogger();
 
-            await RunVersionA();
-            //await RunVersionB();
+           // await RunVersionA();
+            await RunVersionB();
 
             Log.Information("Simulation is done.");
         }
@@ -105,6 +105,7 @@ public class Program
     {
         var applicationMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
         var application = new VersionA.SparkplugApplication(applicationMetrics, Log.Logger);
+
         var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionAApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
 
         // Start an application.
