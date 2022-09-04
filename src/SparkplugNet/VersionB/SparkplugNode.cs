@@ -48,9 +48,9 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is null)
         {
-            throw new Exception("Invalid metric type specified for version B metric.");
+            throw new ArgumentNullException(nameof(this.KnownMetrics), "The KnownMetrics aren't set properly.");
         }
 
         // Get the data message.
@@ -61,7 +61,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToDataMessages);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
@@ -149,9 +150,9 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
 
         var deviceMetrics = this.KnownDevices[deviceIdentifier];
 
-        if (deviceMetrics is not List<VersionBData.Metric> knownMetrics)
+        if (deviceMetrics is null)
         {
-            throw new Exception("Invalid metric type specified for version B metric.");
+            throw new ArgumentNullException(deviceIdentifier, $"The KnownMetrics for the device {deviceIdentifier} aren't set properly.");
         }
 
         // Get the data message.
@@ -163,7 +164,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToDataMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

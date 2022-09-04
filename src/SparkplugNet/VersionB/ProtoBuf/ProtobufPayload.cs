@@ -31,7 +31,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
         public string Uuid { get; set; } = string.Empty;
 
         [global::ProtoBuf.ProtoMember(5, Name = @"body")]
-        public byte[] Body { get; set; } = Array.Empty<byte>();
+        public byte[]? Body { get; set; } = Array.Empty<byte>();
 
         [global::ProtoBuf.ProtoMember(6, Name = @"details")]
         public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();

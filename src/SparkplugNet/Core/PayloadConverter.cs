@@ -117,7 +117,7 @@ internal static class PayloadConverter
     {
         return new VersionBProtoBuf.ProtoBufPayload
         {
-            Body = payload.Body ?? Array.Empty<byte>(),
+            Body = payload.Body,
             Details = payload.Details,
             Metrics = payload.Metrics.Select(ConvertVersionBMetric).ToList(),
             Seq = payload.Seq,
@@ -608,8 +608,11 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="metaData">The <see cref="VersionBProtoBuf.ProtoBufPayload.MetaData"/>.</param>
     /// <returns>The <see cref="VersionBData.MetaData"/>.</returns>
-    private static VersionBData.MetaData ConvertVersionBMetaData(VersionBProtoBuf.ProtoBufPayload.MetaData metaData)
+    private static VersionBData.MetaData? ConvertVersionBMetaData(VersionBProtoBuf.ProtoBufPayload.MetaData? metaData)
     {
+        if (metaData == null)
+            return null;
+
         return new VersionBData.MetaData
         {
             Seq = metaData.Seq,
@@ -629,20 +632,27 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="metaData">The <see cref="VersionBData.MetaData"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.MetaData"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.MetaData ConvertVersionBMetaData(VersionBData.MetaData metaData)
+    private static VersionBProtoBuf.ProtoBufPayload.MetaData? ConvertVersionBMetaData(VersionBData.MetaData? metaData)
     {
-        return new VersionBProtoBuf.ProtoBufPayload.MetaData
+        if (metaData != null)
         {
-            Seq = metaData.Seq,
-            Details = metaData.Details,
-            ContentType = metaData.ContentType,
-            Description = metaData.Description,
-            FileName = metaData.FileName,
-            FileType = metaData.FileType,
-            IsMultiPart = metaData.IsMultiPart,
-            Md5 = metaData.Md5,
-            Size = metaData.Size
-        };
+            return new VersionBProtoBuf.ProtoBufPayload.MetaData
+            {
+                Seq = metaData.Seq,
+                Details = metaData.Details,
+                ContentType = metaData.ContentType,
+                Description = metaData.Description,
+                FileName = metaData.FileName,
+                FileType = metaData.FileType,
+                IsMultiPart = metaData.IsMultiPart,
+                Md5 = metaData.Md5,
+                Size = metaData.Size
+            };
+        }
+        else
+        {
+            return null;
+        }
     }
 
     /// <summary>
@@ -650,8 +660,10 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="template">The <see cref="VersionBProtoBuf.ProtoBufPayload.Template"/>.</param>
     /// <returns>The <see cref="VersionBData.Template"/>.</returns>
-    private static VersionBData.Template ConvertVersionBTemplate(VersionBProtoBuf.ProtoBufPayload.Template template)
+    private static VersionBData.Template? ConvertVersionBTemplate(VersionBProtoBuf.ProtoBufPayload.Template? template)
     {
+        if (template == null)
+            return null;
         return new VersionBData.Template
         {
             Metrics = template.Metrics.Select(ConvertVersionBMetric).ToList(),
@@ -1256,12 +1268,13 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="propertySetList">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</param>
     /// <returns>The <see cref="VersionBData.PropertySetList"/>.</returns>
-    private static VersionBData.PropertySetList ConvertVersionBPropertySetList(VersionBProtoBuf.ProtoBufPayload.PropertySetList propertySetList)
+    private static VersionBData.PropertySetList? ConvertVersionBPropertySetList(VersionBProtoBuf.ProtoBufPayload.PropertySetList propertySetList)
     {
+        if (propertySetList == null) return null;
         return new VersionBData.PropertySetList
         {
             Details = propertySetList.Details,
-            PropertySets = propertySetList.Propertysets.Select(ConvertVersionBPropertySet).ToList()
+            PropertySets = propertySetList.Propertysets?.Select(ConvertVersionBPropertySet)?.ToList() ?? null
         };
     }
 
@@ -1270,12 +1283,13 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="propertySetList">The <see cref="VersionBData.PropertySetList"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.PropertySetList ConvertVersionBPropertySetList(VersionBData.PropertySetList propertySetList)
+    private static VersionBProtoBuf.ProtoBufPayload.PropertySetList? ConvertVersionBPropertySetList(VersionBData.PropertySetList propertySetList)
     {
+        if(propertySetList == null) return null;    
         return new VersionBProtoBuf.ProtoBufPayload.PropertySetList
         {
             Details = propertySetList.Details,
-            Propertysets = propertySetList.PropertySets.Select(ConvertVersionBPropertySet).ToList()
+            Propertysets = propertySetList.PropertySets?.Select(ConvertVersionBPropertySet)?.ToList() ?? null
         };
     }
 
@@ -1284,8 +1298,10 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="propertySet">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySet"/>.</param>
     /// <returns>The <see cref="VersionBData.PropertySet"/>.</returns>
-    private static VersionBData.PropertySet ConvertVersionBPropertySet(VersionBProtoBuf.ProtoBufPayload.PropertySet propertySet)
+    private static VersionBData.PropertySet? ConvertVersionBPropertySet(VersionBProtoBuf.ProtoBufPayload.PropertySet? propertySet)
     {
+        if(propertySet ==null) return null;
+
         return new VersionBData.PropertySet
         {
             Details = propertySet.Details,
@@ -1299,8 +1315,9 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="propertySet">The <see cref="VersionBData.PropertySet"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySet"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.PropertySet ConvertVersionBPropertySet(VersionBData.PropertySet propertySet)
+    private static VersionBProtoBuf.ProtoBufPayload.PropertySet? ConvertVersionBPropertySet(VersionBData.PropertySet? propertySet)
     {
+        if (propertySet == null) return null;
         return new VersionBProtoBuf.ProtoBufPayload.PropertySet
         {
             Details = propertySet.Details,

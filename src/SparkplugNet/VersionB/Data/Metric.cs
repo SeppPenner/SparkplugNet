@@ -102,12 +102,12 @@ public class Metric : MetricBase<DataType>
     /// <summary>
     /// Gets or sets the meta data.
     /// </summary>
-    public MetaData Metadata { get; set; } = new();
+    public MetaData? Metadata { get; set; }
 
     /// <summary>
     /// Gets or sets the properties.
     /// </summary>
-    public PropertySet Properties { get; set; } = new();
+    public PropertySet? Properties { get; set; }
 
     /// <summary>
     /// Gets or sets the integer value.
@@ -217,9 +217,9 @@ public class Metric : MetricBase<DataType>
     /// <summary>
     /// Gets or sets the template value.
     /// </summary>
-    public Template TemplateValue
+    public Template? TemplateValue
     {
-        get => this.templateValue ?? new();
+        get => this.templateValue;
         set
         {
             this.templateValue = value;
@@ -230,9 +230,9 @@ public class Metric : MetricBase<DataType>
     /// <summary>
     /// Gets or sets the extension value.
     /// </summary>
-    public MetricValueExtension ExtensionValue
+    public MetricValueExtension? ExtensionValue
     {
-        get => this.extensionValue ?? new();
+        get => this.extensionValue;
         set
         {
             this.extensionValue = value;
@@ -349,53 +349,30 @@ public class Metric : MetricBase<DataType>
     {
         get
         {
-            switch (this.Type)
+            return this.Type switch
             {
-                case VersionBDataTypeEnum.PropertySetList:
-                case VersionBDataTypeEnum.Unknown:
-                default:
-                    return null;
-                case VersionBDataTypeEnum.Int8:
-                    return (sbyte)this.IntValue;
-                case VersionBDataTypeEnum.Int16:
-                    return (Int16)this.IntValue;
-                case VersionBDataTypeEnum.Int32:
-                    return (Int32)this.IntValue;
-                case VersionBDataTypeEnum.Int64:
-                    return (Int64)this.LongValue;
-                case VersionBDataTypeEnum.UInt8:
-                    return (byte)this.IntValue;
-                case VersionBDataTypeEnum.UInt16:
-                    return (UInt16)this.IntValue;
-                case VersionBDataTypeEnum.UInt32:
-                    return (UInt32)this.IntValue;
-                case VersionBDataTypeEnum.UInt64:
-                    return (UInt64)this.LongValue;
-                case VersionBDataTypeEnum.Float:
-                    return (float)this.FloatValue;
-                case VersionBDataTypeEnum.Double:
-                    return (double)this.DoubleValue;
-                case VersionBDataTypeEnum.Boolean:
-                    return this.BooleanValue;
-                case VersionBDataTypeEnum.String:
-                    return this.StringValue;
-                case VersionBDataTypeEnum.DateTime:
-                    return DateTimeOffset.FromUnixTimeMilliseconds((long)this.LongValue).DateTime;
-                case VersionBDataTypeEnum.Text:
-                    return this.StringValue;
-                case VersionBDataTypeEnum.Uuid:
-                    return Guid.Parse(this.StringValue);
-                case VersionBDataTypeEnum.DataSet:
-                    return this.DataSetValue;
-                case VersionBDataTypeEnum.Bytes:
-                    return this.BytesValue;
-                case VersionBDataTypeEnum.File:
-                    return this.BytesValue;
-                case VersionBDataTypeEnum.Template:
-                    return this.TemplateValue;
-                case VersionBDataTypeEnum.PropertySet:
-                    return this.Properties;
-            }
+                VersionBDataTypeEnum.Int8 => (sbyte)this.IntValue,
+                VersionBDataTypeEnum.Int16 => (Int16)this.IntValue,
+                VersionBDataTypeEnum.Int32 => (Int32)this.IntValue,
+                VersionBDataTypeEnum.Int64 => (Int64)this.LongValue,
+                VersionBDataTypeEnum.UInt8 => (byte)this.IntValue,
+                VersionBDataTypeEnum.UInt16 => (UInt16)this.IntValue,
+                VersionBDataTypeEnum.UInt32 => (UInt32)this.IntValue,
+                VersionBDataTypeEnum.UInt64 => (UInt64)this.LongValue,
+                VersionBDataTypeEnum.Float => (float)this.FloatValue,
+                VersionBDataTypeEnum.Double => (double)this.DoubleValue,
+                VersionBDataTypeEnum.Boolean => this.BooleanValue,
+                VersionBDataTypeEnum.String => this.StringValue,
+                VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds((long)this.LongValue).DateTime,
+                VersionBDataTypeEnum.Text => this.StringValue,
+                VersionBDataTypeEnum.Uuid => Guid.Parse(this.StringValue),
+                VersionBDataTypeEnum.DataSet => this.DataSetValue,
+                VersionBDataTypeEnum.Bytes => this.BytesValue,
+                VersionBDataTypeEnum.File => this.BytesValue,
+                VersionBDataTypeEnum.Template => this.TemplateValue,
+                VersionBDataTypeEnum.PropertySet => this.Properties,
+                _ => null,
+            };
         }
     }
 }

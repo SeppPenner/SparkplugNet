@@ -185,5 +185,6 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// </summary>
     [JsonIgnore]
     [XmlIgnore]
+    [Browsable(false)]
     public CancellationToken? CancellationToken { get; set; }
 }

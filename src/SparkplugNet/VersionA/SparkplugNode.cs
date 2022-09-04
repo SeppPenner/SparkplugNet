@@ -48,7 +48,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionAData.KuraMetric> knownMetrics)
+        if (this.KnownMetrics is null)
         {
             throw new Exception("Invalid metric type specified for version A metric.");
         }
@@ -61,7 +61,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToDataMessages);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
@@ -148,7 +149,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
 
         var deviceMetrics = this.KnownDevices[deviceIdentifier];
 
-        if (deviceMetrics is not List<VersionAData.KuraMetric> knownMetrics)
+        if (deviceMetrics is null)
         {
             throw new Exception("Invalid metric type specified for version A metric.");
         }
@@ -162,7 +163,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToDataMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

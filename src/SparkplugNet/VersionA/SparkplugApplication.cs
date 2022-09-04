@@ -49,7 +49,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionAData.KuraMetric> knownMetrics)
+        if (this.KnownMetrics is null)
         {
             throw new Exception("Invalid metric type specified for version A metric.");
         }
@@ -62,7 +62,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToCommandMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
@@ -88,7 +89,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionAData.KuraMetric> knownMetrics)
+        if (this.KnownMetrics is null)
         {
             throw new Exception("Invalid metric type specified for version A metric.");
         }
@@ -102,7 +103,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToCommandMessages);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);

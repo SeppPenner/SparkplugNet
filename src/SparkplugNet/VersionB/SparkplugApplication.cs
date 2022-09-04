@@ -63,7 +63,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToCommandMessages);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
@@ -92,7 +93,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is null)
         {
             throw new Exception("Invalid metric type specified for version B metric.");
         }
@@ -106,7 +107,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.options.AddSessionNumberToCommandMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

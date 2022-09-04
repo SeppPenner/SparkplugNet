@@ -39,7 +39,14 @@ namespace SparkplugNet.Core
         /// The default reconnect interval
         /// </summary>
         public static readonly TimeSpan DefaultReconnectInterval = TimeSpan.FromSeconds(30);
-
+        /// <summary>
+        /// The default to add session number to data messages
+        /// </summary>
+        public const bool DefaultAddSessionNumberToDataMessages = true;
+        /// <summary>
+        /// The default to add session number to command messages
+        /// </summary>
+        public const bool DefaultAddSessionNumberToCommandMessages = true;
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugBaseOptions"/> class.
         /// </summary>
@@ -128,13 +135,35 @@ namespace SparkplugNet.Core
         public TimeSpan ReconnectInterval { get; set; } = DefaultReconnectInterval;
 
         /// <summary>
+        /// Gets or sets a value indicating whether to [add session number to data messages].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [add session number to data messages]; otherwise, <c>false</c>.
+        /// </value>
+        [DefaultValue(DefaultAddSessionNumberToDataMessages)]
+        public bool AddSessionNumberToDataMessages { get; set; } = DefaultAddSessionNumberToDataMessages;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to [add session number to command messages].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [add session number to command messages]; otherwise, <c>false</c>.
+        /// </value>
+        [DefaultValue(DefaultAddSessionNumberToDataMessages)]
+        public bool AddSessionNumberToCommandMessages { get; set; } = DefaultAddSessionNumberToCommandMessages;
+
+        /// <summary>
         /// Gets or sets the WebSocket parameters.
         /// </summary>
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        [DefaultValue(null)]
         public MqttClientOptionsBuilderWebSocketParameters? WebSocketParameters { get; set; }
 
         /// <summary>
         /// Gets or sets the proxy options.
         /// </summary>
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        [DefaultValue(null)]
         public MqttClientWebSocketProxyOptions? ProxyOptions { get; set; }
 
         /// <summary>
@@ -143,6 +172,8 @@ namespace SparkplugNet.Core
         /// <value>
         /// The TLS parameters.
         /// </value>
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        [DefaultValue(null)]
         public MqttClientOptionsBuilderTlsParameters? TlsParameters { get; set; }
     }
 }
