@@ -26,6 +26,10 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// The default node identifier
     /// </summary>
     public const string DefaultNodeIdentifier = "";
+    /// <summary>
+    /// The default to add session number to data messages
+    /// </summary>
+    public const bool DefaultAddSessionNumberToDataMessages = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
@@ -179,6 +183,15 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// </summary>
     [DefaultValue(DefaultNodeIdentifier)]
     public string EdgeNodeIdentifier { get; set; } = DefaultNodeIdentifier;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to [add session number to data messages].
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [add session number to data messages]; otherwise, <c>false</c>.
+    /// </value>
+    [DefaultValue(DefaultAddSessionNumberToDataMessages)]
+    public bool AddSessionNumberToDataMessages { get; set; } = DefaultAddSessionNumberToDataMessages;
 
     /// <summary>
     /// Gets or sets the cancellation token.

@@ -19,6 +19,11 @@ using Newtonsoft.Json;
 public class SparkplugApplicationOptions : SparkplugBaseOptions
 {
     /// <summary>
+    /// The default to add session number to command messages
+    /// </summary>
+    public const bool DefaultAddSessionNumberToCommandMessages = true;
+
+    /// <summary>
     /// For serializers only
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
@@ -158,6 +163,15 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// If this value is set to <c>true</c>, the application sends STATE messages, else not.
     /// </summary>
     public bool IsPrimaryApplication { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to [add session number to command messages].
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [add session number to command messages]; otherwise, <c>false</c>.
+    /// </value>
+    [DefaultValue(DefaultAddSessionNumberToCommandMessages)]
+    public bool AddSessionNumberToCommandMessages { get; set; } = DefaultAddSessionNumberToCommandMessages;
 
     /// <summary>
     /// Gets or sets the cancellation token.
