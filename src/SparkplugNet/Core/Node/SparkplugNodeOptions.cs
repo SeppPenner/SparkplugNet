@@ -93,11 +93,11 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="cancellationToken">The cancellation token.</param>
     public SparkplugNodeOptions(
        string brokerAddress,
-       int port ,
-       string clientId ,
+       int port,
+       string clientId,
        string userName,
        string password,
-       bool useTls ,
+       bool useTls,
        string scadaHostIdentifier,
        string groupIdentifier,
        string edgeNodeIdentifier,
@@ -111,7 +111,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
              edgeNodeIdentifier: edgeNodeIdentifier,
              tlsParameters: null,
              webSocketParameters: webSocketParameters,
-             proxyOptions : proxyOptions,
+             proxyOptions: proxyOptions,
              cancellationToken: cancellationToken)
     {
 

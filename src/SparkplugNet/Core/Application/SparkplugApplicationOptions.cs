@@ -66,7 +66,6 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
 
     }
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
@@ -84,9 +83,9 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="cancellationToken">The cancellation token.</param>
     public SparkplugApplicationOptions(
     string brokerAddress,
-    int port ,
-    string clientId ,
-    string userName ,
+    int port,
+    string clientId,
+    string userName,
     string password,
     bool useTls,
     string scadaHostIdentifier,

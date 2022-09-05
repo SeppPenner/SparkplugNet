@@ -611,7 +611,9 @@ internal static class PayloadConverter
     private static VersionBData.MetaData? ConvertVersionBMetaData(VersionBProtoBuf.ProtoBufPayload.MetaData? metaData)
     {
         if (metaData == null)
+        {
             return null;
+        }
 
         return new VersionBData.MetaData
         {
@@ -663,7 +665,10 @@ internal static class PayloadConverter
     private static VersionBData.Template? ConvertVersionBTemplate(VersionBProtoBuf.ProtoBufPayload.Template? template)
     {
         if (template == null)
+        {
             return null;
+        }
+
         return new VersionBData.Template
         {
             Metrics = template.Metrics.Select(ConvertVersionBMetric).ToList(),
@@ -680,8 +685,13 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="template">The <see cref="VersionBData.Template"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Template"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.Template ConvertVersionBTemplate(VersionBData.Template template)
+    private static VersionBProtoBuf.ProtoBufPayload.Template? ConvertVersionBTemplate(VersionBData.Template? template)
     {
+        if (template == null)
+        {
+            return null;
+        }
+
         return new VersionBProtoBuf.ProtoBufPayload.Template
         {
             Metrics = template.Metrics.Select(ConvertVersionBMetric).ToList(),
@@ -914,10 +924,10 @@ internal static class PayloadConverter
             BytesValue = metric.BytesValue,
             DataSetValue = ConvertVersionBDataSet(metric.DatasetValue),
             DataType = metric.Datatype,
-            ExtensionValue = new VersionBData.MetricValueExtension
+            ExtensionValue = (metric.ExtensionValue != null) ? new VersionBData.MetricValueExtension
             {
                 Details = metric.ExtensionValue.Details
-            },
+            } : null,
             FloatValue = metric.FloatValue,
             IntValue = metric.IntValue,
             IsHistorical = metric.IsHistorical,
@@ -947,10 +957,10 @@ internal static class PayloadConverter
             {
                 Alias = metric.Alias,
                 Datatype = metric.DataType,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                ExtensionValue = (metric.ExtensionValue != null) ? new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
                 {
                     Details = metric.ExtensionValue.Details
-                },
+                } : null,
                 IsHistorical = metric.IsHistorical,
                 IsNull = metric.IsNull,
                 IsTransient = metric.IsTransient,
@@ -1171,10 +1181,10 @@ internal static class PayloadConverter
             {
                 Alias = metric.Alias,
                 Datatype = metric.DataType,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                ExtensionValue = (metric.ExtensionValue != null) ? new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
                 {
                     Details = metric.ExtensionValue.Details
-                },
+                } : null,
                 IsHistorical = metric.IsHistorical,
                 IsNull = metric.IsNull,
                 IsTransient = metric.IsTransient,
@@ -1187,10 +1197,10 @@ internal static class PayloadConverter
             {
                 Alias = metric.Alias,
                 Datatype = metric.DataType,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                ExtensionValue = (metric.ExtensionValue != null) ? new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
                 {
                     Details = metric.ExtensionValue.Details
-                },
+                } : null,
                 IsHistorical = metric.IsHistorical,
                 IsNull = metric.IsNull,
                 IsTransient = metric.IsTransient,
@@ -1216,10 +1226,10 @@ internal static class PayloadConverter
             {
                 Alias = metric.Alias,
                 Datatype = metric.DataType,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                ExtensionValue = (metric.ExtensionValue != null) ? new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
                 {
                     Details = metric.ExtensionValue.Details
-                },
+                } : null,
                 IsHistorical = metric.IsHistorical,
                 IsNull = metric.IsNull,
                 IsTransient = metric.IsTransient,
@@ -1232,10 +1242,10 @@ internal static class PayloadConverter
             {
                 Alias = metric.Alias,
                 Datatype = metric.DataType,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                ExtensionValue = (metric.ExtensionValue != null) ? new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
                 {
                     Details = metric.ExtensionValue.Details
-                },
+                } : null,
                 IsHistorical = metric.IsHistorical,
                 IsNull = metric.IsNull,
                 IsTransient = metric.IsTransient,
@@ -1248,10 +1258,10 @@ internal static class PayloadConverter
             {
                 Alias = metric.Alias,
                 Datatype = metric.DataType,
-                ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                ExtensionValue = (metric.ExtensionValue != null) ? new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
                 {
                     Details = metric.ExtensionValue.Details
-                },
+                } : null,
                 IsHistorical = metric.IsHistorical,
                 IsNull = metric.IsNull,
                 IsTransient = metric.IsTransient,
@@ -1268,13 +1278,22 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="propertySetList">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</param>
     /// <returns>The <see cref="VersionBData.PropertySetList"/>.</returns>
-    private static VersionBData.PropertySetList? ConvertVersionBPropertySetList(VersionBProtoBuf.ProtoBufPayload.PropertySetList propertySetList)
+    private static VersionBData.PropertySetList? ConvertVersionBPropertySetList(VersionBProtoBuf.ProtoBufPayload.PropertySetList? propertySetList)
     {
-        if (propertySetList == null) return null;
+        if (propertySetList == null)
+        {
+            return null;
+        }
+
+        if (propertySetList.Propertysets == null)
+        {
+            throw new ArgumentNullException(nameof(propertySetList), "Propertysets is not set");
+        }
+
         return new VersionBData.PropertySetList
         {
             Details = propertySetList.Details,
-            PropertySets = propertySetList.Propertysets?.Select(ConvertVersionBPropertySet)?.ToList() ?? null
+            PropertySets = propertySetList.Propertysets.Select(ConvertVersionBPropertySet).ToNonNullList()
         };
     }
 
@@ -1283,13 +1302,17 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="propertySetList">The <see cref="VersionBData.PropertySetList"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.PropertySetList? ConvertVersionBPropertySetList(VersionBData.PropertySetList propertySetList)
+    private static VersionBProtoBuf.ProtoBufPayload.PropertySetList? ConvertVersionBPropertySetList(VersionBData.PropertySetList? propertySetList)
     {
-        if(propertySetList == null) return null;    
+        if (propertySetList == null)
+        {
+            return null;
+        }
+
         return new VersionBProtoBuf.ProtoBufPayload.PropertySetList
         {
             Details = propertySetList.Details,
-            Propertysets = propertySetList.PropertySets?.Select(ConvertVersionBPropertySet)?.ToList() ?? null
+            Propertysets = propertySetList.PropertySets.Select(ConvertVersionBPropertySet).ToNonNullList()
         };
     }
 
@@ -1300,7 +1323,10 @@ internal static class PayloadConverter
     /// <returns>The <see cref="VersionBData.PropertySet"/>.</returns>
     private static VersionBData.PropertySet? ConvertVersionBPropertySet(VersionBProtoBuf.ProtoBufPayload.PropertySet? propertySet)
     {
-        if(propertySet ==null) return null;
+        if (propertySet == null)
+        {
+            return null;
+        }
 
         return new VersionBData.PropertySet
         {
@@ -1317,7 +1343,11 @@ internal static class PayloadConverter
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySet"/>.</returns>
     private static VersionBProtoBuf.ProtoBufPayload.PropertySet? ConvertVersionBPropertySet(VersionBData.PropertySet? propertySet)
     {
-        if (propertySet == null) return null;
+        if (propertySet == null)
+        {
+            return null;
+        }
+
         return new VersionBProtoBuf.ProtoBufPayload.PropertySet
         {
             Details = propertySet.Details,

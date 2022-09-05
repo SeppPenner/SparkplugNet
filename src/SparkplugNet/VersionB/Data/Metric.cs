@@ -79,7 +79,8 @@ public class Metric : MetricBase<DataType>
     /// <summary>
     /// Gets or sets the data type.
     /// </summary>
-    public uint DataType { 
+    public uint DataType
+    {
         get { return (uint)this.Type; }
         set { this.Type = (DataType)value; }
     }
@@ -333,6 +334,7 @@ public class Metric : MetricBase<DataType>
                 this.Properties = this.ConvertValue<PropertySet>(value) ?? new();
                 break;
         }
+
         this.Type = dataType;
         this.IsNull = value == null;
 

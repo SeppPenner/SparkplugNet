@@ -324,7 +324,7 @@ internal class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
                     return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier,
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber,!blnAddSessionNumber), dateTime);
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber, !blnAddSessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
@@ -448,7 +448,7 @@ internal class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
                     return GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier,
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber,!blnAddSessionNumber), dateTime);
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber, !blnAddSessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
@@ -533,11 +533,13 @@ internal class SparkplugMessageGenerator
         }
     }
 
-    /// <summary>
-    /// Adds the session number to the metrics.
-    /// </summary>
+    /// <summary>Adds the session number to metrics.</summary>
     /// <param name="metrics">The metrics.</param>
-    /// <param name="sessionSequenceNumber">The session number.</param>
+    /// <param name="sessionSequenceNumber">The session sequence number.</param>
+    /// <param name="blnSkip">if set to <c>true</c> [skip].</param>
+    /// <returns>
+    ///   The metrics
+    /// </returns>
     private static IEnumerable<VersionAData.KuraMetric> AddSessionNumberToMetrics(IEnumerable<VersionAData.KuraMetric> metrics, long sessionSequenceNumber, bool blnSkip = false)
     {
         if (blnSkip) //Session number in message is disabled
@@ -556,8 +558,13 @@ internal class SparkplugMessageGenerator
         }
     }
 
-    
-    
+    /// <summary>Adds the session number to metrics.</summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <param name="sessionSequenceNumber">The session sequence number.</param>
+    /// <param name="blnSkip">if set to <c>true</c> [skip].</param>
+    /// <returns>
+    ///   The metrics
+    /// </returns>
     private static IEnumerable<VersionBData.Metric> AddSessionNumberToMetrics(IEnumerable<VersionBData.Metric> metrics, long sessionSequenceNumber, bool blnSkip = false)
     {
         if (blnSkip) //Session number in message is disabled

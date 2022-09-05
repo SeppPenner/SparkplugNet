@@ -151,7 +151,7 @@ public class PropertyValue
     /// <summary>
     /// Gets or sets the property set value.
     /// </summary>
-    public PropertySet PropertySetValue
+    public PropertySet? PropertySetValue
     {
         get => this.propertySetValue ?? new();
         set
@@ -164,7 +164,7 @@ public class PropertyValue
     /// <summary>
     /// Gets or sets the property set list value.
     /// </summary>
-    public PropertySetList PropertySetsValue
+    public PropertySetList? PropertySetsValue
     {
         get => this.propertySetListValue ?? new();
         set

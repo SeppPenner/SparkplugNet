@@ -384,7 +384,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetStringValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 8);
 
             [global::ProtoBuf.ProtoMember(9, Name = @"propertyset_value")]
-            public PropertySet PropertysetValue
+            public PropertySet? PropertysetValue
             {
                 get => __pbn__value.Is(9) ? ((PropertySet)__pbn__value.Object) : new();
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(9, value);
@@ -393,7 +393,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetPropertysetValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 9);
 
             [global::ProtoBuf.ProtoMember(10, Name = @"propertysets_value")]
-            public PropertySetList PropertysetsValue
+            public PropertySetList? PropertysetsValue
             {
                 get => __pbn__value.Is(10) ? ((PropertySetList)__pbn__value.Object) : new();
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(10, value);
@@ -544,10 +544,10 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public bool IsNull { get; set; }
 
             [global::ProtoBuf.ProtoMember(8, Name = @"metadata")]
-            public MetaData Metadata { get; set; } = new();
+            public MetaData? Metadata { get; set; } = new();
 
             [global::ProtoBuf.ProtoMember(9, Name = @"properties")]
-            public PropertySet Properties { get; set; } = new();
+            public PropertySet? Properties { get; set; } = new();
 
             [global::ProtoBuf.ProtoMember(10, Name = @"int_value")]
             public uint IntValue
@@ -625,7 +625,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetDatasetValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 17);
 
             [global::ProtoBuf.ProtoMember(18, Name = @"template_value")]
-            public Template TemplateValue
+            public Template? TemplateValue
             {
                 get => __pbn__value.Is(18) ? ((Template)__pbn__value.Object) : new();
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(18, value);
@@ -634,7 +634,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetTemplateValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 18);
 
             [global::ProtoBuf.ProtoMember(19, Name = @"extension_value")]
-            public MetricValueExtension ExtensionValue
+            public MetricValueExtension? ExtensionValue
             {
                 get => __pbn__value.Is(19) ? ((MetricValueExtension)__pbn__value.Object) : new();
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(19, value);
