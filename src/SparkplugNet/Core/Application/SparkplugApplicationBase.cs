@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.Core.Application;
 
-using SparkplugNet.Core.Data;
-
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug application.
@@ -21,7 +19,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     /// <summary>
     /// The options.
     /// </summary>
-    protected SparkplugApplicationOptions? options { private set; get; }
+    protected SparkplugApplicationOptions? Options { private set; get; }
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -73,11 +71,11 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     public async Task Start(SparkplugApplicationOptions applicationOptions)
     {
         // Storing the options.
-        this.options = applicationOptions;
+        this.Options = applicationOptions;
 
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         // Clear states.
@@ -85,7 +83,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
         this.DeviceStates.Clear();
 
         // Add handlers.
-        this.AddDisconnectedHandler();
+        this.AddEventHandler();
         this.AddMessageReceivedHandler();
 
         // Connect, subscribe to incoming messages and send a state message.
@@ -116,9 +114,9 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task PublishNodeCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (!this.Client.IsConnected)
@@ -164,9 +162,9 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task PublishDeviceCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (!this.Client.IsConnected)
@@ -205,12 +203,30 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     protected abstract Task PublishDeviceCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier);
 
     /// <summary>
-    /// Adds the disconnected handler and the reconnect functionality to the client.
+    /// Adds the event handler and the reconnect functionality to the client.
     /// </summary>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
-    private void AddDisconnectedHandler()
+    private void AddEventHandler()
     {
-        this.Client.DisconnectedAsync += this.OnClientDisconnected;
+        this.Client.DisconnectedAsync += this.OnClientDisconnectedAsync;
+        this.Client.ConnectedAsync += this.OnClientConnectedAsync;
+    }
+
+    /// <summary>
+    /// Handles the client disconnection event.
+    /// </summary>
+    /// <param name="arg">The <see cref="MqttClientConnectedEventArgs"/> instance containing the event data.</param>
+    protected virtual async Task OnClientConnectedAsync(MqttClientConnectedEventArgs arg)
+    {
+        try
+        {
+            await this.FireConnectedAsync();
+        }
+        catch (Exception ex)
+        {
+            this.Logger?.Error(ex, "OnClientConnectedAsync");
+            await Task.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -219,23 +235,23 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     /// <param name="args">The arguments.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
-    private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
+    protected virtual async Task OnClientDisconnectedAsync(MqttClientDisconnectedEventArgs args)
     {
         try
         {
-            if (this.options is null)
+            if (this.Options is null)
             {
-                throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+                throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
             }
 
             // Set all metrics to stale.
             this.UpdateMetricState(SparkplugMetricStatus.Offline);
 
             // Invoke disconnected callback.
-            this.OnDisconnected?.Invoke();
+            await this.FireDisconnectedAsync();
 
             // Wait until the disconnect interval is reached.
-            await Task.Delay(this.options.ReconnectInterval);
+            await Task.Delay(this.Options.ReconnectInterval);
 
             // Connect, subscribe to incoming messages and send a state message.
             await this.ConnectInternal();
@@ -245,7 +261,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
         }
         catch (Exception ex)
         {
-            this.Logger?.Error(ex, "OnClientDisconnected");
+            this.Logger?.Error(ex, "OnClientDisconnectedAsync");
             await Task.FromException(ex);
         }
     }
@@ -303,9 +319,9 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     {
         try
         {
-            if (this.options is null)
+            if (this.Options is null)
             {
-                throw new ArgumentNullException(nameof(this.options));
+                throw new ArgumentNullException(nameof(this.Options));
             }
 
             // Increment the session number.
@@ -314,43 +330,43 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
             // Get the will message.
             var willMessage = SparkplugMessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
-                this.options.ScadaHostIdentifier,
+                this.Options.ScadaHostIdentifier,
                 false);
 
             // Build up the MQTT client and connect.
-            this.options.CancellationToken ??= CancellationToken.None;
+            this.Options.CancellationToken ??= CancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
-                .WithClientId(this.options.ClientId)
-                .WithCredentials(this.options.UserName, this.options.Password)
+                .WithClientId(this.Options.ClientId)
+                .WithCredentials(this.Options.UserName, this.Options.Password)
                 .WithCleanSession(false)
                 .WithProtocolVersion(MqttProtocolVersion.V311);
 
-            if (this.options.UseTls)
+            if (this.Options.UseTls)
             {
                 builder.WithTls();
             }
 
-            if (this.options.WebSocketParameters is null)
+            if (this.Options.WebSocketParameters is null)
             {
-                builder.WithTcpServer(this.options.BrokerAddress, this.options.Port);
+                builder.WithTcpServer(this.Options.BrokerAddress, this.Options.Port);
             }
             else
             {
-                builder.WithWebSocketServer(this.options.BrokerAddress, this.options.WebSocketParameters);
+                builder.WithWebSocketServer(this.Options.BrokerAddress, this.Options.WebSocketParameters);
             }
 
-            if (this.options.ProxyOptions != null)
+            if (this.Options.ProxyOptions != null)
             {
                 builder.WithProxy(
-                    this.options.ProxyOptions.Address,
-                    this.options.ProxyOptions.Username,
-                    this.options.ProxyOptions.Password,
-                    this.options.ProxyOptions.Domain,
-                    this.options.ProxyOptions.BypassOnLocal);
+                    this.Options.ProxyOptions.Address,
+                    this.Options.ProxyOptions.Username,
+                    this.Options.ProxyOptions.Password,
+                    this.Options.ProxyOptions.Domain,
+                    this.Options.ProxyOptions.BypassOnLocal);
             }
 
-            if (this.options.IsPrimaryApplication)
+            if (this.Options.IsPrimaryApplication)
             {
                 builder.WithWillContentType(willMessage.ContentType);
                 builder.WithWillCorrelationData(willMessage.CorrelationData);
@@ -372,7 +388,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
             }
 
             this.ClientOptions = builder.Build();
-            await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
+            await this.Client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
 
         }
         catch (Exception ex)
@@ -389,26 +405,26 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task PublishInternal()
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options));
+            throw new ArgumentNullException(nameof(this.Options));
         }
 
         // Only send state messages for the primary application.
-        if (this.options.IsPrimaryApplication)
+        if (this.Options.IsPrimaryApplication)
         {
             // Get the online message.
             var onlineMessage = SparkplugMessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
-                this.options.ScadaHostIdentifier,
+                this.Options.ScadaHostIdentifier,
                 true);
 
             // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
             // Publish message.
-            this.options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
+            this.Options.CancellationToken ??= CancellationToken.None;
+            await this.Client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
         }
     }
 

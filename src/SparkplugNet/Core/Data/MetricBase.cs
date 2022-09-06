@@ -6,7 +6,7 @@ namespace SparkplugNet.Core.Data
     /// Base class for Metrics
     /// </summary>
     /// <typeparam name="DataTypeEnum">The type of the ata type enum.</typeparam>
-    /// <seealso cref="SparkplugNet.Core.Data.IMetric" />
+    /// <seealso cref="SparkplugNet.Core.IMetric" />
     public abstract class MetricBase<DataTypeEnum> : IMetric
         where DataTypeEnum : Enum
     {
@@ -27,7 +27,7 @@ namespace SparkplugNet.Core.Data
         /// <summary>
         /// Gets or sets the type.
         /// </summary>
-        public DataTypeEnum Type { get; set; } = default(DataTypeEnum)!;
+        public DataTypeEnum Type { get; set; } = default!;
 
         /// <summary>
         /// Sets the value.
@@ -47,15 +47,11 @@ namespace SparkplugNet.Core.Data
         {
             if (objValue == null)
             {
-                return default(T);
-            }
-            else if (objValue is T)
-            {
-                return (T)objValue;
+                return default;
             }
             else
             {
-                return (T)Convert.ChangeType(objValue, typeof(T));
+                return objValue is T valueAsT ? valueAsT : (T)Convert.ChangeType(objValue, typeof(T));
             }
         }
     }

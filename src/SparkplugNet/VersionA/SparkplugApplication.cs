@@ -44,9 +44,9 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishNodeCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (this.KnownMetrics is null)
@@ -63,7 +63,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now,
-            this.options.AddSessionNumberToCommandMessages);
+            this.Options.AddSessionNumberToCommandMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
@@ -84,9 +84,9 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (this.KnownMetrics is null)
@@ -104,7 +104,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now,
-            this.options.AddSessionNumberToCommandMessages);
+            this.Options.AddSessionNumberToCommandMessages);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
