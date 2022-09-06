@@ -26,6 +26,10 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// The default node identifier
     /// </summary>
     public const string DefaultNodeIdentifier = "";
+    /// <summary>
+    /// The default to add session number to data messages
+    /// </summary>
+    public const bool DefaultAddSessionNumberToDataMessages = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
@@ -93,11 +97,11 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="cancellationToken">The cancellation token.</param>
     public SparkplugNodeOptions(
        string brokerAddress,
-       int port ,
-       string clientId ,
+       int port,
+       string clientId,
        string userName,
        string password,
-       bool useTls ,
+       bool useTls,
        string scadaHostIdentifier,
        string groupIdentifier,
        string edgeNodeIdentifier,
@@ -111,7 +115,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
              edgeNodeIdentifier: edgeNodeIdentifier,
              tlsParameters: null,
              webSocketParameters: webSocketParameters,
-             proxyOptions : proxyOptions,
+             proxyOptions: proxyOptions,
              cancellationToken: cancellationToken)
     {
 
@@ -181,9 +185,19 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     public string EdgeNodeIdentifier { get; set; } = DefaultNodeIdentifier;
 
     /// <summary>
+    /// Gets or sets a value indicating whether to [add session number to data messages].
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [add session number to data messages]; otherwise, <c>false</c>.
+    /// </value>
+    [DefaultValue(DefaultAddSessionNumberToDataMessages)]
+    public bool AddSessionNumberToDataMessages { get; set; } = DefaultAddSessionNumberToDataMessages;
+
+    /// <summary>
     /// Gets or sets the cancellation token.
     /// </summary>
     [JsonIgnore]
     [XmlIgnore]
+    [Browsable(false)]
     public CancellationToken? CancellationToken { get; set; }
 }

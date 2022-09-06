@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.Core.Node;
 
-using SparkplugNet.Core.Data;
-
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug node.
@@ -21,7 +19,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// The options.
     /// </summary>
-    protected SparkplugNodeOptions? options { get; private set; }
+    protected SparkplugNodeOptions? Options { get; private set; }
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -44,21 +42,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
 
     /// <summary>
-    /// Gets or sets the callback for the device command received event.
-    /// </summary>
-    public Action<T>? DeviceCommandReceived { get; set; } = null;
-
-    /// <summary>
-    /// Gets or sets the callback for the node command received event.
-    /// </summary>
-    public Action<T>? NodeCommandReceived { get; set; } = null;
-
-    /// <summary>
-    /// Gets or sets the callback for the status message received event.
-    /// </summary>
-    public Action<string>? StatusMessageReceived { get; set; } = null;
-
-    /// <summary>
     /// Starts the Sparkplug node.
     /// </summary>
     /// <param name="nodeOptions">The node options.</param>
@@ -67,11 +50,11 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     public async Task Start(SparkplugNodeOptions nodeOptions)
     {
         // Storing the options.
-        this.options = nodeOptions;
+        this.Options = nodeOptions;
 
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         // Add handlers.
@@ -103,9 +86,9 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     public async Task<MqttClientPublishResult> PublishMetrics(IEnumerable<T> metrics)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (!this.Client.IsConnected)
@@ -142,16 +125,16 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options));
+            throw new ArgumentNullException(nameof(this.Options));
         }
 
         // Invoke disconnected callback.
-        this.OnDisconnected?.Invoke();
+        await this.FireDisconnectedAsync();
 
         // Wait until the disconnect interval is reached.
-        await Task.Delay(this.options.ReconnectInterval);
+        await Task.Delay(this.Options.ReconnectInterval);
 
         // Connect, subscribe to incoming messages and send a state message.
         await this.ConnectInternal();
@@ -175,18 +158,17 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="args">The arguments.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
-    private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
+    private async Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
         var topic = args.ApplicationMessage.Topic;
 
         // Handle the STATE message before anything else as they're UTF-8 encoded.
         if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
         {
-            this.StatusMessageReceived?.Invoke(Encoding.UTF8.GetString(args.ApplicationMessage.Payload));
-            return Task.CompletedTask;
+            await this.FireStatusMessageReceivedAsync(Encoding.UTF8.GetString(args.ApplicationMessage.Payload));
         }
 
-        return this.OnMessageReceived(topic, args.ApplicationMessage.Payload);
+        await this.OnMessageReceived(topic, args.ApplicationMessage.Payload);
     }
 
     /// <summary>
@@ -204,9 +186,9 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task ConnectInternal()
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options));
+            throw new ArgumentNullException(nameof(this.Options));
         }
 
         // Increment the session number.
@@ -218,24 +200,24 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         // Get the will message.
         var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
             this.NameSpace,
-            this.options.GroupIdentifier,
-            this.options.EdgeNodeIdentifier,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier,
             this.LastSessionNumber);
 
         // Build up the MQTT client and connect.
-        this.options.CancellationToken ??= CancellationToken.None;
+        this.Options.CancellationToken ??= CancellationToken.None;
 
         var builder = new MqttClientOptionsBuilder()
-            .WithClientId(this.options.ClientId)
-            .WithCredentials(this.options.UserName, this.options.Password)
+            .WithClientId(this.Options.ClientId)
+            .WithCredentials(this.Options.UserName, this.Options.Password)
             .WithCleanSession(false)
             .WithProtocolVersion(MqttProtocolVersion.V311);
 
-        if (this.options.UseTls)
+        if (this.Options.UseTls)
         {
-            if (this.options.TlsParameters != null)
+            if (this.Options.TlsParameters != null)
             {
-                builder.WithTls(this.options.TlsParameters);
+                builder.WithTls(this.Options.TlsParameters);
             }
             else
             {
@@ -243,23 +225,23 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             }
         }
 
-        if (this.options.WebSocketParameters is null)
+        if (this.Options.WebSocketParameters is null)
         {
-            builder.WithTcpServer(this.options.BrokerAddress, this.options.Port);
+            builder.WithTcpServer(this.Options.BrokerAddress, this.Options.Port);
         }
         else
         {
-            builder.WithWebSocketServer(this.options.BrokerAddress, this.options.WebSocketParameters);
+            builder.WithWebSocketServer(this.Options.BrokerAddress, this.Options.WebSocketParameters);
         }
 
-        if (this.options.ProxyOptions != null)
+        if (this.Options.ProxyOptions != null)
         {
             builder.WithProxy(
-                this.options.ProxyOptions.Address,
-                this.options.ProxyOptions.Username,
-                this.options.ProxyOptions.Password,
-                this.options.ProxyOptions.Domain,
-                this.options.ProxyOptions.BypassOnLocal);
+                this.Options.ProxyOptions.Address,
+                this.Options.ProxyOptions.Username,
+                this.Options.ProxyOptions.Password,
+                this.Options.ProxyOptions.Domain,
+                this.Options.ProxyOptions.BypassOnLocal);
         }
 
         // Add the will message data.
@@ -286,7 +268,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         // Debug output.
         this.Logger?.Debug("CONNECT Message: {@ClientOptions}", this.ClientOptions);
 
-        await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
+        await this.Client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
     }
 
     /// <summary>
@@ -296,23 +278,23 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task PublishInternal()
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options));
+            throw new ArgumentNullException(nameof(this.Options));
         }
 
         // Get the online message.
         var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage<T>(
             this.NameSpace,
-            this.options.GroupIdentifier,
-            this.options.EdgeNodeIdentifier,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier,
             this.KnownMetrics,
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
 
         // Publish data.
-        this.options.CancellationToken ??= CancellationToken.None;
+        this.Options.CancellationToken ??= CancellationToken.None;
 
         // Debug output.
         this.Logger?.Debug("NBIRTH Message: {@OnlineMessage}", onlineMessage);
@@ -321,7 +303,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
+        await this.Client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
     }
 
     /// <summary>
@@ -331,18 +313,18 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task SubscribeInternal()
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options));
+            throw new ArgumentNullException(nameof(this.Options));
         }
 
-        var nodeCommandSubscribeTopic = SparkplugTopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
+        var nodeCommandSubscribeTopic = SparkplugTopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.Options.GroupIdentifier, this.Options.EdgeNodeIdentifier);
         await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
-        var deviceCommandSubscribeTopic = SparkplugTopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.options.GroupIdentifier, this.options.EdgeNodeIdentifier);
+        var deviceCommandSubscribeTopic = SparkplugTopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.Options.GroupIdentifier, this.Options.EdgeNodeIdentifier);
         await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
-        var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.options.ScadaHostIdentifier);
+        var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);
         await this.Client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
     }
 }

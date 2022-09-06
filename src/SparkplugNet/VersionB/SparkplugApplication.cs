@@ -45,9 +45,9 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishNodeCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options arent't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options arent't set properly.");
         }
 
         if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
@@ -63,7 +63,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.Options.AddSessionNumberToCommandMessages);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
@@ -87,12 +88,12 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is null)
         {
             throw new Exception("Invalid metric type specified for version B metric.");
         }
@@ -106,7 +107,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.Options.AddSessionNumberToCommandMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

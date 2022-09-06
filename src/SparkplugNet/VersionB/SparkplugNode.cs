@@ -43,25 +43,26 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected override async Task<MqttClientPublishResult> PublishMessage(IEnumerable<VersionBData.Metric> metrics)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
+        if (this.KnownMetrics is null)
         {
-            throw new Exception("Invalid metric type specified for version B metric.");
+            throw new ArgumentNullException(nameof(this.KnownMetrics), "The KnownMetrics aren't set properly.");
         }
 
         // Get the data message.
         var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(
             this.NameSpace,
-            this.options.GroupIdentifier,
-            this.options.EdgeNodeIdentifier,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier,
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.Options.AddSessionNumberToDataMessages);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
@@ -82,7 +83,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
     /// </returns>
     /// <exception cref="System.InvalidCastException">The metric cast didn't work properly.</exception>
-    protected override Task OnMessageReceived(string topic, byte[] payload)
+    protected override async Task OnMessageReceived(string topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
 
@@ -101,7 +102,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
                 {
                     if (metric is VersionBData.Metric convertedMetric)
                     {
-                        this.DeviceCommandReceived?.Invoke(convertedMetric);
+                        await this.FireDeviceCommandReceivedAsync(convertedMetric);
                     }
                 }
             }
@@ -117,14 +118,11 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
                 {
                     if (metric is VersionBData.Metric convertedMetric)
                     {
-                        this.NodeCommandReceived?.Invoke(convertedMetric);
+                        await this.FireNodeCommandReceivedAsync(convertedMetric);
                     }
                 }
             }
         }
-
-        return Task.CompletedTask;
-
     }
 
     /// <summary>
@@ -137,9 +135,9 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected override async Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<VersionBData.Metric> metrics, string deviceIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (!this.KnownDevices.ContainsKey(deviceIdentifier))
@@ -149,21 +147,22 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
 
         var deviceMetrics = this.KnownDevices[deviceIdentifier];
 
-        if (deviceMetrics is not List<VersionBData.Metric> knownMetrics)
+        if (deviceMetrics is null)
         {
-            throw new Exception("Invalid metric type specified for version B metric.");
+            throw new ArgumentNullException(deviceIdentifier, $"The KnownMetrics for the device {deviceIdentifier} aren't set properly.");
         }
 
         // Get the data message.
         var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
             this.NameSpace,
-            this.options.GroupIdentifier,
-            this.options.EdgeNodeIdentifier,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier,
             deviceIdentifier,
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now,
+            this.Options.AddSessionNumberToDataMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

@@ -19,6 +19,11 @@ using Newtonsoft.Json;
 public class SparkplugApplicationOptions : SparkplugBaseOptions
 {
     /// <summary>
+    /// The default to add session number to command messages
+    /// </summary>
+    public const bool DefaultAddSessionNumberToCommandMessages = true;
+
+    /// <summary>
     /// For serializers only
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
@@ -66,7 +71,6 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
 
     }
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
@@ -84,9 +88,9 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="cancellationToken">The cancellation token.</param>
     public SparkplugApplicationOptions(
     string brokerAddress,
-    int port ,
-    string clientId ,
-    string userName ,
+    int port,
+    string clientId,
+    string userName,
     string password,
     bool useTls,
     string scadaHostIdentifier,
@@ -161,9 +165,19 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     public bool IsPrimaryApplication { get; set; } = false;
 
     /// <summary>
+    /// Gets or sets a value indicating whether to [add session number to command messages].
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [add session number to command messages]; otherwise, <c>false</c>.
+    /// </value>
+    [DefaultValue(DefaultAddSessionNumberToCommandMessages)]
+    public bool AddSessionNumberToCommandMessages { get; set; } = DefaultAddSessionNumberToCommandMessages;
+
+    /// <summary>
     /// Gets or sets the cancellation token.
     /// </summary>
     [JsonIgnore]
     [XmlIgnore]
+    [Browsable(false)]
     public CancellationToken? CancellationToken { get; set; }
 }
