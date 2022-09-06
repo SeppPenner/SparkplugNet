@@ -14,7 +14,7 @@ namespace SparkplugNet.Core.Application;
 /// A class that handles a Sparkplug application.
 /// </summary>
 /// <seealso cref="SparkplugBase{T}"/>
-public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IMetric, new()
+public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
     /// <summary>
     /// The options.
@@ -51,16 +51,6 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     /// Gets the node states.
     /// </summary>
     public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new();
-
-    /// <summary>
-    /// Gets or sets the callback for the device data received event.
-    /// </summary>
-    public Action<string, string, string, T>? OnDeviceDataReceived { get; set; } = null;
-
-    /// <summary>
-    /// Gets or sets the callback for the node data received event.
-    /// </summary>
-    public Action<string, string, T>? OnNodeDataReceived { get; set; } = null;
 
     /// <summary>
     /// Starts the Sparkplug application.
@@ -293,7 +283,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
                 return Task.CompletedTask;
             }
 
-            return this.OnMessageReceived(topic, args.ApplicationMessage.Payload);
+            return this.OnMessageReceived(SparkplugMessageTopic.Parse(topic), args.ApplicationMessage.Payload);
         }
         catch (Exception ex)
         {
@@ -308,7 +298,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : I
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected abstract Task OnMessageReceived(string topic, byte[] payload);
+    protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
     /// Connects the Sparkplug application to the MQTT broker.

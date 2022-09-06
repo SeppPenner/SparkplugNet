@@ -50,11 +50,6 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             throw new ArgumentNullException(nameof(this.Options), "The options arent't set properly.");
         }
 
-        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
-        {
-            throw new Exception("Invalid metric type specified for version B metric.");
-        }
-
         // Get the data message.
         var dataMessage = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(
             this.NameSpace,
@@ -125,66 +120,73 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <returns>
     /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
     /// </returns>
-    protected override Task OnMessageReceived(string topic, byte[] payload)
+    protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
 
         if (payloadVersionB != null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
-            this.HandleMessagesForVersionB(topic, convertedPayload);
+            await this.HandleMessagesForVersionBAsync(topic, convertedPayload);
         }
-
-        return Task.CompletedTask;
     }
 
     /// <summary>
-    /// Handles the received messages for payload version B.
+    /// Handles the received messages for payload version A.
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <exception cref="ArgumentNullException">The known metrics are null.</exception>
     /// <exception cref="Exception">The metric is unknown.</exception>
-    private void HandleMessagesForVersionB(string topic, VersionBData.Payload payload)
+    private async Task HandleMessagesForVersionBAsync(SparkplugMessageTopic topic, VersionBData.Payload payload)
     {
-        if (this.KnownMetrics is not IEnumerable<VersionBData.Metric> knownMetrics)
-        {
-            throw new ArgumentNullException(nameof(knownMetrics), "The known metrics are invalid.");
-        }
-
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
 
         this.KnownMetricsStorage.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
 
-        if (topic.Contains(SparkplugMessageType.NodeBirth.GetDescription()))
+        switch (topic.MessageType)
         {
-            this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online);
-        }
+            case SparkplugMessageType.NodeBirth:
+                await this.FireNodeBirthReceivedAsync(topic.EdgeNodeIdentifier,
+                    this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
+                break;
+            case SparkplugMessageType.DeviceBirth:
+                await this.FireDeviceBirthReceivedAsync(topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
+                    this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
+                break;
+            case SparkplugMessageType.NodeData:
+                foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
+                {
+                    await this.FireNodeDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, metric);
+                }
 
-        if (topic.Contains(SparkplugMessageType.NodeDeath.GetDescription()))
-        {
-            this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Offline);
-        }
+                break;
+            case SparkplugMessageType.DeviceData:
+                if (string.IsNullOrEmpty(topic.DeviceIdentifier))
+                {
+                    throw new InvalidOperationException($"topic {topic} is invalid!");
+                }
 
-        if (topic.Contains(SparkplugMessageType.DeviceBirth.GetDescription()))
-        {
-            this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online);
-        }
+                foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
+                {
+                    await this.FireDeviceDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, metric);
+                }
 
-        if (topic.Contains(SparkplugMessageType.DeviceDeath.GetDescription()))
-        {
-            this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Offline);
-        }
+                break;
+            case SparkplugMessageType.NodeDeath:
+                this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
+                await this.FireNodeDeathReceivedAsync(topic.EdgeNodeIdentifier);
+                break;
+            case SparkplugMessageType.DeviceDeath:
+                if (string.IsNullOrEmpty(topic.DeviceIdentifier))
+                {
+                    throw new InvalidOperationException($"topic {topic} is invalid!");
+                }
 
-        if (topic.Contains(SparkplugMessageType.NodeData.GetDescription()))
-        {
-            this.HandleNodeMessage(topic, payload, SparkplugMetricStatus.Online, true);
-        }
-
-        if (topic.Contains(SparkplugMessageType.DeviceData.GetDescription()))
-        {
-            this.HandleDeviceMessage(topic, payload, SparkplugMetricStatus.Online, true);
+                this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
+                await this.FireDeviceDeathReceivedAsync(topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+                break;
         }
     }
 
@@ -194,82 +196,36 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
-    /// <param name="invokeDeviceDataCallback">A value indicating whether the device data callback is invoked or not.</param>
     /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-    private void HandleDeviceMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeDeviceDataCallback = false)
+    private IEnumerable<VersionBData.Metric> ProcessPayload(SparkplugMessageTopic topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
     {
-        var splitTopic = topic.Split('/');
-        if (splitTopic.Length != 5)
-        {
-            return;
-        }
-
-        var groupId = splitTopic[1];
-        var nodeId = splitTopic[3];
-        var deviceId = splitTopic[4];
-
         var metricState = new MetricState<VersionBData.Metric>
         {
             MetricStatus = metricStatus
         };
 
+        if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
+        {
+            this.DeviceStates[topic.DeviceIdentifier] = metricState;
+        }
+        else
+        {
+            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
+        }
+
         foreach (var payloadMetric in payload.Metrics)
         {
-            if (payloadMetric is not VersionBData.Metric convertedMetric)
+            if (payloadMetric is not VersionB.Data.Metric convertedMetric)
             {
                 throw new InvalidCastException("The metric cast didn't work properly.");
             }
 
-            metricState.Metrics[payloadMetric.Name] = convertedMetric;
-
-            if (invokeDeviceDataCallback)
+            if (payloadMetric.Name != null)
             {
-                this.OnDeviceDataReceived?.Invoke(groupId, nodeId, deviceId, convertedMetric);
-            }
-        }
-
-        this.DeviceStates[deviceId] = metricState;
-    }
-
-    /// <summary>
-    /// Handles the node message.
-    /// </summary>
-    /// <param name="topic">The topic.</param>
-    /// <param name="payload">The payload.</param>
-    /// <param name="metricStatus">The metric status.</param>
-    /// <param name="invokeNodeDataCallback">A value indicating whether the node data callback is invoked or not.</param>
-    /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-    private void HandleNodeMessage(string topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus, bool invokeNodeDataCallback = false)
-    {
-        var splitTopic = topic.Split('/');
-        if (splitTopic.Length != 4)
-        {
-            return;
-        }
-
-        var groupId = splitTopic[1];
-        var nodeId = splitTopic[3];
-
-        var metricState = new MetricState<VersionBData.Metric>
-        {
-            MetricStatus = metricStatus
-        };
-
-        foreach (var payloadMetric in payload.Metrics)
-        {
-            if (payloadMetric is not VersionBData.Metric convertedMetric)
-            {
-                throw new InvalidCastException("The metric cast didn't work properly.");
+                metricState.Metrics[payloadMetric.Name] = convertedMetric;
             }
 
-            metricState.Metrics[payloadMetric.Name] = convertedMetric;
-
-            if (invokeNodeDataCallback)
-            {
-                this.OnNodeDataReceived?.Invoke(groupId, nodeId, convertedMetric);
-            }
+            yield return convertedMetric;
         }
-
-        this.NodeStates[nodeId] = metricState;
     }
 }

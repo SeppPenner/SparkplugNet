@@ -40,7 +40,7 @@ namespace SparkplugNet.Core.Node
             /// <value>
             /// The status.
             /// </value>
-            public string Status { get;  }
+            public string Status { get; }
             /// <summary>
             /// Initializes a new instance of the <see cref="StatusMessageEvnetArgs"/> class.
             /// </summary>
@@ -50,59 +50,6 @@ namespace SparkplugNet.Core.Node
                 : base(sender)
             {
                 this.Status = status;
-            }
-        }
-
-        /// <summary>
-        /// Device event args
-        /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class DeviceEventArgs : SparkplugEventArgs
-        {
-            /// <summary>
-            /// Gets the device identifier.
-            /// </summary>
-            /// <value>
-            /// The device identifier.
-            /// </value>
-            public string DeviceIdentifier { get; }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="DeviceEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="deviceIdentifier">The device identifier.</param>
-            public DeviceEventArgs(SparkplugNodeBase<T> sender, string deviceIdentifier)
-                : base(sender)
-            {
-                this.DeviceIdentifier = deviceIdentifier;
-            }
-        }
-
-        /// <summary>
-        /// Device birth event args
-        /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class DeviceBirthEventArgs : DeviceEventArgs
-        {
-            /// <summary>
-            /// Gets the metrics.
-            /// </summary>
-            /// <value>
-            /// The metrics.
-            /// </value>
-            public IEnumerable<T> Metrics { get; }
-            /// <summary>
-            /// Initializes a new instance of the <see cref="DeviceBirthEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="deviceIdentifier">The device identifier.</param>
-            /// <param name="metrics">The metrics.</param>
-            public DeviceBirthEventArgs(SparkplugNodeBase<T> sender, string deviceIdentifier, IEnumerable<T> metrics)
-                : base(sender, deviceIdentifier)
-            {
-                this.Metrics = metrics;
-
             }
         }
     }

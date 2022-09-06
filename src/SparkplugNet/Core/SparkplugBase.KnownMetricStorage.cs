@@ -2,7 +2,6 @@ namespace SparkplugNet.Core
 {
     using System;
     using System.Collections.Generic;
-    using SparkplugNet.Core.Data;
 
     public partial class SparkplugBase<T> : ISparkplugConnection
         where T : IMetric, new()

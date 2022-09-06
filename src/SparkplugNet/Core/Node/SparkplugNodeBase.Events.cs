@@ -115,25 +115,25 @@ namespace SparkplugNet.Core.Node
         }
         #endregion
 
-        #region DeviceBirthReceived
+        #region DeviceBirthPublishing
         /// <summary>
         /// The status message received event
         /// </summary>
-        protected AsyncEvent<DeviceBirthEventArgs> _DeviceBirthReceivedEvent = new AsyncEvent<DeviceBirthEventArgs>();
+        protected AsyncEvent<DeviceBirthEventArgs> _DeviceBirthPublishingEvent = new AsyncEvent<DeviceBirthEventArgs>();
         /// <summary>
         /// Gets or sets the callback for the device birth received event.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [Obsolete("Please use DeviceCommandReceivedAsync", false)]
+        [Obsolete("Please use DeviceBirthSendingAsync", false)]
         public Action<KeyValuePair<string, List<T>>>? DeviceBirthReceived { get; set; } = null;
         /// <summary>
         /// Occurs when [Node command received asynchronous].
         /// </summary>
-        public event Func<DeviceBirthEventArgs, Task> DeviceBirthReceivedAsync
+        public event Func<DeviceBirthEventArgs, Task> DeviceBirthPublishingAsync
         {
-            add => this._DeviceBirthReceivedEvent.AddHandler(value);
-            remove => this._DeviceBirthReceivedEvent.RemoveHandler(value);
+            add => this._DeviceBirthPublishingEvent.AddHandler(value);
+            remove => this._DeviceBirthPublishingEvent.RemoveHandler(value);
         }
 
         /// <summary>
@@ -142,13 +142,13 @@ namespace SparkplugNet.Core.Node
         /// <param name="deviceId">The device identifier.</param>
         /// <param name="metrics">The metrics</param>
         /// <returns></returns>
-        protected virtual Task FireDeviceBirthReceivedAsync(string deviceId, IEnumerable<T> metrics)
+        protected virtual Task FireDeviceBirthPublishingAsync(string deviceId, IEnumerable<T> metrics)
         {
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
             this.DeviceBirthReceived?.Invoke(new KeyValuePair<string, List<T>>(deviceId, metrics.ToList()));
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            return this._DeviceBirthReceivedEvent.InvokeAsync(new DeviceBirthEventArgs(this, deviceId, metrics));
+            return this._DeviceBirthPublishingEvent.InvokeAsync(new DeviceBirthEventArgs(this, this.Options!.EdgeNodeIdentifier, deviceId, metrics));
         }
         #endregion
 
@@ -156,21 +156,21 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// The status message received event
         /// </summary>
-        protected AsyncEvent<DeviceEventArgs> _DeviceDeathReceivedEvent = new AsyncEvent<DeviceEventArgs>();
+        protected AsyncEvent<DeviceEventArgs> _DeviceDeathPublishingEvent = new AsyncEvent<DeviceEventArgs>();
         /// <summary>
         /// Gets or sets the callback for the device death received event.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [Obsolete("Please use DeviceCommandReceivedAsync", false)]
+        [Obsolete("Please use DeviceDeathPublishingAsync", false)]
         public Action<string>? DeviceDeathReceived { get; set; } = null;
         /// <summary>
         /// Occurs when [Node command received asynchronous].
         /// </summary>
-        public event Func<DeviceEventArgs, Task> DeviceDeathReceivedAsync
+        public event Func<DeviceEventArgs, Task> DeviceDeathPublishingAsync
         {
-            add => this._DeviceDeathReceivedEvent.AddHandler(value);
-            remove => this._DeviceDeathReceivedEvent.RemoveHandler(value);
+            add => this._DeviceDeathPublishingEvent.AddHandler(value);
+            remove => this._DeviceDeathPublishingEvent.RemoveHandler(value);
         }
 
         /// <summary>
@@ -178,13 +178,13 @@ namespace SparkplugNet.Core.Node
         /// </summary>
         /// <param name="deviceId">The device identifier.</param>
         /// <returns></returns>
-        protected virtual Task FireDeviceDeathReceivedAsync(string deviceId)
+        protected virtual Task FireDeviceDeathPublishingAsync(string deviceId)
         {
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
             this.DeviceDeathReceived?.Invoke(deviceId);
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            return this._DeviceDeathReceivedEvent.InvokeAsync(new DeviceEventArgs(this, deviceId));
+            return this._DeviceDeathPublishingEvent.InvokeAsync(new DeviceEventArgs(this, this.Options!.EdgeNodeIdentifier, deviceId));
         }
         #endregion
     }

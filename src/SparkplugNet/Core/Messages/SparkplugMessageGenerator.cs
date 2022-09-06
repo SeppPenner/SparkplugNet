@@ -8,9 +8,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Core.Messages;
-
-using SparkplugNet.Core.Data;
-
 /// <summary>
 /// The Sparkplug message generator.
 /// </summary>

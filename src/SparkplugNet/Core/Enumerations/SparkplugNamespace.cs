@@ -17,12 +17,12 @@ public enum SparkplugNamespace
     /// <summary>
     /// The version A namespace.
     /// </summary>
-    [Description("spAv1.0")]
+    [Description(SparkplugTopic.NamespaceSparkplugA)]
     VersionA,
 
     /// <summary>
     /// The version B namespace.
     /// </summary>
-    [Description("spBv1.0")]
+    [Description(SparkplugTopic.NamespaceSparkplugB)]
     VersionB
 }

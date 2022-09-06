@@ -117,10 +117,10 @@ public class Program
         application.DisconnectedAsync += ApplicationVersionA_DisconnectedAsync;
 
         // Handle the application's node data received event.
-        application.OnNodeDataReceived += OnVersionANodeDataReceived;
+        application.NodeDataReceivedAsync += OnVersionANodeDataReceived;
 
         // Handle the application's device data received event.
-        application.OnDeviceDataReceived += OnVersionADeviceDataReceived;
+        application.DeviceDataReceivedAsync += OnVersionADeviceDataReceived;
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -197,13 +197,13 @@ public class Program
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
 
         // Handle the node's device birth received event.
-        node.DeviceBirthReceivedAsync += OnVersionANodeDeviceBirthReceived;
+        node.DeviceBirthPublishingAsync += OnVersionANodeDeviceBirthReceived;
 
         // Handle the node's device command received event.
         node.DeviceCommandReceivedAsync += OnVersionANodeDeviceCommandReceived;
 
         // Handle the node's device death received event.
-        node.DeviceDeathReceivedAsync += OnVersionANodeDeviceDeathReceived;
+        node.DeviceDeathPublishingAsync += OnVersionANodeDeviceDeathReceived;
 
         // Stopping a node.
         await node.Stop();
@@ -229,10 +229,10 @@ public class Program
         application.DisconnectedAsync += ApplicationVersionB_DisconnectedAsync;
 
         // Handle the application's node data received event.
-        application.OnNodeDataReceived += OnVersionBNodeDataReceived;
+        application.NodeDataReceivedAsync += OnVersionBNodeDataReceived;
 
         // Handle the application's device data received event.
-        application.OnDeviceDataReceived += OnVersionBDeviceDataReceived;
+        application.DeviceDataReceivedAsync += OnVersionBDeviceDataReceived;
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -309,13 +309,13 @@ public class Program
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
 
         // Handle the node's device birth received event.
-        node.DeviceBirthReceivedAsync += OnVersionBNodeDeviceBirthReceived;
+        node.DeviceBirthPublishingAsync += OnVersionBNodeDeviceBirthReceived;
 
         // Handle the node's device command received event.
         node.DeviceCommandReceivedAsync += OnVersionBNodeDeviceCommandReceived;
 
         // Handle the node's device death received event.
-        node.DeviceDeathReceivedAsync += OnVersionBNodeDeviceDeathReceived;
+        node.DeviceDeathPublishingAsync += OnVersionBNodeDeviceDeathReceived;
 
         // Stopping a node.
         await node.Stop();
@@ -343,33 +343,37 @@ public class Program
     /// <summary>
     /// Handles the node data callback for version A applications.
     /// </summary>
-    private static void OnVersionANodeDataReceived(string groupId, string nodeId, VersionAData.KuraMetric _)
+    private static Task OnVersionANodeDataReceived(VersionA.SparkplugApplication.DataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the node data callback for version B applications.
     /// </summary>
-    private static void OnVersionBNodeDataReceived(string groupId, string nodeId, VersionBData.Metric _)
+    private static Task OnVersionBNodeDataReceived(VersionB.SparkplugApplication.DataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device data callback for version A applications.
     /// </summary>
-    private static void OnVersionADeviceDataReceived(string groupId, string nodeId, string deviceId, VersionAData.KuraMetric _)
+    private static Task OnVersionADeviceDataReceived(VersionA.SparkplugApplication.DeviceDataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device data callback for version B applications.
     /// </summary>
-    private static void OnVersionBDeviceDataReceived(string groupId, string nodeId, string deviceId, VersionBData.Metric _)
+    private static Task OnVersionBDeviceDataReceived(VersionB.SparkplugApplication.DeviceDataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>

@@ -22,7 +22,7 @@ namespace SparkplugNet.Core
         /// <param name="sender">The sender.</param>
         public SparkplugEventArgs(ISparkplugConnection sender)
         {
-            this.Sender = sender;   
+            this.Sender = sender;
         }
     }
 }

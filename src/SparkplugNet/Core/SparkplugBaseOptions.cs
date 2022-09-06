@@ -39,7 +39,7 @@ namespace SparkplugNet.Core
         /// The default reconnect interval
         /// </summary>
         public static readonly TimeSpan DefaultReconnectInterval = TimeSpan.FromSeconds(30);
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkplugBaseOptions"/> class.
         /// </summary>

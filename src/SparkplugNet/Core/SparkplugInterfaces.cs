@@ -38,7 +38,7 @@ namespace SparkplugNet.Core
         /// <summary>
         /// Occurs when [connected asynchronous].
         /// </summary>
-        event Func<SparkplugEventArgs,Task> ConnectedAsync;
+        event Func<SparkplugEventArgs, Task> ConnectedAsync;
         /// <summary>
         /// Occurs when [disconnected asynchronous].
         /// </summary>

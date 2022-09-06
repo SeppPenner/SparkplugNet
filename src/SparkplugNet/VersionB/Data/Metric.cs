@@ -346,9 +346,9 @@ public class Metric : MetricBase<DataType>
                 default:
                 case VersionBDataTypeEnum.Int8:
                 case VersionBDataTypeEnum.Int16:
-                    
+
                 case VersionBDataTypeEnum.Int32:
-                
+
                 case VersionBDataTypeEnum.UInt8:
                 case VersionBDataTypeEnum.UInt16:
                 case VersionBDataTypeEnum.UInt32:
@@ -373,13 +373,13 @@ public class Metric : MetricBase<DataType>
                 case VersionBDataTypeEnum.Uuid:
                     this.StringValue = "";
                     break;
-                
+
                 case VersionBDataTypeEnum.DataSet:
                     this.DataSetValue = new();
                     break;
                 case VersionBDataTypeEnum.Bytes:
                 case VersionBDataTypeEnum.File:
-                    this.BytesValue =Array.Empty<byte>();
+                    this.BytesValue = Array.Empty<byte>();
                     break;
                 case VersionBDataTypeEnum.Template:
                     this.TemplateValue = new();
@@ -388,6 +388,7 @@ public class Metric : MetricBase<DataType>
                     this.Properties = new();
                     break;
             }
+
             this.IsNull = true;
         }
 

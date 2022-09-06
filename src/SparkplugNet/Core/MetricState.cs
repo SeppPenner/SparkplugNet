@@ -8,9 +8,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Core;
-
-using SparkplugNet.Core.Data;
-
 /// <summary>
 /// The metric state class.
 /// </summary>
