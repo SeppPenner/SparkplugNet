@@ -83,44 +83,44 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
     /// </returns>
     /// <exception cref="System.InvalidCastException">The metric cast didn't work properly.</exception>
-    protected override async Task OnMessageReceived(string topic, byte[] payload)
+    protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
 
         if (payloadVersionB is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
-
-            if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+            if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
             {
-                if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
-                {
-                    throw new InvalidCastException("The metric cast didn't work properly.");
-                }
-
-                foreach (var metric in convertedPayloadVersionB.Metrics)
-                {
-                    if (metric is VersionBData.Metric convertedMetric)
-                    {
-                        await this.FireDeviceCommandReceivedAsync(convertedMetric);
-                    }
-                }
+                throw new InvalidCastException("The metric cast didn't work properly.");
             }
 
-            if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+            switch (topic.MessageType)
             {
-                if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
-                {
-                    throw new InvalidCastException("The metric cast didn't work properly.");
-                }
-
-                foreach (var metric in convertedPayloadVersionB.Metrics)
-                {
-                    if (metric is VersionBData.Metric convertedMetric)
+                case SparkplugMessageType.DeviceCommand:
+                    if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
                     {
-                        await this.FireNodeCommandReceivedAsync(convertedMetric);
+                        foreach (var metric in convertedPayloadVersionB.Metrics)
+                        {
+                            if (metric is VersionBData.Metric convertedMetric)
+                            {
+                                await this.FireDeviceCommandReceivedAsync(topic.DeviceIdentifier, convertedMetric);
+                            }
+                        }
                     }
-                }
+
+                    break;
+
+                case SparkplugMessageType.NodeCommand:
+                    foreach (var metric in convertedPayloadVersionB.Metrics)
+                    {
+                        if (metric is VersionBData.Metric convertedMetric)
+                        {
+                            await this.FireNodeCommandReceivedAsync(convertedMetric);
+                        }
+                    }
+
+                    break;
             }
         }
     }

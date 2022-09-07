@@ -21,7 +21,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <summary>
     /// The options.
     /// </summary>
-    protected SparkplugApplicationOptions? Options { private set; get; }
+    public SparkplugApplicationOptions? Options { private set; get; }
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>

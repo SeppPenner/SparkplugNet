@@ -202,37 +202,78 @@ namespace SparkplugNet.Core
         /// </exception>
         public static SparkplugMessageTopic Parse(string topic)
         {
+            if (TryParse(topic, out var parsedTopic, true))
+            {
+                return parsedTopic;
+            }
+            else
+            {
+                throw new FormatException($"{topic} could not be parsed");
+            }
+        }
+        /// <summary>
+        /// Tries to parse the topic.
+        /// </summary>
+        /// <param name="topic">The topic.</param>
+        /// <param name="parsedTopic">The parsed topic.</param>
+        /// <returns></returns>
+        public static bool TryParse(string topic, out SparkplugMessageTopic? parsedTopic)
+        {
+            return TryParse(topic, out parsedTopic, false);
+        }
+        private static bool TryParse(string topic, out SparkplugMessageTopic? parsedTopic, bool throwError)
+        {
             string[] topics = topic.Split('/');
             if (topics.Length == 4 ||
                 topic.Length == 5)
             {
                 if (!TryGetNamespace(topics[0], out var @namespace))
                 {
-                    throw new FormatException($"namespace {topics[0]} is unknown in topic: {topic}!");
-                }
-
-                string group = topics[1];
-
-                if (!_messageTypeFromString.TryGetValue(topics[2], out var msgType))
-                {
-                    throw new FormatException($"message type {topics[2]} is unknown in topic: {topic}!");
-                }
-
-                string edge = topics[3];
-                string? device;
-                if (topics.Length == 5)
-                {
-                    device = topics[4];
+                    if (throwError)
+                    {
+                        throw new FormatException($"namespace {topics[0]} is unknown in topic: {topic}!");
+                    }
                 }
                 else
                 {
-                    device = null;
-                }
+                    string group = topics[1];
 
-                return new SparkplugMessageTopic(@namespace, group, msgType, edge, device);
+                    if (!_messageTypeFromString.TryGetValue(topics[2], out var msgType))
+                    {
+                        if (throwError)
+                        {
+                            throw new FormatException($"message type {topics[2]} is unknown in topic: {topic}!");
+                        }
+                    }
+                    else
+                    {
+
+                        string edge = topics[3];
+                        string? device;
+                        if (topics.Length == 5)
+                        {
+                            device = topics[4];
+                        }
+                        else
+                        {
+                            device = null;
+                        }
+
+                        parsedTopic = new SparkplugMessageTopic(@namespace, group, msgType, edge, device);
+                        return true;
+                    }
+                }
             }
 
-            throw new FormatException($"{topic} has a invalid format, should consist of 4 or 5 parts!");
+            if (throwError)
+            {
+                throw new FormatException($"{topic} has a invalid format, should consist of 4 or 5 parts!");
+            }
+            else
+            {
+                parsedTopic = null;
+                return false;
+            }
         }
     }
 }

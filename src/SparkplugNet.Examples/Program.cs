@@ -398,7 +398,7 @@ public class Program
     /// Handles the node command callback for version A nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionANodeNodeCommandReceived(VersionA.SparkplugNode.CommandEventArgs args)
+    private static Task OnVersionANodeNodeCommandReceived(VersionA.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -408,7 +408,7 @@ public class Program
     /// Handles the node command callback for version B nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionBNodeNodeCommandReceived(VersionB.SparkplugNode.CommandEventArgs args)
+    private static Task OnVersionBNodeNodeCommandReceived(VersionB.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -458,7 +458,7 @@ public class Program
     /// Handles the device command callback for version A nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionANodeDeviceCommandReceived(VersionA.SparkplugNode.CommandEventArgs args)
+    private static Task OnVersionANodeDeviceCommandReceived(VersionA.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -468,7 +468,7 @@ public class Program
     /// Handles the device command callback for version B nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionBNodeDeviceCommandReceived(VersionB.SparkplugNode.CommandEventArgs args)
+    private static Task OnVersionBNodeDeviceCommandReceived(VersionB.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;

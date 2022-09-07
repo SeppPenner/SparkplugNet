@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.Core.Node;
 
-using System.ComponentModel.DataAnnotations;
-
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug node.
@@ -21,7 +19,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// The options.
     /// </summary>
-    protected SparkplugNodeOptions? Options { get; private set; }
+    public SparkplugNodeOptions? Options { get; private set; }
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -47,23 +45,30 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Starts the Sparkplug node.
     /// </summary>
     /// <param name="nodeOptions">The node options.</param>
+    /// <param name="knownMetricsStorage">(optional) overwrite the known metrics-storage</param>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    public async Task Start(SparkplugNodeOptions nodeOptions)
+    public async Task Start(SparkplugNodeOptions nodeOptions, KnownMetricStorage? knownMetricsStorage = null)
     {
+        if (nodeOptions is null)
+        {
+            throw new ArgumentNullException(nameof(nodeOptions), "The options aren't set properly.");
+        }
+
         if (this.IsRunning)
         {
             throw new InvalidOperationException("Start should only be called once!");
         }
+
         this.IsRunning = true;
+
+        if (knownMetricsStorage != null)
+        {
+            this._knonwMetrics = knownMetricsStorage;
+        }
 
         // Storing the options.
         this.Options = nodeOptions;
-
-        if (this.Options is null)
-        {
-            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
-        }
 
         // Add handlers.
         this.AddEventHandler();
@@ -200,14 +205,20 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     private async Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
         var topic = args.ApplicationMessage.Topic;
-
-        // Handle the STATE message before anything else as they're UTF-8 encoded.
-        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+       
+        if (SparkplugMessageTopic.TryParse(topic, out var messageTopic))
         {
+            await this.OnMessageReceived(messageTopic!, args.ApplicationMessage.Payload);
+        }
+        else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+        {
+            // Handle the STATE message before anything else as they're UTF-8 encoded.
             await this.FireStatusMessageReceivedAsync(Encoding.UTF8.GetString(args.ApplicationMessage.Payload));
         }
-
-        await this.OnMessageReceived(topic, args.ApplicationMessage.Payload);
+        else
+        {
+            this.Logger?.Information("Received message on unkown topic {@topic}: {payload}", topic, args.ApplicationMessage.Payload);
+        }
     }
 
     /// <summary>
@@ -216,7 +227,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected abstract Task OnMessageReceived(string topic, byte[] payload);
+    protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
     /// Connects the Sparkplug node to the MQTT broker.

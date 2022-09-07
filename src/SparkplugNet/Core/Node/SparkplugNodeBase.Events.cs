@@ -8,7 +8,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// The device command received event
         /// </summary>
-        protected AsyncEvent<CommandEventArgs> _deviceCommandReceivedEvent = new AsyncEvent<CommandEventArgs>();
+        protected AsyncEvent<DeviceCommandEventArgs> _deviceCommandReceivedEvent = new AsyncEvent<DeviceCommandEventArgs>();
 
         /// <summary>
         /// Gets or sets the callback for the device command received event.
@@ -21,7 +21,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Occurs when [device command received asynchronous].
         /// </summary>
-        public event Func<CommandEventArgs, Task> DeviceCommandReceivedAsync
+        public event Func<DeviceCommandEventArgs, Task> DeviceCommandReceivedAsync
         {
             add => this._deviceCommandReceivedEvent.AddHandler(value);
             remove => this._deviceCommandReceivedEvent.RemoveHandler(value);
@@ -30,15 +30,16 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Fires the device command received asynchronous.
         /// </summary>
+        /// <param name="deviceId">The device identifier.</param>
         /// <param name="metric">The metric.</param>
         /// <returns></returns>
-        protected virtual Task FireDeviceCommandReceivedAsync(T metric)
+        protected virtual Task FireDeviceCommandReceivedAsync(string deviceId, T metric)
         {
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
             this.DeviceCommandReceived?.Invoke(metric);
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            return this._deviceCommandReceivedEvent.InvokeAsync(new CommandEventArgs(this, metric));
+            return this._deviceCommandReceivedEvent.InvokeAsync(new DeviceCommandEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceId, metric));
         }
         #endregion
 
@@ -46,7 +47,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// The node command received event
         /// </summary>
-        protected AsyncEvent<CommandEventArgs> _nodeCommandReceivedEvent = new AsyncEvent<CommandEventArgs>();
+        protected AsyncEvent<NodeCommandEventArgs> _nodeCommandReceivedEvent = new AsyncEvent<NodeCommandEventArgs>();
         /// <summary>
         /// Gets or sets the callback for the node command received event.
         /// </summary>
@@ -58,7 +59,7 @@ namespace SparkplugNet.Core.Node
         /// <summary>
         /// Occurs when [Node command received asynchronous].
         /// </summary>
-        public event Func<CommandEventArgs, Task> NodeCommandReceivedAsync
+        public event Func<NodeCommandEventArgs, Task> NodeCommandReceivedAsync
         {
             add => this._nodeCommandReceivedEvent.AddHandler(value);
             remove => this._nodeCommandReceivedEvent.RemoveHandler(value);
@@ -75,7 +76,7 @@ namespace SparkplugNet.Core.Node
             this.NodeCommandReceived?.Invoke(metric);
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            return this._nodeCommandReceivedEvent.InvokeAsync(new CommandEventArgs(this, metric));
+            return this._nodeCommandReceivedEvent.InvokeAsync(new NodeCommandEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, metric));
         }
         #endregion
 

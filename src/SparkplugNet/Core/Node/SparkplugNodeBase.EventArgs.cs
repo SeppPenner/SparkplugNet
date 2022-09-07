@@ -3,10 +3,10 @@ namespace SparkplugNet.Core.Node
     public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : IMetric, new()
     {
         /// <summary>
-        /// CommandEventArgs
+        /// NodeCommandEventArgs
         /// </summary>
         /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class CommandEventArgs : SparkplugEventArgs
+        public class NodeCommandEventArgs : NodeEventArgs
         {
             /// <summary>
             /// Gets the metric value.
@@ -17,14 +17,44 @@ namespace SparkplugNet.Core.Node
             public T Metric { get; }
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="CommandEventArgs"/> class.
+            /// Initializes a new instance of the <see cref="NodeCommandEventArgs"/> class.
             /// </summary>
             /// <param name="sender">The sender.</param>
+            /// <param name="groupIdentifier">The group identifier.</param>
+            /// <param name="nodeIdentifier">The node identifier.</param>
             /// <param name="metric">The metric value.</param>
-            public CommandEventArgs(SparkplugNodeBase<T> sender, T metric)
-                : base(sender)
+            public NodeCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string nodeIdentifier, T metric)
+                : base(sender,groupIdentifier,nodeIdentifier)
             {
                 this.Metric = metric;
+            }
+        }
+
+        /// <summary>
+        /// DeviceCommandEventArgs
+        /// </summary>
+        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
+        public class DeviceCommandEventArgs : NodeCommandEventArgs
+        {
+            /// Gets the device identifier.
+            /// </summary>
+            /// <value>
+            /// The device identifier.
+            /// </value>
+            public string DeviceIdentifier { get; }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="DeviceCommandEventArgs"/> class.
+            /// </summary>
+            /// <param name="sender">The sender.</param>
+            /// <param name="groupIdentifier">The group identifier.</param>
+            /// <param name="nodeIdentifier">The node identifier.</param>
+            /// <param name="deviceIdentifier">The device identifier.</param>
+            /// <param name="metric">The metric.</param>
+            public DeviceCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string nodeIdentifier, string deviceIdentifier, T metric)
+               : base(sender, groupIdentifier, nodeIdentifier, metric)
+            {
+                this.DeviceIdentifier = deviceIdentifier;
             }
         }
 

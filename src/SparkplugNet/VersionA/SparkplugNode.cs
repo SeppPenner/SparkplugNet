@@ -83,7 +83,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
     /// </returns>
     /// <exception cref="System.InvalidCastException">The metric cast didn't work properly.</exception>
-    protected override async Task OnMessageReceived(string topic, byte[] payload)
+    protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(payload);
 
@@ -91,36 +91,37 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
         {
             var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
 
-            if (topic.Contains(SparkplugMessageType.DeviceCommand.GetDescription()))
+            if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
             {
-                if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
-                {
-                    throw new InvalidCastException("The metric cast didn't work properly.");
-                }
-
-                foreach (var metric in convertedPayloadVersionA.Metrics)
-                {
-                    if (metric is VersionAData.KuraMetric convertedMetric)
-                    {
-                        await this.FireDeviceCommandReceivedAsync(convertedMetric);
-                    }
-                }
+                throw new InvalidCastException("The metric cast didn't work properly.");
             }
 
-            if (topic.Contains(SparkplugMessageType.NodeCommand.GetDescription()))
+            switch (topic.MessageType)
             {
-                if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
-                {
-                    throw new InvalidCastException("The metric cast didn't work properly.");
-                }
-
-                foreach (var metric in convertedPayloadVersionA.Metrics)
-                {
-                    if (metric is VersionAData.KuraMetric convertedMetric)
+                case SparkplugMessageType.DeviceCommand:
+                    if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
                     {
-                        await this.FireNodeCommandReceivedAsync(convertedMetric);
+                        foreach (var metric in convertedPayloadVersionA.Metrics)
+                        {
+                            if (metric is VersionAData.KuraMetric convertedMetric)
+                            {
+                                await this.FireDeviceCommandReceivedAsync(topic.DeviceIdentifier, convertedMetric);
+                            }
+                        }
                     }
-                }
+
+                    break;
+
+                case SparkplugMessageType.NodeCommand:
+                    foreach (var metric in convertedPayloadVersionA.Metrics)
+                    {
+                        if (metric is VersionAData.KuraMetric convertedMetric)
+                        {
+                            await this.FireNodeCommandReceivedAsync(convertedMetric);
+                        }
+                    }
+
+                    break;
             }
         }
     }
