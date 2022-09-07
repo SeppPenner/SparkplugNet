@@ -6,22 +6,8 @@ namespace SparkplugNet.Core.Application
         /// Event Args for DataReceived Events
         /// </summary>
         /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class DataEventArgs : SparkplugEventArgs
+        public class NodeDataEventArgs : NodeEventArgs
         {
-            /// <summary>
-            /// Gets the group identifier.
-            /// </summary>
-            /// <value>
-            /// The group identifier.
-            /// </value>
-            public string GroupIdentifier { get; }
-            /// <summary>
-            /// Gets the node identifier.
-            /// </summary>
-            /// <value>
-            /// The node identifier.
-            /// </value>
-            public string NodeIdentifier { get; }
             /// <summary>
             /// Gets the metric.
             /// </summary>
@@ -31,17 +17,15 @@ namespace SparkplugNet.Core.Application
             public T Metric { get; }
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="DataEventArgs"/> class.
+            /// Initializes a new instance of the <see cref="NodeDataEventArgs"/> class.
             /// </summary>
             /// <param name="sender">The sender.</param>
             /// <param name="groupIdentifier">The group identifier.</param>
             /// <param name="nodeIdentifier">The node identifier.</param>
             /// <param name="metric">The metric.</param>
-            public DataEventArgs(SparkplugApplicationBase<T> sender, string groupIdentifier, string nodeIdentifier, T metric)
-                : base(sender)
+            public NodeDataEventArgs(SparkplugApplicationBase<T> sender, string groupIdentifier, string nodeIdentifier, T metric)
+                : base(sender,groupIdentifier,nodeIdentifier)
             {
-                this.GroupIdentifier = groupIdentifier;
-                this.NodeIdentifier = nodeIdentifier;
                 this.Metric = metric;
             }
         }
@@ -49,7 +33,7 @@ namespace SparkplugNet.Core.Application
         /// Event Args for DeviceDataReceived Events
         /// </summary>
         /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class DeviceDataEventArgs : DataEventArgs
+        public class DeviceDataEventArgs : NodeDataEventArgs
         {
             /// <summary>
             /// Gets the device identifier.

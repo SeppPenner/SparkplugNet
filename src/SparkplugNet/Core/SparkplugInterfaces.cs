@@ -34,14 +34,5 @@ namespace SparkplugNet.Core
         /// Gets a value indicating whether this instance is connected.
         /// </summary>
         bool IsConnected { get; }
-
-        /// <summary>
-        /// Occurs when [connected asynchronous].
-        /// </summary>
-        event Func<SparkplugEventArgs, Task> ConnectedAsync;
-        /// <summary>
-        /// Occurs when [disconnected asynchronous].
-        /// </summary>
-        event Func<SparkplugEventArgs, Task> DisconnectedAsync;
     }
 }

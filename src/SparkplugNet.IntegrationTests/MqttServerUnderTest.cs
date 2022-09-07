@@ -17,7 +17,7 @@ public static class MqttServerUnderTest
     /// <summary>
     /// Gets or sets the server address.
     /// </summary>
-    public static string ServerAddress { get; set; } = "server1";
+    public static string ServerAddress { get; set; } = "localhost";
 
     /// <summary>
     /// Gets or sets the server port.

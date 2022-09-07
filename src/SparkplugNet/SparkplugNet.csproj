@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <AssemblyName>SparkplugNet</AssemblyName>
     <RootNamespace>SparkplugNet</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -60,5 +60,9 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;C:\Program Files\inray\OPC-Router4&quot;&#xD;&#xA;copy /Y &quot;$(TargetDir)\$(AssemblyName).pdb&quot; &quot;C:\Program Files\inray\OPC-Router4&quot;" />
+  </Target>
 
 </Project>

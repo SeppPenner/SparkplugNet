@@ -148,11 +148,11 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
-                await this.FireNodeBirthReceivedAsync(topic.EdgeNodeIdentifier,
+                await this.FireNodeBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
-                await this.FireDeviceBirthReceivedAsync(topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
+                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
@@ -176,7 +176,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                 break;
             case SparkplugMessageType.NodeDeath:
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
-                await this.FireNodeDeathReceivedAsync(topic.EdgeNodeIdentifier);
+                await this.FireNodeDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
                 break;
             case SparkplugMessageType.DeviceDeath:
                 if (string.IsNullOrEmpty(topic.DeviceIdentifier))
@@ -185,7 +185,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                 }
 
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
-                await this.FireDeviceDeathReceivedAsync(topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+                await this.FireDeviceDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
                 break;
         }
     }

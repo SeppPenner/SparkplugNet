@@ -325,7 +325,7 @@ public class Program
     /// <summary>
     /// Handles the disconnected callback for version A applications.
     /// </summary>
-    private static Task ApplicationVersionA_DisconnectedAsync(Core.SparkplugEventArgs arg)
+    private static Task ApplicationVersionA_DisconnectedAsync(VersionA.SparkplugApplication.SparkplugEventArgs arg)
     {
         // Do something.
         return Task.CompletedTask;
@@ -334,7 +334,7 @@ public class Program
     /// <summary>
     /// Handles the disconnected callback for version B applications.
     /// </summary>
-    private static Task ApplicationVersionB_DisconnectedAsync(Core.SparkplugEventArgs arg)
+    private static Task ApplicationVersionB_DisconnectedAsync(VersionB.SparkplugApplication.SparkplugEventArgs arg)
     {
         // Do something.
         return Task.CompletedTask;
@@ -343,7 +343,7 @@ public class Program
     /// <summary>
     /// Handles the node data callback for version A applications.
     /// </summary>
-    private static Task OnVersionANodeDataReceived(VersionA.SparkplugApplication.DataEventArgs args)
+    private static Task OnVersionANodeDataReceived(VersionA.SparkplugApplication.NodeDataEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -352,7 +352,7 @@ public class Program
     /// <summary>
     /// Handles the node data callback for version B applications.
     /// </summary>
-    private static Task OnVersionBNodeDataReceived(VersionB.SparkplugApplication.DataEventArgs args)
+    private static Task OnVersionBNodeDataReceived(VersionB.SparkplugApplication.NodeDataEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -379,7 +379,7 @@ public class Program
     /// <summary>
     /// Handles the disconnected callback for version A nodes.
     /// </summary>
-    private static Task OnVersionANodeDisconnected(Core.SparkplugEventArgs arg)
+    private static Task OnVersionANodeDisconnected(VersionA.SparkplugNode.SparkplugEventArgs arg)
     {
         // Do something.
         return Task.CompletedTask;
@@ -388,7 +388,7 @@ public class Program
     /// <summary>
     /// Handles the disconnected callback for version B nodes.
     /// </summary>
-    private static Task OnVersionBNodeDisconnected(Core.SparkplugEventArgs arg)
+    private static Task OnVersionBNodeDisconnected(VersionB.SparkplugNode.SparkplugEventArgs arg)
     {
         // Do something.
         return Task.CompletedTask;

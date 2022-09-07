@@ -148,7 +148,7 @@ namespace SparkplugNet.Core.Node
             this.DeviceBirthReceived?.Invoke(new KeyValuePair<string, List<T>>(deviceId, metrics.ToList()));
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            return this._DeviceBirthPublishingEvent.InvokeAsync(new DeviceBirthEventArgs(this, this.Options!.EdgeNodeIdentifier, deviceId, metrics));
+            return this._DeviceBirthPublishingEvent.InvokeAsync(new DeviceBirthEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceId, metrics));
         }
         #endregion
 
@@ -184,7 +184,7 @@ namespace SparkplugNet.Core.Node
             this.DeviceDeathReceived?.Invoke(deviceId);
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            return this._DeviceDeathPublishingEvent.InvokeAsync(new DeviceEventArgs(this, this.Options!.EdgeNodeIdentifier, deviceId));
+            return this._DeviceDeathPublishingEvent.InvokeAsync(new DeviceEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceId));
         }
         #endregion
     }

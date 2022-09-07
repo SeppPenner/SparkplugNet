@@ -57,11 +57,11 @@ namespace SparkplugNet.Core.Application
         /// <summary>
         /// The node data received event
         /// </summary>
-        protected AsyncEvent<DataEventArgs> _NodeDataReceivedEvent = new AsyncEvent<DataEventArgs>();
+        protected AsyncEvent<NodeDataEventArgs> _NodeDataReceivedEvent = new AsyncEvent<NodeDataEventArgs>();
         /// <summary>
         /// Occurs when [node data received asynchronous].
         /// </summary>
-        public event Func<DataEventArgs, Task> NodeDataReceivedAsync
+        public event Func<NodeDataEventArgs, Task> NodeDataReceivedAsync
         {
             add => this._NodeDataReceivedEvent.AddHandler(value);
             remove => this._NodeDataReceivedEvent.RemoveHandler(value);
@@ -79,7 +79,7 @@ namespace SparkplugNet.Core.Application
             this.OnNodeDataReceived?.Invoke(groupId, nodeId, metric);
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            return this._NodeDataReceivedEvent.InvokeAsync(new DataEventArgs(this, groupId, nodeId, metric));
+            return this._NodeDataReceivedEvent.InvokeAsync(new NodeDataEventArgs(this, groupId, nodeId, metric));
         }
         #endregion
 
@@ -97,16 +97,17 @@ namespace SparkplugNet.Core.Application
             remove => this._DeviceBirthReceivedEvent.RemoveHandler(value);
         }
         /// <summary>
-        /// Fires the status message received asynchronous.
+        /// Fires the device birth received asynchronous.
         /// </summary>
+        /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="nodeId">The node identifier.</param>
         /// <param name="deviceId">The device identifier.</param>
-        /// <param name="metrics">The metrics</param>
+        /// <param name="metrics">The metrics.</param>
         /// <returns></returns>
-        protected virtual Task FireDeviceBirthReceivedAsync(string nodeId, string deviceId, IEnumerable<T> metrics)
+        protected virtual Task FireDeviceBirthReceivedAsync(string groupIdentifier, string nodeId, string deviceId, IEnumerable<T> metrics)
         {
 
-            return this._DeviceBirthReceivedEvent.InvokeAsync(new DeviceBirthEventArgs(this, nodeId, deviceId, metrics));
+            return this._DeviceBirthReceivedEvent.InvokeAsync(new DeviceBirthEventArgs(this,groupIdentifier, nodeId, deviceId, metrics));
         }
         #endregion
 
@@ -127,12 +128,13 @@ namespace SparkplugNet.Core.Application
         /// <summary>
         /// Fires the device death received asynchronous.
         /// </summary>
+        /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeId">The edge node identifier.</param>
         /// <param name="deviceId">The device identifier.</param>
         /// <returns></returns>
-        protected virtual Task FireDeviceDeathReceivedAsync(string edgeNodeId, string deviceId)
+        protected virtual Task FireDeviceDeathReceivedAsync(string groupIdentifier, string edgeNodeId, string deviceId)
         {
-            return this._DeviceDeathReceivedEvent.InvokeAsync(new DeviceEventArgs(this, edgeNodeId, deviceId));
+            return this._DeviceDeathReceivedEvent.InvokeAsync(new DeviceEventArgs(this,groupIdentifier, edgeNodeId, deviceId));
         }
         #endregion
 
@@ -151,14 +153,15 @@ namespace SparkplugNet.Core.Application
         }
 
         /// <summary>
-        /// Fires the node birth Received asynchronous.
+        /// Fires the node birth received asynchronous.
         /// </summary>
+        /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="nodeIdentifier">The node identifier.</param>
         /// <param name="metrics">The metrics.</param>
         /// <returns></returns>
-        protected virtual Task FireNodeBirthReceivedAsync(string nodeIdentifier, IEnumerable<T> metrics)
+        protected virtual Task FireNodeBirthReceivedAsync(string groupIdentifier, string nodeIdentifier, IEnumerable<T> metrics)
         {
-            return this._NodeBirthReceivedEvent.InvokeAsync(new NodeBirthEventArgs(this, nodeIdentifier, metrics));
+            return this._NodeBirthReceivedEvent.InvokeAsync(new NodeBirthEventArgs(this,groupIdentifier, nodeIdentifier, metrics));
         }
         #endregion
 
@@ -177,13 +180,14 @@ namespace SparkplugNet.Core.Application
         }
 
         /// <summary>
-        /// Fires the node death Received asynchronous.
+        /// Fires the node death received asynchronous.
         /// </summary>
+        /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="nodeIdentifier">The node identifier.</param>
         /// <returns></returns>
-        protected virtual Task FireNodeDeathReceivedAsync(string nodeIdentifier)
+        protected virtual Task FireNodeDeathReceivedAsync(string groupIdentifier, string nodeIdentifier)
         {
-            return this._NodeDeathReceivedEvent.InvokeAsync(new NodeEventArgs(this, nodeIdentifier));
+            return this._NodeDeathReceivedEvent.InvokeAsync(new NodeEventArgs(this,groupIdentifier, nodeIdentifier));
         }
         #endregion
     }
