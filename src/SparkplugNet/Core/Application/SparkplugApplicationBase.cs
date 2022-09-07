@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.Core.Application;
 
+using MQTTnet.Internal;
+
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug application.
@@ -60,6 +62,12 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Start(SparkplugApplicationOptions applicationOptions)
     {
+        if (this.IsRunning)
+        {
+            throw new InvalidOperationException("Start should only be called once!");
+        }
+        this.IsRunning = true;
+
         // Storing the options.
         this.Options = applicationOptions;
 
@@ -88,6 +96,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Stop()
     {
+        this.IsRunning = false;
         await this.Client.DisconnectAsync();
     }
 
@@ -240,14 +249,19 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             // Invoke disconnected callback.
             await this.FireDisconnectedAsync();
 
+            this.Logger?.Warning("Connection lost, retrying to connect in {@reconnectInterval}", this.Options.ReconnectInterval);
+
             // Wait until the disconnect interval is reached.
             await Task.Delay(this.Options.ReconnectInterval);
 
-            // Connect, subscribe to incoming messages and send a state message.
-            await this.ConnectInternal();
-            this.UpdateMetricState(SparkplugMetricStatus.Online);
-            await this.SubscribeInternal();
-            await this.PublishInternal();
+            if (this.IsRunning)
+            {
+                // Connect, subscribe to incoming messages and send a state message.
+                await this.ConnectInternal();
+                this.UpdateMetricState(SparkplugMetricStatus.Online);
+                await this.SubscribeInternal();
+                await this.PublishInternal();
+            }
         }
         catch (Exception ex)
         {

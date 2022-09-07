@@ -143,6 +143,7 @@ public partial class SparkplugNodeBase<T>
         // Invoke the device death event.
         await this.FireDeviceDeathPublishingAsync(deviceIdentifier);
 
+        this.KnownDevices.TryRemove(deviceIdentifier, out _);
         // Publish the message.
         this.Options.CancellationToken ??= CancellationToken.None;
         return await this.Client.PublishAsync(deviceDeathMessage, this.Options.CancellationToken.Value);

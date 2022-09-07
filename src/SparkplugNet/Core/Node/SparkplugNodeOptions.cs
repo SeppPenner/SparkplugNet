@@ -32,6 +32,11 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     public const bool DefaultAddSessionNumberToDataMessages = true;
 
     /// <summary>
+    /// The default to for publishing known devices on reconnect 
+    /// </summary>
+    public const bool DefaultPublishKnownDeviceMetricsOnReconnect = true;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
     /// </summary>
     public SparkplugNodeOptions()
@@ -192,6 +197,9 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// </value>
     [DefaultValue(DefaultAddSessionNumberToDataMessages)]
     public bool AddSessionNumberToDataMessages { get; set; } = DefaultAddSessionNumberToDataMessages;
+
+    [DefaultValue(DefaultPublishKnownDeviceMetricsOnReconnect)]
+    public bool PublishKnownDeviceMetricsOnReconnect { get; set; } = DefaultPublishKnownDeviceMetricsOnReconnect;
 
     /// <summary>
     /// Gets or sets the cancellation token.

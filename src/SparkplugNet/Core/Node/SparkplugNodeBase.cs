@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.Core.Node;
 
+using System.ComponentModel.DataAnnotations;
+
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug node.
@@ -49,6 +51,12 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Start(SparkplugNodeOptions nodeOptions)
     {
+        if (this.IsRunning)
+        {
+            throw new InvalidOperationException("Start should only be called once!");
+        }
+        this.IsRunning = true;
+
         // Storing the options.
         this.Options = nodeOptions;
 
@@ -58,7 +66,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         // Add handlers.
-        this.AddDisconnectedHandler();
+        this.AddEventHandler();
         this.AddMessageReceivedHandler();
 
         // Connect, subscribe to incoming messages and send a state message.
@@ -73,6 +81,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Stop()
     {
+        this.IsRunning = false;
         await this.Client.DisconnectAsync();
     }
 
@@ -112,11 +121,30 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Adds the disconnected handler and the reconnect functionality to the client.
     /// </summary>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
-    private void AddDisconnectedHandler()
+    private void AddEventHandler()
     {
         this.Client.DisconnectedAsync += this.OnClientDisconnected;
+        this.Client.ConnectedAsync += this.OnClientConnectedAsync;
     }
 
+    /// <summary>
+    /// Handles the client disconnection event.
+    /// </summary>
+    /// <param name="arg">The <see cref="MqttClientConnectedEventArgs"/> instance containing the event data.</param>
+    protected virtual async Task OnClientConnectedAsync(MqttClientConnectedEventArgs arg)
+    {
+        this.Logger?.Information("Connection established");
+
+        try
+        {
+            await this.FireConnectedAsync();
+        }
+        catch (Exception ex)
+        {
+            this.Logger?.Error(ex, "OnClientConnectedAsync");
+            await Task.FromException(ex);
+        }
+    }
     /// <summary>
     /// Handles the client disconnection.
     /// </summary>
@@ -125,21 +153,32 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
-        if (this.Options is null)
+        try
         {
-            throw new ArgumentNullException(nameof(this.Options));
+            if (this.Options is null)
+            {
+                throw new ArgumentNullException(nameof(this.Options));
+            }
+
+            // Invoke disconnected callback.
+            await this.FireDisconnectedAsync();
+
+            this.Logger?.Warning("Connection lost, retrying to connect in {@reconnectInterval}", this.Options.ReconnectInterval);
+            // Wait until the disconnect interval is reached.
+            await Task.Delay(this.Options.ReconnectInterval);
+            if (this.IsRunning)
+            {
+                // Connect, subscribe to incoming messages and send a state message.
+                await this.ConnectInternal();
+                await this.SubscribeInternal();
+                await this.PublishInternal();
+            }
         }
-
-        // Invoke disconnected callback.
-        await this.FireDisconnectedAsync();
-
-        // Wait until the disconnect interval is reached.
-        await Task.Delay(this.Options.ReconnectInterval);
-
-        // Connect, subscribe to incoming messages and send a state message.
-        await this.ConnectInternal();
-        await this.SubscribeInternal();
-        await this.PublishInternal();
+        catch (Exception ex)
+        {
+            this.Logger?.Error(ex, "OnClientDisconnectedAsync");
+            await Task.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -243,7 +282,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
                 this.Options.ProxyOptions.Domain,
                 this.Options.ProxyOptions.BypassOnLocal);
         }
-
         // Add the will message data.
         builder.WithWillContentType(willMessage.ContentType);
         builder.WithWillCorrelationData(willMessage.CorrelationData);
@@ -282,7 +320,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             throw new ArgumentNullException(nameof(this.Options));
         }
-
+        
         // Get the online message.
         var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage<T>(
             this.NameSpace,
@@ -304,6 +342,14 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         // Publish the message.
         await this.Client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
+
+        if (this.Options.PublishKnownDeviceMetricsOnReconnect)
+        {
+            foreach (var device in this.KnownDevices)
+            {
+                await this.PublishDeviceBirthMessage(device.Value, device.Key);
+            }
+        }
     }
 
     /// <summary>

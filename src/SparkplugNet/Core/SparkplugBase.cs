@@ -94,6 +94,14 @@ public partial class SparkplugBase<T> : ISparkplugConnection
     public bool IsConnected => this.Client.IsConnected;
 
     /// <summary>
+    /// Gets or sets a value indicating whether this instance is running.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this instance is running; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsRunning { get; protected set; }
+
+    /// <summary>
     /// Gets the known metric names.
     /// </summary>
     public IEnumerable<T> KnownMetrics => this._knonwMetrics.Values;
