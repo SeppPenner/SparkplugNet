@@ -198,6 +198,12 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     [DefaultValue(DefaultAddSessionNumberToDataMessages)]
     public bool AddSessionNumberToDataMessages { get; set; } = DefaultAddSessionNumberToDataMessages;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether [publish known device metrics on reconnect].
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [publish known device metrics on reconnect]; otherwise, <c>false</c>.
+    /// </value>
     [DefaultValue(DefaultPublishKnownDeviceMetricsOnReconnect)]
     public bool PublishKnownDeviceMetricsOnReconnect { get; set; } = DefaultPublishKnownDeviceMetricsOnReconnect;
 
