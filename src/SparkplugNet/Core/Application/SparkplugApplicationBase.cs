@@ -291,13 +291,22 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         {
             var topic = args.ApplicationMessage.Topic;
 
-            // Skip the STATE messages as they're UTF-8 encoded.
-            if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+            if (SparkplugMessageTopic.TryParse(topic, out var topicParsed))
             {
+                return this.OnMessageReceived(topicParsed!, args.ApplicationMessage.Payload);
+            }
+
+            else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+            {
+                // Skip the STATE messages as they're UTF-8 encoded.
+                return Task.CompletedTask;
+            }
+            else
+            {
+                this.Logger?.Information("Received message on unkown topic {@topic}: {payload}", topic, args.ApplicationMessage.Payload);
                 return Task.CompletedTask;
             }
 
-            return this.OnMessageReceived(SparkplugMessageTopic.Parse(topic), args.ApplicationMessage.Payload);
         }
         catch (Exception ex)
         {

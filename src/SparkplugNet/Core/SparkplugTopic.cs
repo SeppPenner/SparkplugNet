@@ -223,36 +223,36 @@ namespace SparkplugNet.Core
         }
         private static bool TryParse(string topic, out SparkplugMessageTopic? parsedTopic, bool throwError)
         {
-            string[] topics = topic.Split('/');
-            if (topics.Length == 4 ||
-                topic.Length == 5)
+            string[] topicsSplitted = topic.Split('/');
+            if (topicsSplitted.Length == 4 ||
+                topicsSplitted.Length == 5)
             {
-                if (!TryGetNamespace(topics[0], out var @namespace))
+                if (!TryGetNamespace(topicsSplitted[0], out var @namespace))
                 {
                     if (throwError)
                     {
-                        throw new FormatException($"namespace {topics[0]} is unknown in topic: {topic}!");
+                        throw new FormatException($"namespace {topicsSplitted[0]} is unknown in topic: {topic}!");
                     }
                 }
                 else
                 {
-                    string group = topics[1];
+                    string group = topicsSplitted[1];
 
-                    if (!_messageTypeFromString.TryGetValue(topics[2], out var msgType))
+                    if (!_messageTypeFromString.TryGetValue(topicsSplitted[2], out var msgType))
                     {
                         if (throwError)
                         {
-                            throw new FormatException($"message type {topics[2]} is unknown in topic: {topic}!");
+                            throw new FormatException($"message type {topicsSplitted[2]} is unknown in topic: {topic}!");
                         }
                     }
                     else
                     {
 
-                        string edge = topics[3];
+                        string edge = topicsSplitted[3];
                         string? device;
-                        if (topics.Length == 5)
+                        if (topicsSplitted.Length == 5)
                         {
-                            device = topics[4];
+                            device = topicsSplitted[4];
                         }
                         else
                         {
