@@ -8,12 +8,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Core;
-
 /// <summary>
 /// A base class for all Sparkplug applications, nodes and devices.
 /// </summary>
 /// <typeparam name="T">The type parameter.</typeparam>
-public class SparkplugBase<T> where T : class, new()
+public partial class SparkplugBase<T> : ISparkplugConnection
+    where T : IMetric, new()
 {
     /// <summary>
     /// The message generator.
@@ -26,20 +26,36 @@ public class SparkplugBase<T> where T : class, new()
     internal readonly IMqttClient Client;
 
     /// <summary>
+    /// The knonw metrics by Name
+    /// </summary>
+    protected KnownMetricStorage _knonwMetrics;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="logger">The logger.</param>
-    public SparkplugBase(List<T> knownMetrics, ILogger? logger = null)
-    {
-        this.KnownMetrics = knownMetrics;
+    public SparkplugBase(IEnumerable<T> knownMetrics, ILogger? logger = null)
+        : this(new KnownMetricStorage(knownMetrics), logger)
+    { }
 
-        this.NameSpace = this.KnownMetrics switch
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The known metrics storage.</param>
+    /// <param name="logger">The logger.</param>
+    public SparkplugBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null)
+    {
+        this._knonwMetrics = knownMetricsStorage;
+
+        if (typeof(T).IsAssignableFrom(typeof(VersionAData.KuraMetric)))
         {
-            List<VersionAData.KuraMetric> => SparkplugNamespace.VersionA,
-            List<VersionBData.Metric> => SparkplugNamespace.VersionB,
-            _ => SparkplugNamespace.VersionB
-        };
+            this.NameSpace = SparkplugNamespace.VersionA;
+        }
+        else
+        {
+            this.NameSpace = SparkplugNamespace.VersionB;
+        }
 
         this.Client = new MqttFactory().CreateMqttClient();
         this.Logger = logger;
@@ -78,14 +94,30 @@ public class SparkplugBase<T> where T : class, new()
     public bool IsConnected => this.Client.IsConnected;
 
     /// <summary>
-    /// Gets the known metric names.
+    /// Gets or sets a value indicating whether this instance is running.
     /// </summary>
-    public List<T> KnownMetrics { get; }
+    /// <value>
+    ///   <c>true</c> if this instance is running; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsRunning { get; protected set; }
 
     /// <summary>
-    /// Gets or sets the callback for the disconnected event. Indicates that metrics might be stale.
+    /// Gets the known metric names.
     /// </summary>
-    public Action? OnDisconnected { get; set; } = null;
+    public IEnumerable<T> KnownMetrics => this._knonwMetrics.Values;
+
+    /// <summary>
+    /// Gets the known metrics storage.
+    /// </summary>
+    /// <value>
+    /// The known metrics storage.
+    /// </value>
+    public KnownMetricStorage KnownMetricsStorage => this._knonwMetrics;
+
+    /// <summary>
+    /// Gets the known metric names.
+    /// </summary>
+    IEnumerable<IMetric> ISparkplugConnection.KnownMetrics => this.KnownMetrics.Cast<IMetric>();
 
     /// <summary>
     /// Resets the last sequence number.

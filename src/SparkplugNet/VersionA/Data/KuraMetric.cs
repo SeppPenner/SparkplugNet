@@ -9,10 +9,12 @@
 
 namespace SparkplugNet.VersionA.Data;
 
+using SparkplugNet.Core.Data;
+
 /// <summary>
 /// The externally used Sparkplug A Kura metric class.
 /// </summary>
-public class KuraMetric
+public class KuraMetric : MetricBase<DataType>
 {
     /// <summary>
     /// The double value.
@@ -43,16 +45,6 @@ public class KuraMetric
     /// The string value.
     /// </summary>
     private string? stringValue;
-
-    /// <summary>
-    /// Gets or sets the name.
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the type.
-    /// </summary>
-    public DataType Type { get; set; }
 
     /// <summary>
     /// Gets or sets the double value.
@@ -113,4 +105,96 @@ public class KuraMetric
     /// Gets or sets the bytes value.
     /// </summary>
     public byte[]? BytesValue { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KuraMetric"/> class.
+    /// </summary>
+    public KuraMetric()
+    {
+
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KuraMetric"/> class.
+    /// </summary>
+    /// <param name="strName">Name of the string.</param>
+    /// <param name="dataType">Type of the data.</param>
+    /// <param name="value">The value.</param>
+    public KuraMetric(string strName, DataType dataType, object value)
+    {
+        this.Name = strName;
+        this.SetValue(dataType, value);
+    }
+
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    /// <param name="dataType">Type of the data.</param>
+    /// <param name="value">The value.</param>
+    public override MetricBase<DataType> SetValue(DataType dataType, object value)
+    {
+        switch (dataType)
+        {
+            case DataType.Double:
+                this.DoubleValue = this.ConvertValue<double>(value);
+                break;
+            case DataType.Float:
+                this.FloatValue = this.ConvertValue<float>(value);
+                break;
+            case DataType.Int64:
+                this.LongValue = this.ConvertValue<long>(value);
+                break;
+            case DataType.Int32:
+                this.IntValue = this.ConvertValue<int>(value);
+                break;
+            case DataType.Bool:
+                this.BoolValue = this.ConvertValue<bool>(value);
+                break;
+            case DataType.String:
+                this.StringValue = this.ConvertValue<string>(value);
+                break;
+            case DataType.Bytes:
+                this.BytesValue = this.ConvertValue<byte[]>(value);
+                break;
+            default:
+                throw new NotImplementedException($"Type {dataType} is not supported yet");
+        }
+
+        this.Type = dataType;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Gets the value.
+    /// </summary>
+    /// <value>
+    /// The value.
+    /// </value>
+    /// <exception cref="System.NotImplementedException">Type {this.Type} is not supported yet</exception>
+    public override object? Value
+    {
+        get
+        {
+            switch (this.Type)
+            {
+                case DataType.Double:
+                    return this.DoubleValue;
+                case DataType.Float:
+                    return this.FloatValue;
+                case DataType.Int64:
+                    return this.LongValue;
+                case DataType.Int32:
+                    return this.IntValue;
+                case DataType.Bool:
+                    return this.BoolValue;
+                case DataType.String:
+                    return this.StringValue;
+                case DataType.Bytes:
+                    return this.BytesValue;
+                default:
+                    throw new NotImplementedException($"Type {this.Type} is not supported yet");
+            }
+        }
+    }
 }

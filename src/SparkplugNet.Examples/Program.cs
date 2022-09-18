@@ -17,12 +17,12 @@ public class Program
     /// <summary>
     /// The cancellation token source.
     /// </summary>
-    private static readonly CancellationTokenSource CancellationTokenSource = new ();
+    private static readonly CancellationTokenSource CancellationTokenSource = new();
 
     /// <summary>
     /// The version A metrics.
     /// </summary>
-    private static readonly List<VersionAData.KuraMetric> VersionAMetrics = new ()
+    private static readonly List<VersionAData.KuraMetric> VersionAMetrics = new()
     {
         new ()
         {
@@ -37,15 +37,15 @@ public class Program
     /// <summary>
     /// The version A metrics.
     /// </summary>
-    private static readonly List<VersionBData.Metric> VersionBMetrics = new ()
+    private static readonly List<VersionBData.Metric> VersionBMetrics = new()
     {
         new VersionBData.Metric
         {
-            Name = "Test", DataType = (uint)VersionBData.DataType.Double, DoubleValue = 1.20
+            Name = "temperature", DataType = (uint)VersionBData.DataType.Float, FloatValue = 1.20f
         },
         new VersionBData.Metric
         {
-            Name = "Test2",
+            Name = "climateactive",
             DataType = (uint)VersionBData.DataType.Boolean, BooleanValue = true
         }
     };
@@ -62,8 +62,8 @@ public class Program
                 .WriteTo.Console()
                 .CreateLogger();
 
-            await RunVersionA();
-            // await RunVersionB();
+           // await RunVersionA();
+            await RunVersionB();
 
             Log.Information("Simulation is done.");
         }
@@ -105,7 +105,8 @@ public class Program
     {
         var applicationMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
         var application = new VersionA.SparkplugApplication(applicationMetrics, Log.Logger);
-        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "application1", "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
+
+        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionAApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -113,13 +114,13 @@ public class Program
         Log.Information("Application started...");
 
         // Handle the application's disconnected event.
-        application.OnDisconnected += OnVersionAApplicationDisconnected;
+        application.DisconnectedAsync += ApplicationVersionA_DisconnectedAsync;
 
         // Handle the application's node data received event.
-        application.OnNodeDataReceived += OnVersionANodeDataReceived;
+        application.NodeDataReceivedAsync += OnVersionANodeDataReceived;
 
         // Handle the application's device data received event.
-        application.OnDeviceDataReceived += OnVersionADeviceDataReceived;
+        application.DeviceDataReceivedAsync += OnVersionADeviceDataReceived;
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -154,7 +155,7 @@ public class Program
     {
         var nodeMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
         var node = new VersionA.SparkplugNode(nodeMetrics, Log.Logger);
-        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
+        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1A", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
 
         // Start a node.
         Log.Information("Starting node...");
@@ -171,13 +172,13 @@ public class Program
         var isApplicationConnected = node.IsConnected;
 
         // Handle the node's disconnected event.
-        node.OnDisconnected += OnVersionANodeDisconnected;
+        node.DisconnectedAsync += OnVersionANodeDisconnected;
 
         // Handle the node's node command received event.
-        node.NodeCommandReceived += OnVersionANodeNodeCommandReceived;
+        node.NodeCommandReceivedAsync += OnVersionANodeNodeCommandReceived;
 
         // Handles the node's status message received event.
-        node.StatusMessageReceived += OnVersionANodeStatusMessageReceived;
+        node.StatusMessageReceivedAsync += OnVersionANodeStatusMessageReceived;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -196,13 +197,13 @@ public class Program
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
 
         // Handle the node's device birth received event.
-        node.DeviceBirthReceived += OnVersionANodeDeviceBirthReceived;
+        node.DeviceBirthPublishingAsync += OnVersionANodeDeviceBirthReceived;
 
         // Handle the node's device command received event.
-        node.DeviceCommandReceived += OnVersionANodeDeviceCommandReceived;
+        node.DeviceCommandReceivedAsync += OnVersionANodeDeviceCommandReceived;
 
         // Handle the node's device death received event.
-        node.DeviceDeathReceived += OnVersionANodeDeviceDeathReceived;
+        node.DeviceDeathPublishingAsync += OnVersionANodeDeviceDeathReceived;
 
         // Stopping a node.
         await node.Stop();
@@ -217,7 +218,7 @@ public class Program
     {
         var applicationMetrics = new List<VersionBData.Metric>(VersionBMetrics);
         var application = new VersionB.SparkplugApplication(applicationMetrics, Log.Logger);
-        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, "application1", "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
+        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionBApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -225,13 +226,13 @@ public class Program
         Log.Information("Application started...");
 
         // Handle the application's disconnected event.
-        application.OnDisconnected += OnVersionBApplicationDisconnected;
+        application.DisconnectedAsync += ApplicationVersionB_DisconnectedAsync;
 
         // Handle the application's node data received event.
-        application.OnNodeDataReceived += OnVersionBNodeDataReceived;
+        application.NodeDataReceivedAsync += OnVersionBNodeDataReceived;
 
         // Handle the application's device data received event.
-        application.OnDeviceDataReceived += OnVersionBDeviceDataReceived;
+        application.DeviceDataReceivedAsync += OnVersionBDeviceDataReceived;
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -266,7 +267,7 @@ public class Program
     {
         var nodeMetrics = new List<VersionBData.Metric>(VersionBMetrics);
         var node = new VersionB.SparkplugNode(nodeMetrics, Log.Logger);
-        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
+        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1B", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
 
         // Start a node.
         Log.Information("Starting node...");
@@ -283,13 +284,13 @@ public class Program
         var isApplicationConnected = node.IsConnected;
 
         // Handle the node's disconnected event.
-        node.OnDisconnected += OnVersionBNodeDisconnected;
+        node.DisconnectedAsync += OnVersionBNodeDisconnected;
 
         // Handle the node's node command received event.
-        node.NodeCommandReceived += OnVersionBNodeNodeCommandReceived;
+        node.NodeCommandReceivedAsync += OnVersionBNodeNodeCommandReceived;
 
         // Handles the node's status message received event.
-        node.StatusMessageReceived += OnVersionBNodeStatusMessageReceived;
+        node.StatusMessageReceivedAsync += OnVersionBNodeStatusMessageReceived;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -308,13 +309,13 @@ public class Program
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
 
         // Handle the node's device birth received event.
-        node.DeviceBirthReceived += OnVersionBNodeDeviceBirthReceived;
+        node.DeviceBirthPublishingAsync += OnVersionBNodeDeviceBirthReceived;
 
         // Handle the node's device command received event.
-        node.DeviceCommandReceived += OnVersionBNodeDeviceCommandReceived;
+        node.DeviceCommandReceivedAsync += OnVersionBNodeDeviceCommandReceived;
 
         // Handle the node's device death received event.
-        node.DeviceDeathReceived += OnVersionBNodeDeviceDeathReceived;
+        node.DeviceDeathPublishingAsync += OnVersionBNodeDeviceDeathReceived;
 
         // Stopping a node.
         await node.Stop();
@@ -324,154 +325,172 @@ public class Program
     /// <summary>
     /// Handles the disconnected callback for version A applications.
     /// </summary>
-    private static void OnVersionAApplicationDisconnected()
+    private static Task ApplicationVersionA_DisconnectedAsync(VersionA.SparkplugApplication.SparkplugEventArgs arg)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the disconnected callback for version B applications.
     /// </summary>
-    private static void OnVersionBApplicationDisconnected()
+    private static Task ApplicationVersionB_DisconnectedAsync(VersionB.SparkplugApplication.SparkplugEventArgs arg)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the node data callback for version A applications.
     /// </summary>
-    private static void OnVersionANodeDataReceived(string groupId, string nodeId, VersionAData.KuraMetric _)
+    private static Task OnVersionANodeDataReceived(VersionA.SparkplugApplication.NodeDataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the node data callback for version B applications.
     /// </summary>
-    private static void OnVersionBNodeDataReceived(string groupId, string nodeId, VersionBData.Metric _)
+    private static Task OnVersionBNodeDataReceived(VersionB.SparkplugApplication.NodeDataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device data callback for version A applications.
     /// </summary>
-    private static void OnVersionADeviceDataReceived(string groupId, string nodeId, string deviceId, VersionAData.KuraMetric _)
+    private static Task OnVersionADeviceDataReceived(VersionA.SparkplugApplication.DeviceDataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device data callback for version B applications.
     /// </summary>
-    private static void OnVersionBDeviceDataReceived(string groupId, string nodeId, string deviceId, VersionBData.Metric _)
+    private static Task OnVersionBDeviceDataReceived(VersionB.SparkplugApplication.DeviceDataEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the disconnected callback for version A nodes.
     /// </summary>
-    private static void OnVersionANodeDisconnected()
+    private static Task OnVersionANodeDisconnected(VersionA.SparkplugNode.SparkplugEventArgs arg)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the disconnected callback for version B nodes.
     /// </summary>
-    private static void OnVersionBNodeDisconnected()
+    private static Task OnVersionBNodeDisconnected(VersionB.SparkplugNode.SparkplugEventArgs arg)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the node command callback for version A nodes.
     /// </summary>
-    /// <param name="metric">The received metric.</param>
-    private static void OnVersionANodeNodeCommandReceived(VersionAData.KuraMetric metric)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionANodeNodeCommandReceived(VersionA.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
-    /// <summary>
+    /// <summary> 
     /// Handles the node command callback for version B nodes.
     /// </summary>
-    /// <param name="metric">The received metric.</param>
-    private static void OnVersionBNodeNodeCommandReceived(VersionBData.Metric metric)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionBNodeNodeCommandReceived(VersionB.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the status message callback for version A nodes.
     /// </summary>
-    /// <param name="status">The status.</param>
-    private static void OnVersionANodeStatusMessageReceived(string status)
+    /// <param name="args">The status.</param>
+    private static Task OnVersionANodeStatusMessageReceived(VersionA.SparkplugNode.StatusMessageEvnetArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the status message callback for version B nodes.
     /// </summary>
-    /// <param name="status">The status.</param>
-    private static void OnVersionBNodeStatusMessageReceived(string status)
+    /// <param name="args">The args.</param>
+    private static Task OnVersionBNodeStatusMessageReceived(VersionB.SparkplugNode.StatusMessageEvnetArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device birth callback for version A nodes.
     /// </summary>
-    /// <param name="deviceData">The received device data.</param>
-    private static void OnVersionANodeDeviceBirthReceived(KeyValuePair<string, List<VersionAData.KuraMetric>> deviceData)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionANodeDeviceBirthReceived(VersionA.SparkplugNode.DeviceBirthEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device birth callback for version B nodes.
     /// </summary>
-    /// <param name="deviceData">The received device data.</param>
-    private static void OnVersionBNodeDeviceBirthReceived(KeyValuePair<string, List<VersionBData.Metric>> deviceData)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionBNodeDeviceBirthReceived(VersionB.SparkplugNode.DeviceBirthEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device command callback for version A nodes.
     /// </summary>
-    /// <param name="metric">The received metric.</param>
-    private static void OnVersionANodeDeviceCommandReceived(VersionAData.KuraMetric metric)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionANodeDeviceCommandReceived(VersionA.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device command callback for version B nodes.
     /// </summary>
-    /// <param name="metric">The received metric.</param>
-    private static void OnVersionBNodeDeviceCommandReceived(VersionBData.Metric metric)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionBNodeDeviceCommandReceived(VersionB.SparkplugNode.NodeCommandEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device death callback for version A nodes.
     /// </summary>
-    /// <param name="deviceIdentifier">The received device identifier.</param>
-    private static void OnVersionANodeDeviceDeathReceived(string deviceIdentifier)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionANodeDeviceDeathReceived(VersionA.SparkplugNode.DeviceEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the device death callback for version B nodes.
     /// </summary>
-    /// <param name="deviceIdentifier">The received device identifier.</param>
-    private static void OnVersionBNodeDeviceDeathReceived(string deviceIdentifier)
+    /// <param name="args">The received args.</param>
+    private static Task OnVersionBNodeDeviceDeathReceived(VersionB.SparkplugNode.DeviceEventArgs args)
     {
         // Do something.
+        return Task.CompletedTask;
     }
 }

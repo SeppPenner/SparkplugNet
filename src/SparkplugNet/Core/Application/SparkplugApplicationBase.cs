@@ -9,17 +9,19 @@
 
 namespace SparkplugNet.Core.Application;
 
+using MQTTnet.Internal;
+
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug application.
 /// </summary>
 /// <seealso cref="SparkplugBase{T}"/>
-public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : class, new()
+public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
     /// <summary>
     /// The options.
     /// </summary>
-    protected SparkplugApplicationOptions? options { private set; get; }
+    public SparkplugApplicationOptions? Options { private set; get; }
 
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
@@ -28,7 +30,17 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
-    public SparkplugApplicationBase(List<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplicationBase(IEnumerable<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
+    /// </summary>
+    /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="logger">The logger.</param>
+    /// /// <seealso cref="SparkplugBase{T}"/>
+    public SparkplugApplicationBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
     {
     }
 
@@ -43,16 +55,6 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new();
 
     /// <summary>
-    /// Gets or sets the callback for the device data received event.
-    /// </summary>
-    public Action<string, string, string, T>? OnDeviceDataReceived { get; set; } = null;
-
-    /// <summary>
-    /// Gets or sets the callback for the node data received event.
-    /// </summary>
-    public Action<string, string, T>? OnNodeDataReceived { get; set; } = null;
-
-    /// <summary>
     /// Starts the Sparkplug application.
     /// </summary>
     /// <param name="applicationOptions">The application option.</param>
@@ -60,12 +62,18 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Start(SparkplugApplicationOptions applicationOptions)
     {
-        // Storing the options.
-        this.options = applicationOptions;
-
-        if (this.options is null)
+        if (this.IsRunning)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new InvalidOperationException("Start should only be called once!");
+        }
+        this.IsRunning = true;
+
+        // Storing the options.
+        this.Options = applicationOptions;
+
+        if (this.Options is null)
+        {
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         // Clear states.
@@ -73,7 +81,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
         this.DeviceStates.Clear();
 
         // Add handlers.
-        this.AddDisconnectedHandler();
+        this.AddEventHandler();
         this.AddMessageReceivedHandler();
 
         // Connect, subscribe to incoming messages and send a state message.
@@ -88,6 +96,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Stop()
     {
+        this.IsRunning = false;
         await this.Client.DisconnectAsync();
     }
 
@@ -102,11 +111,11 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <exception cref="ArgumentException">The group or edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    public async Task PublishNodeCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
+    public async Task PublishNodeCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (!this.Client.IsConnected)
@@ -136,7 +145,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected abstract Task PublishNodeCommandMessage(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier);
+    protected abstract Task PublishNodeCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier);
 
     /// <summary>
     /// Publishes a device command.
@@ -150,11 +159,11 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <exception cref="ArgumentException">The group or edge node or device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    public async Task PublishDeviceCommand(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+    public async Task PublishDeviceCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
         if (!this.Client.IsConnected)
@@ -190,15 +199,33 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <exception cref="Exception">An invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected abstract Task PublishDeviceCommandMessage(List<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier);
+    protected abstract Task PublishDeviceCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier);
 
     /// <summary>
-    /// Adds the disconnected handler and the reconnect functionality to the client.
+    /// Adds the event handler and the reconnect functionality to the client.
     /// </summary>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
-    private void AddDisconnectedHandler()
+    private void AddEventHandler()
     {
-        this.Client.DisconnectedAsync += this.OnClientDisconnected;
+        this.Client.DisconnectedAsync += this.OnClientDisconnectedAsync;
+        this.Client.ConnectedAsync += this.OnClientConnectedAsync;
+    }
+
+    /// <summary>
+    /// Handles the client disconnection event.
+    /// </summary>
+    /// <param name="arg">The <see cref="MqttClientConnectedEventArgs"/> instance containing the event data.</param>
+    protected virtual async Task OnClientConnectedAsync(MqttClientConnectedEventArgs arg)
+    {
+        try
+        {
+            await this.FireConnectedAsync();
+        }
+        catch (Exception ex)
+        {
+            this.Logger?.Error(ex, "OnClientConnectedAsync");
+            await Task.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -207,27 +234,40 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <param name="args">The arguments.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
-    private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
+    protected virtual async Task OnClientDisconnectedAsync(MqttClientDisconnectedEventArgs args)
     {
-        if (this.options is null)
+        try
         {
-            throw new ArgumentNullException(nameof(this.options), "The options aren't set properly.");
+            if (this.Options is null)
+            {
+                throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
+            }
+
+            // Set all metrics to stale.
+            this.UpdateMetricState(SparkplugMetricStatus.Offline);
+
+            // Invoke disconnected callback.
+            await this.FireDisconnectedAsync();
+
+            this.Logger?.Warning("Connection lost, retrying to connect in {@reconnectInterval}", this.Options.ReconnectInterval);
+
+            // Wait until the disconnect interval is reached.
+            await Task.Delay(this.Options.ReconnectInterval);
+
+            if (this.IsRunning)
+            {
+                // Connect, subscribe to incoming messages and send a state message.
+                await this.ConnectInternal();
+                this.UpdateMetricState(SparkplugMetricStatus.Online);
+                await this.SubscribeInternal();
+                await this.PublishInternal();
+            }
         }
-
-        // Set all metrics to stale.
-        this.UpdateMetricState(SparkplugMetricStatus.Offline);
-
-        // Invoke disconnected callback.
-        this.OnDisconnected?.Invoke();
-
-        // Wait until the disconnect interval is reached.
-        await Task.Delay(this.options.ReconnectInterval);
-
-        // Connect, subscribe to incoming messages and send a state message.
-        await this.ConnectInternal();
-        this.UpdateMetricState(SparkplugMetricStatus.Online);
-        await this.SubscribeInternal();
-        await this.PublishInternal();
+        catch (Exception ex)
+        {
+            this.Logger?.Error(ex, "OnClientDisconnectedAsync");
+            await Task.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -247,15 +287,32 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
     private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
-        var topic = args.ApplicationMessage.Topic;
-
-        // Skip the STATE messages as they're UTF-8 encoded.
-        if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+        try
         {
-            return Task.CompletedTask;
-        }
+            var topic = args.ApplicationMessage.Topic;
 
-        return this.OnMessageReceived(topic, args.ApplicationMessage.Payload);
+            if (SparkplugMessageTopic.TryParse(topic, out var topicParsed))
+            {
+                return this.OnMessageReceived(topicParsed!, args.ApplicationMessage.Payload);
+            }
+
+            else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
+            {
+                // Skip the STATE messages as they're UTF-8 encoded.
+                return Task.CompletedTask;
+            }
+            else
+            {
+                this.Logger?.Information("Received message on unkown topic {@topic}: {payload}", topic, args.ApplicationMessage.Payload);
+                return Task.CompletedTask;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            this.Logger?.Error(ex, "OnApplicationMessageReceived");
+            return Task.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -264,7 +321,7 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected abstract Task OnMessageReceived(string topic, byte[] payload);
+    protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
     /// Connects the Sparkplug application to the MQTT broker.
@@ -273,76 +330,85 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task ConnectInternal()
     {
-        if (this.options is null)
+        try
         {
-            throw new ArgumentNullException(nameof(this.options));
-        }
-
-        // Increment the session number.
-        this.IncrementLastSessionNumber();
-
-        // Get the will message.
-        var willMessage = SparkplugMessageGenerator.GetSparkplugStateMessage(
-            this.NameSpace,
-            this.options.ScadaHostIdentifier,
-            false);
-
-        // Build up the MQTT client and connect.
-        this.options.CancellationToken ??= CancellationToken.None;
-
-        var builder = new MqttClientOptionsBuilder()
-            .WithClientId(this.options.ClientId)
-            .WithCredentials(this.options.UserName, this.options.Password)
-            .WithCleanSession(false)
-            .WithProtocolVersion(MqttProtocolVersion.V311);
-
-        if (this.options.UseTls)
-        {
-            builder.WithTls();
-        }
-
-        if (this.options.WebSocketParameters is null)
-        {
-            builder.WithTcpServer(this.options.BrokerAddress, this.options.Port);
-        }
-        else
-        {
-            builder.WithWebSocketServer(this.options.BrokerAddress, this.options.WebSocketParameters);
-        }
-
-        if (this.options.ProxyOptions != null)
-        {
-            builder.WithProxy(
-                this.options.ProxyOptions.Address,
-                this.options.ProxyOptions.Username,
-                this.options.ProxyOptions.Password,
-                this.options.ProxyOptions.Domain,
-                this.options.ProxyOptions.BypassOnLocal);
-        }
-
-        if (this.options.IsPrimaryApplication)
-        {
-            builder.WithWillContentType(willMessage.ContentType);
-            builder.WithWillCorrelationData(willMessage.CorrelationData);
-            builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
-            builder.WithWillPayload(willMessage.Payload);
-            builder.WithWillPayloadFormatIndicator(willMessage.PayloadFormatIndicator);
-            builder.WithWillQualityOfServiceLevel(willMessage.QualityOfServiceLevel);
-            builder.WithWillResponseTopic(willMessage.ResponseTopic);
-            builder.WithWillRetain(willMessage.Retain);
-            builder.WithWillTopic(willMessage.Topic);
-
-            if (willMessage.UserProperties != null)
+            if (this.Options is null)
             {
-                foreach (var userProperty in willMessage.UserProperties)
+                throw new ArgumentNullException(nameof(this.Options));
+            }
+
+            // Increment the session number.
+            this.IncrementLastSessionNumber();
+
+            // Get the will message.
+            var willMessage = SparkplugMessageGenerator.GetSparkplugStateMessage(
+                this.NameSpace,
+                this.Options.ScadaHostIdentifier,
+                false);
+
+            // Build up the MQTT client and connect.
+            this.Options.CancellationToken ??= CancellationToken.None;
+
+            var builder = new MqttClientOptionsBuilder()
+                .WithClientId(this.Options.ClientId)
+                .WithCredentials(this.Options.UserName, this.Options.Password)
+                .WithCleanSession(false)
+                .WithProtocolVersion(MqttProtocolVersion.V311);
+
+            if (this.Options.UseTls)
+            {
+                builder.WithTls();
+            }
+
+            if (this.Options.WebSocketParameters is null)
+            {
+                builder.WithTcpServer(this.Options.BrokerAddress, this.Options.Port);
+            }
+            else
+            {
+                builder.WithWebSocketServer(this.Options.BrokerAddress, this.Options.WebSocketParameters);
+            }
+
+            if (this.Options.ProxyOptions != null)
+            {
+                builder.WithProxy(
+                    this.Options.ProxyOptions.Address,
+                    this.Options.ProxyOptions.Username,
+                    this.Options.ProxyOptions.Password,
+                    this.Options.ProxyOptions.Domain,
+                    this.Options.ProxyOptions.BypassOnLocal);
+            }
+
+            if (this.Options.IsPrimaryApplication)
+            {
+                builder.WithWillContentType(willMessage.ContentType);
+                builder.WithWillCorrelationData(willMessage.CorrelationData);
+                builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
+                builder.WithWillPayload(willMessage.Payload);
+                builder.WithWillPayloadFormatIndicator(willMessage.PayloadFormatIndicator);
+                builder.WithWillQualityOfServiceLevel(willMessage.QualityOfServiceLevel);
+                builder.WithWillResponseTopic(willMessage.ResponseTopic);
+                builder.WithWillRetain(willMessage.Retain);
+                builder.WithWillTopic(willMessage.Topic);
+
+                if (willMessage.UserProperties != null)
                 {
-                    builder.WithWillUserProperty(userProperty.Name, userProperty.Value);
+                    foreach (var userProperty in willMessage.UserProperties)
+                    {
+                        builder.WithWillUserProperty(userProperty.Name, userProperty.Value);
+                    }
                 }
             }
-        }
 
-        this.ClientOptions = builder.Build();
-        await this.Client.ConnectAsync(this.ClientOptions, this.options.CancellationToken.Value);
+            this.ClientOptions = builder.Build();
+            await this.Client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
+
+        }
+        catch (Exception ex)
+        {
+            this.Logger?.Error(ex, "ConnectInternal");
+            await Task.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -352,26 +418,26 @@ public abstract class SparkplugApplicationBase<T> : SparkplugBase<T> where T : c
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task PublishInternal()
     {
-        if (this.options is null)
+        if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.options));
+            throw new ArgumentNullException(nameof(this.Options));
         }
 
         // Only send state messages for the primary application.
-        if (this.options.IsPrimaryApplication)
+        if (this.Options.IsPrimaryApplication)
         {
             // Get the online message.
             var onlineMessage = SparkplugMessageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
-                this.options.ScadaHostIdentifier,
+                this.Options.ScadaHostIdentifier,
                 true);
 
             // Increment the sequence number.
             this.IncrementLastSequenceNumber();
 
             // Publish message.
-            this.options.CancellationToken ??= CancellationToken.None;
-            await this.Client.PublishAsync(onlineMessage, this.options.CancellationToken.Value);
+            this.Options.CancellationToken ??= CancellationToken.None;
+            await this.Client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
         }
     }
 
