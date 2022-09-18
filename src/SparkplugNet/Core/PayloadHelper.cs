@@ -41,7 +41,7 @@ internal static class PayloadHelper
     /// <returns>The <see cref="T:T?"/> value as deserialized object.</returns>
     public static T? Deserialize<T>(byte[]? data) where T : class
     {
-        if (null == data)
+        if (data is null)
         {
             return null;
         }

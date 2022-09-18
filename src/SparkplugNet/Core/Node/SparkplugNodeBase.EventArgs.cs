@@ -1,86 +1,88 @@
-namespace SparkplugNet.Core.Node
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugNodeBase.EventArgs.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A class that handles a Sparkplug node.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace SparkplugNet.Core.Node;
+
+/// <inheritdoc cref="SparkplugBase{T}"/>
+/// <summary>
+/// A class that handles a Sparkplug node.
+/// </summary>
+/// <seealso cref="SparkplugBase{T}"/>
+public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
-    public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : IMetric, new()
+    /// <summary>
+    /// A class for the node command event args.
+    /// </summary>
+    public class NodeCommandEventArgs : NodeEventArgs
     {
         /// <summary>
-        /// NodeCommandEventArgs
+        /// Initializes a new instance of the <see cref="NodeCommandEventArgs"/> class.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class NodeCommandEventArgs : NodeEventArgs
+        /// <param name="sender">The sender.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="metric">The metric.</param>
+        public NodeCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, T metric)
+            : base(sender, groupIdentifier, edgeNodeIdentifier)
         {
-            /// <summary>
-            /// Gets the metric value.
-            /// </summary>
-            /// <value>
-            /// The metric value.
-            /// </value>
-            public T Metric { get; }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="NodeCommandEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="groupIdentifier">The group identifier.</param>
-            /// <param name="nodeIdentifier">The node identifier.</param>
-            /// <param name="metric">The metric value.</param>
-            public NodeCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string nodeIdentifier, T metric)
-                : base(sender,groupIdentifier,nodeIdentifier)
-            {
-                this.Metric = metric;
-            }
+            this.Metric = metric;
         }
 
         /// <summary>
-        /// DeviceCommandEventArgs
+        /// Gets the metric.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class DeviceCommandEventArgs : NodeCommandEventArgs
-        {
-            /// Gets the device identifier.
-            /// </summary>
-            /// <value>
-            /// The device identifier.
-            /// </value>
-            public string DeviceIdentifier { get; }
+        public T Metric { get; }
+    }
 
-            /// <summary>
-            /// Initializes a new instance of the <see cref="DeviceCommandEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="groupIdentifier">The group identifier.</param>
-            /// <param name="nodeIdentifier">The node identifier.</param>
-            /// <param name="deviceIdentifier">The device identifier.</param>
-            /// <param name="metric">The metric.</param>
-            public DeviceCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string nodeIdentifier, string deviceIdentifier, T metric)
-               : base(sender, groupIdentifier, nodeIdentifier, metric)
-            {
-                this.DeviceIdentifier = deviceIdentifier;
-            }
+    /// <summary>
+    /// A class for the device command event args.
+    /// </summary>
+    public class DeviceCommandEventArgs : NodeCommandEventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeviceCommandEventArgs"/> class.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="metric">The metric.</param>
+        public DeviceCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, T metric)
+           : base(sender, groupIdentifier, edgeNodeIdentifier, metric)
+        {
+            this.DeviceIdentifier = deviceIdentifier;
         }
 
         /// <summary>
-        /// StatusMessageEvnetArgs
+        /// Gets the device identifier.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class StatusMessageEvnetArgs : SparkplugEventArgs
+        public string DeviceIdentifier { get; }
+    }
+
+    /// <summary>
+    /// A class for the status message event args.
+    /// </summary>
+    public class StatusMessageEventArgs : SparkplugEventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StatusMessageEventArgs"/> class.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="status">The status.</param>
+        public StatusMessageEventArgs(SparkplugNodeBase<T> sender, string status): base(sender)
         {
-            /// <summary>
-            /// Gets the status.
-            /// </summary>
-            /// <value>
-            /// The status.
-            /// </value>
-            public string Status { get; }
-            /// <summary>
-            /// Initializes a new instance of the <see cref="StatusMessageEvnetArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="status">The status.</param>
-            public StatusMessageEvnetArgs(SparkplugNodeBase<T> sender, string status)
-                : base(sender)
-            {
-                this.Status = status;
-            }
+            this.Status = status;
         }
+
+        /// <summary>
+        /// Gets the status.
+        /// </summary>
+        public string Status { get; }
     }
 }

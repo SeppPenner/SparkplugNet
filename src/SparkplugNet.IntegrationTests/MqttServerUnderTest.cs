@@ -30,7 +30,7 @@ public static class MqttServerUnderTest
     public static string ClientId { get; set; } = "client1";
 
     /// <summary>
-    /// Gets or sets the scada host identifier.
+    /// Gets or sets the SCADA host identifier.
     /// </summary>
     public static string ScadaHostIdentifier { get; set; } = "scadaHost1";
 }

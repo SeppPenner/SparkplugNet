@@ -82,7 +82,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// <returns>
     /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
     /// </returns>
-    /// <exception cref="System.InvalidCastException">The metric cast didn't work properly.</exception>
+    /// <exception cref="InvalidCastException">The metric cast didn't work properly.</exception>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
@@ -98,7 +98,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             switch (topic.MessageType)
             {
                 case SparkplugMessageType.DeviceCommand:
-                    if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
+                    if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                     {
                         foreach (var metric in convertedPayloadVersionB.Metrics)
                         {

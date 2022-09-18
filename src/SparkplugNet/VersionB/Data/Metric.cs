@@ -260,7 +260,7 @@ public class Metric : MetricBase<DataType>
     {
         this.Name = strName;
         this.SetValue(dataType, value);
-        if (timestamp != null)
+        if (timestamp is not null)
         {
             this.Timestamp = (ulong)(timestamp.Value.ToUnixTimeMilliseconds());
         }
@@ -274,7 +274,7 @@ public class Metric : MetricBase<DataType>
     /// <returns></returns>
     public override MetricBase<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object value)
     {
-        if (value != null)
+        if (value is not null)
         {
             switch (dataType)
             {
@@ -399,9 +399,6 @@ public class Metric : MetricBase<DataType>
     /// <summary>
     /// Gets the value.
     /// </summary>
-    /// <value>
-    /// The value.
-    /// </value>
     public override object? Value
     {
         get

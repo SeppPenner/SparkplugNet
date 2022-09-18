@@ -20,7 +20,7 @@ public static class Constants
     public const string SessionNumberMetricName = "BDSEQ";
 
     /// <summary>
-    /// The epoch
+    /// The epoch.
     /// </summary>
-    public static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+    public static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 }

@@ -124,7 +124,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
 
-        if (payloadVersionB != null)
+        if (payloadVersionB is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
             await this.HandleMessagesForVersionBAsync(topic, convertedPayload);
@@ -163,7 +163,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
 
                 break;
             case SparkplugMessageType.DeviceData:
-                if (string.IsNullOrEmpty(topic.DeviceIdentifier))
+                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                 {
                     throw new InvalidOperationException($"topic {topic} is invalid!");
                 }
@@ -179,7 +179,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                 await this.FireNodeDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
                 break;
             case SparkplugMessageType.DeviceDeath:
-                if (string.IsNullOrEmpty(topic.DeviceIdentifier))
+                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                 {
                     throw new InvalidOperationException($"topic {topic} is invalid!");
                 }
@@ -204,7 +204,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             MetricStatus = metricStatus
         };
 
-        if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
+        if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
             this.DeviceStates[topic.DeviceIdentifier] = metricState;
         }
@@ -220,7 +220,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                 throw new InvalidCastException("The metric cast didn't work properly.");
             }
 
-            if (payloadMetric.Name != null)
+            if (payloadMetric.Name is not null)
             {
                 metricState.Metrics[payloadMetric.Name] = convertedMetric;
             }

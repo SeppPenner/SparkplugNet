@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.VersionA;
 
-using SparkplugNet.Core;
-
 /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
 public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMetric>
 {
@@ -128,7 +126,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     {
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(payload);
 
-        if (payloadVersionA != null)
+        if (payloadVersionA is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
             await this.HandleMessagesForVersionA(topic, convertedPayload);
@@ -167,7 +165,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
 
                 break;
             case SparkplugMessageType.DeviceData:
-                if (string.IsNullOrEmpty(topic.DeviceIdentifier))
+                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                 {
                     throw new InvalidOperationException($"topic {topic} is invalid!");
                 }
@@ -183,7 +181,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
                 await this.FireNodeDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
                 break;
             case SparkplugMessageType.DeviceDeath:
-                if (string.IsNullOrEmpty(topic.DeviceIdentifier))
+                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                 {
                     throw new InvalidOperationException($"topic {topic} is invalid!");
                 }
@@ -208,7 +206,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             MetricStatus = metricStatus
         };
 
-        if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
+        if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
             this.DeviceStates[topic.DeviceIdentifier] = metricState;
         }
@@ -224,7 +222,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
                 throw new InvalidCastException("The metric cast didn't work properly.");
             }
 
-            if (payloadMetric.Name != null)
+            if (payloadMetric.Name is not null)
             {
                 metricState.Metrics[payloadMetric.Name] = convertedMetric;
             }

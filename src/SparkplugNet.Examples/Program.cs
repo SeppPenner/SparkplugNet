@@ -418,7 +418,7 @@ public class Program
     /// Handles the status message callback for version A nodes.
     /// </summary>
     /// <param name="args">The status.</param>
-    private static Task OnVersionANodeStatusMessageReceived(VersionA.SparkplugNode.StatusMessageEvnetArgs args)
+    private static Task OnVersionANodeStatusMessageReceived(VersionA.SparkplugNode.StatusMessageEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -428,7 +428,7 @@ public class Program
     /// Handles the status message callback for version B nodes.
     /// </summary>
     /// <param name="args">The args.</param>
-    private static Task OnVersionBNodeStatusMessageReceived(VersionB.SparkplugNode.StatusMessageEvnetArgs args)
+    private static Task OnVersionBNodeStatusMessageReceived(VersionB.SparkplugNode.StatusMessageEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;

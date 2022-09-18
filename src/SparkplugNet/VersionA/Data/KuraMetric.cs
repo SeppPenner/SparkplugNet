@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.VersionA.Data;
 
-using SparkplugNet.Core.Data;
-
 /// <summary>
 /// The externally used Sparkplug A Kura metric class.
 /// </summary>
@@ -45,6 +43,25 @@ public class KuraMetric : MetricBase<DataType>
     /// The string value.
     /// </summary>
     private string? stringValue;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KuraMetric"/> class.
+    /// </summary>
+    public KuraMetric()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KuraMetric"/> class.
+    /// </summary>
+    /// <param name="strName">Name of the string.</param>
+    /// <param name="dataType">Type of the data.</param>
+    /// <param name="value">The value.</param>
+    public KuraMetric(string strName, DataType dataType, object value)
+    {
+        this.Name = strName;
+        this.SetValue(dataType, value);
+    }
 
     /// <summary>
     /// Gets or sets the double value.
@@ -107,26 +124,6 @@ public class KuraMetric : MetricBase<DataType>
     public byte[]? BytesValue { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="KuraMetric"/> class.
-    /// </summary>
-    public KuraMetric()
-    {
-
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="KuraMetric"/> class.
-    /// </summary>
-    /// <param name="strName">Name of the string.</param>
-    /// <param name="dataType">Type of the data.</param>
-    /// <param name="value">The value.</param>
-    public KuraMetric(string strName, DataType dataType, object value)
-    {
-        this.Name = strName;
-        this.SetValue(dataType, value);
-    }
-
-    /// <summary>
     /// Sets the value.
     /// </summary>
     /// <param name="dataType">Type of the data.</param>
@@ -168,33 +165,22 @@ public class KuraMetric : MetricBase<DataType>
     /// <summary>
     /// Gets the value.
     /// </summary>
-    /// <value>
-    /// The value.
-    /// </value>
-    /// <exception cref="System.NotImplementedException">Type {this.Type} is not supported yet</exception>
+    /// <exception cref="NotImplementedException">Type {this.Type} is not supported yet</exception>
     public override object? Value
     {
         get
         {
-            switch (this.Type)
+            return this.Type switch
             {
-                case DataType.Double:
-                    return this.DoubleValue;
-                case DataType.Float:
-                    return this.FloatValue;
-                case DataType.Int64:
-                    return this.LongValue;
-                case DataType.Int32:
-                    return this.IntValue;
-                case DataType.Bool:
-                    return this.BoolValue;
-                case DataType.String:
-                    return this.StringValue;
-                case DataType.Bytes:
-                    return this.BytesValue;
-                default:
-                    throw new NotImplementedException($"Type {this.Type} is not supported yet");
-            }
+                DataType.Double => this.DoubleValue,
+                DataType.Float => this.FloatValue,
+                DataType.Int64 => this.LongValue,
+                DataType.Int32 => this.IntValue,
+                DataType.Bool => this.BoolValue,
+                DataType.String => this.StringValue,
+                DataType.Bytes => this.BytesValue,
+                _ => throw new NotImplementedException($"Type {this.Type} is not supported yet"),
+            };
         }
     }
 }

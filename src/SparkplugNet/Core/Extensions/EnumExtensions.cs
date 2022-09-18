@@ -3,14 +3,14 @@
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   A class that contains extension method for all <see cref="Enum"/> data types.
+//   A class that contains extension methods for all <see cref="Enum"/> data types.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Core.Extensions;
 
 /// <summary>
-/// A class that contains extension method for all <see cref="Enum"/> data types.
+/// A class that contains extension methods for all <see cref="Enum"/> data types.
 /// </summary>
 internal static class EnumExtensions
 {

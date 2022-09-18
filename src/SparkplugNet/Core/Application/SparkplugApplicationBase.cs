@@ -16,28 +16,24 @@ namespace SparkplugNet.Core.Application;
 /// <seealso cref="SparkplugBase{T}"/>
 public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
-    /// <summary>
-    /// The options.
-    /// </summary>
-    public SparkplugApplicationOptions? Options { private set; get; }
-
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
     /// </summary>
-    /// <param name="knownMetrics">The metric names.</param>
+    /// <param name="knownMetrics">The known metric names.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
     public SparkplugApplicationBase(IEnumerable<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
+    /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
     /// </summary>
-    /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="knownMetricsStorage">The known metric storage.</param>
     /// <param name="logger">The logger.</param>
-    /// /// <seealso cref="SparkplugBase{T}"/>
+    /// <seealso cref="SparkplugBase{T}"/>
     public SparkplugApplicationBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
     {
     }
@@ -48,14 +44,20 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     public ConcurrentDictionary<string, MetricState<T>> NodeStates { get; } = new();
 
     /// <summary>
-    /// Gets the node states.
+    /// Gets the device states.
     /// </summary>
     public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new();
 
     /// <summary>
+    /// Gets the options.
+    /// </summary>
+    public SparkplugApplicationOptions? Options { private set; get; }
+
+    /// <summary>
     /// Starts the Sparkplug application.
     /// </summary>
-    /// <param name="applicationOptions">The application option.</param>
+    /// <param name="applicationOptions">The application options.</param>
+    /// <exception cref="InvalidOperationException">The start should be only called once.</exception>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Start(SparkplugApplicationOptions applicationOptions)
@@ -136,18 +138,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Publishes a node command message.
-    /// </summary>
-    /// <param name="metrics">The metrics.</param>
-    /// <param name="groupIdentifier">The group identifier.</param>
-    /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">An invalid metric type was specified.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected abstract Task PublishNodeCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier);
-
-    /// <summary>
-    /// Publishes a device command.
+    /// Publishes a device command message.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
@@ -189,7 +180,18 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Publishes a version A device command message.
+    /// Publishes a node command message.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <param name="groupIdentifier">The group identifier.</param>
+    /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="Exception">An invalid metric type was specified.</exception>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    protected abstract Task PublishNodeCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier);
+
+    /// <summary>
+    /// Publishes a device command message.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
@@ -201,20 +203,19 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     protected abstract Task PublishDeviceCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier);
 
     /// <summary>
-    /// Adds the event handler and the reconnect functionality to the client.
+    /// Called when a message is received.
     /// </summary>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    private void AddEventHandler()
-    {
-        this.Client.DisconnectedAsync += this.OnClientDisconnectedAsync;
-        this.Client.ConnectedAsync += this.OnClientConnectedAsync;
-    }
+    /// <param name="topic">The topic.</param>
+    /// <param name="payload">The payload.</param>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
-    /// Handles the client disconnection event.
+    /// Handles the client connected event.
     /// </summary>
-    /// <param name="arg">The <see cref="MqttClientConnectedEventArgs"/> instance containing the event data.</param>
-    protected virtual async Task OnClientConnectedAsync(MqttClientConnectedEventArgs arg)
+    /// <param name="args">The arguments.</param>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    protected virtual async Task OnClientConnectedAsync(MqttClientConnectedEventArgs args)
     {
         try
         {
@@ -228,11 +229,11 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Handles the client disconnection.
+    /// Handles the client disconnection event.
     /// </summary>
     /// <param name="args">The arguments.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual async Task OnClientDisconnectedAsync(MqttClientDisconnectedEventArgs args)
     {
         try
@@ -250,7 +251,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             this.Logger?.Warning("Connection lost, retrying to connect in {@ReconnectInterval}.", this.Options.ReconnectInterval);
 
-            // Wait until the disconnect interval is reached.
+            // Wait until the reconnect interval is reached.
             await Task.Delay(this.Options.ReconnectInterval);
 
             if (this.IsRunning)
@@ -270,6 +271,16 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
+    /// Adds the event handler and the reconnect functionality to the client.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    private void AddEventHandler()
+    {
+        this.Client.DisconnectedAsync += this.OnClientDisconnectedAsync;
+        this.Client.ConnectedAsync += this.OnClientConnectedAsync;
+    }
+
+    /// <summary>
     /// Adds the message received handler to handle incoming messages.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
@@ -284,6 +295,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="args">The arguments.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
         try
@@ -302,10 +314,9 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             }
             else
             {
-                this.Logger?.Information("Received message on unkown topic {Topic}: {Payload}", topic, args.ApplicationMessage.Payload);
+                this.Logger?.Information("Received message on unkown topic {Topic}: {Payload}.", topic, args.ApplicationMessage.Payload);
                 return Task.CompletedTask;
             }
-
         }
         catch (Exception ex)
         {
@@ -313,14 +324,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             return Task.FromException(ex);
         }
     }
-
-    /// <summary>
-    /// Called when [message received].
-    /// </summary>
-    /// <param name="topic">The topic.</param>
-    /// <param name="payload">The payload.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
     /// Connects the Sparkplug application to the MQTT broker.
@@ -368,7 +371,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 builder.WithWebSocketServer(this.Options.BrokerAddress, this.Options.WebSocketParameters);
             }
 
-            if (this.Options.ProxyOptions != null)
+            if (this.Options.ProxyOptions is not null)
             {
                 builder.WithProxy(
                     this.Options.ProxyOptions.Address,
@@ -390,7 +393,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 builder.WithWillRetain(willMessage.Retain);
                 builder.WithWillTopic(willMessage.Topic);
 
-                if (willMessage.UserProperties != null)
+                if (willMessage.UserProperties is not null)
                 {
                     foreach (var userProperty in willMessage.UserProperties)
                     {
@@ -435,7 +438,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             this.IncrementLastSequenceNumber();
 
             // Publish message.
-            this.Options.CancellationToken ??= CancellationToken.None;
+            this.Options.CancellationToken ??= SystemCancellationToken.None;
             await this.Client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
         }
     }

@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.VersionA;
 
-using SparkplugNet.Core;
-
 /// <inheritdoc cref="SparkplugNodeBase{T}"/>
 public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
 {
@@ -82,7 +80,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// <returns>
     /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
     /// </returns>
-    /// <exception cref="System.InvalidCastException">The metric cast didn't work properly.</exception>
+    /// <exception cref="InvalidCastException">The metric cast didn't work properly.</exception>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(payload);
@@ -99,7 +97,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             switch (topic.MessageType)
             {
                 case SparkplugMessageType.DeviceCommand:
-                    if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
+                    if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                     {
                         foreach (var metric in convertedPayloadVersionA.Metrics)
                         {

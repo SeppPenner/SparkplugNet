@@ -9,29 +9,26 @@
 
 namespace SparkplugNet.Core.Application;
 
-using System.Xml.Serialization;
-using Newtonsoft.Json;
-
+/// <inheritdoc cref="SparkplugBaseOptions"/>
 /// <summary>
 /// A class that contains the application options.
 /// </summary>
+/// <seealso cref="SparkplugBaseOptions"/>
 [Serializable]
 public class SparkplugApplicationOptions : SparkplugBaseOptions
 {
     /// <summary>
-    /// The default to add session number to command messages
+    /// The default option to add session numbers to command messages.
     /// </summary>
     public const bool DefaultAddSessionNumberToCommandMessages = true;
 
     /// <summary>
-    /// For serializers only
+    /// For serializers only.
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public SparkplugApplicationOptions()
-        : this(brokerAddress: DefaultBroker)
+    public SparkplugApplicationOptions() : this(brokerAddress: DefaultBroker)
     {
-
     }
 
     /// <summary>
@@ -40,11 +37,11 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="brokerAddress">The broker address.</param>
     /// <param name="port">The port.</param>
     /// <param name="clientId">The client identifier.</param>
-    /// <param name="userName">Name of the user.</param>
+    /// <param name="userName">The name of the user.</param>
     /// <param name="password">The password.</param>
-    /// <param name="useTls">if set to <c>true</c> [use TLS].</param>
-    /// <param name="scadaHostIdentifier">The scada host identifier.</param>
-    /// <param name="isPrimaryApplication">if set to <c>true</c> [is primary application].</param>
+    /// <param name="useTls">A value indicating whether TLS is used or not.</param>
+    /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
+    /// <param name="isPrimaryApplication">A value indicating whether the application is a primary application or not.</param>
     /// <param name="tlsParameters">The TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
@@ -59,8 +56,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
         bool isPrimaryApplication = false,
         MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
-        MqttClientWebSocketProxyOptions? proxyOptions = null
-)
+        MqttClientWebSocketProxyOptions? proxyOptions = null)
         : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
               reconnectInterval: TimeSpan.FromSeconds(30),
               isPrimaryApplication: isPrimaryApplication,
@@ -68,7 +64,6 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
               webSocketParameters: webSocketParameters,
               proxyOptions: proxyOptions)
     {
-
     }
 
     /// <summary>
@@ -77,37 +72,36 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="brokerAddress">The broker address.</param>
     /// <param name="port">The port.</param>
     /// <param name="clientId">The client identifier.</param>
-    /// <param name="userName">Name of the user.</param>
+    /// <param name="userName">The name of the user.</param>
     /// <param name="password">The password.</param>
-    /// <param name="useTls">if set to <c>true</c> [use TLS].</param>
-    /// <param name="scadaHostIdentifier">The scada host identifier.</param>
+    /// <param name="useTls">A value indicating whether TLS is used or not.</param>
+    /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
-    /// <param name="isPrimaryApplication">if set to <c>true</c> [is primary application].</param>
+    /// <param name="isPrimaryApplication">A value indicating whether the application is a primary application or not.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     public SparkplugApplicationOptions(
-    string brokerAddress,
-    int port,
-    string clientId,
-    string userName,
-    string password,
-    bool useTls,
-    string scadaHostIdentifier,
-    TimeSpan reconnectInterval,
-    bool isPrimaryApplication = false,
-    MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
-    MqttClientWebSocketProxyOptions? proxyOptions = null,
-        CancellationToken? cancellationToken = null)
-    : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
-          reconnectInterval: reconnectInterval,
-          isPrimaryApplication: isPrimaryApplication,
-          tlsParameters: null,
-          webSocketParameters: webSocketParameters,
-          proxyOptions: proxyOptions,
-          cancellationToken: cancellationToken)
+        string brokerAddress,
+        int port,
+        string clientId,
+        string userName,
+        string password,
+        bool useTls,
+        string scadaHostIdentifier,
+        TimeSpan reconnectInterval,
+        bool isPrimaryApplication = false,
+        MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
+        MqttClientWebSocketProxyOptions? proxyOptions = null,
+        SystemCancellationToken? cancellationToken = null)
+        : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
+            reconnectInterval: reconnectInterval,
+            isPrimaryApplication: isPrimaryApplication,
+            tlsParameters: null,
+            webSocketParameters: webSocketParameters,
+            proxyOptions: proxyOptions,
+            cancellationToken: cancellationToken)
     {
-
     }
 
     /// <summary>
@@ -116,12 +110,12 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="brokerAddress">The broker address.</param>
     /// <param name="port">The port.</param>
     /// <param name="clientId">The client identifier.</param>
-    /// <param name="userName">Name of the user.</param>
+    /// <param name="userName">The name of the user.</param>
     /// <param name="password">The password.</param>
-    /// <param name="useTls">if set to <c>true</c> [use TLS].</param>
-    /// <param name="scadaHostIdentifier">The scada host identifier.</param>
+    /// <param name="useTls">A value indicating whether TLS is used or not.</param>
+    /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
-    /// <param name="isPrimaryApplication">if set to <c>true</c> [is primary application].</param>
+    /// <param name="isPrimaryApplication">A value indicating whether the application is a primary application or not.</param>
     /// <param name="tlsParameters">The TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
@@ -139,7 +133,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
         MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null,
-        CancellationToken? cancellationToken = null)
+        SystemCancellationToken? cancellationToken = null)
         : base(brokerAddress: brokerAddress,
             port: port,
             clientId: clientId,
@@ -150,10 +144,8 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
             reconnectInterval: reconnectInterval,
             tlsParameters: tlsParameters,
             webSocketParameters: webSocketParameters,
-            proxyOptions: proxyOptions
-            )
+            proxyOptions: proxyOptions)
     {
-
         this.IsPrimaryApplication = isPrimaryApplication;
         this.CancellationToken = cancellationToken ?? SystemCancellationToken.None;
     }
@@ -165,11 +157,8 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     public bool IsPrimaryApplication { get; set; } = false;
 
     /// <summary>
-    /// Gets or sets a value indicating whether to [add session number to command messages].
+    /// Gets or sets a value indicating whether session messages are added to command messages or not.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if [add session number to command messages]; otherwise, <c>false</c>.
-    /// </value>
     [DefaultValue(DefaultAddSessionNumberToCommandMessages)]
     public bool AddSessionNumberToCommandMessages { get; set; } = DefaultAddSessionNumberToCommandMessages;
 
@@ -179,5 +168,5 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     [JsonIgnore]
     [XmlIgnore]
     [Browsable(false)]
-    public CancellationToken? CancellationToken { get; set; }
+    public SystemCancellationToken? CancellationToken { get; set; }
 }
