@@ -60,17 +60,17 @@ public abstract class SparkplugBaseOptions
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     public SparkplugBaseOptions(
-    string brokerAddress,
-    int port,
-    string clientId,
-    string userName,
-    string password,
-    bool useTls,
-    string scadaHostIdentifier,
-    TimeSpan reconnectInterval,
-    MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
-    MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
-    MqttClientWebSocketProxyOptions? proxyOptions = null)
+        string brokerAddress,
+        int port,
+        string clientId,
+        string userName,
+        string password,
+        bool useTls,
+        string scadaHostIdentifier,
+        TimeSpan reconnectInterval,
+        MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
+        MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
+        MqttClientWebSocketProxyOptions? proxyOptions = null)
     {
         this.BrokerAddress = brokerAddress;
         this.Port = port;

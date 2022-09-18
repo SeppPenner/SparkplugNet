@@ -1,19 +1,18 @@
 namespace SparkplugNet.Core;
-public partial class SparkplugBase<T> : ISparkplugConnection
-    where T : IMetric, new()
+
+public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, new()
 {
     /// <summary>
     /// Storage for the Known Metrics
     /// </summary>
-    /// <seealso cref="SparkplugNet.Core.ISparkplugConnection" />
+    /// <seealso cref="ISparkplugConnection" />
     public class KnownMetricStorage : ConcurrentDictionary<string, T>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="KnownMetricStorage"/> class.
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
-        public KnownMetricStorage(IEnumerable<T> knownMetrics)
-            : base(StringComparer.InvariantCultureIgnoreCase)
+        public KnownMetricStorage(IEnumerable<T> knownMetrics) : base(StringComparer.InvariantCultureIgnoreCase)
         {
             if (knownMetrics is not null)
             {

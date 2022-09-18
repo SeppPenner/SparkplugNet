@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.VersionB;
 
-using SparkplugNet.Core;
-
 /// <inheritdoc cref="SparkplugNodeBase{T}"/>
 public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
 {
@@ -90,6 +88,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
         if (payloadVersionB is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+
             if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
             {
                 throw new InvalidCastException("The metric cast didn't work properly.");

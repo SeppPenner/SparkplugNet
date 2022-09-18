@@ -17,5 +17,5 @@ public class MetricValueExtension
     /// <summary>
     /// Gets or sets the details.
     /// </summary>
-    public List<byte> Details { get; set; } = new List<byte>();
+    public List<byte> Details { get; set; } = new();
 }

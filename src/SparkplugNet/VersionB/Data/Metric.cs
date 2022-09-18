@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.VersionB.Data;
 
-using SparkplugNet.Core.Data;
-
 /// <summary>
 /// The externally used Sparkplug B metric class.
 /// </summary>
@@ -67,6 +65,31 @@ public class Metric : MetricBase<DataType>
     private MetricValueExtension? extensionValue;
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    public Metric()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    /// <param name="strName">Name of the string.</param>
+    /// <param name="dataType">Type of the data.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="timestamp">The timestamp.</param>
+    public Metric(string strName, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    {
+        this.Name = strName;
+        this.SetValue(dataType, value);
+
+        if (timestamp is not null)
+        {
+            this.Timestamp = (ulong)(timestamp.Value.ToUnixTimeMilliseconds());
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the alias.
     /// </summary>
     public ulong Alias { get; set; }
@@ -82,7 +105,7 @@ public class Metric : MetricBase<DataType>
     public uint DataType
     {
         get { return (uint)this.Type; }
-        set { this.Type = (DataType)value; }
+        set { this.Type = (VersionBDataTypeEnum)value; }
     }
 
     /// <summary>
@@ -242,36 +265,11 @@ public class Metric : MetricBase<DataType>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Metric"/> class.
-    /// </summary>
-    public Metric()
-    {
-
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Metric"/> class.
-    /// </summary>
-    /// <param name="strName">Name of the string.</param>
-    /// <param name="dataType">Type of the data.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="timestamp">The timestamp.</param>
-    public Metric(string strName, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
-    {
-        this.Name = strName;
-        this.SetValue(dataType, value);
-        if (timestamp is not null)
-        {
-            this.Timestamp = (ulong)(timestamp.Value.ToUnixTimeMilliseconds());
-        }
-    }
-
-    /// <summary>
     /// Sets the value.
     /// </summary>
     /// <param name="dataType">Type of the data.</param>
     /// <param name="value">The value.</param>
-    /// <returns></returns>
+    /// <returns>The metric.</returns>
     public override MetricBase<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object value)
     {
         if (value is not null)
@@ -406,13 +404,13 @@ public class Metric : MetricBase<DataType>
             return this.Type switch
             {
                 VersionBDataTypeEnum.Int8 => (sbyte)this.IntValue,
-                VersionBDataTypeEnum.Int16 => (Int16)this.IntValue,
-                VersionBDataTypeEnum.Int32 => (Int32)this.IntValue,
-                VersionBDataTypeEnum.Int64 => (Int64)this.LongValue,
+                VersionBDataTypeEnum.Int16 => (short)this.IntValue,
+                VersionBDataTypeEnum.Int32 => (int)this.IntValue,
+                VersionBDataTypeEnum.Int64 => (long)this.LongValue,
                 VersionBDataTypeEnum.UInt8 => (byte)this.IntValue,
-                VersionBDataTypeEnum.UInt16 => (UInt16)this.IntValue,
-                VersionBDataTypeEnum.UInt32 => (UInt32)this.IntValue,
-                VersionBDataTypeEnum.UInt64 => (UInt64)this.LongValue,
+                VersionBDataTypeEnum.UInt16 => (ushort)this.IntValue,
+                VersionBDataTypeEnum.UInt32 => (uint)this.IntValue,
+                VersionBDataTypeEnum.UInt64 => (ulong)this.LongValue,
                 VersionBDataTypeEnum.Float => (float)this.FloatValue,
                 VersionBDataTypeEnum.Double => (double)this.DoubleValue,
                 VersionBDataTypeEnum.Boolean => this.BooleanValue,

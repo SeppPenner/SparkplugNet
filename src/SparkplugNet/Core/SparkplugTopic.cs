@@ -1,8 +1,5 @@
 namespace SparkplugNet.Core;
 
-/// <summary>
-/// The base sparkplug Topic
-/// </summary>
 public class SparkplugTopic
 {
     /// <summary>
@@ -178,7 +175,7 @@ public class SparkplugMessageTopic : SparkplugTopic
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <returns></returns>
-    /// <exception cref="System.FormatException">
+    /// <exception cref="FormatException">
     /// namespace {topics[0]} is unknown in topic: {topic}!
     /// or
     /// message type {topics[2]} is unknown in topic: {topic}!

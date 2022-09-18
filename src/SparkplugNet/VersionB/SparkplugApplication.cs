@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.VersionB;
 
-using SparkplugNet.Core;
-
 /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
 public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric>
 {
