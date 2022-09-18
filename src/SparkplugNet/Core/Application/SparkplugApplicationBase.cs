@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.Core.Application;
 
-using MQTTnet.Internal;
-
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug application.
@@ -66,6 +64,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         {
             throw new InvalidOperationException("Start should only be called once!");
         }
+
         this.IsRunning = true;
 
         // Storing the options.
@@ -249,7 +248,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             // Invoke disconnected callback.
             await this.FireDisconnectedAsync();
 
-            this.Logger?.Warning("Connection lost, retrying to connect in {@reconnectInterval}", this.Options.ReconnectInterval);
+            this.Logger?.Warning("Connection lost, retrying to connect in {@ReconnectInterval}.", this.Options.ReconnectInterval);
 
             // Wait until the disconnect interval is reached.
             await Task.Delay(this.Options.ReconnectInterval);
@@ -303,7 +302,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             }
             else
             {
-                this.Logger?.Information("Received message on unkown topic {@topic}: {payload}", topic, args.ApplicationMessage.Payload);
+                this.Logger?.Information("Received message on unkown topic {Topic}: {Payload}", topic, args.ApplicationMessage.Payload);
                 return Task.CompletedTask;
             }
 
