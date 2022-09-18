@@ -42,7 +42,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// Validates the incomming metrics.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
-        /// <exception cref="System.Exception">Metric {metric.Name} is an unknown metric.</exception>
+        /// <exception cref="Exception">Metric {metric.Name} is an unknown metric.</exception>
         public virtual void ValidateIncommingMetrics(IEnumerable<T> metrics)
         {
             foreach (var metric in metrics.Where(metric => !this.ContainsKey(metric.Name)))

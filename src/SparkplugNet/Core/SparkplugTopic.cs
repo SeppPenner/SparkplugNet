@@ -230,9 +230,9 @@ public class SparkplugMessageTopic : SparkplugTopic
                 }
                 else
                 {
-
                     string edge = splitTopics[3];
                     string? device;
+
                     if (splitTopics.Length == 5)
                     {
                         device = splitTopics[4];
