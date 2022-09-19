@@ -57,7 +57,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="scadaHostIdentifier">The scada host identifier.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-    /// <param name="tlsParameters">The TLS parameters.</param>
+    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     public SparkplugNodeOptions(
@@ -70,14 +70,14 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
         string scadaHostIdentifier = DefaultScadaHostIdentifier,
         string groupIdentifier = DefaultGroupIdentifier,
         string edgeNodeIdentifier = DefaultNodeIdentifier,
-        MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
+        GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null)
         : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
               reconnectInterval: TimeSpan.FromSeconds(30),
               groupIdentifier: groupIdentifier,
               edgeNodeIdentifier: edgeNodeIdentifier,
-              tlsParameters: tlsParameters,
+              getTlsParameters: getTlsParameters,
               webSocketParameters: webSocketParameters,
               proxyOptions: proxyOptions)
     {
@@ -118,7 +118,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
              reconnectInterval: reconnectInterval,
              groupIdentifier: groupIdentifier,
              edgeNodeIdentifier: edgeNodeIdentifier,
-             tlsParameters: null,
+             getTlsParameters: null,
              webSocketParameters: webSocketParameters,
              proxyOptions: proxyOptions,
              cancellationToken: cancellationToken)
@@ -139,7 +139,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
-    /// <param name="tlsParameters">The TLS parameters.</param>
+    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
@@ -154,7 +154,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
         string groupIdentifier,
         string edgeNodeIdentifier,
         TimeSpan reconnectInterval,
-        MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
+        GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null,
         CancellationToken? cancellationToken = null)
@@ -166,7 +166,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
             useTls: useTls,
             scadaHostIdentifier: scadaHostIdentifier,
             reconnectInterval: reconnectInterval,
-            tlsParameters: tlsParameters,
+            getTlsParameters: getTlsParameters,
             webSocketParameters: webSocketParameters,
             proxyOptions: proxyOptions
             )

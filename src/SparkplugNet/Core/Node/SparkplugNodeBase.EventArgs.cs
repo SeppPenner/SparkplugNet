@@ -36,11 +36,9 @@ namespace SparkplugNet.Core.Node
         /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
         public class DeviceCommandEventArgs : NodeCommandEventArgs
         {
+            /// <summary>
             /// Gets the device identifier.
             /// </summary>
-            /// <value>
-            /// The device identifier.
-            /// </value>
             public string DeviceIdentifier { get; }
 
             /// <summary>

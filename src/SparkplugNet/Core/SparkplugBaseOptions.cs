@@ -7,6 +7,12 @@ namespace SparkplugNet.Core
     /// </summary>
     public abstract class SparkplugBaseOptions
     {
+
+        /// <summary>
+        /// Returns a <see cref="MqttClientOptionsBuilderTlsParameters"/> instance or null 
+        /// </summary>
+        public delegate MqttClientOptionsBuilderTlsParameters? GetTlsParametersDelegate();
+
         /// <summary>
         /// The default broker
         /// </summary>
@@ -51,7 +57,7 @@ namespace SparkplugNet.Core
         /// <param name="password">The password.</param>
         /// <param name="useTls">if set to <c>true</c> [use TLS].</param>
         /// <param name="scadaHostIdentifier">The scada host identifier.</param>
-        /// <param name="tlsParameters">The TLS parameters.</param>
+        /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
         /// <param name="webSocketParameters">The web socket parameters.</param>
         /// <param name="proxyOptions">The proxy options.</param>
         public SparkplugBaseOptions(
@@ -63,7 +69,7 @@ namespace SparkplugNet.Core
         bool useTls,
         string scadaHostIdentifier,
         TimeSpan reconnectInterval,
-        MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
+        GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null)
         {
@@ -77,7 +83,7 @@ namespace SparkplugNet.Core
             this.ReconnectInterval = reconnectInterval;
             this.WebSocketParameters = webSocketParameters;
             this.ProxyOptions = proxyOptions;
-            this.TlsParameters = tlsParameters;
+            this.GetTlsParameters = getTlsParameters;
         }
 
         /// <summary>
@@ -142,13 +148,13 @@ namespace SparkplugNet.Core
         public MqttClientWebSocketProxyOptions? ProxyOptions { get; set; }
 
         /// <summary>
-        /// Gets or sets the TLS parameters.
+        /// Gets or sets the delegate to provide TLS parameter.
         /// </summary>
         /// <value>
         /// The TLS parameters.
         /// </value>
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        [DefaultValue(null)]
-        public MqttClientOptionsBuilderTlsParameters? TlsParameters { get; set; }
+        [System.Xml.Serialization.XmlIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public GetTlsParametersDelegate? GetTlsParameters { get; set; }
     }
 }

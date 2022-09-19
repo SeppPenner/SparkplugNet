@@ -205,7 +205,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     private async Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
         var topic = args.ApplicationMessage.Topic;
-       
+
         if (SparkplugMessageTopic.TryParse(topic, out var messageTopic))
         {
             await this.OnMessageReceived(messageTopic!, args.ApplicationMessage.Payload);
@@ -265,9 +265,18 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         if (this.Options.UseTls)
         {
-            if (this.Options.TlsParameters != null)
+            if (this.Options.GetTlsParameters != null)
             {
-                builder.WithTls(this.Options.TlsParameters);
+                MqttClientOptionsBuilderTlsParameters? tlsParameter = this.Options.GetTlsParameters();
+                if (tlsParameter != null)
+                {
+
+                    builder.WithTls(tlsParameter);
+                }
+                else
+                {
+                    builder.WithTls();
+                }
             }
             else
             {
@@ -331,7 +340,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             throw new ArgumentNullException(nameof(this.Options));
         }
-        
+
         // Get the online message.
         var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage<T>(
             this.NameSpace,

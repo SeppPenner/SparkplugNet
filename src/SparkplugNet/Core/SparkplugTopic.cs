@@ -200,7 +200,7 @@ namespace SparkplugNet.Core
         /// message type {topics[2]} is unknown in topic: {topic}!
         /// or
         /// </exception>
-        public static SparkplugMessageTopic Parse(string topic)
+        public static SparkplugMessageTopic? Parse(string topic)
         {
             if (TryParse(topic, out var parsedTopic, true))
             {

@@ -9,8 +9,8 @@
 
 namespace SparkplugNet.Core.Application;
 
-using System.Xml.Serialization;
 using Newtonsoft.Json;
+using System.Xml.Serialization;
 
 /// <summary>
 /// A class that contains the application options.
@@ -45,7 +45,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="useTls">if set to <c>true</c> [use TLS].</param>
     /// <param name="scadaHostIdentifier">The scada host identifier.</param>
     /// <param name="isPrimaryApplication">if set to <c>true</c> [is primary application].</param>
-    /// <param name="tlsParameters">The TLS parameters.</param>
+    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     public SparkplugApplicationOptions(
@@ -57,14 +57,14 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
         bool useTls = DefaultUseTls,
         string scadaHostIdentifier = DefaultScadaHostIdentifier,
         bool isPrimaryApplication = false,
-        MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
+        GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null
 )
         : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
               reconnectInterval: TimeSpan.FromSeconds(30),
               isPrimaryApplication: isPrimaryApplication,
-              tlsParameters: tlsParameters,
+              getTlsParameters: getTlsParameters,
               webSocketParameters: webSocketParameters,
               proxyOptions: proxyOptions)
     {
@@ -102,7 +102,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
           reconnectInterval: reconnectInterval,
           isPrimaryApplication: isPrimaryApplication,
-          tlsParameters: null,
+          getTlsParameters: null,
           webSocketParameters: webSocketParameters,
           proxyOptions: proxyOptions,
           cancellationToken: cancellationToken)
@@ -122,7 +122,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="scadaHostIdentifier">The scada host identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
     /// <param name="isPrimaryApplication">if set to <c>true</c> [is primary application].</param>
-    /// <param name="tlsParameters">The TLS parameters.</param>
+    /// <param name="getTlsParameters">The delegate to TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
@@ -136,7 +136,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
         string scadaHostIdentifier,
         TimeSpan reconnectInterval,
         bool isPrimaryApplication = false,
-        MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
+        GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null,
         CancellationToken? cancellationToken = null)
@@ -148,12 +148,11 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
             useTls: useTls,
             scadaHostIdentifier: scadaHostIdentifier,
             reconnectInterval: reconnectInterval,
-            tlsParameters: tlsParameters,
+            getTlsParameters: getTlsParameters,
             webSocketParameters: webSocketParameters,
             proxyOptions: proxyOptions
             )
     {
-
         this.IsPrimaryApplication = isPrimaryApplication;
         this.CancellationToken = cancellationToken ?? SystemCancellationToken.None;
     }

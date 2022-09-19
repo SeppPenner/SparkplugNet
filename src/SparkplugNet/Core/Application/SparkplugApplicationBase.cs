@@ -9,8 +9,6 @@
 
 namespace SparkplugNet.Core.Application;
 
-using MQTTnet.Internal;
-
 /// <inheritdoc cref="SparkplugBase{T}"/>
 /// <summary>
 /// A class that handles a Sparkplug application.
@@ -66,6 +64,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         {
             throw new InvalidOperationException("Start should only be called once!");
         }
+
         this.IsRunning = true;
 
         // Storing the options.
@@ -306,7 +305,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 this.Logger?.Information("Received message on unkown topic {@topic}: {payload}", topic, args.ApplicationMessage.Payload);
                 return Task.CompletedTask;
             }
-
         }
         catch (Exception ex)
         {
@@ -357,7 +355,23 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (this.Options.UseTls)
             {
-                builder.WithTls();
+                if (this.Options.GetTlsParameters != null)
+                {
+                    MqttClientOptionsBuilderTlsParameters? tlsParameter = this.Options.GetTlsParameters();
+                    if (tlsParameter != null)
+                    {
+
+                        builder.WithTls(tlsParameter);
+                    }
+                    else
+                    {
+                        builder.WithTls();
+                    }
+                }
+                else
+                {
+                    builder.WithTls();
+                }
             }
 
             if (this.Options.WebSocketParameters is null)
