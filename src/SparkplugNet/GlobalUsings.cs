@@ -3,6 +3,7 @@ global using System;
 global using System.Collections.Concurrent;
 global using System.Collections.Generic;
 global using System.ComponentModel;
+global using System.Diagnostics.CodeAnalysis;
 global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
@@ -25,6 +26,7 @@ global using SparkplugNet.Core.Application;
 global using SparkplugNet.Core.Data;
 global using SparkplugNet.Core.Enumerations;
 global using SparkplugNet.Core.Extensions;
+global using SparkplugNet.Core.Interfaces;
 global using SparkplugNet.Core.Messages;
 global using SparkplugNet.Core.Node;
 

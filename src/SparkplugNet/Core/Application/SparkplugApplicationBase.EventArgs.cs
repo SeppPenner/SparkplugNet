@@ -47,6 +47,7 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <seealso cref="NodeDataEventArgs"/>
     public class DeviceDataEventArgs : NodeDataEventArgs
     {
+        /// <inheritdoc cref="NodeDataEventArgs"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceDataEventArgs"/> class.
         /// </summary>
@@ -55,6 +56,7 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="metric">The metric.</param>
+        /// <seealso cref="NodeDataEventArgs"/>
         public DeviceDataEventArgs(SparkplugApplicationBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, T metric)
             : base(sender, groupIdentifier, edgeNodeIdentifier, metric)
         {

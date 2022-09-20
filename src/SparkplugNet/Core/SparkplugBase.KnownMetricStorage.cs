@@ -1,11 +1,26 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugBase.KnownMetricStorage.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A base class for all Sparkplug applications, nodes and devices.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace SparkplugNet.Core;
 
+/// <inheritdoc cref="ISparkplugConnection" />
+/// <summary>
+/// A base class for all Sparkplug applications, nodes and devices.
+/// </summary>
+/// <seealso cref="ISparkplugConnection" />
 public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, new()
 {
+    /// <inheritdoc cref="ConcurrentDictionary{TKey, TValue}"/>
     /// <summary>
-    /// Storage for the Known Metrics
+    /// A class to handle the known metric storage.
     /// </summary>
-    /// <seealso cref="ISparkplugConnection" />
+    /// <seealso cref="ConcurrentDictionary{TKey, TValue}"/>
     public class KnownMetricStorage : ConcurrentDictionary<string, T>
     {
         /// <summary>
@@ -27,7 +42,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// Filters the outgoing metrics.
         /// </summary>
         /// <param name="metrics">The metric.</param>
-        /// <returns></returns>
+        /// <returns>The filtered metrics.</returns>
         public virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metrics)
         {
             return metrics.Where(m =>
@@ -39,11 +54,11 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         }
 
         /// <summary>
-        /// Validates the incomming metrics.
+        /// Validates the incoming metrics.
         /// </summary>
         /// <param name="metrics">The metrics.</param>
-        /// <exception cref="Exception">Metric {metric.Name} is an unknown metric.</exception>
-        public virtual void ValidateIncommingMetrics(IEnumerable<T> metrics)
+        /// <exception cref="Exception">Thrown if the metric name is an unknown metric.</exception>
+        public virtual void ValidateIncomingMetrics(IEnumerable<T> metrics)
         {
             foreach (var metric in metrics.Where(metric => !this.ContainsKey(metric.Name)))
             {

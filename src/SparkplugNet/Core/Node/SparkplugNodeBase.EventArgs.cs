@@ -40,11 +40,14 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         public T Metric { get; }
     }
 
+    /// <inheritdoc cref="NodeCommandEventArgs"/>
     /// <summary>
     /// A class for the device command event args.
     /// </summary>
+    /// <seealso cref="NodeCommandEventArgs"/>
     public class DeviceCommandEventArgs : NodeCommandEventArgs
     {
+        /// <inheritdoc cref="NodeCommandEventArgs"/>
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceCommandEventArgs"/> class.
         /// </summary>
@@ -53,6 +56,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
         /// <param name="metric">The metric.</param>
+        /// <seealso cref="NodeCommandEventArgs"/>
         public DeviceCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, T metric)
            : base(sender, groupIdentifier, edgeNodeIdentifier, metric)
         {

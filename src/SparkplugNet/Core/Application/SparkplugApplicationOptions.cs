@@ -3,7 +3,7 @@
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   A class that contains the application options.
+//   A class that contains the Sparkplug application options.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ namespace SparkplugNet.Core.Application;
 
 /// <inheritdoc cref="SparkplugBaseOptions"/>
 /// <summary>
-/// A class that contains the application options.
+/// A class that contains the Sparkplug application options.
 /// </summary>
 /// <seealso cref="SparkplugBaseOptions"/>
 [Serializable]
@@ -22,15 +22,18 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// </summary>
     public const bool DefaultAddSessionNumberToCommandMessages = true;
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// For serializers only.
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
+    /// <seealso cref="SparkplugBaseOptions"/>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public SparkplugApplicationOptions() : this(brokerAddress: DefaultBroker)
     {
     }
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
@@ -45,6 +48,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="tlsParameters">The TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
+    /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugApplicationOptions(
         string brokerAddress = DefaultBroker,
         int port = DefaultPort,
@@ -66,6 +70,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     {
     }
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
@@ -81,6 +86,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
+    /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugApplicationOptions(
         string brokerAddress,
         int port,
@@ -104,6 +110,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     {
     }
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
     /// </summary>
@@ -120,6 +127,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
+    /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugApplicationOptions(
         string brokerAddress,
         int port,

@@ -9,10 +9,12 @@
 
 namespace SparkplugNet.Core;
 
+/// <inheritdoc cref="ISparkplugConnection"/>
 /// <summary>
 /// A base class for all Sparkplug applications, nodes and devices.
 /// </summary>
 /// <typeparam name="T">The type parameter.</typeparam>
+/// <seealso cref="ISparkplugConnection"/>
 public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, new()
 {
     /// <summary>
@@ -30,21 +32,25 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// </summary>
     protected KnownMetricStorage knownMetrics;
 
+    /// <inheritdoc cref="ISparkplugConnection"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="logger">The logger.</param>
+    /// <seealso cref="ISparkplugConnection"/>
     public SparkplugBase(IEnumerable<T> knownMetrics, ILogger? logger = null)
         : this(new KnownMetricStorage(knownMetrics), logger)
     {
     }
 
+    /// <inheritdoc cref="ISparkplugConnection"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The known metrics storage.</param>
     /// <param name="logger">The logger.</param>
+    /// <seealso cref="ISparkplugConnection"/>
     public SparkplugBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null)
     {
         this.knownMetrics = knownMetricsStorage;

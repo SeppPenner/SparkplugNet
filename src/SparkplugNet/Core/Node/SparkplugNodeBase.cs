@@ -48,7 +48,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     /// <param name="nodeOptions">The node options.</param>
     /// <param name="knownMetricsStorage">(optional) overwrite the known metrics-storage</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Start(SparkplugNodeOptions nodeOptions, KnownMetricStorage? knownMetricsStorage = null)
     {
@@ -96,9 +96,9 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Publishes some metrics.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The MQTT client is not connected or an invalid metric type was specified.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if the MQTT client is not connected or an invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     public async Task<MqttClientPublishResult> PublishMetrics(IEnumerable<T> metrics)
     {
@@ -119,8 +119,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Publishes metrics for a node.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">An invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected abstract Task<MqttClientPublishResult> PublishMessage(IEnumerable<T> metrics);
 
@@ -155,7 +155,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Adds the disconnected handler and the reconnect functionality to the client.
     /// </summary>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     private void AddEventHandler()
     {
         this.Client.DisconnectedAsync += this.OnClientDisconnected;
@@ -167,7 +167,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     /// <param name="args">The event args.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
@@ -204,8 +204,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Adds the message received handler to handle incoming messages.
     /// </summary>
-    /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+    /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     private void AddMessageReceivedHandler()
     {
         this.Client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
@@ -215,7 +215,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Handles the message received handler.
     /// </summary>
     /// <param name="args">The arguments.</param>
-    /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
@@ -239,7 +239,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Connects the Sparkplug node to the MQTT broker.
     /// </summary>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task ConnectInternal()
     {
@@ -331,7 +331,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Publishes data to the MQTT broker.
     /// </summary>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task PublishInternal()
     {
@@ -374,7 +374,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Subscribes the client to the node subscribe topics.
     /// </summary>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task SubscribeInternal()
     {

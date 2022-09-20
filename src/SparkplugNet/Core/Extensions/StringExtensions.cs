@@ -18,7 +18,7 @@ internal static class StringExtensions
     /// Checks whether the given identifier is valid or not.
     /// </summary>
     /// <param name="value">The value.</param>
-    /// <returns><c>true</c> if the given identifier is valid, <c>false</c> else.</returns>
+    /// <returns>A value indicating whether the identifier is valid or not.</returns>
     internal static bool IsIdentifierValid(this string value)
     {
         return !string.IsNullOrWhiteSpace(value) && !value.Contains('/') && !value.Contains('#') && !value.Contains('+');

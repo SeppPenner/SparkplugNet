@@ -1,47 +1,56 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugApplicationOptions.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A base class that contains the Sparkplug options.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace SparkplugNet.Core;
 
 /// <summary>
-/// A class that contains the sparkplug connect options.
+/// A base class that contains the Sparkplug options.
 /// </summary>
 public abstract class SparkplugBaseOptions
 {
     /// <summary>
-    /// The default broker
+    /// The default broker.
     /// </summary>
     public const string DefaultBroker = "localhost";
 
     /// <summary>
-    /// The default port
+    /// The default port.
     /// </summary>
     public const int DefaultPort = 1883;
 
     /// <summary>
-    /// The default client identifier
+    /// The default client identifier.
     /// </summary>
     public const string DefaultClientId = "SparkplugNet";
 
     /// <summary>
-    /// The default user name
+    /// The default user name.
     /// </summary>
     public const string DefaultUserName = "";
 
     /// <summary>
-    /// The default password
+    /// The default password.
     /// </summary>
     public const string DefaultPassword = "";
 
     /// <summary>
-    /// The default use TLS
+    /// The default value whether TLS is used or not.
     /// </summary>
     public const bool DefaultUseTls = false;
 
     /// <summary>
-    /// The default SCADA host identifier
+    /// The default SCADA host identifier.
     /// </summary>
     public const string DefaultScadaHostIdentifier = "SparkplugNet";
 
     /// <summary>
-    /// The default reconnect interval
+    /// The default reconnect interval.
     /// </summary>
     public static readonly TimeSpan DefaultReconnectInterval = TimeSpan.FromSeconds(30);
 
@@ -54,7 +63,7 @@ public abstract class SparkplugBaseOptions
     /// <param name="clientId">The client identifier.</param>
     /// <param name="userName">The name of the user.</param>
     /// <param name="password">The password.</param>
-    /// <param name="useTls">if set to <c>true</c> [use TLS].</param>
+    /// <param name="useTls">A value indicating whether TLS should be used or not.</param>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="tlsParameters">The TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>

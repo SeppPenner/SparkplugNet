@@ -37,13 +37,16 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// </summary>
     public const bool DefaultPublishKnownDeviceMetricsOnReconnect = true;
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
     /// </summary>
+    /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugNodeOptions() : this(brokerAddress: DefaultBroker)
     {
     }
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
     /// </summary>
@@ -59,6 +62,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="tlsParameters">The TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
+    /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugNodeOptions(
         string brokerAddress = DefaultBroker,
         int port = DefaultPort,
@@ -82,6 +86,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     {
     }
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
     /// </summary>
@@ -98,6 +103,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
+    /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugNodeOptions(
        string brokerAddress,
        int port,
@@ -123,6 +129,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     {
     }
 
+    /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
     /// </summary>
@@ -140,6 +147,7 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
+    /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugNodeOptions(
         string brokerAddress,
         int port,

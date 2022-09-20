@@ -3,13 +3,17 @@
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   Defines the SparkplugApplication type.
+//   A class that handles a Sparkplug application.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.VersionB;
 
 /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
+/// <summary>
+///   A class that handles a Sparkplug application.
+/// </summary>
+/// <seealso cref="SparkplugApplicationBase{T}"/>
 public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric>
 {
     /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
@@ -18,16 +22,18 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
+    /// <seealso cref="SparkplugApplicationBase{T}"/>
     public SparkplugApplication(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
+    /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
     /// <param name="logger">The logger.</param>
-    /// /// <seealso cref="SparkplugApplicationBase{T}"/>
+    /// <seealso cref="SparkplugApplicationBase{T}"/>
     public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
     {
     }
@@ -38,8 +44,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="metrics">The metrics.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">An invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishNodeCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
@@ -76,8 +82,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">An invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
@@ -111,13 +117,11 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     }
 
     /// <summary>
-    /// Called when [application message received].
+    /// Called when an application message was received.
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <returns>
-    /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
-    /// </returns>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
@@ -134,14 +138,15 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <exception cref="ArgumentNullException">The known metrics are null.</exception>
-    /// <exception cref="Exception">The metric is unknown.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
+    /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task HandleMessagesForVersionBAsync(SparkplugMessageTopic topic, VersionBData.Payload payload)
     {
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
 
-        this.KnownMetricsStorage.ValidateIncommingMetrics(metricsWithoutSequenceMetric);
+        this.KnownMetricsStorage.ValidateIncomingMetrics(metricsWithoutSequenceMetric);
 
         switch (topic.MessageType)
         {
@@ -194,7 +199,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
-    /// <exception cref="InvalidCastException">The metric cast is invalid.</exception>
+    /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<VersionBData.Metric> ProcessPayload(SparkplugMessageTopic topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
     {
         var metricState = new MetricState<VersionBData.Metric>

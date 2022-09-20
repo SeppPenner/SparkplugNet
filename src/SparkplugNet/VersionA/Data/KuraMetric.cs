@@ -165,7 +165,7 @@ public class KuraMetric : MetricBase<DataType>
     /// <summary>
     /// Gets the value.
     /// </summary>
-    /// <exception cref="NotImplementedException">Type {this.Type} is not supported yet</exception>
+    /// <exception cref="NotImplementedException">Thrown if the type is not supported yet.</exception>
     public override object? Value
     {
         get
