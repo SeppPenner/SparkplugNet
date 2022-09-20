@@ -47,6 +47,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "BoBiene",
+      "name": "Bo Biene",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23037659?v=4",
+      "profile": "https://github.com/BoBiene",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
