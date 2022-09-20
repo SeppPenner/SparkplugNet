@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Core;
+namespace SparkplugNet.Core.Topics;
 
 /// <inheritdoc cref="SparkplugTopic"/>
 /// <summary>
