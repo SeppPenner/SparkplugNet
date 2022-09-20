@@ -214,7 +214,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
 
         if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
-            this.DeviceStates[topic.DeviceIdentifier] = metricState;
+            // No idea why we need a bang (!) operator here?!
+            this.DeviceStates[topic.DeviceIdentifier!] = metricState;
         }
         else
         {

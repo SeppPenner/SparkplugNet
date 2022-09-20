@@ -99,7 +99,11 @@ public class SparkplugMessageTopic : SparkplugTopic
     {
         if (TryParse(topic, out var parsedTopic, true))
         {
+#if NETSTANDARD2_1_OR_GREATER
             return parsedTopic;
+#else
+            return parsedTopic!;
+#endif
         }
         else
         {
@@ -113,7 +117,11 @@ public class SparkplugMessageTopic : SparkplugTopic
     /// <param name="topic">The topic.</param>
     /// <param name="parsedTopic">The parsed topic.</param>
     /// <returns>A value indicating whether the topic can be parsed or not.</returns>
+#if NETSTANDARD2_1_OR_GREATER
     public static bool TryParse(string topic, [NotNullWhen(true)] out SparkplugMessageTopic? parsedTopic)
+#else
+    public static bool TryParse(string topic, out SparkplugMessageTopic? parsedTopic)
+#endif
     {
         return TryParse(topic, out parsedTopic, false);
     }
