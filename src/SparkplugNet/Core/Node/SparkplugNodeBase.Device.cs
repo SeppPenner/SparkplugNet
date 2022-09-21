@@ -19,15 +19,15 @@ public partial class SparkplugNodeBase<T>
     /// <summary>
     /// Gets the known devices.
     /// </summary>
-    public ConcurrentDictionary<string, List<T>> KnownDevices { get; } = new ConcurrentDictionary<string, List<T>>();
+    public ConcurrentDictionary<string, List<T>> KnownDevices { get; } = new();
 
     /// <summary>
     /// Publishes a device birth message to the MQTT broker.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The MQTT client is not connected.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if the MQTT client is not connected.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     public async Task<MqttClientPublishResult> PublishDeviceBirthMessage(List<T> knownMetrics, string deviceIdentifier)
     {
@@ -71,9 +71,9 @@ public partial class SparkplugNodeBase<T>
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The MQTT client is not connected or the device is unknown or an invalid metric type was specified.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">The namespace is out of range.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if the MQTT client is not connected or the device is unknown or an invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     public Task<MqttClientPublishResult> PublishDeviceData(IEnumerable<T> metrics, string deviceIdentifier)
     {
@@ -96,19 +96,11 @@ public partial class SparkplugNodeBase<T>
     }
 
     /// <summary>
-    /// Publishes the message for device.
-    /// </summary>
-    /// <param name="metrics">The metrics.</param>
-    /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <returns></returns>
-    protected abstract Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<T> metrics, string deviceIdentifier);
-
-    /// <summary>
     /// Publishes a device death message to the MQTT broker.
     /// </summary>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The MQTT client is not connected or the device is unknown.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if the MQTT client is not connected or the device is unknown.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     public async Task<MqttClientPublishResult> PublishDeviceDeathMessage(string deviceIdentifier)
     {
@@ -145,7 +137,15 @@ public partial class SparkplugNodeBase<T>
 
         this.KnownDevices.TryRemove(deviceIdentifier, out _);
         // Publish the message.
-        this.Options.CancellationToken ??= CancellationToken.None;
+        this.Options.CancellationToken ??= SystemCancellationToken.None;
         return await this.Client.PublishAsync(deviceDeathMessage, this.Options.CancellationToken.Value);
     }
+
+    /// <summary>
+    /// Publishes the message for a device.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
+    protected abstract Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<T> metrics, string deviceIdentifier);
 }

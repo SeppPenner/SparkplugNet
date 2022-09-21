@@ -36,7 +36,7 @@ public class Payload
     /// <summary>
     /// Gets or sets the metrics.
     /// </summary>
-    public List<KuraMetric> Metrics { get; set; } = new List<KuraMetric>();
+    public List<KuraMetric> Metrics { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the body.

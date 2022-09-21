@@ -78,7 +78,7 @@ public class PropertyValue
         set
         {
             this.integerValue = value;
-            this.ValueCase = DataType.Int32;
+            this.ValueCase = VersionBDataTypeEnum.Int32;
         }
     }
 
@@ -91,7 +91,7 @@ public class PropertyValue
         set
         {
             this.longValue = value;
-            this.ValueCase = DataType.Int64;
+            this.ValueCase = VersionBDataTypeEnum.Int64;
         }
     }
 
@@ -104,7 +104,7 @@ public class PropertyValue
         set
         {
             this.floatValue = value;
-            this.ValueCase = DataType.Float;
+            this.ValueCase = VersionBDataTypeEnum.Float;
         }
     }
 
@@ -117,7 +117,7 @@ public class PropertyValue
         set
         {
             this.doubleValue = value;
-            this.ValueCase = DataType.Double;
+            this.ValueCase = VersionBDataTypeEnum.Double;
         }
     }
 
@@ -130,7 +130,7 @@ public class PropertyValue
         set
         {
             this.booleanValue = value;
-            this.ValueCase = DataType.Boolean;
+            this.ValueCase = VersionBDataTypeEnum.Boolean;
         }
     }
 
@@ -144,7 +144,7 @@ public class PropertyValue
         set
         {
             this.stringValue = value;
-            this.ValueCase = DataType.String;
+            this.ValueCase = VersionBDataTypeEnum.String;
         }
     }
 
@@ -157,7 +157,7 @@ public class PropertyValue
         set
         {
             this.propertySetValue = value;
-            this.ValueCase = DataType.PropertySet;
+            this.ValueCase = VersionBDataTypeEnum.PropertySet;
         }
     }
 
@@ -170,7 +170,7 @@ public class PropertyValue
         set
         {
             this.propertySetListValue = value;
-            this.ValueCase = DataType.PropertySet;
+            this.ValueCase = VersionBDataTypeEnum.PropertySet;
         }
     }
 
@@ -183,12 +183,12 @@ public class PropertyValue
         set
         {
             this.extensionValue = value;
-            this.ValueCase = DataType.Unknown;
+            this.ValueCase = VersionBDataTypeEnum.Unknown;
         }
     }
 
     /// <summary>
     /// Gets or sets the value case.
     /// </summary>
-    public DataType ValueCase { get; set; }
+    public VersionBDataTypeEnum ValueCase { get; set; }
 }

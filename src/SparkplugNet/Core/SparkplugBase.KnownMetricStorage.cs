@@ -1,60 +1,68 @@
-namespace SparkplugNet.Core
-{
-    using System;
-    using System.Collections.Generic;
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugBase.KnownMetricStorage.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A base class for all Sparkplug applications, nodes and devices.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-    public partial class SparkplugBase<T> : ISparkplugConnection
-        where T : IMetric, new()
+namespace SparkplugNet.Core;
+
+/// <inheritdoc cref="ISparkplugConnection" />
+/// <summary>
+/// A base class for all Sparkplug applications, nodes and devices.
+/// </summary>
+/// <seealso cref="ISparkplugConnection" />
+public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, new()
+{
+    /// <inheritdoc cref="ConcurrentDictionary{TKey, TValue}"/>
+    /// <summary>
+    /// A class to handle the known metric storage.
+    /// </summary>
+    /// <seealso cref="ConcurrentDictionary{TKey, TValue}"/>
+    public class KnownMetricStorage : ConcurrentDictionary<string, T>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KnownMetricStorage"/> class.
+        /// </summary>
+        /// <param name="knownMetrics">The known metrics.</param>
+        public KnownMetricStorage(IEnumerable<T> knownMetrics) : base(StringComparer.InvariantCultureIgnoreCase)
+        {
+            if (knownMetrics is not null)
+            {
+                foreach (var metric in knownMetrics)
+                {
+                    this[metric.Name] = metric;
+                }
+            }
+        }
 
         /// <summary>
-        /// Storage for the Known Metrics
+        /// Filters the outgoing metrics.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.ISparkplugConnection" />
-        public class KnownMetricStorage : ConcurrentDictionary<string, T>
+        /// <param name="metrics">The metric.</param>
+        /// <returns>The filtered metrics.</returns>
+        public virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metrics)
         {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="KnownMetricStorage"/> class.
-            /// </summary>
-            /// <param name="knownMetrics">The known metrics.</param>
-            public KnownMetricStorage(IEnumerable<T> knownMetrics)
-                : base(StringComparer.InvariantCultureIgnoreCase)
-            {
-                if (knownMetrics != null)
-                {
-                    foreach (var metric in knownMetrics)
-                    {
-                        this[metric.Name] = metric;
-                    }
-                }
-            }
+            return metrics.Where(m =>
+                // Remove the session number metric if a user might have added it.
+                !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
+                // Remove all not known metrics.
+                this.ContainsKey(m.Name)
+            );
+        }
 
-            /// <summary>
-            /// Filters the outgoing metrics.
-            /// </summary>
-            /// <param name="metrics">The metric.</param>
-            /// <returns></returns>
-            public virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metrics)
+        /// <summary>
+        /// Validates the incoming metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <exception cref="Exception">Thrown if the metric name is an unknown metric.</exception>
+        public virtual void ValidateIncomingMetrics(IEnumerable<T> metrics)
+        {
+            foreach (var metric in metrics.Where(metric => !this.ContainsKey(metric.Name)))
             {
-                return metrics.Where(m =>
-                    // Remove the session number metric if a user might have added it.
-                    !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
-                    // Remove all not known metrics.
-                    this.ContainsKey(m.Name)
-                );
-            }
-
-            /// <summary>
-            /// Validates the incomming metrics.
-            /// </summary>
-            /// <param name="metrics">The metrics.</param>
-            /// <exception cref="System.Exception">Metric {metric.Name} is an unknown metric.</exception>
-            public virtual void ValidateIncommingMetrics(IEnumerable<T> metrics)
-            {
-                foreach (var metric in metrics.Where(metric => !this.ContainsKey(metric.Name)))
-                {
-                    throw new Exception($"Metric {metric.Name} is an unknown metric.");
-                }
+                throw new Exception($"Metric {metric.Name} is an unknown metric.");
             }
         }
     }

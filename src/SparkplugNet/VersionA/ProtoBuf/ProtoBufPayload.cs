@@ -23,7 +23,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
             get => __pbn__Timestamp.GetValueOrDefault();
             set => __pbn__Timestamp = value;
         }
-        public bool ShouldSerializeTimestamp() => __pbn__Timestamp != null;
+        public bool ShouldSerializeTimestamp() => __pbn__Timestamp is not null;
         public void ResetTimestamp() => __pbn__Timestamp = null;
         private long? __pbn__Timestamp;
 
@@ -39,7 +39,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
             get => __pbn__Body;
             set => __pbn__Body = value;
         }
-        public bool ShouldSerializeBody() => __pbn__Body != null;
+        public bool ShouldSerializeBody() => __pbn__Body is not null;
         public void ResetBody() => __pbn__Body = Array.Empty<byte>();
         private byte[] __pbn__Body = Array.Empty<byte>();
 
@@ -62,7 +62,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__DoubleValue.GetValueOrDefault();
                 set => __pbn__DoubleValue = value;
             }
-            public bool ShouldSerializeDoubleValue() => __pbn__DoubleValue != null;
+            public bool ShouldSerializeDoubleValue() => __pbn__DoubleValue is not null;
             public void ResetDoubleValue() => __pbn__DoubleValue = null;
             private double? __pbn__DoubleValue;
 
@@ -72,7 +72,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__FloatValue.GetValueOrDefault();
                 set => __pbn__FloatValue = value;
             }
-            public bool ShouldSerializeFloatValue() => __pbn__FloatValue != null;
+            public bool ShouldSerializeFloatValue() => __pbn__FloatValue is not null;
             public void ResetFloatValue() => __pbn__FloatValue = null;
             private float? __pbn__FloatValue;
 
@@ -82,7 +82,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__LongValue.GetValueOrDefault();
                 set => __pbn__LongValue = value;
             }
-            public bool ShouldSerializeLongValue() => __pbn__LongValue != null;
+            public bool ShouldSerializeLongValue() => __pbn__LongValue is not null;
             public void ResetLongValue() => __pbn__LongValue = null;
             private long? __pbn__LongValue;
 
@@ -92,7 +92,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__IntValue.GetValueOrDefault();
                 set => __pbn__IntValue = value;
             }
-            public bool ShouldSerializeIntValue() => __pbn__IntValue != null;
+            public bool ShouldSerializeIntValue() => __pbn__IntValue is not null;
             public void ResetIntValue() => __pbn__IntValue = null;
             private int? __pbn__IntValue;
 
@@ -102,7 +102,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__BoolValue.GetValueOrDefault();
                 set => __pbn__BoolValue = value;
             }
-            public bool ShouldSerializeBoolValue() => __pbn__BoolValue != null;
+            public bool ShouldSerializeBoolValue() => __pbn__BoolValue is not null;
             public void ResetBoolValue() => __pbn__BoolValue = null;
             private bool? __pbn__BoolValue;
 
@@ -113,7 +113,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__StringValue ?? "";
                 set => __pbn__StringValue = value;
             }
-            public bool ShouldSerializeStringValue() => __pbn__StringValue != null;
+            public bool ShouldSerializeStringValue() => __pbn__StringValue is not null;
             public void ResetStringValue() => __pbn__StringValue = null;
             private string? __pbn__StringValue;
 
@@ -123,7 +123,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__BytesValue;
                 set => __pbn__BytesValue = value;
             }
-            public bool ShouldSerializeBytesValue() => __pbn__BytesValue != null;
+            public bool ShouldSerializeBytesValue() => __pbn__BytesValue is not null;
             public void ResetBytesValue() => __pbn__BytesValue = null;
             private byte[]? __pbn__BytesValue;
 
@@ -167,7 +167,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__Altitude.GetValueOrDefault();
                 set => __pbn__Altitude = value;
             }
-            public bool ShouldSerializeAltitude() => __pbn__Altitude != null;
+            public bool ShouldSerializeAltitude() => __pbn__Altitude is not null;
             public void ResetAltitude() => __pbn__Altitude = null;
             private double? __pbn__Altitude;
 
@@ -177,7 +177,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__Precision.GetValueOrDefault();
                 set => __pbn__Precision = value;
             }
-            public bool ShouldSerializePrecision() => __pbn__Precision != null;
+            public bool ShouldSerializePrecision() => __pbn__Precision is not null;
             public void ResetPrecision() => __pbn__Precision = null;
             private double? __pbn__Precision;
 
@@ -187,7 +187,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__Heading.GetValueOrDefault();
                 set => __pbn__Heading = value;
             }
-            public bool ShouldSerializeHeading() => __pbn__Heading != null;
+            public bool ShouldSerializeHeading() => __pbn__Heading is not null;
             public void ResetHeading() => __pbn__Heading = null;
             private double? __pbn__Heading;
 
@@ -197,7 +197,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__Speed.GetValueOrDefault();
                 set => __pbn__Speed = value;
             }
-            public bool ShouldSerializeSpeed() => __pbn__Speed != null;
+            public bool ShouldSerializeSpeed() => __pbn__Speed is not null;
             public void ResetSpeed() => __pbn__Speed = null;
             private double? __pbn__Speed;
 
@@ -207,7 +207,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__Timestamp.GetValueOrDefault();
                 set => __pbn__Timestamp = value;
             }
-            public bool ShouldSerializeTimestamp() => __pbn__Timestamp != null;
+            public bool ShouldSerializeTimestamp() => __pbn__Timestamp is not null;
             public void ResetTimestamp() => __pbn__Timestamp = null;
             private long? __pbn__Timestamp;
 
@@ -217,7 +217,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__Satellites.GetValueOrDefault();
                 set => __pbn__Satellites = value;
             }
-            public bool ShouldSerializeSatellites() => __pbn__Satellites != null;
+            public bool ShouldSerializeSatellites() => __pbn__Satellites is not null;
             public void ResetSatellites() => __pbn__Satellites = null;
             private int? __pbn__Satellites;
 
@@ -227,7 +227,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
                 get => __pbn__Status.GetValueOrDefault();
                 set => __pbn__Status = value;
             }
-            public bool ShouldSerializeStatus() => __pbn__Status != null;
+            public bool ShouldSerializeStatus() => __pbn__Status is not null;
             public void ResetStatus() => __pbn__Status = null;
             private int? __pbn__Status;
 

@@ -1,21 +1,26 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MetricValueExtension.cs" company="Hämmer Electronics">
+// <copyright file="IMetric.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   The externally used Sparkplug B metric value extension class.
+//   The interface for all metrics.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.VersionB.Data;
+namespace SparkplugNet.Core.Interfaces;
 
 /// <summary>
-/// The externally used Sparkplug B metric value extension class.
+/// The interface for all metrics.
 /// </summary>
-public class MetricValueExtension
+public interface IMetric
 {
     /// <summary>
-    /// Gets or sets the details.
+    /// Gets the name.
     /// </summary>
-    public List<byte> Details { get; set; } = new();
+    public string Name { get; }
+
+    /// <summary>
+    /// Gets the value.
+    /// </summary>
+    public object? Value { get; }
 }

@@ -3,15 +3,17 @@
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   Defines the SparkplugNode type.
+//   A class that handles a Sparkplug node.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.VersionB;
 
-using SparkplugNet.Core;
-
 /// <inheritdoc cref="SparkplugNodeBase{T}"/>
+/// <summary>
+///   A class that handles a Sparkplug node.
+/// </summary>
+/// <seealso cref="SparkplugNodeBase{T}"/>
 public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
 {
     /// <inheritdoc cref="SparkplugNodeBase{T}"/>
@@ -20,16 +22,18 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
+    /// <seealso cref="SparkplugNodeBase{T}"/>
     public SparkplugNode(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
+    /// <inheritdoc cref="SparkplugNodeBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
     /// <param name="logger">The logger.</param>
-    /// /// <seealso cref="SparkplugNodeBase{T}"/>
+    /// <seealso cref="SparkplugNodeBase{T}"/>
     public SparkplugNode(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
     {
     }
@@ -38,8 +42,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// Publishes version B metrics for a node.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">An invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected override async Task<MqttClientPublishResult> PublishMessage(IEnumerable<VersionBData.Metric> metrics)
     {
@@ -75,14 +79,12 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     }
 
     /// <summary>
-    /// Called when [message received].
+    /// Called when a node message was received.
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <returns>
-    /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
-    /// </returns>
-    /// <exception cref="System.InvalidCastException">The metric cast didn't work properly.</exception>
+    /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
@@ -90,6 +92,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
         if (payloadVersionB is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+
             if (convertedPayload is not VersionBData.Payload convertedPayloadVersionB)
             {
                 throw new InvalidCastException("The metric cast didn't work properly.");
@@ -98,7 +101,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             switch (topic.MessageType)
             {
                 case SparkplugMessageType.DeviceCommand:
-                    if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
+                    if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                     {
                         foreach (var metric in convertedPayloadVersionB.Metrics)
                         {
@@ -130,8 +133,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The device is unknown or an invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if the device is unknown or an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected override async Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<VersionBData.Metric> metrics, string deviceIdentifier)
     {

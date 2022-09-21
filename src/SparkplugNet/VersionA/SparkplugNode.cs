@@ -3,15 +3,17 @@
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   Defines the SparkplugNode type.
+//   A class that handles a Sparkplug node.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.VersionA;
 
-using SparkplugNet.Core;
-
 /// <inheritdoc cref="SparkplugNodeBase{T}"/>
+/// <summary>
+///   A class that handles a Sparkplug node.
+/// </summary>
+/// <seealso cref="SparkplugNodeBase{T}"/>
 public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
 {
     /// <inheritdoc cref="SparkplugNodeBase{T}"/>
@@ -20,16 +22,18 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
+    /// <seealso cref="SparkplugNodeBase{T}"/>
     public SparkplugNode(IEnumerable<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
+    /// <inheritdoc cref="SparkplugNodeBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
     /// <param name="logger">The logger.</param>
-    /// /// <seealso cref="SparkplugNodeBase{T}"/>
+    /// <seealso cref="SparkplugNodeBase{T}"/>
     public SparkplugNode(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
     {
     }
@@ -38,8 +42,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// Publishes version A metrics for a node.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">An invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected override async Task<MqttClientPublishResult> PublishMessage(IEnumerable<VersionAData.KuraMetric> metrics)
     {
@@ -75,14 +79,12 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     }
 
     /// <summary>
-    /// Called when [message received].
+    /// Called when the node message is received.
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <returns>
-    /// A <see cref="T:System.Threading.Tasks.Task" /> representing any asynchronous operation.
-    /// </returns>
-    /// <exception cref="System.InvalidCastException">The metric cast didn't work properly.</exception>
+    /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
+    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(payload);
@@ -99,7 +101,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             switch (topic.MessageType)
             {
                 case SparkplugMessageType.DeviceCommand:
-                    if (!string.IsNullOrEmpty(topic.DeviceIdentifier))
+                    if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                     {
                         foreach (var metric in convertedPayloadVersionA.Metrics)
                         {
@@ -131,8 +133,8 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">The options are null.</exception>
-    /// <exception cref="Exception">The device is unknown or an invalid metric type was specified.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if the device is unknown or an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected override async Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<VersionAData.KuraMetric> metrics, string deviceIdentifier)
     {

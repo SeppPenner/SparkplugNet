@@ -22,7 +22,7 @@ public class Payload
     /// <summary>
     /// Gets or sets the metrics.
     /// </summary>
-    public List<Metric> Metrics { get; set; } = new List<Metric>();
+    public List<Metric> Metrics { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the SEQ number.

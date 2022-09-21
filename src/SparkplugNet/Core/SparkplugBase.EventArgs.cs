@@ -1,153 +1,157 @@
-namespace SparkplugNet.Core
-{
-    using System.Collections.Generic;
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugBase.EventArgs.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A base class for all Sparkplug applications, nodes and devices.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-    public partial class SparkplugBase<T> : ISparkplugConnection
-         where T : IMetric, new()
+namespace SparkplugNet.Core;
+
+/// <inheritdoc cref="ISparkplugConnection"/>
+/// <summary>
+/// A base class for all Sparkplug applications, nodes and devices.
+/// </summary>
+/// <seealso cref="ISparkplugConnection"/>
+public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, new()
+{
+    /// <inheritdoc cref="EventArgs" />
+    /// <summary>
+    /// A class for the Sparkplug event args.
+    /// </summary>
+    /// <seealso cref="EventArgs" />
+    public class SparkplugEventArgs : EventArgs
     {
         /// <summary>
-        /// Sparkplug Base EventArgs
+        /// Initializes a new instance of the <see cref="SparkplugEventArgs"/> class.
         /// </summary>
-        /// <seealso cref="System.EventArgs" />
-        public class SparkplugEventArgs : EventArgs
+        /// <param name="sender">The sender.</param>
+        public SparkplugEventArgs(SparkplugBase<T> sender)
         {
-            /// <summary>
-            /// Gets the sender.
-            /// </summary>
-            /// <value>
-            /// The sender.
-            /// </value>
-            public SparkplugBase<T> Sender { get; }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="SparkplugEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            public SparkplugEventArgs(SparkplugBase<T> sender)
-            {
-                this.Sender = sender;
-            }
+            this.Sender = sender;
         }
 
         /// <summary>
-        /// Node event args
+        /// Gets the sender.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class NodeEventArgs : SparkplugEventArgs
+        public SparkplugBase<T> Sender { get; }
+    }
+
+    /// <inheritdoc cref="SparkplugEventArgs" />
+    /// <summary>
+    /// A class for the node event args.
+    /// </summary>
+    /// <seealso cref="SparkplugEventArgs" />
+    public class NodeEventArgs : SparkplugEventArgs
+    {
+        /// <inheritdoc cref="SparkplugEventArgs" />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeEventArgs"/> class.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <seealso cref="SparkplugEventArgs" />
+        public NodeEventArgs(SparkplugBase<T> sender, string groupIdentifier, string edgeNodeIdentifier) : base(sender)
         {
-            /// <summary>
-            /// Gets the group identifier.
-            /// </summary>
-            /// <value>
-            /// The group identifier.
-            /// </value>
-            public string GroupIdentifier { get; }
-
-            /// <summary>
-            /// Gets the node identifier.
-            /// </summary>
-            /// <value>
-            /// The node identifier.
-            /// </value>
-            public string NodeIdentifier { get; }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="NodeEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="groupIdentifier">The group identifier.</param>
-            /// <param name="nodeIdentifier">The node identifier.</param>
-            public NodeEventArgs(SparkplugBase<T> sender, string groupIdentifier, string nodeIdentifier)
-                : base(sender)
-            {
-                this.GroupIdentifier = groupIdentifier;
-                this.NodeIdentifier = nodeIdentifier;
-            }
+            this.GroupIdentifier = groupIdentifier;
+            this.EdgeNodeIdentifier = edgeNodeIdentifier;
         }
 
         /// <summary>
-        /// Device event args
+        /// Gets the group identifier.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class DeviceEventArgs : NodeEventArgs
-        {
-            /// <summary>
-            /// Gets the device identifier.
-            /// </summary>
-            /// <value>
-            /// The device identifier.
-            /// </value>
-            public string DeviceIdentifier { get; }
+        public string GroupIdentifier { get; }
 
-            /// <summary>
-            /// Initializes a new instance of the <see cref="DeviceEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="groupIdentifier">The group identifier.</param>
-            /// <param name="nodeIdentifier">The node identifier.</param>
-            /// <param name="deviceIdentifier">The device identifier.</param>
-            public DeviceEventArgs(SparkplugBase<T> sender, string groupIdentifier, string nodeIdentifier, string deviceIdentifier)
-                : base(sender,groupIdentifier, nodeIdentifier)
-            {
-                this.DeviceIdentifier = deviceIdentifier;
-            }
+        /// <summary>
+        /// Gets the edge node identifier.
+        /// </summary>
+        public string EdgeNodeIdentifier { get; }
+    }
+
+    /// <inheritdoc cref="NodeEventArgs" />
+    /// <summary>
+    /// A class for the device event args.
+    /// </summary>
+    /// <seealso cref="NodeEventArgs" />
+    public class DeviceEventArgs : NodeEventArgs
+    {
+        /// <inheritdoc cref="NodeEventArgs" />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeviceEventArgs"/> class.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <seealso cref="NodeEventArgs" />
+        public DeviceEventArgs(SparkplugBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+            : base(sender, groupIdentifier, edgeNodeIdentifier)
+        {
+            this.DeviceIdentifier = deviceIdentifier;
         }
 
         /// <summary>
-        /// Device birth event args
+        /// Gets the device identifier.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class DeviceBirthEventArgs : DeviceEventArgs
-        {
-            /// <summary>
-            /// Gets the metrics.
-            /// </summary>
-            /// <value>
-            /// The metrics.
-            /// </value>
-            public IEnumerable<T> Metrics { get; }
-            /// <summary>
-            /// Initializes a new instance of the <see cref="DeviceBirthEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="groupIdentifier">The group identifier.</param>
-            /// <param name="nodeIdentifier">The node identifier.</param>
-            /// <param name="deviceIdentifier">The device identifier.</param>
-            /// <param name="metrics">The metrics.</param>
-            public DeviceBirthEventArgs(SparkplugBase<T> sender, string groupIdentifier, string nodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
-                : base(sender,groupIdentifier, nodeIdentifier, deviceIdentifier)
-            {
-                this.Metrics = metrics;
+        public string DeviceIdentifier { get; }
+    }
 
-            }
+    /// <inheritdoc cref="DeviceEventArgs" />
+    /// <summary>
+    /// A class for the device birth event args.
+    /// </summary>
+    /// <seealso cref="DeviceEventArgs" />
+    public class DeviceBirthEventArgs : DeviceEventArgs
+    {
+        /// <inheritdoc cref="DeviceEventArgs" />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeviceBirthEventArgs"/> class.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="deviceIdentifier">The device identifier.</param>
+        /// <param name="metrics">The metrics.</param>
+        /// <seealso cref="DeviceEventArgs" />
+        public DeviceBirthEventArgs(SparkplugBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
+            : base(sender, groupIdentifier, edgeNodeIdentifier, deviceIdentifier)
+        {
+            this.Metrics = metrics;
         }
 
         /// <summary>
-        /// Device birth event args
+        /// Gets the metrics.
         /// </summary>
-        /// <seealso cref="SparkplugNet.Core.SparkplugBase&lt;T&gt;" />
-        public class NodeBirthEventArgs : NodeEventArgs
-        {
-            /// <summary>
-            /// Gets the metrics.
-            /// </summary>
-            /// <value>
-            /// The metrics.
-            /// </value>
-            public IEnumerable<T> Metrics { get; }
-            /// <summary>
-            /// Initializes a new instance of the <see cref="DeviceBirthEventArgs"/> class.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="groupIdentifier">The group identifier.</param>
-            /// <param name="nodeIdentifier">The node identifier.</param>
-            /// <param name="metrics">The metrics.</param>
-            public NodeBirthEventArgs(SparkplugBase<T> sender, string groupIdentifier, string nodeIdentifier, IEnumerable<T> metrics)
-                : base(sender,groupIdentifier, nodeIdentifier)
-            {
-                this.Metrics = metrics;
+        public IEnumerable<T> Metrics { get; }
+    }
 
-            }
+    /// <inheritdoc cref="NodeEventArgs" />
+    /// <summary>
+    /// A class for the node birth event args.
+    /// </summary>
+    /// <seealso cref="NodeEventArgs" />
+    public class NodeBirthEventArgs : NodeEventArgs
+    {
+        /// <inheritdoc cref="NodeEventArgs" />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeBirthEventArgs"/> class.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="metrics">The metrics.</param>
+        /// <seealso cref="NodeEventArgs" />
+        public NodeBirthEventArgs(SparkplugBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, IEnumerable<T> metrics)
+            : base(sender, groupIdentifier, edgeNodeIdentifier)
+        {
+            this.Metrics = metrics;
         }
+
+        /// <summary>
+        /// Gets the metrics.
+        /// </summary>
+        public IEnumerable<T> Metrics { get; }
     }
 }
