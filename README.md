@@ -14,7 +14,7 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 [![Gitter](https://badges.gitter.im/SparkplugNet/community.svg)](https://gitter.im/SparkplugNet/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Available for
@@ -96,6 +96,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://github.com/OffTravel"><img src="https://avatars.githubusercontent.com/u/19183574?v=4?s=100" width="100px;" alt=""/><br /><sub><b>OffTravel</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Tests">⚠️</a></td>
       <td align="center"><a href="https://github.com/cjmurph"><img src="https://avatars.githubusercontent.com/u/2868949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>cjmurph</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=cjmurph" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=cjmurph" title="Tests">⚠️</a></td>
       <td align="center"><a href="https://github.com/BoBiene"><img src="https://avatars.githubusercontent.com/u/23037659?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bo Biene</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=BoBiene" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=BoBiene" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/TimJoehnk"><img src="https://avatars.githubusercontent.com/u/93274944?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tim Jöhnk</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=TimJoehnk" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
