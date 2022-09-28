@@ -9,9 +9,6 @@
 
 namespace SparkplugNet.Core.Application;
 
-using Newtonsoft.Json;
-using System.Xml.Serialization;
-
 /// <inheritdoc cref="SparkplugBaseOptions"/>
 /// <summary>
 /// A class that contains the Sparkplug application options.
@@ -91,19 +88,19 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugApplicationOptions(
-    string brokerAddress,
-    int port,
-    string clientId,
-    string userName,
-    string password,
-    bool useTls,
-    string scadaHostIdentifier,
-    TimeSpan reconnectInterval,
-    bool isPrimaryApplication = false,
-    MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
-    MqttClientWebSocketProxyOptions? proxyOptions = null,
-        CancellationToken? cancellationToken = null)
-    : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
+        string brokerAddress,
+        int port,
+        string clientId,
+        string userName,
+        string password,
+        bool useTls,
+        string scadaHostIdentifier,
+        TimeSpan reconnectInterval,
+        bool isPrimaryApplication = false,
+        MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
+        MqttClientWebSocketProxyOptions? proxyOptions = null,
+        SystemCancellationToken? cancellationToken = null)
+        : this(brokerAddress, port, clientId, userName, password, useTls, scadaHostIdentifier,
           reconnectInterval: reconnectInterval,
           isPrimaryApplication: isPrimaryApplication,
           getTlsParameters: null,
@@ -126,7 +123,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
     /// <param name="isPrimaryApplication">A value indicating whether the application is a primary application or not.</param>
-    /// <param name="getTlsParameters">The delegate to TLS parameters.</param>
+    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>

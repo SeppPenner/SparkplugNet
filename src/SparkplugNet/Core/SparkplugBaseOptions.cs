@@ -3,9 +3,11 @@
 // The project is licensed under the MIT license.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+// <summary>
+//   A base class that contains the Sparkplug options.
+// </summary>
 
 namespace SparkplugNet.Core;
-using System;
 
 /// <summary>
 /// A base class that contains the Sparkplug options.
@@ -18,35 +20,42 @@ public abstract class SparkplugBaseOptions
     public delegate MqttClientOptionsBuilderTlsParameters? GetTlsParametersDelegate();
 
     /// <summary>
-    /// The default broker
+    /// The default broker.
     /// </summary>
     public const string DefaultBroker = "localhost";
+
     /// <summary>
-    /// The default port
+    /// The default port.
     /// </summary>
     public const int DefaultPort = 1883;
+
     /// <summary>
-    /// The default client identifier
+    /// The default client identifier.
     /// </summary>
     public const string DefaultClientId = "SparkplugNet";
+
     /// <summary>
-    /// The default user name
+    /// The default user name.
     /// </summary>
     public const string DefaultUserName = "";
+
     /// <summary>
-    /// The default password
+    /// The default password.
     /// </summary>
     public const string DefaultPassword = "";
+
     /// <summary>
-    /// The default use TLS
+    /// The default value whether TLS is used or not.
     /// </summary>
     public const bool DefaultUseTls = false;
+
     /// <summary>
-    /// The default scada host identifier
+    /// The default SCADA host identifier.
     /// </summary>
     public const string DefaultScadaHostIdentifier = "SparkplugNet";
+
     /// <summary>
-    /// The default reconnect interval
+    /// The default reconnect interval.
     /// </summary>
     public static readonly TimeSpan DefaultReconnectInterval = TimeSpan.FromSeconds(30);
 
@@ -154,10 +163,7 @@ public abstract class SparkplugBaseOptions
     /// <summary>
     /// Gets or sets the delegate to provide TLS parameter.
     /// </summary>
-    /// <value>
-    /// The TLS parameters.
-    /// </value>
-    [System.Xml.Serialization.XmlIgnore]
-    [Newtonsoft.Json.JsonIgnore]
+    [XmlIgnore]
+    [JsonIgnore]
     public GetTlsParametersDelegate? GetTlsParameters { get; set; }
 }

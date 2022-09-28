@@ -359,13 +359,13 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (this.Options.UseTls)
             {
-                if (this.Options.GetTlsParameters != null)
+                if (this.Options.GetTlsParameters is not null)
                 {
-                    MqttClientOptionsBuilderTlsParameters? tlsParameter = this.Options.GetTlsParameters();
-                    if (tlsParameter != null)
-                    {
+                    MqttClientOptionsBuilderTlsParameters? tlsParameters = this.Options.GetTlsParameters();
 
-                        builder.WithTls(tlsParameter);
+                    if (tlsParameters is not null)
+                    {
+                        builder.WithTls(tlsParameters);
                     }
                     else
                     {

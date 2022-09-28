@@ -272,13 +272,12 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         if (this.Options.UseTls)
         {
-            if (this.Options.GetTlsParameters != null)
-
+            if (this.Options.GetTlsParameters is not null)
             {
                 MqttClientOptionsBuilderTlsParameters? tlsParameter = this.Options.GetTlsParameters();
-                if (tlsParameter != null)
-                {
 
+                if (tlsParameter is not null)
+                {
                     builder.WithTls(tlsParameter);
                 }
                 else
