@@ -359,7 +359,23 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (this.Options.UseTls)
             {
-                builder.WithTls();
+                if (this.Options.GetTlsParameters != null)
+                {
+                    MqttClientOptionsBuilderTlsParameters? tlsParameter = this.Options.GetTlsParameters();
+                    if (tlsParameter != null)
+                    {
+
+                        builder.WithTls(tlsParameter);
+                    }
+                    else
+                    {
+                        builder.WithTls();
+                    }
+                }
+                else
+                {
+                    builder.WithTls();
+                }
             }
 
             if (this.Options.WebSocketParameters is null)

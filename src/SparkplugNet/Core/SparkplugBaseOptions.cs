@@ -2,12 +2,10 @@
 // <copyright file="SparkplugApplicationOptions.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
-// <summary>
-//   A base class that contains the Sparkplug options.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Core;
+using System;
 
 /// <summary>
 /// A base class that contains the Sparkplug options.
@@ -15,42 +13,40 @@ namespace SparkplugNet.Core;
 public abstract class SparkplugBaseOptions
 {
     /// <summary>
-    /// The default broker.
+    /// Returns a <see cref="MqttClientOptionsBuilderTlsParameters"/> instance or null 
+    /// </summary>
+    public delegate MqttClientOptionsBuilderTlsParameters? GetTlsParametersDelegate();
+
+    /// <summary>
+    /// The default broker
     /// </summary>
     public const string DefaultBroker = "localhost";
-
     /// <summary>
-    /// The default port.
+    /// The default port
     /// </summary>
     public const int DefaultPort = 1883;
-
     /// <summary>
-    /// The default client identifier.
+    /// The default client identifier
     /// </summary>
     public const string DefaultClientId = "SparkplugNet";
-
     /// <summary>
-    /// The default user name.
+    /// The default user name
     /// </summary>
     public const string DefaultUserName = "";
-
     /// <summary>
-    /// The default password.
+    /// The default password
     /// </summary>
     public const string DefaultPassword = "";
-
     /// <summary>
-    /// The default value whether TLS is used or not.
+    /// The default use TLS
     /// </summary>
     public const bool DefaultUseTls = false;
-
     /// <summary>
-    /// The default SCADA host identifier.
+    /// The default scada host identifier
     /// </summary>
     public const string DefaultScadaHostIdentifier = "SparkplugNet";
-
     /// <summary>
-    /// The default reconnect interval.
+    /// The default reconnect interval
     /// </summary>
     public static readonly TimeSpan DefaultReconnectInterval = TimeSpan.FromSeconds(30);
 
@@ -65,7 +61,7 @@ public abstract class SparkplugBaseOptions
     /// <param name="password">The password.</param>
     /// <param name="useTls">A value indicating whether TLS should be used or not.</param>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
-    /// <param name="tlsParameters">The TLS parameters.</param>
+    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
     public SparkplugBaseOptions(
@@ -77,7 +73,7 @@ public abstract class SparkplugBaseOptions
         bool useTls,
         string scadaHostIdentifier,
         TimeSpan reconnectInterval,
-        MqttClientOptionsBuilderTlsParameters? tlsParameters = null,
+        GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null)
     {
@@ -91,7 +87,7 @@ public abstract class SparkplugBaseOptions
         this.ReconnectInterval = reconnectInterval;
         this.WebSocketParameters = webSocketParameters;
         this.ProxyOptions = proxyOptions;
-        this.TlsParameters = tlsParameters;
+        this.GetTlsParameters = getTlsParameters;
     }
 
     /// <summary>
@@ -156,9 +152,12 @@ public abstract class SparkplugBaseOptions
     public MqttClientWebSocketProxyOptions? ProxyOptions { get; set; }
 
     /// <summary>
-    /// Gets or sets the TLS parameters.
+    /// Gets or sets the delegate to provide TLS parameter.
     /// </summary>
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    [DefaultValue(null)]
-    public MqttClientOptionsBuilderTlsParameters? TlsParameters { get; set; }
+    /// <value>
+    /// The TLS parameters.
+    /// </value>
+    [System.Xml.Serialization.XmlIgnore]
+    [Newtonsoft.Json.JsonIgnore]
+    public GetTlsParametersDelegate? GetTlsParameters { get; set; }
 }

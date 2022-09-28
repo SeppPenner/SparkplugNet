@@ -79,7 +79,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="status">The status.</param>
-        public StatusMessageEventArgs(SparkplugNodeBase<T> sender, string status): base(sender)
+        public StatusMessageEventArgs(SparkplugNodeBase<T> sender, string status) : base(sender)
         {
             this.Status = status;
         }
