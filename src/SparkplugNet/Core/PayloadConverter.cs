@@ -238,6 +238,9 @@ internal static class PayloadConverter
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.DoubleValue => VersionBDataTypeEnum.Double,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.BooleanValue => VersionBDataTypeEnum.Boolean,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue => VersionBDataTypeEnum.String,
+            VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.BytesValue => VersionBDataTypeEnum.Bytes,
+            VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.DatasetValue => VersionBDataTypeEnum.DataSet,
+            VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.TemplateValue => VersionBDataTypeEnum.Template,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.ExtensionValue => VersionBDataTypeEnum.Unknown,
             _ => VersionBDataTypeEnum.String
         };
