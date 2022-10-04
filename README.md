@@ -63,7 +63,8 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 
 ## Special notes
 * Although it's not required to publish a **BDSEQ** metric with all messages according to the specification,
-this library includes it in any `spBv1.0` message except the state messages because I think it's useful.
+this library includes it in any `spBv1.0` message except the state messages because I think it's useful in versions up to 1.0.0.
+From version 1.1.0 on, this behaviour can be controlled by setting `AddSessionNumberToCommandMessages` in the application options and `AddSessionNumberToDataMessages` in the node options.
 * The library uses [Serilog](https://serilog.net/) for logging purposes because it's very extendable (`Log.Logger` or similar stuff in the examples refers to the Serilog library).
 
 ## Further resources
