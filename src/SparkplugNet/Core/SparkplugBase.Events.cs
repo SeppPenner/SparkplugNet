@@ -18,15 +18,6 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
 {
     #region Disconnected
     /// <summary>
-    /// Gets or sets the callback for the disconnected event. Indicates that metrics might be stale.
-    /// Obsolete, please use <see cref="DisconnectedAsync"/>.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use DisconnectedAsync", false)]
-    public Action? OnDisconnected { get; set; } = null;
-
-    /// <summary>
     /// The disconnected event.
     /// </summary>
     protected AsyncEvent<SparkplugEventArgs> disconnectedEvent = new();
@@ -46,9 +37,6 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected Task FireDisconnectedAsync()
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.OnDisconnected?.Invoke();
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
         return this.disconnectedEvent.InvokeAsync(new SparkplugEventArgs(this));
     }
     #endregion
