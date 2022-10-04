@@ -62,6 +62,7 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * Version 2.2, spAv1.0 and spBv1.0.
 
 ## Special notes
+* Version 1.1.0 introduces the async event pattern and deprecates the "old, synchronous" events, Version 1.2.0+ will remove the old events completely. (BREAKING)
 * Although it's not required to publish a **BDSEQ** metric with all messages according to the specification,
 this library includes it in any `spBv1.0` message except the state messages because I think it's useful. This only happens in versions up to 1.0.0.
 From version 1.1.0 on, this behaviour can be controlled by setting `AddSessionNumberToCommandMessages` in the application options and `AddSessionNumberToDataMessages` in the node options.
