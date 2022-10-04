@@ -26,11 +26,11 @@ public class Program
     {
         new ()
         {
-            Name = "Test", Type = VersionAData.DataType.Double, DoubleValue = 1.20
+            Name = "temperature", Type = VersionAData.DataType.Double, DoubleValue = 1.20
         },
         new ()
         {
-            Name = "Test2", Type = VersionAData.DataType.Bool, BoolValue = true
+            Name = "climateactive", Type = VersionAData.DataType.Bool, BoolValue = true
         }
     };
 
@@ -114,7 +114,7 @@ public class Program
         Log.Information("Application started...");
 
         // Handle the application's disconnected event.
-        application.DisconnectedAsync += ApplicationVersionA_DisconnectedAsync;
+        application.DisconnectedAsync += ApplicationVersionADisconnected;
 
         // Handle the application's node data received event.
         application.NodeDataReceivedAsync += OnVersionANodeDataReceived;
@@ -171,14 +171,23 @@ public class Program
         // Check whether a node is connected.
         var isApplicationConnected = node.IsConnected;
 
-        // Handle the node's disconnected event.
+        // Handles the node's disconnected event.
         node.DisconnectedAsync += OnVersionANodeDisconnected;
 
-        // Handle the node's node command received event.
+        // Handles the node's node command received event.
         node.NodeCommandReceivedAsync += OnVersionANodeNodeCommandReceived;
 
         // Handles the node's status message received event.
         node.StatusMessageReceivedAsync += OnVersionANodeStatusMessageReceived;
+
+        // Handles the node's device birth received event.
+        node.DeviceBirthPublishingAsync += OnVersionANodeDeviceBirthReceived;
+
+        // Handles the node's device command received event.
+        node.DeviceCommandReceivedAsync += OnVersionANodeDeviceCommandReceived;
+
+        // Handles the node's device death received event.
+        node.DeviceDeathPublishingAsync += OnVersionANodeDeviceDeathReceived;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -195,15 +204,6 @@ public class Program
 
         // Publish a device death message.
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
-
-        // Handle the node's device birth received event.
-        node.DeviceBirthPublishingAsync += OnVersionANodeDeviceBirthReceived;
-
-        // Handle the node's device command received event.
-        node.DeviceCommandReceivedAsync += OnVersionANodeDeviceCommandReceived;
-
-        // Handle the node's device death received event.
-        node.DeviceDeathPublishingAsync += OnVersionANodeDeviceDeathReceived;
 
         // Stopping a node.
         await node.Stop();
@@ -226,7 +226,7 @@ public class Program
         Log.Information("Application started...");
 
         // Handle the application's disconnected event.
-        application.DisconnectedAsync += ApplicationVersionB_DisconnectedAsync;
+        application.DisconnectedAsync += ApplicationVersionBDisconnected;
 
         // Handle the application's node data received event.
         application.NodeDataReceivedAsync += OnVersionBNodeDataReceived;
@@ -286,11 +286,20 @@ public class Program
         // Handle the node's disconnected event.
         node.DisconnectedAsync += OnVersionBNodeDisconnected;
 
-        // Handle the node's node command received event.
+        // Handles the node's node command received event.
         node.NodeCommandReceivedAsync += OnVersionBNodeNodeCommandReceived;
 
         // Handles the node's status message received event.
         node.StatusMessageReceivedAsync += OnVersionBNodeStatusMessageReceived;
+
+        // Handles the node's device birth received event.
+        node.DeviceBirthPublishingAsync += OnVersionBNodeDeviceBirthReceived;
+
+        // Handles the node's device command received event.
+        node.DeviceCommandReceivedAsync += OnVersionBNodeDeviceCommandReceived;
+
+        // Handles the node's device death received event.
+        node.DeviceDeathPublishingAsync += OnVersionBNodeDeviceDeathReceived;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -308,15 +317,6 @@ public class Program
         // Publish a device death message.
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
 
-        // Handle the node's device birth received event.
-        node.DeviceBirthPublishingAsync += OnVersionBNodeDeviceBirthReceived;
-
-        // Handle the node's device command received event.
-        node.DeviceCommandReceivedAsync += OnVersionBNodeDeviceCommandReceived;
-
-        // Handle the node's device death received event.
-        node.DeviceDeathPublishingAsync += OnVersionBNodeDeviceDeathReceived;
-
         // Stopping a node.
         await node.Stop();
         Log.Information("Node stopped...");
@@ -325,7 +325,7 @@ public class Program
     /// <summary>
     /// Handles the disconnected callback for version A applications.
     /// </summary>
-    private static Task ApplicationVersionA_DisconnectedAsync(VersionA.SparkplugApplication.SparkplugEventArgs arg)
+    private static Task ApplicationVersionADisconnected(VersionA.SparkplugApplication.SparkplugEventArgs arg)
     {
         // Do something.
         return Task.CompletedTask;
@@ -334,7 +334,7 @@ public class Program
     /// <summary>
     /// Handles the disconnected callback for version B applications.
     /// </summary>
-    private static Task ApplicationVersionB_DisconnectedAsync(VersionB.SparkplugApplication.SparkplugEventArgs arg)
+    private static Task ApplicationVersionBDisconnected(VersionB.SparkplugApplication.SparkplugEventArgs arg)
     {
         // Do something.
         return Task.CompletedTask;
