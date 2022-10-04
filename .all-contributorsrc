@@ -66,6 +66,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Patrick2607",
+      "name": "Patrick.GK",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9799823?v=4",
+      "profile": "https://github.com/Patrick2607",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
