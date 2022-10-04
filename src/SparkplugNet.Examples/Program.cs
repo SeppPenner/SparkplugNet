@@ -180,14 +180,14 @@ public class Program
         // Handles the node's status message received event.
         node.StatusMessageReceivedAsync += OnVersionANodeStatusMessageReceived;
 
-        // Handles the node's device birth received event.
-        node.DeviceBirthPublishingAsync += OnVersionANodeDeviceBirthReceived;
+        // Handles the node's device birth publishing event.
+        node.DeviceBirthPublishingAsync += OnVersionANodeDeviceBirthPublishing;
 
         // Handles the node's device command received event.
         node.DeviceCommandReceivedAsync += OnVersionANodeDeviceCommandReceived;
 
-        // Handles the node's device death received event.
-        node.DeviceDeathPublishingAsync += OnVersionANodeDeviceDeathReceived;
+        // Handles the node's device death publishing event.
+        node.DeviceDeathPublishingAsync += OnVersionANodeDeviceDeathPublishing;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -292,14 +292,14 @@ public class Program
         // Handles the node's status message received event.
         node.StatusMessageReceivedAsync += OnVersionBNodeStatusMessageReceived;
 
-        // Handles the node's device birth received event.
-        node.DeviceBirthPublishingAsync += OnVersionBNodeDeviceBirthReceived;
+        // Handles the node's device birth publishing event.
+        node.DeviceBirthPublishingAsync += OnVersionBNodeDeviceBirthPublishing;
 
         // Handles the node's device command received event.
         node.DeviceCommandReceivedAsync += OnVersionBNodeDeviceCommandReceived;
 
-        // Handles the node's device death received event.
-        node.DeviceDeathPublishingAsync += OnVersionBNodeDeviceDeathReceived;
+        // Handles the node's device death publishing event.
+        node.DeviceDeathPublishingAsync += OnVersionBNodeDeviceDeathPublishing;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -438,7 +438,7 @@ public class Program
     /// Handles the device birth callback for version A nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionANodeDeviceBirthReceived(VersionA.SparkplugNode.DeviceBirthEventArgs args)
+    private static Task OnVersionANodeDeviceBirthPublishing(VersionA.SparkplugNode.DeviceBirthEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -448,7 +448,7 @@ public class Program
     /// Handles the device birth callback for version B nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionBNodeDeviceBirthReceived(VersionB.SparkplugNode.DeviceBirthEventArgs args)
+    private static Task OnVersionBNodeDeviceBirthPublishing(VersionB.SparkplugNode.DeviceBirthEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -478,7 +478,7 @@ public class Program
     /// Handles the device death callback for version A nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionANodeDeviceDeathReceived(VersionA.SparkplugNode.DeviceEventArgs args)
+    private static Task OnVersionANodeDeviceDeathPublishing(VersionA.SparkplugNode.DeviceEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -488,7 +488,7 @@ public class Program
     /// Handles the device death callback for version B nodes.
     /// </summary>
     /// <param name="args">The received args.</param>
-    private static Task OnVersionBNodeDeviceDeathReceived(VersionB.SparkplugNode.DeviceEventArgs args)
+    private static Task OnVersionBNodeDeviceDeathPublishing(VersionB.SparkplugNode.DeviceEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
