@@ -61,7 +61,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    [Obsolete("Please use DeviceCommandReceivedAsync", false)]
+    [Obsolete("Please use NodeCommandReceivedAsync", false)]
     public Action<T>? NodeCommandReceived { get; set; } = null;
 
     /// <summary>
@@ -99,7 +99,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    [Obsolete("Please use DeviceCommandReceivedAsync", false)]
+    [Obsolete("Please use StatusMessageReceivedAsync", false)]
     public Action<string>? StatusMessageReceived { get; set; } = null;
 
     /// <summary>
@@ -137,7 +137,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    [Obsolete("Please use DeviceBirthSendingAsync", false)]
+    [Obsolete("Please use DeviceBirthPublishingAsync", false)]
     public Action<KeyValuePair<string, List<T>>>? DeviceBirthReceived { get; set; } = null;
 
     /// <summary>
@@ -170,7 +170,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
     #endregion
 
-    #region DeviceDeathReceived
+    #region DeviceDeathPublishing
     /// <summary>
     /// Gets or sets the callback for the device death publishing event.
     /// </summary>
