@@ -38,4 +38,23 @@ public class DataSet
     /// Gets or sets the details.
     /// </summary>
     public List<byte> Details { get; set; } = new();
+
+    /// <summary>
+    /// Initializes the DataSet
+    /// </summary>
+    public DataSet()
+    {
+    }
+
+    /// <summary>
+    /// Initializes the DataSet using a Dictionary with Column names as key
+    /// and DataType as value
+    /// </summary>
+    /// <param name="entries"></param>
+    public DataSet(IDictionary<string, VersionBDataTypeEnum> entries)
+    {
+        this.NumOfColumns = (ulong)entries.Count;
+        this.Columns = entries.Keys.ToList();
+        this.Types = entries.Values.Select(type => (uint)type).ToArray();
+    }
 }

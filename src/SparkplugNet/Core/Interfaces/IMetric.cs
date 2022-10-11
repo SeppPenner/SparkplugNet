@@ -18,9 +18,4 @@ public interface IMetric
     /// Gets the name.
     /// </summary>
     public string Name { get; }
-
-    /// <summary>
-    /// Gets the value.
-    /// </summary>
-    public object? Value { get; }
 }

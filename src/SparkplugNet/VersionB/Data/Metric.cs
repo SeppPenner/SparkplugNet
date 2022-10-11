@@ -12,37 +12,13 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B metric class.
 /// </summary>
-public class Metric : MetricBase<DataType>
+public class Metric : ValueBaseVersionB, IMetric
 {
     /// <summary>
-    /// The integer value.
+    /// Gets or sets the name.
     /// </summary>
-    private uint? integerValue;
-
-    /// <summary>
-    /// The long value.
-    /// </summary>
-    private ulong? longValue;
-
-    /// <summary>
-    /// The float value.
-    /// </summary>
-    private float? floatValue;
-
-    /// <summary>
-    /// The double value.
-    /// </summary>
-    private double? doubleValue;
-
-    /// <summary>
-    /// The boolean value.
-    /// </summary>
-    private bool? booleanValue;
-
-    /// <summary>
-    /// The string value.
-    /// </summary>
-    private string? stringValue;
+    [DefaultValue("")]
+    public virtual string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// The bytes value.
@@ -83,10 +59,8 @@ public class Metric : MetricBase<DataType>
         this.Name = strName;
         this.SetValue(dataType, value);
 
-        if (timestamp is not null)
-        {
-            this.Timestamp = (ulong)(timestamp.Value.ToUnixTimeMilliseconds());
-        }
+        if (timestamp != null)
+            this.Timestamp = (ulong)timestamp.Value.ToUnixTimeMilliseconds();
     }
 
     /// <summary>
@@ -98,15 +72,6 @@ public class Metric : MetricBase<DataType>
     /// Gets or sets the timestamp.
     /// </summary>
     public ulong Timestamp { get; set; }
-
-    /// <summary>
-    /// Gets or sets the data type.
-    /// </summary>
-    public uint DataType
-    {
-        get { return (uint)this.Type; }
-        set { this.Type = (VersionBDataTypeEnum)value; }
-    }
 
     /// <summary>
     /// Gets or sets a value indicating whether the metric is historical or not.
@@ -134,94 +99,15 @@ public class Metric : MetricBase<DataType>
     public PropertySet? Properties { get; set; }
 
     /// <summary>
-    /// Gets or sets the integer value.
-    /// </summary>
-    public uint IntValue
-    {
-        get => this.integerValue ?? default;
-        set
-        {
-            this.integerValue = value;
-            this.Type = VersionBDataTypeEnum.Int32;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the long value.
-    /// </summary>
-    public ulong LongValue
-    {
-        get => this.longValue ?? default;
-        set
-        {
-            this.longValue = value;
-            this.Type = VersionBDataTypeEnum.Int64;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the float value.
-    /// </summary>
-    public float FloatValue
-    {
-        get => this.floatValue ?? default;
-        set
-        {
-            this.floatValue = value;
-            this.Type = VersionBDataTypeEnum.Float;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the double value.
-    /// </summary>
-    public double DoubleValue
-    {
-        get => this.doubleValue ?? default;
-        set
-        {
-            this.doubleValue = value;
-            this.Type = VersionBDataTypeEnum.Double;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the boolean value.
-    /// </summary>
-    public bool BooleanValue
-    {
-        get => this.booleanValue ?? default;
-        set
-        {
-            this.booleanValue = value;
-            this.Type = VersionBDataTypeEnum.Boolean;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the string value.
-    /// </summary>
-    [DefaultValue("")]
-    public string StringValue
-    {
-        get => this.stringValue ?? string.Empty;
-        set
-        {
-            this.stringValue = value;
-            this.Type = VersionBDataTypeEnum.String;
-        }
-    }
-
-    /// <summary>
     /// Gets or sets the bytes value.
     /// </summary>
-    public byte[] BytesValue
+    public virtual byte[] BytesValue
     {
         get => this.bytesValue ?? Array.Empty<byte>();
         set
         {
             this.bytesValue = value;
-            this.Type = VersionBDataTypeEnum.Bytes;
+            this.DataType = VersionBDataTypeEnum.Bytes;
         }
     }
 
@@ -234,7 +120,7 @@ public class Metric : MetricBase<DataType>
         set
         {
             this.dataSetValue = value;
-            this.Type = VersionBDataTypeEnum.DataSet;
+            this.DataType = VersionBDataTypeEnum.DataSet;
         }
     }
 
@@ -247,7 +133,7 @@ public class Metric : MetricBase<DataType>
         set
         {
             this.templateValue = value;
-            this.Type = VersionBDataTypeEnum.Template;
+            this.DataType = VersionBDataTypeEnum.Template;
         }
     }
 
@@ -260,7 +146,7 @@ public class Metric : MetricBase<DataType>
         set
         {
             this.extensionValue = value;
-            this.Type = VersionBDataTypeEnum.Unknown;
+            this.DataType = VersionBDataTypeEnum.Unknown;
         }
     }
 
@@ -270,161 +156,43 @@ public class Metric : MetricBase<DataType>
     /// <param name="dataType">Type of the data.</param>
     /// <param name="value">The value.</param>
     /// <returns>The metric.</returns>
-    public override MetricBase<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object value)
+    public override IValue<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object? value)
     {
-        if (value is not null)
+        this.IsNull = value == null;
+
+        switch (dataType)
         {
-            switch (dataType)
-            {
-                case VersionBDataTypeEnum.PropertySetList:
-                case VersionBDataTypeEnum.Unknown:
-                default:
-                case VersionBDataTypeEnum.Int8:
-                    this.IntValue = this.ConvertValue<uint>(value);
-                    break;
-                case VersionBDataTypeEnum.Int16:
-                    this.IntValue = this.ConvertValue<uint>(value);
-                    break;
-                case VersionBDataTypeEnum.Int32:
-                    this.IntValue = this.ConvertValue<uint>(value);
-                    break;
-                case VersionBDataTypeEnum.Int64:
-                    this.LongValue = this.ConvertValue<ulong>(value);
-                    break;
-                case VersionBDataTypeEnum.UInt8:
-                    this.IntValue = this.ConvertValue<uint>(value);
-                    break;
-                case VersionBDataTypeEnum.UInt16:
-                    this.IntValue = this.ConvertValue<uint>(value);
-                    break;
-                case VersionBDataTypeEnum.UInt32:
-                    this.IntValue = this.ConvertValue<uint>(value);
-                    break;
-                case VersionBDataTypeEnum.UInt64:
-                    this.LongValue = this.ConvertValue<ulong>(value);
-                    break;
-                case VersionBDataTypeEnum.Float:
-                    this.FloatValue = this.ConvertValue<float>(value);
-                    break;
-                case VersionBDataTypeEnum.Double:
-                    this.DoubleValue = this.ConvertValue<double>(value);
-                    break;
-                case VersionBDataTypeEnum.Boolean:
-                    this.BooleanValue = this.ConvertValue<bool>(value);
-                    break;
-                case VersionBDataTypeEnum.String:
-                case VersionBDataTypeEnum.Text:
-                case VersionBDataTypeEnum.Uuid:
-                    this.StringValue = this.ConvertValue<string>(value)!;
-                    break;
-                case VersionBDataTypeEnum.DateTime:
-                    this.LongValue = (ulong)new DateTimeOffset(this.ConvertValue<DateTime>(value)).ToUnixTimeMilliseconds();
-                    break;
-                case VersionBDataTypeEnum.DataSet:
-                    this.DataSetValue = this.ConvertValue<DataSet>(value) ?? new();
-                    break;
-                case VersionBDataTypeEnum.Bytes:
-                case VersionBDataTypeEnum.File:
-                    this.BytesValue = this.ConvertValue<byte[]>(value) ?? Array.Empty<byte>();
-                    break;
-                case VersionBDataTypeEnum.Template:
-                    this.TemplateValue = this.ConvertValue<Template>(value) ?? new();
-                    break;
-                case VersionBDataTypeEnum.PropertySet:
-                    this.Properties = this.ConvertValue<PropertySet>(value) ?? new();
-                    break;
-            }
-        }
-        else
-        {
-            switch (dataType)
-            {
-                case VersionBDataTypeEnum.PropertySetList:
-                case VersionBDataTypeEnum.Unknown:
-                default:
-                case VersionBDataTypeEnum.Int8:
-                case VersionBDataTypeEnum.Int16:
-
-                case VersionBDataTypeEnum.Int32:
-
-                case VersionBDataTypeEnum.UInt8:
-                case VersionBDataTypeEnum.UInt16:
-                case VersionBDataTypeEnum.UInt32:
-                    this.IntValue = 0;
-                    break;
-                case VersionBDataTypeEnum.Int64:
-                case VersionBDataTypeEnum.UInt64:
-                case VersionBDataTypeEnum.DateTime:
-                    this.LongValue = 0;
-                    break;
-                case VersionBDataTypeEnum.Float:
-                    this.FloatValue = 0;
-                    break;
-                case VersionBDataTypeEnum.Double:
-                    this.DoubleValue = 0;
-                    break;
-                case VersionBDataTypeEnum.Boolean:
-                    this.BooleanValue = false;
-                    break;
-                case VersionBDataTypeEnum.String:
-                case VersionBDataTypeEnum.Text:
-                case VersionBDataTypeEnum.Uuid:
-                    this.StringValue = "";
-                    break;
-
-                case VersionBDataTypeEnum.DataSet:
-                    this.DataSetValue = new();
-                    break;
-                case VersionBDataTypeEnum.Bytes:
-                case VersionBDataTypeEnum.File:
-                    this.BytesValue = Array.Empty<byte>();
-                    break;
-                case VersionBDataTypeEnum.Template:
-                    this.TemplateValue = new();
-                    break;
-                case VersionBDataTypeEnum.PropertySet:
-                    this.Properties = new();
-                    break;
-            }
-
-            this.IsNull = true;
+            case VersionBDataTypeEnum.Bytes:
+            case VersionBDataTypeEnum.File:
+                this.BytesValue = value.ConvertOrDefaultTo<byte[]>();
+                break;
+            case VersionBDataTypeEnum.DataSet:
+                this.DataSetValue = value.ConvertOrDefaultTo<DataSet>();
+                break;
+            case VersionBDataTypeEnum.Template:
+                this.TemplateValue = value.ConvertOrDefaultTo<Template>();
+                break;
+            case VersionBDataTypeEnum.PropertySet:
+                this.Properties = value.ConvertOrDefaultTo<PropertySet>();
+                break;
+            default:
+                base.SetValue(dataType, value);
+                break;
         }
 
-        this.Type = dataType;
         return this;
     }
 
     /// <summary>
     /// Gets the value.
     /// </summary>
-    public override object? Value
+    public override object? Value => base.Value ?? (this.DataType switch
     {
-        get
-        {
-            return this.Type switch
-            {
-                VersionBDataTypeEnum.Int8 => (sbyte)this.IntValue,
-                VersionBDataTypeEnum.Int16 => (short)this.IntValue,
-                VersionBDataTypeEnum.Int32 => (int)this.IntValue,
-                VersionBDataTypeEnum.Int64 => (long)this.LongValue,
-                VersionBDataTypeEnum.UInt8 => (byte)this.IntValue,
-                VersionBDataTypeEnum.UInt16 => (ushort)this.IntValue,
-                VersionBDataTypeEnum.UInt32 => (uint)this.IntValue,
-                VersionBDataTypeEnum.UInt64 => (ulong)this.LongValue,
-                VersionBDataTypeEnum.Float => (float)this.FloatValue,
-                VersionBDataTypeEnum.Double => (double)this.DoubleValue,
-                VersionBDataTypeEnum.Boolean => this.BooleanValue,
-                VersionBDataTypeEnum.String => this.StringValue,
-                VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds((long)this.LongValue).DateTime,
-                VersionBDataTypeEnum.Text => this.StringValue,
-                VersionBDataTypeEnum.Uuid => Guid.Parse(this.StringValue),
-                VersionBDataTypeEnum.DataSet => this.DataSetValue,
-                VersionBDataTypeEnum.Bytes => this.BytesValue,
-                VersionBDataTypeEnum.File => this.BytesValue,
-                VersionBDataTypeEnum.Template => this.TemplateValue,
-                VersionBDataTypeEnum.PropertySet => this.Properties,
-                _ => null,
-            };
-        }
-    }
+        VersionBDataTypeEnum.Bytes
+        or VersionBDataTypeEnum.File => this.BytesValue,
+        VersionBDataTypeEnum.DataSet => this.DataSetValue,
+        VersionBDataTypeEnum.Template => this.TemplateValue,
+        VersionBDataTypeEnum.PropertySet => this.Properties,
+        _ => null,
+    });
 }
