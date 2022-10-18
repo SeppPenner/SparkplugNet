@@ -37,7 +37,7 @@ public enum DataType
     /// <summary>
     /// The boolean data type.
     /// </summary>
-    Bool = 4,
+    Boolean = 4,
 
     /// <summary>
     /// The string data type.

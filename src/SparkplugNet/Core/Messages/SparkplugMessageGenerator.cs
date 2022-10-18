@@ -556,7 +556,7 @@ internal class SparkplugMessageGenerator
                 {
                     Name = Constants.SessionNumberMetricName,
                     LongValue = sessionSequenceNumber,
-                    Type = VersionAData.DataType.Int64
+                    DataType = VersionAData.DataType.Int64
                 }
             });
         }
@@ -586,7 +586,7 @@ internal class SparkplugMessageGenerator
                 {
                     Name = Constants.SessionNumberMetricName,
                     LongValue = (ulong)sessionSequenceNumber,
-                    DataType = (uint)VersionBData.DataType.Int64
+                    ValueCase = (uint)VersionBData.DataType.Int64
                 }
             });
         }

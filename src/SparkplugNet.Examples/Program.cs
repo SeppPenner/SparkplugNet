@@ -26,11 +26,11 @@ public class Program
     {
         new ()
         {
-            Name = "temperature", Type = VersionAData.DataType.Double, DoubleValue = 1.20
+            Name = "temperature", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
         },
         new ()
         {
-            Name = "climateactive", Type = VersionAData.DataType.Bool, BoolValue = true
+            Name = "climateactive", DataType = VersionAData.DataType.Bool, BoolValue = true
         }
     };
 
@@ -41,12 +41,12 @@ public class Program
     {
         new VersionBData.Metric
         {
-            Name = "temperature", DataType = (uint)VersionBData.DataType.Float, FloatValue = 1.20f
+            Name = "temperature", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.20f
         },
         new VersionBData.Metric
         {
             Name = "climateactive",
-            DataType = (uint)VersionBData.DataType.Boolean, BooleanValue = true
+            ValueCase = (uint)VersionBData.DataType.Boolean, BooleanValue = true
         }
     };
 

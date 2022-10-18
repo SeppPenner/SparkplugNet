@@ -124,9 +124,9 @@ public class SparkplugNodeSequentialTest
 
         var testMetrics = new List<Metric>
         {
-            new () { Name = "General/Name", Timestamp = unixNow, DataType = (uint)DataType.String, StringValue = "Some Name" },
-            new () { Name = "General/Some Int Value", Timestamp = unixNow, DataType = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
-            new () { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, DataType = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) }
+            new () { Name = "General/Name", Timestamp = unixNow, ValueCase = (uint)DataType.String, StringValue = "Some Name" },
+            new () { Name = "General/Some Int Value", Timestamp = unixNow, ValueCase = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
+            new () { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, ValueCase = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) }
         };
 
         return testMetrics;
@@ -146,7 +146,7 @@ public class SparkplugNodeSequentialTest
         {
             Name = "General/Extra Metric",
             Timestamp = unixUtcNow,
-            DataType = (uint)DataType.Int64,
+            ValueCase = (uint)DataType.Int64,
             LongValue = (ulong)random.Next(0, int.MaxValue)
         });
 
@@ -158,7 +158,7 @@ public class SparkplugNodeSequentialTest
             }
 
             metric.Timestamp = unixUtcNow;
-            switch (metric.DataType)
+            switch (metric.ValueCase)
             {
                 case (int)DataType.String:
                 case (int)DataType.Text:

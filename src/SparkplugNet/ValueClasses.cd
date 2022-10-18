@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="SparkplugNet.Core.Data.ValueBase&lt;DataTypeEnum&gt;">
+    <Position X="3.75" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAICAgAgAAAACAAAAAgAAEAgAABgACAAAAA=</HashCode>
+      <FileName>Core\Data\ValueBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SparkplugNet.VersionA.Data.ValueBaseVersionA">
+    <Position X="7.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAACAAAAAgICCgAEAAgABAAAAAgAAEAgAAAgAAAAAAA=</HashCode>
+      <FileName>VersionA\Data\ValueBaseVersionA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SparkplugNet.VersionB.Data.ValueBaseVersionB">
+    <Position X="7.5" Y="5.5" Width="2.5" />
+    <InheritanceLine Type="SparkplugNet.Core.Data.ValueBase&lt;DataTypeEnum&gt;" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.812" Y="4.238" />
+        <Point X="4.812" Y="5.875" />
+        <Point X="7.5" Y="5.875" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>IAACAAAAAgICAgAEAAAABAAAAAgAAEAgAAAgAAAAAAA=</HashCode>
+      <FileName>VersionB\Data\ValueBaseVersionB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SparkplugNet.VersionA.Data.KuraMetric">
+    <Position X="11.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>VersionA\Data\KuraMetric.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SparkplugNet.VersionB.Data.DataSetValue">
+    <Position X="2.75" Y="8.75" Width="3" />
+    <InheritanceLine Type="SparkplugNet.VersionB.Data.ValueBaseVersionB" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.5" Y="8.625" />
+        <Point X="6.125" Y="8.625" />
+        <Point X="6.125" Y="9.875" />
+        <Point X="5.75" Y="9.875" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>VersionB\Data\DataSetValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SparkplugNet.VersionB.Data.Metric">
+    <Position X="11.25" Y="5.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>EAQAAIAAAAIACgAAAAgCAIQAAAAAAAAIAAIgABAOAAA=</HashCode>
+      <FileName>VersionB\Data\Metric.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SparkplugNet.VersionB.Data.Parameter">
+    <Position X="2.75" Y="6.5" Width="3" />
+    <InheritanceLine Type="SparkplugNet.VersionB.Data.ValueBaseVersionB" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.5" Y="7.312" />
+        <Point X="6.625" Y="7.312" />
+        <Point X="6.625" Y="7.312" />
+        <Point X="5.75" Y="7.312" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAIQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>VersionB\Data\Parameter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SparkplugNet.VersionB.Data.PropertyValue">
+    <Position X="7.25" Y="10" Width="3" />
+    <InheritanceLine Type="SparkplugNet.VersionB.Data.ValueBaseVersionB" FixedToPoint="true">
+      <Path>
+        <Point X="8.75" Y="9.367" />
+        <Point X="8.75" Y="10" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>BAAAAICAAAAAAAAAAAAAAIAAAAAAAAIIQAAAAAAAAAA=</HashCode>
+      <FileName>VersionB\Data\PropertyValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="SparkplugNet.Core.Interfaces.IValue&lt;DataTypeEnum&gt;">
+    <Position X="0.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAICAgAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Core\Interfaces\IValue.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SparkplugNet.Core.Interfaces.IMetric">
+    <Position X="0.5" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\Interfaces\IMetric.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

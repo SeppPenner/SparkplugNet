@@ -23,8 +23,8 @@ public class SparkplugMessageGeneratorTest
         new VersionA.Data.KuraMetric
         {
             Name = "Test",
-            BoolValue = true,
-            Type = VersionA.Data.DataType.Bool
+            BooleanValue = true,
+            DataType = VersionA.Data.DataType.Boolean
         }
     };
 
@@ -36,7 +36,7 @@ public class SparkplugMessageGeneratorTest
         new VersionB.Data.Metric
         {
             Name = "Test",
-            DataType = (uint)VersionB.Data.DataType.Int32,
+            ValueCase = (uint)VersionB.Data.DataType.Int32,
             IntValue = 20
         }
     };
@@ -48,7 +48,7 @@ public class SparkplugMessageGeneratorTest
     {
         Name = Constants.SessionNumberMetricName,
         LongValue = 1,
-        Type = VersionA.Data.DataType.Int64
+        DataType = VersionA.Data.DataType.Int64
     };
 
     /// <summary>
@@ -58,7 +58,7 @@ public class SparkplugMessageGeneratorTest
     {
         Name = Constants.SessionNumberMetricName,
         LongValue = 1,
-        DataType = (uint)VersionB.Data.DataType.Int64
+        ValueCase = (uint)VersionB.Data.DataType.Int64
     };
 
     /// <summary>
@@ -130,12 +130,12 @@ public class SparkplugMessageGeneratorTest
         Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
         Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
-        Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
-        Assert.AreEqual(this.metricsA.First().Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.metricsA.First().BooleanValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
+        Assert.AreEqual(this.metricsA.First().DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
     }
 
     /// <summary>
@@ -155,11 +155,11 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.metricsB.First().ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(1).Datatype);
     }
 
     /// <summary>
@@ -178,12 +178,12 @@ public class SparkplugMessageGeneratorTest
         Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
         Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
-        Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
-        Assert.AreEqual(this.metricsA.First().Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.metricsA.First().BooleanValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
+        Assert.AreEqual(this.metricsA.First().DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
     }
 
     /// <summary>
@@ -203,11 +203,11 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.metricsB.First().ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(1).Datatype);
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(0).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
     }
 
     /// <summary>
@@ -247,7 +247,7 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(0).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
     }
 
     /// <summary>
@@ -265,7 +265,7 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(0).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
     }
 
     /// <summary>
@@ -283,7 +283,7 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(0).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
     }
 
     /// <summary>
@@ -302,12 +302,12 @@ public class SparkplugMessageGeneratorTest
         Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
         Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
-        Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
-        Assert.AreEqual(this.metricsA.First().Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.metricsA.First().BooleanValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
+        Assert.AreEqual(this.metricsA.First().DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
     }
 
     /// <summary>
@@ -327,11 +327,11 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.metricsB.First().ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(1).Datatype);
     }
 
     /// <summary>
@@ -350,12 +350,12 @@ public class SparkplugMessageGeneratorTest
         Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
         Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
-        Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
-        Assert.AreEqual(this.metricsA.First().Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.metricsA.First().BooleanValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
+        Assert.AreEqual(this.metricsA.First().DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
     }
 
     /// <summary>
@@ -375,11 +375,11 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.metricsB.First().ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(1).Datatype);
     }
 
     /// <summary>
@@ -398,12 +398,12 @@ public class SparkplugMessageGeneratorTest
         Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
         Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
-        Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
-        Assert.AreEqual(this.metricsA.First().Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.metricsA.First().BooleanValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
+        Assert.AreEqual(this.metricsA.First().DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
     }
 
     /// <summary>
@@ -423,11 +423,11 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.metricsB.First().ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(1).Datatype);
     }
 
     /// <summary>
@@ -446,12 +446,12 @@ public class SparkplugMessageGeneratorTest
         Assert.AreEqual(2, payloadVersionA.Metrics.Count);
 
         Assert.AreEqual(this.metricsA.First().Name, payloadVersionA.Metrics.ElementAt(0).Name);
-        Assert.AreEqual(this.metricsA.First().BoolValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
-        Assert.AreEqual(this.metricsA.First().Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
+        Assert.AreEqual(this.metricsA.First().BooleanValue, payloadVersionA.Metrics.ElementAt(0).BoolValue);
+        Assert.AreEqual(this.metricsA.First().DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(0).Type));
 
         Assert.AreEqual(this.seqMetricA.Name, payloadVersionA.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricA.LongValue, payloadVersionA.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricA.Type, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
+        Assert.AreEqual(this.seqMetricA.DataType, PayloadConverter.ConvertVersionADataType(payloadVersionA.Metrics.ElementAt(1).Type));
     }
 
     /// <summary>
@@ -471,10 +471,10 @@ public class SparkplugMessageGeneratorTest
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(this.metricsB.First().IntValue, payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual(this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).Datatype);
+        Assert.AreEqual(this.metricsB.First().ValueCase, payloadVersionB.Metrics.ElementAt(0).Datatype);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(this.seqMetricB.LongValue, payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual(this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).Datatype);
+        Assert.AreEqual(this.seqMetricB.ValueCase, payloadVersionB.Metrics.ElementAt(1).Datatype);
     }
 }
