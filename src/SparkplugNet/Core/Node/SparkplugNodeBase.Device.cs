@@ -62,7 +62,7 @@ public partial class SparkplugNodeBase<T>
         await this.FireDeviceBirthPublishingAsync(deviceIdentifier, knownMetrics);
 
         // Publish the message.
-        this.Options.CancellationToken ??= CancellationToken.None;
+        this.Options.CancellationToken ??= SystemCancellationToken.None;
         return await this.Client.PublishAsync(deviceBirthMessage, this.Options.CancellationToken.Value);
     }
 

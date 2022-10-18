@@ -18,14 +18,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
 {
     #region DeviceDataReceived
     /// <summary>
-    /// Gets or sets the callback for the device data received event.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use DeviceDataReceivedAsync", false)]
-    public Action<string, string, string, T>? OnDeviceDataReceived { get; set; } = null;
-
-    /// <summary>
     /// The device data received event.
     /// </summary>
     protected AsyncEvent<DeviceDataEventArgs> DeviceDataReceivedEvent = new();
@@ -49,23 +41,11 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceDataReceivedAsync(string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, T metric)
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.OnDeviceDataReceived?.Invoke(groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metric);
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-
         return this.DeviceDataReceivedEvent.InvokeAsync(new DeviceDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metric));
     }
     #endregion
 
     #region NodeDataReceived
-    /// <summary>
-    /// Gets or sets the callback for the node data received event.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use NodeDataReceivedAsync", false)]
-    public Action<string, string, T>? OnNodeDataReceived { get; set; } = null;
-
     /// <summary>
     /// The node data received event.
     /// </summary>
@@ -89,10 +69,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireNodeDataReceivedAsync(string groupIdentifier, string edgeNodeIdentifier, T metric)
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.OnNodeDataReceived?.Invoke(groupIdentifier, edgeNodeIdentifier, metric);
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-
         return this.NodeDataReceivedEvent.InvokeAsync(new NodeDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, metric));
     }
     #endregion

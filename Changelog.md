@@ -1,6 +1,7 @@
 Change history
 --------------
 
+* **Version 1.1.0.0 (2022-10-04)** : Updated events (Thanks to @cjmurph, https://github.com/SeppPenner/SparkplugNet/pull/19), added abstract base classes (Thanks to @BoBiene, https://github.com/SeppPenner/SparkplugNet/pull/20), introducing interfaces, unified things, rework to async events (Thanks to @BoBiene, https://github.com/SeppPenner/SparkplugNet/pull/21), fixed version B metric conversion error (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/26), updated NuGet packages.
 * **Version 1.0.0.0 (2022-08-03)** : 1.0 release: Switched to MqttNet 4, some bugfixes with node command and device command invocation (Thanks to @OffTravel).
 * **Version 0.7.0.0 (2022-03-24)** : 0.7 beta release: Added callbacks for the application to handle node data and device data received metrics, updated NuGet packages, fixes https://github.com/SeppPenner/SparkplugNet/issues/14.
 * **Version 0.6.0.0 (2022-02-18)** : 0.6 beta release: Added nullable checks, added editorconfig, added file scoped namespaces, added global usings, removed native support for Net Framework (Breaking change), fixes https://github.com/SeppPenner/SparkplugNet/issues/7.

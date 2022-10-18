@@ -18,14 +18,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 {
     #region DeviceCommandReceived
     /// <summary>
-    /// Gets or sets the callback for the device command received event.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use DeviceCommandReceivedAsync", false)]
-    public Action<T>? DeviceCommandReceived { get; set; } = null;
-
-    /// <summary>
     /// The device command received event.
     /// </summary>
     protected AsyncEvent<DeviceCommandEventArgs> DeviceCommandReceivedEvent = new();
@@ -47,23 +39,11 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceCommandReceivedAsync(string deviceIdentifier, T metric)
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.DeviceCommandReceived?.Invoke(metric);
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-
         return this.DeviceCommandReceivedEvent.InvokeAsync(new DeviceCommandEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceIdentifier, metric));
     }
     #endregion
 
     #region NodeCommandReceived
-    /// <summary>
-    /// Gets or sets the callback for the node command received event.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use DeviceCommandReceivedAsync", false)]
-    public Action<T>? NodeCommandReceived { get; set; } = null;
-
     /// <summary>
     /// The node command received event.
     /// </summary>
@@ -85,23 +65,11 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireNodeCommandReceivedAsync(T metric)
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.NodeCommandReceived?.Invoke(metric);
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-
         return this.NodeCommandReceivedEvent.InvokeAsync(new NodeCommandEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, metric));
     }
     #endregion
 
     #region StatusMessageReceived
-    /// <summary>
-    /// Gets or sets the callback for the status message received event.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use DeviceCommandReceivedAsync", false)]
-    public Action<string>? StatusMessageReceived { get; set; } = null;
-
     /// <summary>
     /// The status message received event.
     /// </summary>
@@ -123,23 +91,11 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireStatusMessageReceivedAsync(string status)
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.StatusMessageReceived?.Invoke(status);
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-
         return this.StatusMessageReceivedEvent.InvokeAsync(new StatusMessageEventArgs(this, status));
     }
     #endregion
 
     #region DeviceBirthPublishing
-    /// <summary>
-    /// Gets or sets the callback for the device birth publishing event.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use DeviceBirthSendingAsync", false)]
-    public Action<KeyValuePair<string, List<T>>>? DeviceBirthReceived { get; set; } = null;
-
     /// <summary>
     /// The device birth publishing event.
     /// </summary>
@@ -162,23 +118,11 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceBirthPublishingAsync(string deviceIdentifier, IEnumerable<T> metrics)
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.DeviceBirthReceived?.Invoke(new KeyValuePair<string, List<T>>(deviceIdentifier, metrics.ToList()));
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-
         return this.DeviceBirthPublishingEvent.InvokeAsync(new DeviceBirthEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceIdentifier, metrics));
     }
     #endregion
 
-    #region DeviceDeathReceived
-    /// <summary>
-    /// Gets or sets the callback for the device death publishing event.
-    /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Browsable(false)]
-    [Obsolete("Please use DeviceDeathPublishingAsync", false)]
-    public Action<string>? DeviceDeathReceived { get; set; } = null;
-
+    #region DeviceDeathPublishing
     /// <summary>
     /// The device death publishing event.
     /// </summary>
@@ -200,10 +144,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceDeathPublishingAsync(string deviceIdentifier)
     {
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
-        this.DeviceDeathReceived?.Invoke(deviceIdentifier);
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
-
         return this.DeviceDeathPublishingEvent.InvokeAsync(new DeviceEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceIdentifier));
     }
     #endregion

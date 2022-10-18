@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Version 1.0.0.0 (2022-08-03): 1.0 release: Switched to MqttNet 4, some bugfixes with node command and device command invocation (Thanks to @OffTravel).</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 1.1.0.0 (2022-10-04): Updated events (Thanks to @cjmurph, https://github.com/SeppPenner/SparkplugNet/pull/19), added abstract base classes (Thanks to @BoBiene, https://github.com/SeppPenner/SparkplugNet/pull/20), introducing interfaces, unified things, rework to async events (Thanks to @BoBiene, https://github.com/SeppPenner/SparkplugNet/pull/21), fixed version B metric conversion error (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/26), updated NuGet packages.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>

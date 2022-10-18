@@ -14,7 +14,7 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 [![Gitter](https://badges.gitter.im/SparkplugNet/community.svg)](https://gitter.im/SparkplugNet/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Available for
@@ -62,8 +62,10 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * Version 2.2, spAv1.0 and spBv1.0.
 
 ## Special notes
+* Version 1.1.0 introduces the async event pattern and deprecates the "old, synchronous" events, Version 1.2.0+ will remove the old events completely. (BREAKING)
 * Although it's not required to publish a **BDSEQ** metric with all messages according to the specification,
-this library includes it in any `spBv1.0` message except the state messages because I think it's useful.
+this library includes it in any `spBv1.0` message except the state messages in versions up to 1.0.0 because I think it's useful.
+From version 1.1.0 on, this behaviour can be controlled by setting `AddSessionNumberToCommandMessages` in the application options and `AddSessionNumberToDataMessages` in the node options.
 * The library uses [Serilog](https://serilog.net/) for logging purposes because it's very extendable (`Log.Logger` or similar stuff in the examples refers to the Serilog library).
 
 ## Further resources
@@ -91,14 +93,18 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href="https://franzhuber23.blogspot.de/"><img src="https://avatars.githubusercontent.com/u/9639361?v=4?s=100" width="100px;" alt=""/><br /><sub><b>HansM</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Documentation">📖</a> <a href="#example-SeppPenner" title="Examples">💡</a> <a href="#maintenance-SeppPenner" title="Maintenance">🚧</a> <a href="#projectManagement-SeppPenner" title="Project Management">📆</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Tests">⚠️</a></td>
-      <td align="center"><a href="https://github.com/insightdocs"><img src="https://avatars.githubusercontent.com/u/23101485?v=4?s=100" width="100px;" alt=""/><br /><sub><b>insightdocs</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=insightdocs" title="Tests">⚠️</a></td>
-      <td align="center"><a href="https://github.com/OffTravel"><img src="https://avatars.githubusercontent.com/u/19183574?v=4?s=100" width="100px;" alt=""/><br /><sub><b>OffTravel</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Tests">⚠️</a></td>
-      <td align="center"><a href="https://github.com/cjmurph"><img src="https://avatars.githubusercontent.com/u/2868949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>cjmurph</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=cjmurph" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=cjmurph" title="Tests">⚠️</a></td>
-      <td align="center"><a href="https://github.com/BoBiene"><img src="https://avatars.githubusercontent.com/u/23037659?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bo Biene</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=BoBiene" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=BoBiene" title="Tests">⚠️</a></td>
-      <td align="center"><a href="https://github.com/TimJoehnk"><img src="https://avatars.githubusercontent.com/u/93274944?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tim Jöhnk</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=TimJoehnk" title="Code">💻</a></td>
+      <td align="center"><a href="https://franzhuber23.blogspot.de/"><img src="https://avatars.githubusercontent.com/u/9639361?v=4?s=100" width="100px;" alt="HansM"/><br /><sub><b>HansM</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Documentation">📖</a> <a href="#example-SeppPenner" title="Examples">💡</a> <a href="#maintenance-SeppPenner" title="Maintenance">🚧</a> <a href="#projectManagement-SeppPenner" title="Project Management">📆</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=SeppPenner" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/insightdocs"><img src="https://avatars.githubusercontent.com/u/23101485?v=4?s=100" width="100px;" alt="insightdocs"/><br /><sub><b>insightdocs</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=insightdocs" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/OffTravel"><img src="https://avatars.githubusercontent.com/u/19183574?v=4?s=100" width="100px;" alt="OffTravel"/><br /><sub><b>OffTravel</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=OffTravel" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/cjmurph"><img src="https://avatars.githubusercontent.com/u/2868949?v=4?s=100" width="100px;" alt="cjmurph"/><br /><sub><b>cjmurph</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=cjmurph" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=cjmurph" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/BoBiene"><img src="https://avatars.githubusercontent.com/u/23037659?v=4?s=100" width="100px;" alt="Bo Biene"/><br /><sub><b>Bo Biene</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=BoBiene" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=BoBiene" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/TimJoehnk"><img src="https://avatars.githubusercontent.com/u/93274944?v=4?s=100" width="100px;" alt="Tim Jöhnk"/><br /><sub><b>Tim Jöhnk</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=TimJoehnk" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/Patrick2607"><img src="https://avatars.githubusercontent.com/u/9799823?v=4?s=100" width="100px;" alt="Patrick.GK"/><br /><sub><b>Patrick.GK</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=Patrick2607" title="Code">💻</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=Patrick2607" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
+  <tfoot>
+    
+  </tfoot>
 </table>
 
 <!-- markdownlint-restore -->
