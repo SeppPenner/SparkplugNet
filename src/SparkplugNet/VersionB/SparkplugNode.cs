@@ -161,7 +161,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
             deviceIdentifier,
-            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterOutgoingMetrics(deviceMetrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now,
