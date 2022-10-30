@@ -748,6 +748,8 @@ internal static class PayloadConverter
                 pbMetric.TemplateValue = ConvertVersionBTemplate(metric.TemplateValue);
                 break;
             case VersionBDataTypeEnum.Bytes:
+                pbMetric.BytesValue = metric.BytesValue;
+                break;
             case VersionBDataTypeEnum.Unknown:
             case VersionBDataTypeEnum.File:
             case VersionBDataTypeEnum.PropertySet:

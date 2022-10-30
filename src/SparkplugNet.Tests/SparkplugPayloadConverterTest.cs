@@ -181,6 +181,6 @@ public class SparkplugPayloadConverterTest
         Assert.IsTrue(payloadConverted.Metrics.Count > 0);
         Assert.IsNotNull(payloadConverted.Metrics[0]);
         CollectionAssert.AreEqual(new byte[] { 1, 2, 3, 4 }, payloadConverted.Metrics[0].BytesValue);
-        Assert.AreEqual(1, payloadConverted.Metrics[0].Datatype);
+        Assert.AreEqual((uint)17, payloadConverted.Metrics[0].Datatype);
     }
 }
