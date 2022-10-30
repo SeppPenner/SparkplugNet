@@ -16,3 +16,6 @@ dotnet_style_qualification_for_event=true:warning
 csharp_style_allow_blank_lines_between_consecutive_braces_experimental=false:warning
 dotnet_sort_system_directives_first=true:warning
 dotnet_diagnostic.IDE0005.severity=warning
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:warning
