@@ -21,7 +21,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionAPayloadFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionAPayload(new VersionA.ProtoBuf.ProtoBufPayload());
+        var payload = PayloadConverter.ConvertVersionAPayload(new VersionAProtoBufPayload());
         Assert.IsNotNull(payload);
     }
 
@@ -41,7 +41,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBPayloadFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBPayload(new VersionB.ProtoBuf.ProtoBufPayload());
+        var payload = PayloadConverter.ConvertVersionBPayload(new VersionBProtoBufPayload());
         Assert.IsNotNull(payload);
     }
 
@@ -61,7 +61,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionADataTypeFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionADataType(new VersionA.ProtoBuf.ProtoBufPayload.KuraMetric.ValueType());
+        var payload = PayloadConverter.ConvertVersionADataType(new VersionAProtoBufPayload.KuraMetric.ValueType());
         Assert.IsNotNull(payload);
     }
 
@@ -81,7 +81,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeDataSetValueFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeDataSetValue(new VersionB.ProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataTypeDataSetValue(new VersionBProtoBufPayload.DataSet.DataSetValue.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -101,7 +101,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeMetricFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeMetric(new VersionB.ProtoBuf.ProtoBufPayload.Metric.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataTypeMetric(new VersionBProtoBufPayload.Metric.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -121,7 +121,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeParameterFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeParameter(new VersionB.ProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataTypeParameter(new VersionBProtoBufPayload.Template.Parameter.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -141,7 +141,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypePropertyValueFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypePropertyValue(new VersionB.ProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataTypePropertyValue(new VersionBProtoBufPayload.PropertyValue.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -153,5 +153,34 @@ public class SparkplugPayloadConverterTest
     {
         var payload = PayloadConverter.ConvertVersionBDataTypePropertyValue(new VersionB.Data.DataType());
         Assert.IsNotNull(payload);
+    }
+
+    /// <summary>
+    /// Tests the Sparkplug payload converter for converting a version B data type property value to Proto with byte data in the metrics.
+    /// </summary>
+    [TestMethod]
+    public void TestConvertVersionBMetricsWithByteValues()
+    {
+        var payload = new VersionB.Data.Payload
+        {
+            Metrics = new VersionB.Data.Metric[]
+            {
+                new VersionB.Data.Metric()
+                {
+                    BytesValue = new byte[] { 1, 2, 3, 4 }
+                }
+            }.ToList(),
+            Seq = 1,
+            Timestamp = (ulong)DateTimeOffset.Now.ToUnixTimeMilliseconds()
+        };
+
+        var payloadConverted = PayloadConverter.ConvertVersionBPayload(payload);
+
+        Assert.IsNotNull(payloadConverted);
+        Assert.IsNotNull(payloadConverted.Metrics);
+        Assert.IsTrue(payloadConverted.Metrics.Count > 0);
+        Assert.IsNotNull(payloadConverted.Metrics[0]);
+        CollectionAssert.AreEqual(new byte[] { 1, 2, 3, 4 }, payloadConverted.Metrics[0].BytesValue);
+        Assert.AreEqual(1, payloadConverted.Metrics[0].Datatype);
     }
 }
