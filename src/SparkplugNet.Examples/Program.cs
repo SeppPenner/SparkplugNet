@@ -30,7 +30,7 @@ public class Program
         },
         new ()
         {
-            Name = "climateactive", DataType = VersionAData.DataType.Bool, BoolValue = true
+            Name = "climateactive", DataType = VersionAData.DataType.Boolean, BooleanValue = true
         }
     };
 
