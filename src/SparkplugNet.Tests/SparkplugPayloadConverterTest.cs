@@ -157,6 +157,7 @@ public class SparkplugPayloadConverterTest
 
     /// <summary>
     /// Tests the Sparkplug payload converter for converting a version B data type property value to Proto with byte data in the metrics.
+    /// Test code for https://github.com/SeppPenner/SparkplugNet/issues/30.
     /// </summary>
     [TestMethod]
     public void TestConvertVersionBMetricsWithByteValues()
