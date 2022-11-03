@@ -19,7 +19,7 @@ public partial class SparkplugNodeBase<T>
     /// <summary>
     /// Gets the known devices.
     /// </summary>
-    public ConcurrentDictionary<string, List<T>> KnownDevices { get; } = new();
+    public ConcurrentDictionary<string, KnownMetricStorage> KnownDevices { get; } = new();
 
     /// <summary>
     /// Publishes a device birth message to the MQTT broker.
@@ -56,7 +56,7 @@ public partial class SparkplugNodeBase<T>
         this.IncrementLastSequenceNumber();
 
         // Add the known metrics to the known devices.
-        this.KnownDevices.TryAdd(deviceIdentifier, knownMetrics);
+        this.KnownDevices.TryAdd(deviceIdentifier, new KnownMetricStorage(knownMetrics));
 
         // Invoke the device birth event.
         await this.FireDeviceBirthPublishingAsync(deviceIdentifier, knownMetrics);
@@ -146,6 +146,42 @@ public partial class SparkplugNodeBase<T>
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="Exception">Thrown if the device is unknown or an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    protected abstract Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<T> metrics, string deviceIdentifier);
+    protected virtual async Task<MqttClientPublishResult> PublishMessageForDevice(IEnumerable<T> metrics, string deviceIdentifier)
+    {
+        if (this.Options is null)
+        {
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
+        }
+
+        if (!this.KnownDevices.TryGetValue(deviceIdentifier, out KnownMetricStorage deviceMetricStorage))
+        {
+            throw new Exception("The device is unknown, please publish a device birth message first.");
+        }
+
+        if (deviceMetricStorage is null)
+        {
+            throw new Exception("Invalid metric type specified for version A metric.");
+        }
+
+        // Get the data message.
+        var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
+            this.NameSpace,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier,
+            deviceIdentifier,
+            deviceMetricStorage.FilterOutgoingMetrics(metrics),
+            this.LastSequenceNumber,
+            this.LastSessionNumber,
+            DateTimeOffset.Now,
+            this.Options.AddSessionNumberToDataMessages);
+
+        // Increment the sequence number.
+        this.IncrementLastSequenceNumber();
+
+        // Publish the message.
+        return await this.Client.PublishAsync(dataMessage);
+    }
 }
