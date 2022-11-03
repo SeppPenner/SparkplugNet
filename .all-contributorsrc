@@ -74,7 +74,8 @@
       "profile": "https://github.com/Patrick2607",
       "contributions": [
         "code",
-        "test"
+        "test",
+        "infra"
       ]
     }
   ],
@@ -83,5 +84,6 @@
   "projectOwner": "SeppPenner",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
