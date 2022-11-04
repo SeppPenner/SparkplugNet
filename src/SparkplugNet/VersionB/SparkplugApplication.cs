@@ -155,7 +155,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
-                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
+                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
