@@ -163,7 +163,7 @@ public partial class SparkplugNodeBase<T>
 
         if (deviceMetricStorage is null)
         {
-            throw new Exception("Invalid metric type specified for version A metric.");
+            throw new ArgumentNullException(deviceIdentifier, $"The KnownMetrics for the device {deviceIdentifier} aren't set properly.");
         }
 
         // Get the data message.
