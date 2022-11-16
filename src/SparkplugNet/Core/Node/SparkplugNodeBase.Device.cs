@@ -156,14 +156,14 @@ public partial class SparkplugNodeBase<T>
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.KnownDevices.TryGetValue(deviceIdentifier, out KnownMetricStorage deviceMetricStorage))
+        if (!this.KnownDevices.TryGetValue(deviceIdentifier, out KnownMetricStorage? deviceMetricStorage))
         {
             throw new Exception("The device is unknown, please publish a device birth message first.");
         }
 
         if (deviceMetricStorage is null)
         {
-            throw new ArgumentNullException(deviceIdentifier, $"The KnownMetrics for the device {deviceIdentifier} aren't set properly.");
+            throw new ArgumentNullException(deviceIdentifier, $"The known metrics for the device {deviceIdentifier} aren't set properly.");
         }
 
         // Get the data message.

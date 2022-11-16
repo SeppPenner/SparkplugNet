@@ -173,7 +173,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             case SparkplugMessageType.DeviceData:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                 {
-                    throw new InvalidOperationException($"topic {topic} is invalid!");
+                    throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
                 foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
@@ -189,7 +189,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
             case SparkplugMessageType.DeviceDeath:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                 {
-                    throw new InvalidOperationException($"topic {topic} is invalid!");
+                    throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);

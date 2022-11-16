@@ -24,9 +24,8 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     public class KnownMetricStorage : ConcurrentDictionary<string, T>
     {
         /// <summary>
-        /// Returns the Metrics as List
+        /// Gets the metrics as <see cref="List{T}"/>.
         /// </summary>
-        /// <returns></returns>
         public List<T> Metrics => this.Values.ToList();
 
         /// <summary>
