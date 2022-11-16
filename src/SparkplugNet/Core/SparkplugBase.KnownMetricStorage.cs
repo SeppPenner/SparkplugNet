@@ -24,6 +24,12 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     public class KnownMetricStorage : ConcurrentDictionary<string, T>
     {
         /// <summary>
+        /// Returns the Metrics as List
+        /// </summary>
+        /// <returns></returns>
+        public List<T> Metrics => this.Values.ToList();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="KnownMetricStorage"/> class.
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
