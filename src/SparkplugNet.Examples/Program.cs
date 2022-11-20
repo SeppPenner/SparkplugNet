@@ -20,32 +20,94 @@ public class Program
     private static readonly CancellationTokenSource CancellationTokenSource = new();
 
     /// <summary>
-    /// The version A metrics.
+    /// The version A metrics for an application.
     /// </summary>
-    private static readonly List<VersionAData.KuraMetric> VersionAMetrics = new()
+    private static readonly List<VersionAData.KuraMetric> VersionAMetricsApplication = new()
     {
         new ()
         {
-            Name = "temperature", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
+            Name = "temperatureApplication", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
         },
         new ()
         {
-            Name = "climateactive", DataType = VersionAData.DataType.Boolean, BooleanValue = true
+            Name = "climateactiveApplication", DataType = VersionAData.DataType.Boolean, BooleanValue = true
         }
     };
 
     /// <summary>
-    /// The version A metrics.
+    /// The version A metrics for a node.
     /// </summary>
-    private static readonly List<VersionBData.Metric> VersionBMetrics = new()
+    private static readonly List<VersionAData.KuraMetric> VersionAMetricsNode = new()
+    {
+        new ()
+        {
+            Name = "temperatureNode", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
+        },
+        new ()
+        {
+            Name = "climateactiveNode", DataType = VersionAData.DataType.Boolean, BooleanValue = true
+        }
+    };
+
+    /// <summary>
+    /// The version A metrics for a device.
+    /// </summary>
+    private static readonly List<VersionAData.KuraMetric> VersionAMetricsDevice = new()
+    {
+        new ()
+        {
+            Name = "temperatureDevice", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
+        },
+        new ()
+        {
+            Name = "climateactiveDevice", DataType = VersionAData.DataType.Boolean, BooleanValue = true
+        }
+    };
+
+    /// <summary>
+    /// The version A metrics for an application.
+    /// </summary>
+    private static readonly List<VersionBData.Metric> VersionBMetricsApplication = new()
     {
         new VersionBData.Metric
         {
-            Name = "temperature", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.20f
+            Name = "temperatureApplication", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.20f
         },
         new VersionBData.Metric
         {
-            Name = "climateactive",
+            Name = "climateactiveApplication",
+            ValueCase = (uint)VersionBData.DataType.Boolean, BooleanValue = true
+        }
+    };
+
+    /// <summary>
+    /// The version A metrics for a node.
+    /// </summary>
+    private static readonly List<VersionBData.Metric> VersionBMetricsNode = new()
+    {
+        new VersionBData.Metric
+        {
+            Name = "temperatureNode", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.243f
+        },
+        new VersionBData.Metric
+        {
+            Name = "climateactiveNode",
+            ValueCase = (uint)VersionBData.DataType.Boolean, BooleanValue = true
+        }
+    };
+
+    /// <summary>
+    /// The version A metrics for a device.
+    /// </summary>
+    private static readonly List<VersionBData.Metric> VersionBMetricsDevice = new()
+    {
+        new VersionBData.Metric
+        {
+            Name = "temperatureDevice", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.243f
+        },
+        new VersionBData.Metric
+        {
+            Name = "climateactiveDevice",
             ValueCase = (uint)VersionBData.DataType.Boolean, BooleanValue = true
         }
     };
@@ -103,9 +165,7 @@ public class Program
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionAApplication()
     {
-        var applicationMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
-        var application = new VersionA.SparkplugApplication(applicationMetrics, Log.Logger);
-
+        var application = new VersionA.SparkplugApplication(VersionAMetricsApplication, Log.Logger);
         var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionAApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
 
         // Start an application.
@@ -129,11 +189,11 @@ public class Program
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
-        await application.PublishNodeCommand(applicationMetrics, "group1", "edge1");
+        await application.PublishNodeCommand(VersionAMetricsApplication, "group1", "edge1");
 
         // Publish device commands.
         Log.Information("Publishing a device command ...");
-        await application.PublishDeviceCommand(applicationMetrics, "group1", "edge1", "device1");
+        await application.PublishDeviceCommand(VersionAMetricsApplication, "group1", "edge1", "device1");
 
         // Get the known metrics from an application.
         var currentlyKnownMetrics = application.KnownMetrics;
@@ -158,8 +218,7 @@ public class Program
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionANode()
     {
-        var nodeMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
-        var node = new VersionA.SparkplugNode(nodeMetrics, Log.Logger);
+        var node = new VersionA.SparkplugNode(VersionAMetricsNode, Log.Logger);
         var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1A", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
 
         // Start a node.
@@ -168,7 +227,7 @@ public class Program
         Log.Information("Node started...");
 
         // Publish node metrics.
-        await node.PublishMetrics(nodeMetrics);
+        await node.PublishMetrics(VersionAMetricsNode);
 
         // Get the known node metrics from a node.
         var currentlyKnownMetrics = node.KnownMetrics;
@@ -196,13 +255,12 @@ public class Program
 
         // Handling devices.
         const string DeviceIdentifier = "device1";
-        var deviceMetrics = new List<VersionAData.KuraMetric>(VersionAMetrics);
 
         // Publish a device birth message.
-        await node.PublishDeviceBirthMessage(deviceMetrics, DeviceIdentifier);
+        await node.PublishDeviceBirthMessage(VersionAMetricsDevice, DeviceIdentifier);
 
         // Publish a device data message.
-        await node.PublishDeviceData(deviceMetrics, DeviceIdentifier);
+        await node.PublishDeviceData(VersionAMetricsDevice, DeviceIdentifier);
 
         // Publish a device death message.
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
@@ -218,9 +276,8 @@ public class Program
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionBApplication()
     {
-        var applicationMetrics = new List<VersionBData.Metric>(VersionBMetrics);
-        var application = new VersionB.SparkplugApplication(applicationMetrics, Log.Logger);
         var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionBApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
+        var application = new VersionB.SparkplugApplication(VersionBMetricsApplication, Log.Logger);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -243,11 +300,11 @@ public class Program
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
-        await application.PublishNodeCommand(applicationMetrics, "group1", "edge1");
+        await application.PublishNodeCommand(VersionBMetricsApplication, "group1", "edge1");
 
         // Publish device commands.
         Log.Information("Publishing a device command ...");
-        await application.PublishDeviceCommand(applicationMetrics, "group1", "edge1", "device1");
+        await application.PublishDeviceCommand(VersionBMetricsApplication, "group1", "edge1", "device1");
 
         // Get the known metrics from an application.
         var currentlyKnownMetrics = application.KnownMetrics;
@@ -272,9 +329,8 @@ public class Program
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionBNode()
     {
-        var nodeMetrics = new List<VersionBData.Metric>(VersionBMetrics);
-        var node = new VersionB.SparkplugNode(nodeMetrics, Log.Logger);
         var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1B", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
+        var node = new VersionB.SparkplugNode(VersionBMetricsNode, Log.Logger);
 
         // Start a node.
         Log.Information("Starting node...");
@@ -282,7 +338,7 @@ public class Program
         Log.Information("Node started...");
 
         // Publish node metrics.
-        await node.PublishMetrics(nodeMetrics);
+        await node.PublishMetrics(VersionBMetricsNode);
 
         // Get the known node metrics from a node.
         var currentlyKnownMetrics = node.KnownMetrics;
@@ -310,13 +366,12 @@ public class Program
 
         // Handling devices.
         const string DeviceIdentifier = "device1";
-        var deviceMetrics = new List<VersionBData.Metric>(VersionBMetrics);
 
         // Publish a device birth message.
-        await node.PublishDeviceBirthMessage(deviceMetrics, DeviceIdentifier);
+        await node.PublishDeviceBirthMessage(VersionBMetricsDevice, DeviceIdentifier);
 
         // Publish a device data message.
-        await node.PublishDeviceData(deviceMetrics, DeviceIdentifier);
+        await node.PublishDeviceData(VersionBMetricsDevice, DeviceIdentifier);
 
         // Publish a device death message.
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
