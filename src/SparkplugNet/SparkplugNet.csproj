@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <RepositoryType>Github</RepositoryType>
-    <PackageReleaseNotes>Version 1.1.1.0 (2022-10-30): Fixed a bug within the metric conversion (Thanks to @49564B0F, https://github.com/SeppPenner/SparkplugNet/issues/30), fixed a bug with the device metrics on publishing (Thanks to @emmanuelbertho, https://github.com/SeppPenner/SparkplugNet/issues/28), unified even more things (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/29), updated NuGet packages.</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 1.2.0.0 (2022-11-20): Updated nuget packages, removed support for Net5.0, added support for Net7.0, fixed a bug with the device storage (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/31).</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
