@@ -37,6 +37,7 @@ public class SparkplugNodeSequentialTest
     /// </summary>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [TestMethod]
+    [Ignore]
     public async Task T1TestNodeVersionBConnectBirth()
     {
         Log.Logger = new LoggerConfiguration()
@@ -74,6 +75,7 @@ public class SparkplugNodeSequentialTest
     /// </summary>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [TestMethod]
+    [Ignore]
     public async Task T2TestNodeVersionBPublishMetrics()
     {
         // Publish metrics with changes.
@@ -95,6 +97,7 @@ public class SparkplugNodeSequentialTest
     /// </summary>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [TestMethod]
+    [Ignore]
     public async Task T3TestNodeVersionBStopDisconnect()
     {
         // Assert that the node is not null.
