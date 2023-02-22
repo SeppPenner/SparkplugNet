@@ -78,9 +78,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 public uint Type { get; set; }
 
                 [global::ProtoBuf.ProtoMember(3, Name = @"int_value")]
-                public uint IntValue
+                public int IntValue
                 {
-                    get => __pbn__value.Is(3) ? __pbn__value.UInt32 : default;
+                    get => __pbn__value.Is(3) ? __pbn__value.Int32 : default;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(3, value);
                 }
                 public bool ShouldSerializeIntValue() => __pbn__value.Is(3);
@@ -89,9 +89,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 private global::ProtoBuf.DiscriminatedUnion64Object __pbn__value;
 
                 [global::ProtoBuf.ProtoMember(4, Name = @"long_value")]
-                public ulong LongValue
+                public long LongValue
                 {
-                    get => __pbn__value.Is(4) ? __pbn__value.UInt64 : default;
+                    get => __pbn__value.Is(4) ? __pbn__value.Int64 : default;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(4, value);
                 }
                 public bool ShouldSerializeLongValue() => __pbn__value.Is(4);
@@ -128,7 +128,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 [global::System.ComponentModel.DefaultValue("")]
                 public string StringValue
                 {
-                    get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : "";
+                    get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : string.Empty;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(8, value);
                 }
                 public bool ShouldSerializeStringValue() => __pbn__value.Is(8);
@@ -143,6 +143,24 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 public bool ShouldSerializeExtensionValue() => __pbn__value.Is(9);
                 public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 9);
 
+                [global::ProtoBuf.ProtoMember(10, Name = @"uint_value")]
+                public uint UintValue
+                {
+                    get => __pbn__value.Is(10) ? __pbn__value.UInt32 : default;
+                    set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(10, value);
+                }
+                public bool ShouldSerializeUintValue() => __pbn__value.Is(10);
+                public void ResetUintValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 10);
+
+                [global::ProtoBuf.ProtoMember(11, Name = @"ulong_value")]
+                public ulong UlongValue
+                {
+                    get => __pbn__value.Is(11) ? __pbn__value.UInt64 : default;
+                    set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(11, value);
+                }
+                public bool ShouldSerializeUlongValue() => __pbn__value.Is(11);
+                public void ResetUlongValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 11);
+
                 public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
 
                 public enum ValueOneofCase
@@ -155,6 +173,8 @@ namespace SparkplugNet.VersionB.ProtoBuf
                     BooleanValue = 7,
                     StringValue = 8,
                     ExtensionValue = 9,
+                    UintValue = 10,
+                    UlongValue = 11,
                 }
 
                 [global::ProtoBuf.ProtoContract()]
@@ -203,9 +223,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
                     => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
                 [global::ProtoBuf.ProtoMember(1, Name = @"int_value")]
-                public uint IntValue
+                public int IntValue
                 {
-                    get => __pbn__value.Is(1) ? __pbn__value.UInt32 : default;
+                    get => __pbn__value.Is(1) ? __pbn__value.Int32 : default;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(1, value);
                 }
                 public bool ShouldSerializeIntValue() => __pbn__value.Is(1);
@@ -214,9 +234,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 private global::ProtoBuf.DiscriminatedUnion64Object __pbn__value;
 
                 [global::ProtoBuf.ProtoMember(2, Name = @"long_value")]
-                public ulong LongValue
+                public long LongValue
                 {
-                    get => __pbn__value.Is(2) ? __pbn__value.UInt64 : default;
+                    get => __pbn__value.Is(2) ? __pbn__value.Int64 : default;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(2, value);
                 }
                 public bool ShouldSerializeLongValue() => __pbn__value.Is(2);
@@ -268,6 +288,24 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 public bool ShouldSerializeExtensionValue() => __pbn__value.Is(7);
                 public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 7);
 
+                [global::ProtoBuf.ProtoMember(8, Name = @"uint_value")]
+                public uint UintValue
+                {
+                    get => __pbn__value.Is(8) ? __pbn__value.UInt32 : default;
+                    set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(8, value);
+                }
+                public bool ShouldSerializeUintValue() => __pbn__value.Is(8);
+                public void ResetUintValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 8);
+
+                [global::ProtoBuf.ProtoMember(9, Name = @"ulong_value")]
+                public ulong UlongValue
+                {
+                    get => __pbn__value.Is(9) ? __pbn__value.UInt64 : default;
+                    set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(9, value);
+                }
+                public bool ShouldSerializeUlongValue() => __pbn__value.Is(9);
+                public void ResetUlongValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 9);
+
                 public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
 
                 public enum ValueOneofCase
@@ -280,6 +318,8 @@ namespace SparkplugNet.VersionB.ProtoBuf
                     BooleanValue = 5,
                     StringValue = 6,
                     ExtensionValue = 7,
+                    UintValue = 8,
+                    UlongValue = 9,
                 }
 
                 [global::ProtoBuf.ProtoContract()]
@@ -327,9 +367,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public bool IsNull { get; set; }
 
             [global::ProtoBuf.ProtoMember(3, Name = @"int_value")]
-            public uint IntValue
+            public int IntValue
             {
-                get => __pbn__value.Is(3) ? __pbn__value.UInt32 : default;
+                get => __pbn__value.Is(3) ? __pbn__value.Int32 : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(3, value);
             }
             public bool ShouldSerializeIntValue() => __pbn__value.Is(3);
@@ -338,9 +378,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
             private global::ProtoBuf.DiscriminatedUnion64Object __pbn__value;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"long_value")]
-            public ulong LongValue
+            public long LongValue
             {
-                get => __pbn__value.Is(4) ? __pbn__value.UInt64 : default;
+                get => __pbn__value.Is(4) ? __pbn__value.Int64 : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(4, value);
             }
             public bool ShouldSerializeLongValue() => __pbn__value.Is(4);
@@ -377,7 +417,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::System.ComponentModel.DefaultValue("")]
             public string StringValue
             {
-                get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : "";
+                get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : string.Empty;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(8, value);
             }
             public bool ShouldSerializeStringValue() => __pbn__value.Is(8);
@@ -402,13 +442,31 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetPropertysetsValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 10);
 
             [global::ProtoBuf.ProtoMember(11, Name = @"extension_value")]
-            public PropertyValueExtension ExtensionValue
+            public PropertyValueExtension? ExtensionValue
             {
                 get => __pbn__value.Is(11) ? ((PropertyValueExtension)__pbn__value.Object) : new();
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(11, value);
             }
             public bool ShouldSerializeExtensionValue() => __pbn__value.Is(11);
             public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 11);
+
+            [global::ProtoBuf.ProtoMember(12, Name = @"uint_value")]
+            public uint UintValue
+            {
+                get => __pbn__value.Is(12) ? __pbn__value.UInt32 : default;
+                set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(12, value);
+            }
+            public bool ShouldSerializeUintValue() => __pbn__value.Is(12);
+            public void ResetUintValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 12);
+
+            [global::ProtoBuf.ProtoMember(13, Name = @"ulong_value")]
+            public ulong UlongValue
+            {
+                get => __pbn__value.Is(13) ? __pbn__value.UInt64 : default;
+                set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(13, value);
+            }
+            public bool ShouldSerializeUlongValue() => __pbn__value.Is(13);
+            public void ResetUlongValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 13);
 
             public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
 
@@ -424,6 +482,8 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 PropertysetValue = 9,
                 PropertysetsValue = 10,
                 ExtensionValue = 11,
+                UintValue = 12,
+                UlongValue = 13,
             }
 
             [global::ProtoBuf.ProtoContract()]
@@ -544,15 +604,15 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public bool IsNull { get; set; }
 
             [global::ProtoBuf.ProtoMember(8, Name = @"metadata")]
-            public MetaData? Metadata { get; set; } = new();
+            public MetaData? Metadata { get; set; }
 
             [global::ProtoBuf.ProtoMember(9, Name = @"properties")]
-            public PropertySet? Properties { get; set; } = new();
+            public PropertySet? Properties { get; set; }
 
             [global::ProtoBuf.ProtoMember(10, Name = @"int_value")]
-            public uint IntValue
+            public int IntValue
             {
-                get => __pbn__value.Is(10) ? __pbn__value.UInt32 : default;
+                get => __pbn__value.Is(10) ? __pbn__value.Int32 : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(10, value);
             }
             public bool ShouldSerializeIntValue() => __pbn__value.Is(10);
@@ -561,9 +621,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
             private global::ProtoBuf.DiscriminatedUnion64Object __pbn__value;
 
             [global::ProtoBuf.ProtoMember(11, Name = @"long_value")]
-            public ulong LongValue
+            public long LongValue
             {
-                get => __pbn__value.Is(11) ? __pbn__value.UInt64 : default;
+                get => __pbn__value.Is(11) ? __pbn__value.Int64 : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(11, value);
             }
             public bool ShouldSerializeLongValue() => __pbn__value.Is(11);
@@ -600,7 +660,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::System.ComponentModel.DefaultValue("")]
             public string StringValue
             {
-                get => __pbn__value.Is(15) ? ((string)__pbn__value.Object) : "";
+                get => __pbn__value.Is(15) ? ((string)__pbn__value.Object) : string.Empty;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(15, value);
             }
             public bool ShouldSerializeStringValue() => __pbn__value.Is(15);
@@ -616,7 +676,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetBytesValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 16);
 
             [global::ProtoBuf.ProtoMember(17, Name = @"dataset_value")]
-            public DataSet DatasetValue
+            public DataSet? DatasetValue
             {
                 get => __pbn__value.Is(17) ? ((DataSet)__pbn__value.Object) : new();
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(17, value);
@@ -642,6 +702,24 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public bool ShouldSerializeExtensionValue() => __pbn__value.Is(19);
             public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 19);
 
+            [global::ProtoBuf.ProtoMember(20, Name = @"uint_value")]
+            public uint UintValue
+            {
+                get => __pbn__value.Is(20) ? __pbn__value.UInt32 : default;
+                set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(20, value);
+            }
+            public bool ShouldSerializeUintValue() => __pbn__value.Is(20);
+            public void ResetUintValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 20);
+
+            [global::ProtoBuf.ProtoMember(21, Name = @"ulong_value")]
+            public ulong UlongValue
+            {
+                get => __pbn__value.Is(21) ? __pbn__value.UInt64 : default;
+                set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(21, value);
+            }
+            public bool ShouldSerializeUlongValue() => __pbn__value.Is(21);
+            public void ResetUlongValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 21);
+
             public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
 
             public enum ValueOneofCase
@@ -657,6 +735,8 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 DatasetValue = 17,
                 TemplateValue = 18,
                 ExtensionValue = 19,
+                UintValue = 20,
+                UlongValue = 21,
             }
 
             [global::ProtoBuf.ProtoContract()]

@@ -8,17 +8,27 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     /// <summary>
     /// The integer value.
     /// </summary>
-    private uint? intValue;
+    private uint? uintValue;
+
+    /// <summary>
+    /// The integer value.
+    /// </summary>
+    private int? intValue;
 
     /// <summary>
     /// The long value.
     /// </summary>
-    private ulong? longValue;
+    private long? longValue;
+
+    /// <summary>
+    /// The long value.
+    /// </summary>
+    private ulong? ulongValue;
 
     /// <summary>
     /// Gets or sets the integer value.
     /// </summary>
-    public virtual uint IntValue
+    public virtual int IntValue
     {
         get => this.intValue ?? default;
         set
@@ -29,15 +39,42 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     }
 
     /// <summary>
+    /// Gets or sets the integer value.
+    /// </summary>
+    public virtual uint UIntValue
+    {
+        get => this.uintValue ?? default;
+        set
+        {
+            this.uintValue = value;
+            this.DataType = VersionBDataTypeEnum.UInt32;
+        }
+    }
+
+
+    /// <summary>
     /// Gets or sets the long value.
     /// </summary>
-    public virtual ulong LongValue
+    public virtual long LongValue
     {
         get => this.longValue ?? default;
         set
         {
             this.longValue = value;
             this.DataType = VersionBDataTypeEnum.Int64;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the ulong value.
+    /// </summary>
+    public virtual ulong ULongValue
+    {
+        get => this.ulongValue ?? default;
+        set
+        {
+            this.ulongValue = value;
+            this.DataType = VersionBDataTypeEnum.UInt64;
         }
     }
 
@@ -111,17 +148,17 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     {
         VersionBDataTypeEnum.Int8 => (sbyte)this.IntValue,
         VersionBDataTypeEnum.Int16 => (short)this.IntValue,
-        VersionBDataTypeEnum.Int32 => (int)this.IntValue,
-        VersionBDataTypeEnum.Int64 => (long)this.LongValue,
-        VersionBDataTypeEnum.UInt8 => (byte)this.IntValue,
-        VersionBDataTypeEnum.UInt16 => (ushort)this.IntValue,
-        VersionBDataTypeEnum.UInt32 => this.IntValue,
-        VersionBDataTypeEnum.UInt64 => this.LongValue,
+        VersionBDataTypeEnum.Int32 => this.IntValue,
+        VersionBDataTypeEnum.Int64 => this.LongValue,
+        VersionBDataTypeEnum.UInt8 => (byte)this.UIntValue,
+        VersionBDataTypeEnum.UInt16 => (ushort)this.UIntValue,
+        VersionBDataTypeEnum.UInt32 => this.UIntValue,
+        VersionBDataTypeEnum.UInt64 => this.ULongValue,
         VersionBDataTypeEnum.Float => this.FloatValue,
         VersionBDataTypeEnum.Double => this.DoubleValue,
         VersionBDataTypeEnum.Boolean => this.BooleanValue,
         VersionBDataTypeEnum.String => this.StringValue,
-        VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds((long)this.LongValue).DateTime,
+        VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds((long)this.ULongValue).DateTime,
         VersionBDataTypeEnum.Text => this.StringValue,
         VersionBDataTypeEnum.Uuid => Guid.Parse(this.StringValue),
         _ => null,
@@ -142,14 +179,18 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
             case VersionBDataTypeEnum.Int8:
             case VersionBDataTypeEnum.Int16:
             case VersionBDataTypeEnum.Int32:
+                this.IntValue = value.ConvertTo<int>();
+                break;
+            case VersionBDataTypeEnum.Int64:
+                this.LongValue = value.ConvertTo<long>();
+                break;
             case VersionBDataTypeEnum.UInt8:
             case VersionBDataTypeEnum.UInt16:
             case VersionBDataTypeEnum.UInt32:
-                this.IntValue = value.ConvertTo<uint>();
+                this.UIntValue = value.ConvertTo<uint>();
                 break;
-            case VersionBDataTypeEnum.Int64:
             case VersionBDataTypeEnum.UInt64:
-                this.LongValue = value.ConvertTo<ulong>();
+                this.ULongValue = value.ConvertTo<ulong>();
                 break;
             case VersionBDataTypeEnum.Float:
                 this.FloatValue = value.ConvertTo<float>();
@@ -166,7 +207,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                 this.StringValue = value.ConvertOrDefaultTo<string>();
                 break;
             case VersionBDataTypeEnum.DateTime:
-                this.LongValue = (ulong)new DateTimeOffset(value.ConvertTo<DateTime>()).ToUnixTimeMilliseconds();
+                this.ULongValue = (ulong)new DateTimeOffset(value.ConvertTo<DateTime>()).ToUnixTimeMilliseconds();
                 break;
             default:
                 throw new NotImplementedException($"Type {dataType} is not supported yet");

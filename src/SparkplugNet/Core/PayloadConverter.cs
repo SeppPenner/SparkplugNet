@@ -164,7 +164,9 @@ internal static class PayloadConverter
         {
             VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None => VersionBDataTypeEnum.Unknown,
             VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue => VersionBDataTypeEnum.Int32,
+            VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.UintValue => VersionBDataTypeEnum.UInt32,
             VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue => VersionBDataTypeEnum.Int64,
+            VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.UlongValue => VersionBDataTypeEnum.UInt64,
             VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.FloatValue => VersionBDataTypeEnum.Float,
             VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.DoubleValue => VersionBDataTypeEnum.Double,
             VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.BooleanValue => VersionBDataTypeEnum.Boolean,
@@ -186,15 +188,15 @@ internal static class PayloadConverter
             VersionBDataTypeEnum.Int16 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int32 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int64 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue,
-            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Float => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.FloatValue,
             VersionBDataTypeEnum.Double => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.DoubleValue,
             VersionBDataTypeEnum.Boolean => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.BooleanValue,
             VersionBDataTypeEnum.String => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.StringValue,
-            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Text => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.Uuid => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.DataSet => VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.ValueOneofCase.None,
@@ -216,7 +218,9 @@ internal static class PayloadConverter
         {
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None => VersionBDataTypeEnum.Unknown,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue => VersionBDataTypeEnum.Int32,
+            VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.UintValue => VersionBDataTypeEnum.UInt32,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue => VersionBDataTypeEnum.Int64,
+            VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.UlongValue => VersionBDataTypeEnum.UInt64,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.FloatValue => VersionBDataTypeEnum.Float,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.DoubleValue => VersionBDataTypeEnum.Double,
             VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.BooleanValue => VersionBDataTypeEnum.Boolean,
@@ -241,15 +245,15 @@ internal static class PayloadConverter
             VersionBDataTypeEnum.Int16 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int32 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int64 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue,
-            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Float => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.FloatValue,
             VersionBDataTypeEnum.Double => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.DoubleValue,
             VersionBDataTypeEnum.Boolean => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.BooleanValue,
             VersionBDataTypeEnum.String => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue,
-            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Text => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.Uuid => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.DataSet => VersionBProtoBuf.ProtoBufPayload.Metric.ValueOneofCase.None,
@@ -271,7 +275,9 @@ internal static class PayloadConverter
         {
             VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None => VersionBDataTypeEnum.Unknown,
             VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue => VersionBDataTypeEnum.Int32,
+            VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.UintValue => VersionBDataTypeEnum.UInt32,
             VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue => VersionBDataTypeEnum.Int64,
+            VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.UlongValue => VersionBDataTypeEnum.UInt64,
             VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.FloatValue => VersionBDataTypeEnum.Float,
             VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.DoubleValue => VersionBDataTypeEnum.Double,
             VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.BooleanValue => VersionBDataTypeEnum.Boolean,
@@ -293,15 +299,15 @@ internal static class PayloadConverter
             VersionBDataTypeEnum.Int16 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int32 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int64 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue,
-            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Float => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.FloatValue,
             VersionBDataTypeEnum.Double => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.DoubleValue,
             VersionBDataTypeEnum.Boolean => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.BooleanValue,
             VersionBDataTypeEnum.String => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.StringValue,
-            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Text => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.Uuid => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.DataSet => VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ValueOneofCase.None,
@@ -323,7 +329,9 @@ internal static class PayloadConverter
         {
             VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None => VersionBDataTypeEnum.Unknown,
             VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue => VersionBDataTypeEnum.Int32,
+            VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.UintValue => VersionBDataTypeEnum.UInt32,
             VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue => VersionBDataTypeEnum.Int64,
+            VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.UlongValue => VersionBDataTypeEnum.UInt64,
             VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.FloatValue => VersionBDataTypeEnum.Float,
             VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.DoubleValue => VersionBDataTypeEnum.Double,
             VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.BooleanValue => VersionBDataTypeEnum.Boolean,
@@ -345,15 +353,15 @@ internal static class PayloadConverter
             VersionBDataTypeEnum.Int16 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int32 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
             VersionBDataTypeEnum.Int64 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue,
-            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.IntValue,
-            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.UInt8 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt16 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt32 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.UintValue,
+            VersionBDataTypeEnum.UInt64 => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Float => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.FloatValue,
             VersionBDataTypeEnum.Double => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.DoubleValue,
             VersionBDataTypeEnum.Boolean => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.BooleanValue,
             VersionBDataTypeEnum.String => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.StringValue,
-            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.LongValue,
+            VersionBDataTypeEnum.DateTime => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.UlongValue,
             VersionBDataTypeEnum.Text => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.Uuid => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.StringValue,
             VersionBDataTypeEnum.DataSet => VersionBProtoBuf.ProtoBufPayload.PropertyValue.ValueOneofCase.None,
@@ -411,7 +419,9 @@ internal static class PayloadConverter
             },
             FloatValue = dataSetValue.FloatValue,
             IntValue = dataSetValue.IntValue,
+            UIntValue = dataSetValue.UintValue,
             LongValue = dataSetValue.LongValue,
+            ULongValue = dataSetValue.UlongValue,
             StringValue = dataSetValue.StringValue,
             DataType = ConvertVersionBDataTypeDataSetValue(dataSetValue.ValueCase)
         };
@@ -426,18 +436,24 @@ internal static class PayloadConverter
         {
             VersionBDataTypeEnum.Int8
             or VersionBDataTypeEnum.Int16
-            or VersionBDataTypeEnum.Int32
-            or VersionBDataTypeEnum.UInt8
-            or VersionBDataTypeEnum.UInt16
-            or VersionBDataTypeEnum.UInt32 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+            or VersionBDataTypeEnum.Int32 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
                 IntValue = dataSetValue.IntValue
             },
-            VersionBDataTypeEnum.Int64
-            or VersionBDataTypeEnum.UInt64
-            or VersionBDataTypeEnum.DateTime => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+            VersionBDataTypeEnum.Int64 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
                 LongValue = dataSetValue.LongValue
+            },
+            VersionBDataTypeEnum.UInt8
+            or VersionBDataTypeEnum.UInt16
+            or VersionBDataTypeEnum.UInt32 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+            {
+                UintValue = dataSetValue.UIntValue
+            },
+            VersionBDataTypeEnum.UInt64
+            or VersionBDataTypeEnum.DateTime => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+            {
+                UlongValue = dataSetValue.ULongValue
             },
             VersionBDataTypeEnum.Float => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
@@ -591,7 +607,9 @@ internal static class PayloadConverter
             },
             FloatValue = parameter.FloatValue,
             IntValue = parameter.IntValue,
+            UIntValue = parameter.UintValue,
             LongValue = parameter.LongValue,
+            ULongValue = parameter.UlongValue,
             Name = parameter.Name,
             StringValue = parameter.StringValue,
             ValueCase = parameter.Type,
@@ -616,15 +634,19 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int8:
             case VersionBDataTypeEnum.Int16:
             case VersionBDataTypeEnum.Int32:
-            case VersionBDataTypeEnum.UInt8:
-            case VersionBDataTypeEnum.UInt16:
-            case VersionBDataTypeEnum.UInt32:
                 pbTplParam.IntValue = parameter.IntValue;
                 break;
             case VersionBDataTypeEnum.Int64:
+                pbTplParam.LongValue = parameter.LongValue;
+                break;
+            case VersionBDataTypeEnum.UInt8:
+            case VersionBDataTypeEnum.UInt16:
+            case VersionBDataTypeEnum.UInt32:
+                pbTplParam.UintValue = parameter.UIntValue;
+                break;
             case VersionBDataTypeEnum.UInt64:
             case VersionBDataTypeEnum.DateTime:
-                pbTplParam.LongValue = parameter.LongValue;
+                pbTplParam.UlongValue = parameter.ULongValue;
                 break;
             case VersionBDataTypeEnum.Float:
                 pbTplParam.FloatValue = parameter.FloatValue;
@@ -679,10 +701,12 @@ internal static class PayloadConverter
             } : null,
             FloatValue = metric.FloatValue,
             IntValue = metric.IntValue,
+            UIntValue = metric.UintValue,
             IsHistorical = metric.IsHistorical,
             IsNull = metric.IsNull,
             IsTransient = metric.IsTransient,
             LongValue = metric.LongValue,
+            ULongValue = metric.UlongValue,
             Metadata = ConvertVersionBMetaData(metric.Metadata),
             Name = metric.Name,
             Properties = ConvertVersionBPropertySet(metric.Properties),
@@ -717,15 +741,19 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int8:
             case VersionBDataTypeEnum.Int16:
             case VersionBDataTypeEnum.Int32:
-            case VersionBDataTypeEnum.UInt8:
-            case VersionBDataTypeEnum.UInt16:
-            case VersionBDataTypeEnum.UInt32:
                 pbMetric.IntValue = metric.IntValue;
                 break;
             case VersionBDataTypeEnum.Int64:
+                pbMetric.LongValue = metric.LongValue;
+                break;
+            case VersionBDataTypeEnum.UInt8:
+            case VersionBDataTypeEnum.UInt16:
+            case VersionBDataTypeEnum.UInt32:
+                pbMetric.UintValue = metric.UIntValue;
+                break;
             case VersionBDataTypeEnum.UInt64:
             case VersionBDataTypeEnum.DateTime:
-                pbMetric.LongValue = metric.LongValue;
+                pbMetric.UlongValue = metric.ULongValue;
                 break;
             case VersionBDataTypeEnum.Float:
                 pbMetric.FloatValue = metric.FloatValue;
@@ -848,8 +876,10 @@ internal static class PayloadConverter
             },
             FloatValue = propertyValue.FloatValue,
             IntValue = propertyValue.IntValue,
+            UIntValue = propertyValue.UintValue,
             IsNull = propertyValue.IsNull,
             LongValue = propertyValue.LongValue,
+            ULongValue = propertyValue.UlongValue,
             PropertySetValue = ConvertVersionBPropertySet(propertyValue.PropertysetValue),
             StringValue = propertyValue.StringValue,
             ValueCase = propertyValue.Type,
@@ -871,17 +901,22 @@ internal static class PayloadConverter
 
         switch (propertyValue.DataType)
         {
+            case VersionBDataTypeEnum.Int8:
             case VersionBDataTypeEnum.Int16:
             case VersionBDataTypeEnum.Int32:
-            case VersionBDataTypeEnum.UInt8:
-            case VersionBDataTypeEnum.UInt16:
-            case VersionBDataTypeEnum.UInt32:
                 pbPropValue.IntValue = propertyValue.IntValue;
                 break;
             case VersionBDataTypeEnum.Int64:
+                pbPropValue.LongValue = propertyValue.LongValue;
+                break;
+            case VersionBDataTypeEnum.UInt8:
+            case VersionBDataTypeEnum.UInt16:
+            case VersionBDataTypeEnum.UInt32:
+                pbPropValue.UintValue = propertyValue.UIntValue;
+                break;
             case VersionBDataTypeEnum.UInt64:
             case VersionBDataTypeEnum.DateTime:
-                pbPropValue.LongValue = propertyValue.LongValue;
+                pbPropValue.UlongValue = propertyValue.ULongValue;
                 break;
             case VersionBDataTypeEnum.Float:
                 pbPropValue.FloatValue = propertyValue.FloatValue;
@@ -916,6 +951,6 @@ internal static class PayloadConverter
                 break;
         }
 
-        return pbPropValue;        
+        return pbPropValue;
     }
 }
