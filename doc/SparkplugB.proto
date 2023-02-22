@@ -22,9 +22,9 @@ package org.eclipse.tahu.protobuf;
 
 option java_package         = "org.eclipse.tahu.protobuf";
 option java_outer_classname = "SparkplugBProto";
+option csharp_namespace = "SparkplugNet.VersionBProtoBuf";
 
-
-message Payload {
+message ProtoBufPayload {
     /*
         // Indexes of Data Types
         // Unknown placeholder for future expansion.
@@ -62,13 +62,15 @@ message Payload {
             uint32 type        = 2;
 
             oneof value {
-                uint32 int_value        = 3;
-                uint64 long_value       = 4;
+                int32 int_value        = 3;
+                int64 long_value       = 4;
                 float  float_value      = 5;
                 double double_value     = 6;
                 bool   boolean_value    = 7;
                 string string_value     = 8;
                 ParameterValueExtension extension_value = 9;
+                uint32 uint_value        = 10;
+                uint64 ulong_value       = 11;
             }
 
             message ParameterValueExtension {
@@ -89,13 +91,15 @@ message Payload {
         message DataSetValue {
 
             oneof value {
-                uint32 int_value                        = 1;
-                uint64 long_value                       = 2;
+                int32 int_value                        = 1;
+                int64 long_value                       = 2;
                 float  float_value                      = 3;
                 double double_value                     = 4;
                 bool   boolean_value                    = 5;
                 string string_value                     = 6;
                 DataSetValueExtension extension_value   = 7;
+                uint32 uint_value        = 8;
+                uint64 ulong_value       = 9;
             }
 
             message DataSetValueExtension {
@@ -121,8 +125,8 @@ message Payload {
         bool       is_null                = 2;
 
         oneof value {
-            uint32          int_value              = 3;
-            uint64          long_value             = 4;
+            int32           int_value              = 3;
+            int64           long_value             = 4;
             float           float_value            = 5;
             double          double_value           = 6;
             bool            boolean_value          = 7;
@@ -130,6 +134,8 @@ message Payload {
             PropertySet     propertyset_value      = 9;
             PropertySetList propertysets_value     = 10;      // List of Property Values
             PropertyValueExtension extension_value = 11;
+            uint32 uint_value        = 12;
+            uint64 ulong_value       = 13;
         }
 
         message PropertyValueExtension {
@@ -180,8 +186,8 @@ message Payload {
         PropertySet properties = 9;
 
         oneof value {
-            uint32   int_value                      = 10;
-            uint64   long_value                     = 11;
+            int32   int_value                      = 10;
+            int64   long_value                     = 11;
             float    float_value                    = 12;
             double   double_value                   = 13;
             bool     boolean_value                  = 14;
@@ -190,6 +196,8 @@ message Payload {
             DataSet  dataset_value                  = 17;
             Template template_value                 = 18;
             MetricValueExtension extension_value    = 19;
+            uint32 uint_value        = 20;
+            uint64 ulong_value       = 21;
         }
 
         message MetricValueExtension {
