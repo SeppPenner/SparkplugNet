@@ -15,11 +15,7 @@ global using MQTTnet.Formatter;
 global using MQTTnet.Internal;
 global using MQTTnet.Protocol;
 
-#if NET6_0_OR_GREATER
 global using System.Text.Json.Serialization;
-#else
-global using Newtonsoft.Json;
-#endif
 
 global using ProtoBuf;
 
