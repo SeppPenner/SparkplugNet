@@ -25,6 +25,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <ImplicitUsings>enable</ImplicitUsings>
+        <NoWarn>NU1803</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
