@@ -62,8 +62,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now,
-            this.Options.AddSessionNumberToCommandMessages);
+            DateTimeOffset.Now);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
@@ -106,8 +105,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now,
-            this.Options.AddSessionNumberToCommandMessages);
+            DateTimeOffset.Now);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

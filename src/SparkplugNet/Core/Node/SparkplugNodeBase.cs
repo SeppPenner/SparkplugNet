@@ -259,7 +259,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
-            this.LastSessionNumber);
+            this.LastSessionNumber,
+            this.Options.NodeDeathQualityOfServiceLevel);
 
         // Build up the MQTT client and connect.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
@@ -267,8 +268,18 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         var builder = new MqttClientOptionsBuilder()
             .WithClientId(this.Options.ClientId)
             .WithCredentials(this.Options.UserName, this.Options.Password)
-            .WithCleanSession(false)
-            .WithProtocolVersion(MqttProtocolVersion.V311);
+            .WithProtocolVersion((MqttProtocolVersion)this.Options.MqttProtocolVersion);
+
+        switch (this.Options.MqttProtocolVersion)
+        {
+            case SparkplugMqttProtocolVersion.V311:
+                builder.WithCleanSession(true);
+                break;
+            case SparkplugMqttProtocolVersion.V500:
+                // Todo: Set clean start?!
+                builder.WithSessionExpiryInterval(0);
+                break;
+        }
 
         if (this.Options.UseTls)
         {

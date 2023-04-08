@@ -58,6 +58,8 @@ public class SparkplugNodeSequentialTest
             MqttServerUnderTest.ScadaHostIdentifier,
             GroupIdentifier,
             EdgeNodeIdentifier,
+            MqttProtocolVersion.V311,
+            MqttQualityOfServiceLevel.AtMostOnce,
             TimeSpan.FromSeconds(30),
             null,
             null,

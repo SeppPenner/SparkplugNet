@@ -65,8 +65,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now,
-            this.Options.AddSessionNumberToDataMessages);
+            DateTimeOffset.Now);
 
         // Debug output.
         this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);

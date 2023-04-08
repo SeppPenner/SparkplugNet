@@ -175,8 +175,7 @@ public partial class SparkplugNodeBase<T>
             deviceMetricStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now,
-            this.Options.AddSessionNumberToDataMessages);
+            DateTimeOffset.Now);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

@@ -165,6 +165,7 @@ internal class SparkplugMessageGenerator
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="sessionNumber">The session number.</param>
+    /// <param name="qualityOfServiceLevel">The quality of service level.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
@@ -172,7 +173,8 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        long sessionNumber)
+        long sessionNumber,
+        MqttQualityOfServiceLevel qualityOfServiceLevel)
     {
         if (!groupIdentifier.IsIdentifierValid())
         {
@@ -190,7 +192,7 @@ internal class SparkplugMessageGenerator
                 {
                     var metrics = new List<VersionBData.Metric>();
                     return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier,
-                        AddSessionNumberToMetrics(metrics, sessionNumber));
+                        AddSessionNumberToMetrics(metrics, sessionNumber), qualityOfServiceLevel);
                 }
 
             default:
@@ -260,7 +262,6 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="sessionNumber">The session number.</param>
     /// <param name="dateTime">The date time.</param>
-    /// <param name="addSessionNumbers">A value indicating whether to add the 'SessionNumber' metric or not.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
@@ -271,8 +272,7 @@ internal class SparkplugMessageGenerator
         IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
-        DateTimeOffset dateTime,
-        bool addSessionNumbers)
+        DateTimeOffset dateTime)
         where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
@@ -292,7 +292,7 @@ internal class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
                     return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier,
-                        AddSessionNumberToMetrics(newMetrics, sessionNumber, !addSessionNumbers), sequenceNumber, dateTime);
+                        AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -312,7 +312,6 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="sessionNumber">The session number.</param>
     /// <param name="dateTime">The date time.</param>
-    /// <param name="addSessionNumbers">A value indicating whether to add the 'SessionNumber' metric or not.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
@@ -324,8 +323,7 @@ internal class SparkplugMessageGenerator
         IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
-        DateTimeOffset dateTime,
-        bool addSessionNumbers)
+        DateTimeOffset dateTime)
         where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
@@ -350,7 +348,7 @@ internal class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
                     return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
-                         AddSessionNumberToMetrics(newMetrics, sessionNumber, !addSessionNumbers), sequenceNumber, dateTime);
+                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -369,7 +367,6 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="sessionNumber">The session number.</param>
     /// <param name="dateTime">The date time.</param>
-    /// <param name="addSessionNumbers">A value indicating whether to add the 'SessionNumber' metric or not.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
@@ -380,8 +377,7 @@ internal class SparkplugMessageGenerator
         IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
-        DateTimeOffset dateTime,
-        bool addSessionNumbers)
+        DateTimeOffset dateTime)
         where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
@@ -402,7 +398,7 @@ internal class SparkplugMessageGenerator
                                      ?? new List<VersionBData.Metric>();
 
                     return GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
-                         AddSessionNumberToMetrics(newMetrics, sessionNumber, !addSessionNumbers), sequenceNumber, dateTime);
+                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
             default:
@@ -422,7 +418,6 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="sessionNumber">The session number.</param>
     /// <param name="dateTime">The date time.</param>
-    /// <param name="addSessionNumbers">A value indicating whether to add the 'SessionNumber' metric or not.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
@@ -434,7 +429,7 @@ internal class SparkplugMessageGenerator
         IEnumerable<T> metrics,
         int sequenceNumber,
         long sessionNumber,
-        DateTimeOffset dateTime, bool addSessionNumbers)
+        DateTimeOffset dateTime)
         where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
@@ -459,7 +454,7 @@ internal class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<VersionBData.Metric>
                                      ?? new List<VersionBData.Metric>();
 
-                    newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber, !addSessionNumbers);
+                    newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
                     return GetSparkPlugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
                 }
@@ -509,7 +504,10 @@ internal class SparkplugMessageGenerator
     {
         return new MqttApplicationMessageBuilder()
             .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
-            .WithPayload(online ? "ONLINE" : "OFFLINE").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce).WithRetainFlag().Build();
+            .WithPayload(online ? "ONLINE" : "OFFLINE")
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithRetainFlag()
+            .Build();
     }
 
     /// <summary>
@@ -552,7 +550,8 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 
@@ -598,7 +597,8 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 
@@ -609,12 +609,14 @@ internal class SparkplugMessageGenerator
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
+    /// <param name="qualityOfServiceLevel">The quality of service level.</param>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
     private MqttApplicationMessage GetSparkPlugNodeDeathB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        IEnumerable<VersionBData.Metric> metrics)
+        IEnumerable<VersionBData.Metric> metrics,
+        MqttQualityOfServiceLevel qualityOfServiceLevel)
     {
         var payload = new VersionBData.Payload
         {
@@ -636,7 +638,7 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(qualityOfServiceLevel)
             .Build();
     }
 
@@ -682,7 +684,8 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 
@@ -726,7 +729,8 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 
@@ -772,7 +776,8 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     deviceIdentifier))
             .WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 
@@ -812,7 +817,8 @@ internal class SparkplugMessageGenerator
                     SparkplugMessageType.NodeCommand,
                     edgeNodeIdentifier,
                     string.Empty)).WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 
@@ -854,7 +860,8 @@ internal class SparkplugMessageGenerator
                     SparkplugMessageType.DeviceCommand,
                     edgeNodeIdentifier,
                     deviceIdentifier)).WithPayload(serialized)
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 }

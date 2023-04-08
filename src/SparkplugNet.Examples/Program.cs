@@ -109,7 +109,21 @@ public class Program
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionBApplication()
     {
-        var applicationOptions = new SparkplugApplicationOptions("localhost", 1883, nameof(RunVersionBApplication), "user", "password", false, "scada1", TimeSpan.FromSeconds(30), true, null, null, CancellationTokenSource.Token);
+        var applicationOptions = new SparkplugApplicationOptions(
+            "localhost",
+            1883,
+            nameof(RunVersionBApplication),
+            "user",
+            "password",
+            false,
+            "scada1",
+            TimeSpan.FromSeconds(30),
+            SparkplugMqttProtocolVersion.V311,
+            null,
+            null,
+            null,
+            true,
+            CancellationTokenSource.Token);
         var application = new VersionB.SparkplugApplication(VersionBMetricsApplication, Log.Logger);
 
         // Start an application.
@@ -162,7 +176,23 @@ public class Program
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionBNode()
     {
-        var nodeOptions = new SparkplugNodeOptions("localhost", 1883, "node 1", "user", "password", false, "scada1B", "group1", "node1", TimeSpan.FromSeconds(30), null, null, CancellationTokenSource.Token);
+        var nodeOptions = new SparkplugNodeOptions(
+            "localhost",
+            1883,
+            "node 1",
+            "user",
+            "password",
+            false,
+            "scada1B",
+            TimeSpan.FromSeconds(30),
+            SparkplugMqttProtocolVersion.V311,
+            null,
+            null,
+            null,
+            "group1",
+            "node1",
+            MqttQualityOfServiceLevel.AtMostOnce,
+            CancellationTokenSource.Token);
         var node = new VersionB.SparkplugNode(VersionBMetricsNode, Log.Logger);
 
         // Start a node.

@@ -2,6 +2,7 @@
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 global using MQTTnet;
+global using MQTTnet.Protocol;
 
 global using Serilog;
 
