@@ -55,11 +55,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     {
         this.knownMetrics = knownMetricsStorage;
 
-        if (typeof(T).IsAssignableFrom(typeof(VersionAData.KuraMetric)))
-        {
-            this.NameSpace = SparkplugNamespace.VersionA;
-        }
-        else
+        if (typeof(T).IsAssignableFrom(typeof(VersionBData.Metric)))
         {
             this.NameSpace = SparkplugNamespace.VersionB;
         }

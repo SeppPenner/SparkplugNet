@@ -134,7 +134,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     }
 
     /// <summary>
-    /// Handles the received messages for payload version A.
+    /// Handles the received messages for payload version B.
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>

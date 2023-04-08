@@ -15,12 +15,6 @@ namespace SparkplugNet.Core.Enumerations;
 public enum SparkplugNamespace
 {
     /// <summary>
-    /// The version A namespace.
-    /// </summary>
-    [Description(SparkplugTopic.NamespaceSparkplugA)]
-    VersionA,
-
-    /// <summary>
     /// The version B namespace.
     /// </summary>
     [Description(SparkplugTopic.NamespaceSparkplugB)]
