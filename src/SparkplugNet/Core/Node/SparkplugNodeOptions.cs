@@ -68,7 +68,6 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
         MqttClientWebSocketProxyOptions? proxyOptions = null,
         string? groupIdentifier = null,
         string? edgeNodeIdentifier = null,
-        MqttQualityOfServiceLevel? nodeDeathQualityOfServiceLevel = null,
         SystemCancellationToken? cancellationToken = null)
          : base(
             brokerAddress,

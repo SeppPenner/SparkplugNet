@@ -191,7 +191,6 @@ public class Program
             null,
             "group1",
             "node1",
-            MqttQualityOfServiceLevel.AtMostOnce,
             CancellationTokenSource.Token);
         var node = new VersionB.SparkplugNode(VersionBMetricsNode, Log.Logger);
 
