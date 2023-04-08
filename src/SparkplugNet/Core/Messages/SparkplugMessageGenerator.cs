@@ -165,7 +165,6 @@ internal class SparkplugMessageGenerator
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="sessionNumber">The session number.</param>
-    /// <param name="qualityOfServiceLevel">The quality of service level.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
@@ -173,8 +172,7 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        long sessionNumber,
-        MqttQualityOfServiceLevel qualityOfServiceLevel)
+        long sessionNumber)
     {
         if (!groupIdentifier.IsIdentifierValid())
         {
@@ -192,7 +190,7 @@ internal class SparkplugMessageGenerator
                 {
                     var metrics = new List<VersionBData.Metric>();
                     return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier,
-                        AddSessionNumberToMetrics(metrics, sessionNumber), qualityOfServiceLevel);
+                        AddSessionNumberToMetrics(metrics, sessionNumber));
                 }
 
             default:
@@ -609,14 +607,12 @@ internal class SparkplugMessageGenerator
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
-    /// <param name="qualityOfServiceLevel">The quality of service level.</param>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
     private MqttApplicationMessage GetSparkPlugNodeDeathB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
-        MqttQualityOfServiceLevel qualityOfServiceLevel)
+        IEnumerable<VersionBData.Metric> metrics)
     {
         var payload = new VersionBData.Payload
         {
@@ -638,7 +634,8 @@ internal class SparkplugMessageGenerator
                     edgeNodeIdentifier,
                     string.Empty))
             .WithPayload(serialized)
-            .WithQualityOfServiceLevel(qualityOfServiceLevel)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithRetainFlag(false)
             .Build();
     }
 

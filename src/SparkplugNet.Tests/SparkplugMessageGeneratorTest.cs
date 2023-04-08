@@ -141,7 +141,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestNodeDeathMessageNamespaceB()
     {
-        var message = this.messageGenerator.GetSparkPlugNodeDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", 1, MqttQualityOfServiceLevel.AtMostOnce);
+        var message = this.messageGenerator.GetSparkPlugNodeDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", 1);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
         Assert.AreEqual("spBv1.0/group1/NDEATH/edge1", message.Topic);

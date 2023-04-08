@@ -259,8 +259,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
-            this.LastSessionNumber,
-            this.Options.NodeDeathQualityOfServiceLevel);
+            this.LastSessionNumber);
 
         // Build up the MQTT client and connect.
         this.Options.CancellationToken ??= SystemCancellationToken.None;

@@ -33,11 +33,6 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// </summary>
     public const bool DefaultPublishKnownDeviceMetricsOnReconnect = true;
 
-    /// <summary>
-    /// The default quality of service level for the node death command.
-    /// </summary>
-    public const MqttQualityOfServiceLevel DefaultNodeDeathQualityOfServiceLevel = MqttQualityOfServiceLevel.AtMostOnce;
-
     /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeOptions"/> class.
@@ -53,7 +48,6 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
     /// <param name="mqttProtocolVersion">The MQTT protocol version.</param>
-    /// <param name="nodeDeathQualityOfServiceLevel">The quality of service level for the node death message.</param>
     /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
@@ -92,7 +86,6 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     {
         this.GroupIdentifier = string.IsNullOrWhiteSpace(groupIdentifier) ? DefaultGroupIdentifier : groupIdentifier;
         this.EdgeNodeIdentifier = string.IsNullOrWhiteSpace(edgeNodeIdentifier) ? DefaultEdgeNodeIdentifier : edgeNodeIdentifier;
-        this.NodeDeathQualityOfServiceLevel = nodeDeathQualityOfServiceLevel ?? DefaultNodeDeathQualityOfServiceLevel;
         this.CancellationToken = cancellationToken ?? SystemCancellationToken.None;
     }
 
@@ -114,12 +107,6 @@ public class SparkplugNodeOptions : SparkplugBaseOptions
     /// </summary>
     [DefaultValue(DefaultPublishKnownDeviceMetricsOnReconnect)]
     public bool PublishKnownDeviceMetricsOnReconnect { get; set; } = DefaultPublishKnownDeviceMetricsOnReconnect;
-
-    /// <summary>
-    /// Gets or sets the quality of service level for the node death command.
-    /// </summary>
-    [DefaultValue(DefaultNodeDeathQualityOfServiceLevel)]
-    public MqttQualityOfServiceLevel NodeDeathQualityOfServiceLevel { get; set; } = DefaultNodeDeathQualityOfServiceLevel;
 
     /// <summary>
     /// Gets or sets the cancellation token.
