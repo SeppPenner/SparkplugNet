@@ -30,6 +30,7 @@ global using SparkplugNet.Core.Interfaces;
 global using SparkplugNet.Core.Messages;
 global using SparkplugNet.Core.Node;
 global using SparkplugNet.Core.Topics;
+global using SparkplugNet.VersionB.Data;
 
 global using VersionBData = SparkplugNet.VersionB.Data;
 global using VersionBDataTypeEnum = SparkplugNet.VersionB.Data.DataType;
