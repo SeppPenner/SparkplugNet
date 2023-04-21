@@ -15,22 +15,22 @@ namespace SparkplugNet.IntegrationTests;
 public static class MqttServerUnderTest
 {
     /// <summary>
-    /// Gets or sets the server address.
+    /// The server address.
     /// </summary>
-    public static string ServerAddress { get; set; } = "localhost";
+    public const string ServerAddress = "localhost";
 
     /// <summary>
-    /// Gets or sets the server port.
+    /// The server port.
     /// </summary>
-    public static int ServerPort { get; set; } = 1883;
+    public const int ServerPort = 1883;
 
     /// <summary>
-    /// Gets or sets the client identifier.
+    /// The client identifier.
     /// </summary>
-    public static string ClientId { get; set; } = "client1";
+    public const string ClientId = "client1";
 
     /// <summary>
-    /// Gets or sets the SCADA host identifier.
+    /// The SCADA host identifier.
     /// </summary>
-    public static string ScadaHostIdentifier { get; set; } = "scadaHost1";
+    public const string ScadaHostIdentifier = "scadaHost1";
 }

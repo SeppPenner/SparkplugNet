@@ -306,7 +306,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             {
                 return this.OnMessageReceived(topicParsed!, args.ApplicationMessage.Payload);
             }
-
             else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
             {
                 // Skip the STATE messages as they're UTF-8 encoded.
@@ -354,8 +353,19 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             var builder = new MqttClientOptionsBuilder()
                 .WithClientId(this.Options.ClientId)
                 .WithCredentials(this.Options.UserName, this.Options.Password)
-                .WithCleanSession(false)
-                .WithProtocolVersion(MqttProtocolVersion.V311);
+                .WithProtocolVersion((MqttProtocolVersion)this.Options.MqttProtocolVersion);
+
+            switch (this.Options.MqttProtocolVersion)
+            {
+                case SparkplugMqttProtocolVersion.V311:
+                    builder.WithCleanSession(true);
+                    break;
+                case SparkplugMqttProtocolVersion.V500:
+                    // Todo: Use WithCleanStart when available from release build!
+                    builder.WithCleanSession(true);
+                    builder.WithSessionExpiryInterval(0);
+                    break;
+            }
 
             if (this.Options.UseTls)
             {

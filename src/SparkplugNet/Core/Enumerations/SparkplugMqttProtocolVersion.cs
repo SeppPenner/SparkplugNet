@@ -1,22 +1,26 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugNamespace.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugMqttProtocolVersion.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   The Sparkplug namespace enumeration.
+//   The Sparkplug MQTT protocol version.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Core.Enumerations;
 
 /// <summary>
-/// The Sparkplug namespace enumeration.
+/// The Sparkplug MQTT protocol version.
 /// </summary>
-public enum SparkplugNamespace
+public enum SparkplugMqttProtocolVersion
 {
     /// <summary>
-    /// The version B namespace.
+    /// MQTT protocol version 3.1.1.
     /// </summary>
-    [Description(SparkplugTopic.NamespaceSparkplugB)]
-    VersionB
+    V311 = 4,
+
+    /// <summary>
+    /// MQTT protocol version 5.0.0.
+    /// </summary>
+    V500 = 5
 }

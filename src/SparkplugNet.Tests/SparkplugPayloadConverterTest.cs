@@ -16,26 +16,6 @@ namespace SparkplugNet.Tests;
 public class SparkplugPayloadConverterTest
 {
     /// <summary>
-    /// Tests the Sparkplug payload converter for converting a version A payload from Proto.
-    /// </summary>
-    [TestMethod]
-    public void TestConvertVersionAPayloadFromProto()
-    {
-        var payload = PayloadConverter.ConvertVersionAPayload(new VersionAProtoBufPayload());
-        Assert.IsNotNull(payload);
-    }
-
-    /// <summary>
-    /// Tests the Sparkplug payload converter for converting a version A payload to Proto.
-    /// </summary>
-    [TestMethod]
-    public void TestConvertVersionAPayloadToProto()
-    {
-        var payload = PayloadConverter.ConvertVersionAPayload(new VersionA.Data.Payload());
-        Assert.IsNotNull(payload);
-    }
-
-    /// <summary>
     /// Tests the Sparkplug payload converter for converting a version B payload from Proto.
     /// </summary>
     [TestMethod]
@@ -52,26 +32,6 @@ public class SparkplugPayloadConverterTest
     public void TestConvertVersionBPayloadToProto()
     {
         var payload = PayloadConverter.ConvertVersionBPayload(new VersionB.Data.Payload());
-        Assert.IsNotNull(payload);
-    }
-
-    /// <summary>
-    /// Tests the Sparkplug payload converter for converting a version A data type from Proto.
-    /// </summary>
-    [TestMethod]
-    public void TestConvertVersionADataTypeFromProto()
-    {
-        var payload = PayloadConverter.ConvertVersionADataType(new VersionAProtoBufPayload.KuraMetric.ValueType());
-        Assert.IsNotNull(payload);
-    }
-
-    /// <summary>
-    /// Tests the Sparkplug payload converter for converting a version A data type to Proto.
-    /// </summary>
-    [TestMethod]
-    public void TestConvertVersionADataTypeToProto()
-    {
-        var payload = PayloadConverter.ConvertVersionADataType(new VersionA.Data.DataType());
         Assert.IsNotNull(payload);
     }
 

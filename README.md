@@ -24,7 +24,6 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 * Net 7.0
 
 ## Net Core and Net Framework latest and LTS versions
-* https://dotnet.microsoft.com/download/dotnet-framework
 * https://dotnet.microsoft.com/download/dotnet-core
 * https://dotnet.microsoft.com/download/dotnet
 
@@ -58,7 +57,8 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * [MQTT.fx](http://www.mqttfx.jensd.de/) has a Sparkplug data decoder. The binaries for version 1.7.1 can also be taken from https://github.com/SeppPenner/mqttfx171-backup (The software is now under development by a company and requires a license for version 1.7.1+).
 
 ## Supported Sparkplug standards
-* Version 2.2, spAv1.0 and spBv1.0.
+* Version 1.3.0 and above: Sparkplug, version 3.0, spBv1.0.
+* Version 1.2.0 and below: Sparkplug, version 2.2, spAv1.0 and spBv1.0.
 
 ## Special notes
 * Version 1.1.0 introduces the async event pattern and deprecates the "old, synchronous" events, Version 1.2.0+ will remove the old events completely. (BREAKING)
