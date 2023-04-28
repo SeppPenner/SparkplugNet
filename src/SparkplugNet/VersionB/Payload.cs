@@ -21,7 +21,7 @@ namespace SparkplugNet.VersionB
         [global::ProtoBuf.ProtoMember(2, Name = @"metrics")]
         public global::System.Collections.Generic.List<Metric> Metrics { get; set; } = new global::System.Collections.Generic.List<Metric>();
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"seq")]
+        [global::ProtoBuf.ProtoMember(3, Name = @"seq", IsRequired = true)]
         public ulong Seq { get; set; }
 
         [global::ProtoBuf.ProtoMember(4, Name = @"uuid")]
@@ -488,7 +488,7 @@ namespace SparkplugNet.VersionB
             [global::ProtoBuf.ProtoMember(3, Name = @"size")]
             public ulong Size { get; set; }
 
-            [global::ProtoBuf.ProtoMember(4, Name = @"seq")]
+            [global::ProtoBuf.ProtoMember(4, Name = @"seq", IsRequired = true)]
             public ulong Seq { get; set; }
 
             [global::ProtoBuf.ProtoMember(5, Name = @"file_name")]
