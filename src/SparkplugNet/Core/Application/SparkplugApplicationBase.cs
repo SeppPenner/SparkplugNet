@@ -361,8 +361,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                     builder.WithCleanSession(true);
                     break;
                 case SparkplugMqttProtocolVersion.V500:
-                    // Todo: Use WithCleanStart when available from release build!
-                    builder.WithCleanSession(true);
+                    builder.WithCleanStart(true);
                     builder.WithSessionExpiryInterval(0);
                     break;
             }
