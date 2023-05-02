@@ -17,7 +17,7 @@ public static class Constants
     /// <summary>
     /// The session number metric name.
     /// </summary>
-    public const string SessionNumberMetricName = "BDSEQ";
+    public const string SessionNumberMetricName = "bdSeq";
 
     /// <summary>
     /// The epoch.
