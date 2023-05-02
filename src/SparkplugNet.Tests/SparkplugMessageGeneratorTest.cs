@@ -73,7 +73,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestDeviceBirthMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.Now;
+        var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkPlugDeviceBirthMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
@@ -97,7 +97,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestNodeBirthMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.Now;
+        var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkPlugNodeBirthMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
@@ -121,7 +121,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestDeviceDeathMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.Now;
+        var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkPlugDeviceDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
@@ -159,7 +159,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestDeviceDataMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.Now;
+        var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkPlugDeviceDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
@@ -183,7 +183,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestNodeDataMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.Now;
+        var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkPlugNodeDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
@@ -207,7 +207,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestDeviceCommandMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.Now;
+        var dateTime = DateTimeOffset.UtcNow;
         var message = SparkplugMessageGenerator.GetSparkPlugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
@@ -231,7 +231,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestNodeCommandMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.Now;
+        var dateTime = DateTimeOffset.UtcNow;
         var message = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 

@@ -132,7 +132,7 @@ public class SparkplugPayloadConverterTest
                 }
             }.ToList(),
             Seq = 1,
-            Timestamp = (ulong)DateTimeOffset.Now.ToUnixTimeMilliseconds()
+            Timestamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
         };
 
         var payloadConverted = PayloadConverter.ConvertVersionBPayload(payload);

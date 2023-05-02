@@ -50,7 +50,7 @@ public partial class SparkplugNodeBase<T>
             knownMetrics,
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.UtcNow);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
@@ -127,7 +127,7 @@ public partial class SparkplugNodeBase<T>
             deviceIdentifier,
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.UtcNow);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
@@ -175,7 +175,7 @@ public partial class SparkplugNodeBase<T>
             deviceMetricStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.UtcNow);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();

@@ -367,7 +367,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             this.KnownMetrics,
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.Now);
+            DateTimeOffset.UtcNow);
 
         // Publish data.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
