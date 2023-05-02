@@ -92,7 +92,7 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as IEnumerable<VersionBData.Metric> ?? new List<VersionBData.Metric>();
+                    var newMetrics = metrics as IEnumerable<Metric> ?? new List<Metric>();
                     return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
@@ -147,7 +147,7 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as IEnumerable<VersionBData.Metric> ?? new List<VersionBData.Metric>();
+                    var newMetrics = metrics as IEnumerable<Metric> ?? new List<Metric>();
 
                     return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
@@ -188,7 +188,7 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var metrics = new List<VersionBData.Metric>();
+                    var metrics = new List<Metric>();
                     return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(metrics, sessionNumber));
                 }
@@ -239,7 +239,7 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var metrics = new List<VersionBData.Metric>();
+                    var metrics = new List<Metric>();
                     return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                         AddSessionNumberToMetrics(metrics, sessionNumber), sequenceNumber, dateTime);
                 }
@@ -287,8 +287,8 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
-                                     ?? new List<VersionBData.Metric>();
+                    var newMetrics = metrics as IEnumerable<Metric>
+                                     ?? new List<Metric>();
                     return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
@@ -343,8 +343,8 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
-                                     ?? new List<VersionBData.Metric>();
+                    var newMetrics = metrics as IEnumerable<Metric>
+                                     ?? new List<Metric>();
                     return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                          AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
@@ -392,8 +392,8 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
-                                     ?? new List<VersionBData.Metric>();
+                    var newMetrics = metrics as IEnumerable<Metric>
+                                     ?? new List<Metric>();
 
                     return GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                          AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
@@ -449,8 +449,8 @@ internal class SparkplugMessageGenerator
         {
             case SparkplugNamespace.VersionB:
                 {
-                    var newMetrics = metrics as IEnumerable<VersionBData.Metric>
-                                     ?? new List<VersionBData.Metric>();
+                    var newMetrics = metrics as IEnumerable<Metric>
+                                     ?? new List<Metric>();
 
                     newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
@@ -467,8 +467,8 @@ internal class SparkplugMessageGenerator
     /// <param name="sessionSequenceNumber">The session sequence number.</param>
     /// <param name="skipSessionSequenceNumber">A value indicating whether the session sequence number will be skipped or not.</param>
     /// <returns>The metrics.</returns>
-    private static IEnumerable<VersionBData.Metric> AddSessionNumberToMetrics(
-        IEnumerable<VersionBData.Metric> metrics,
+    private static IEnumerable<Metric> AddSessionNumberToMetrics(
+        IEnumerable<Metric> metrics,
         long sessionSequenceNumber,
         bool skipSessionSequenceNumber = false)
     {
@@ -480,13 +480,13 @@ internal class SparkplugMessageGenerator
         else
         {
             // Add a BDSEQ metric.
-            return metrics.Concat(new VersionBData.Metric[]
+            return metrics.Concat(new Metric[]
             {
-                new VersionBData.Metric
+                new Metric
                 {
                     Name = Constants.SessionNumberMetricName,
                     LongValue = (ulong)sessionSequenceNumber,
-                    ValueCase = (uint)VersionBData.DataType.Int64
+                    ValueCase = (uint)DataType.Int64
                 }
             });
         }
@@ -500,12 +500,27 @@ internal class SparkplugMessageGenerator
     /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
     private static MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online)
     {
+        var stateString = GetSparkplugStateMessage(online);
         return new MqttApplicationMessageBuilder()
             .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
-            .WithPayload(online ? "ONLINE" : "OFFLINE")
+            .WithPayload(stateString)
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .WithRetainFlag()
             .Build();
+    }
+
+    /// <summary>
+    /// Gets the STATE message payload.
+    /// </summary>
+    /// <param name="online">A value indicating whether the state is online or offline.</param>
+    /// <returns>The STATE message as JSON string.</returns>
+    private static string GetSparkplugStateMessage(bool online)
+    {
+        return JsonSerializer.Serialize(new StateMessage
+        {
+            Online = online,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+        });
     }
 
     /// <summary>
@@ -522,11 +537,11 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
+        IEnumerable<Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList(),
             Seq = (ulong)sequenceNumber,
@@ -569,11 +584,11 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
+        IEnumerable<Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList(),
             Seq = (ulong)sequenceNumber,
@@ -612,9 +627,9 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        IEnumerable<VersionBData.Metric> metrics)
+        IEnumerable<Metric> metrics)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList()
         };
@@ -655,11 +670,11 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
+        IEnumerable<Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList(),
             Seq = (ulong)sequenceNumber,
@@ -700,11 +715,11 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
+        IEnumerable<Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList(),
             Seq = (ulong)sequenceNumber,
@@ -747,11 +762,11 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
+        IEnumerable<Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList(),
             Seq = (ulong)sequenceNumber,
@@ -792,11 +807,11 @@ internal class SparkplugMessageGenerator
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
+        IEnumerable<Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList(),
             Seq = (ulong)sequenceNumber,
@@ -835,11 +850,11 @@ internal class SparkplugMessageGenerator
         string groupIdentifier,
         string edgeNodeIdentifier,
         string deviceIdentifier,
-        IEnumerable<VersionBData.Metric> metrics,
+        IEnumerable<Metric> metrics,
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new VersionBData.Payload
+        var payload = new Payload
         {
             Metrics = metrics.ToList(),
             Seq = (ulong)sequenceNumber,

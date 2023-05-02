@@ -18,9 +18,9 @@ internal static class PayloadConverter
     /// Gets the version B payload converted from the ProtoBuf payload.
     /// </summary>
     /// <param name="payload">The <see cref="VersionBProtoBuf.ProtoBufPayload"/>.</param>
-    /// <returns>The <see cref="VersionBData.Payload"/>.</returns>
-    public static VersionBData.Payload ConvertVersionBPayload(VersionBProtoBuf.ProtoBufPayload payload)
-        => new VersionBData.Payload
+    /// <returns>The <see cref="Payload"/>.</returns>
+    public static Payload ConvertVersionBPayload(VersionBProtoBuf.ProtoBufPayload payload)
+        => new Payload
         {
             Body = payload.Body,
             Details = payload.Details,
@@ -33,9 +33,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the ProtoBuf payload converted from the version B payload.
     /// </summary>
-    /// <param name="payload">The <see cref="VersionBData.Payload"/>.</param>
+    /// <param name="payload">The <see cref="Payload"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload"/>.</returns>
-    public static VersionBProtoBuf.ProtoBufPayload ConvertVersionBPayload(VersionBData.Payload payload)
+    public static VersionBProtoBuf.ProtoBufPayload ConvertVersionBPayload(Payload payload)
         => new VersionBProtoBuf.ProtoBufPayload
         {
             Body = payload.Body,
@@ -261,9 +261,9 @@ internal static class PayloadConverter
     /// Gets the version B data set from the version B ProtoBuf data set.
     /// </summary>
     /// <param name="dataSet">The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet"/>.</param>
-    /// <returns>The <see cref="VersionBData.DataSet"/>.</returns>
-    private static VersionBData.DataSet ConvertVersionBDataSet(VersionBProtoBuf.ProtoBufPayload.DataSet dataSet)
-        => new VersionBData.DataSet
+    /// <returns>The <see cref="DataSet"/>.</returns>
+    private static DataSet ConvertVersionBDataSet(VersionBProtoBuf.ProtoBufPayload.DataSet dataSet)
+        => new DataSet
         {
             Details = dataSet.Details,
             Columns = dataSet.Columns,
@@ -275,9 +275,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf data set from the version B data set.
     /// </summary>
-    /// <param name="dataSet">The <see cref="VersionBData.DataSet"/>.</param>
+    /// <param name="dataSet">The <see cref="DataSet"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.DataSet ConvertVersionBDataSet(VersionBData.DataSet dataSet)
+    private static VersionBProtoBuf.ProtoBufPayload.DataSet ConvertVersionBDataSet(DataSet dataSet)
         => new VersionBProtoBuf.ProtoBufPayload.DataSet
         {
             Details = dataSet.Details,
@@ -291,13 +291,13 @@ internal static class PayloadConverter
     /// Gets the version B data set value from the version B ProtoBuf data set value.
     /// </summary>
     /// <param name="dataSetValue">The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue"/>.</param>
-    /// <returns>The <see cref="VersionBData.DataSetValue"/>.</returns>
-    private static VersionBData.DataSetValue ConvertVersionBDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue dataSetValue)
-        => new VersionBData.DataSetValue
+    /// <returns>The <see cref="DataSetValue"/>.</returns>
+    private static DataSetValue ConvertVersionBDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue dataSetValue)
+        => new DataSetValue
         {
             DoubleValue = dataSetValue.DoubleValue,
             BooleanValue = dataSetValue.BooleanValue,
-            ExtensionValue = new VersionBData.DataSetValueExtension
+            ExtensionValue = new DataSetValueExtension
             {
                 Details = dataSetValue.ExtensionValue.Details
             },
@@ -311,9 +311,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf data set value from the version B data set value.
     /// </summary>
-    /// <param name="dataSetValue">The <see cref="VersionBData.DataSetValue"/>.</param>
+    /// <param name="dataSetValue">The <see cref="DataSetValue"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue ConvertVersionBDataSetValue(VersionBData.DataSetValue dataSetValue)
+    private static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue ConvertVersionBDataSetValue(DataSetValue dataSetValue)
         => dataSetValue.DataType switch
         {
             VersionBDataTypeEnum.Int8
@@ -369,9 +369,9 @@ internal static class PayloadConverter
     /// Gets the version B row from the version B ProtoBuf row.
     /// </summary>
     /// <param name="row">The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.Row"/>.</param>
-    /// <returns>The <see cref="VersionBData.Row"/>.</returns>
-    private static VersionBData.Row ConvertVersionBRow(VersionBProtoBuf.ProtoBufPayload.DataSet.Row row)
-        => new VersionBData.Row
+    /// <returns>The <see cref="Row"/>.</returns>
+    private static Row ConvertVersionBRow(VersionBProtoBuf.ProtoBufPayload.DataSet.Row row)
+        => new Row
         {
             Details = row.Details,
             Elements = row.Elements.Select(ConvertVersionBDataSetValue).ToList()
@@ -380,9 +380,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf row from the version B row.
     /// </summary>
-    /// <param name="row">The <see cref="VersionBData.Row"/>.</param>
+    /// <param name="row">The <see cref="Row"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.Row"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.DataSet.Row ConvertVersionBRow(VersionBData.Row row)
+    private static VersionBProtoBuf.ProtoBufPayload.DataSet.Row ConvertVersionBRow(Row row)
         => new VersionBProtoBuf.ProtoBufPayload.DataSet.Row
         {
             Details = row.Details,
@@ -393,11 +393,11 @@ internal static class PayloadConverter
     /// Gets the version B meta data from the version B ProtoBuf meta data.
     /// </summary>
     /// <param name="metaData">The <see cref="VersionBProtoBuf.ProtoBufPayload.MetaData"/>.</param>
-    /// <returns>The <see cref="VersionBData.MetaData"/>.</returns>
-    private static VersionBData.MetaData? ConvertVersionBMetaData(VersionBProtoBuf.ProtoBufPayload.MetaData? metaData)
+    /// <returns>The <see cref="MetaData"/>.</returns>
+    private static MetaData? ConvertVersionBMetaData(VersionBProtoBuf.ProtoBufPayload.MetaData? metaData)
         => metaData is null
         ? null
-        : new VersionBData.MetaData
+        : new MetaData
         {
             Seq = metaData.Seq,
             Details = metaData.Details,
@@ -413,9 +413,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf meta data from the version B meta data.
     /// </summary>
-    /// <param name="metaData">The <see cref="VersionBData.MetaData"/>.</param>
+    /// <param name="metaData">The <see cref="MetaData"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.MetaData"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.MetaData? ConvertVersionBMetaData(VersionBData.MetaData? metaData)
+    private static VersionBProtoBuf.ProtoBufPayload.MetaData? ConvertVersionBMetaData(MetaData? metaData)
         => metaData is null
         ? null
         : new VersionBProtoBuf.ProtoBufPayload.MetaData
@@ -435,11 +435,11 @@ internal static class PayloadConverter
     /// Gets the version B template from the version B ProtoBuf template.
     /// </summary>
     /// <param name="template">The <see cref="VersionBProtoBuf.ProtoBufPayload.Template"/>.</param>
-    /// <returns>The <see cref="VersionBData.Template"/>.</returns>
-    private static VersionBData.Template? ConvertVersionBTemplate(VersionBProtoBuf.ProtoBufPayload.Template? template)
+    /// <returns>The <see cref="Template"/>.</returns>
+    private static Template? ConvertVersionBTemplate(VersionBProtoBuf.ProtoBufPayload.Template? template)
         => template is null
         ? null
-        : new VersionBData.Template
+        : new Template
         {
             Metrics = template.Metrics.Select(ConvertVersionBMetric).ToList(),
             Details = template.Details,
@@ -452,9 +452,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf template from the version B template.
     /// </summary>
-    /// <param name="template">The <see cref="VersionBData.Template"/>.</param>
+    /// <param name="template">The <see cref="Template"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Template"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.Template? ConvertVersionBTemplate(VersionBData.Template? template)
+    private static VersionBProtoBuf.ProtoBufPayload.Template? ConvertVersionBTemplate(Template? template)
         => template is null
         ? null
         : new VersionBProtoBuf.ProtoBufPayload.Template
@@ -471,13 +471,13 @@ internal static class PayloadConverter
     /// Gets the version B parameter from the version B ProtoBuf parameter.
     /// </summary>
     /// <param name="parameter">The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter"/>.</param>
-    /// <returns>The <see cref="VersionBData.Parameter"/>.</returns>
-    private static VersionBData.Parameter ConvertVersionBParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter parameter)
-        => new VersionBData.Parameter
+    /// <returns>The <see cref="Parameter"/>.</returns>
+    private static Parameter ConvertVersionBParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter parameter)
+        => new Parameter
         {
             DoubleValue = parameter.DoubleValue,
             BooleanValue = parameter.BooleanValue,
-            ExtensionValue = new VersionBData.ParameterValueExtension
+            ExtensionValue = new ParameterValueExtension
             {
                 Extensions = parameter.ExtensionValue.Extensions
             },
@@ -493,9 +493,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf parameter from the version B parameter.
     /// </summary>
-    /// <param name="parameter">The <see cref="VersionBData.Parameter"/>.</param>
+    /// <param name="parameter">The <see cref="Parameter"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.Template.Parameter ConvertVersionBParameter(VersionBData.Parameter parameter)
+    private static VersionBProtoBuf.ProtoBufPayload.Template.Parameter ConvertVersionBParameter(Parameter parameter)
     {
         VersionBProtoBuf.ProtoBufPayload.Template.Parameter pbTplParam = new()
         {
@@ -555,9 +555,9 @@ internal static class PayloadConverter
     /// Gets the version B metric from the version B ProtoBuf metric.
     /// </summary>
     /// <param name="metric">The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</param>
-    /// <returns>The <see cref="VersionBData.Metric"/>.</returns>
-    private static VersionBData.Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric metric)
-        => new VersionBData.Metric
+    /// <returns>The <see cref="Metric"/>.</returns>
+    private static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric metric)
+        => new Metric
         {
             DoubleValue = metric.DoubleValue,
             Alias = metric.Alias,
@@ -565,7 +565,7 @@ internal static class PayloadConverter
             BytesValue = metric.BytesValue,
             DataSetValue = ConvertVersionBDataSet(metric.DatasetValue),
             ValueCase = metric.Datatype,
-            ExtensionValue = (metric.ExtensionValue is not null) ? new VersionBData.MetricValueExtension
+            ExtensionValue = (metric.ExtensionValue is not null) ? new MetricValueExtension
             {
                 Details = metric.ExtensionValue.Details
             } : null,
@@ -587,9 +587,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf metric from the version B metric.
     /// </summary>
-    /// <param name="metric">The <see cref="VersionBData.Metric"/>.</param>
+    /// <param name="metric">The <see cref="Metric"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(VersionBData.Metric metric)
+    private static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(Metric metric)
     {
         VersionBProtoBuf.ProtoBufPayload.Metric pbMetric = new()
         {
@@ -659,8 +659,8 @@ internal static class PayloadConverter
     /// Gets the version B property set list from the version B ProtoBuf property set list.
     /// </summary>
     /// <param name="propertySetList">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</param>
-    /// <returns>The <see cref="VersionBData.PropertySetList"/>.</returns>
-    private static VersionBData.PropertySetList? ConvertVersionBPropertySetList(VersionBProtoBuf.ProtoBufPayload.PropertySetList? propertySetList)
+    /// <returns>The <see cref="PropertySetList"/>.</returns>
+    private static PropertySetList? ConvertVersionBPropertySetList(VersionBProtoBuf.ProtoBufPayload.PropertySetList? propertySetList)
     {
         if (propertySetList is null)
         {
@@ -672,7 +672,7 @@ internal static class PayloadConverter
             throw new ArgumentNullException(nameof(propertySetList), "Propertysets is not set");
         }
 
-        return new VersionBData.PropertySetList
+        return new PropertySetList
         {
             Details = propertySetList.Details,
             PropertySets = propertySetList.Propertysets.Select(ConvertVersionBPropertySet).ToNonNullList()
@@ -682,9 +682,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf property set list from the version B property set list.
     /// </summary>
-    /// <param name="propertySetList">The <see cref="VersionBData.PropertySetList"/>.</param>
+    /// <param name="propertySetList">The <see cref="PropertySetList"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.PropertySetList? ConvertVersionBPropertySetList(VersionBData.PropertySetList? propertySetList)
+    private static VersionBProtoBuf.ProtoBufPayload.PropertySetList? ConvertVersionBPropertySetList(PropertySetList? propertySetList)
         => propertySetList is null
         ? null
         : new VersionBProtoBuf.ProtoBufPayload.PropertySetList
@@ -697,11 +697,11 @@ internal static class PayloadConverter
     /// Gets the version B property set from the version B ProtoBuf property set.
     /// </summary>
     /// <param name="propertySet">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySet"/>.</param>
-    /// <returns>The <see cref="VersionBData.PropertySet"/>.</returns>
-    private static VersionBData.PropertySet? ConvertVersionBPropertySet(VersionBProtoBuf.ProtoBufPayload.PropertySet? propertySet)
+    /// <returns>The <see cref="PropertySet"/>.</returns>
+    private static PropertySet? ConvertVersionBPropertySet(VersionBProtoBuf.ProtoBufPayload.PropertySet? propertySet)
         => propertySet is null
         ? null
-        : new VersionBData.PropertySet
+        : new PropertySet
         {
             Details = propertySet.Details,
             Keys = propertySet.Keys,
@@ -711,9 +711,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf property set from the version B property set.
     /// </summary>
-    /// <param name="propertySet">The <see cref="VersionBData.PropertySet"/>.</param>
+    /// <param name="propertySet">The <see cref="PropertySet"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySet"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.PropertySet? ConvertVersionBPropertySet(VersionBData.PropertySet? propertySet)
+    private static VersionBProtoBuf.ProtoBufPayload.PropertySet? ConvertVersionBPropertySet(PropertySet? propertySet)
         => propertySet is null
         ? null
         : new VersionBProtoBuf.ProtoBufPayload.PropertySet
@@ -727,14 +727,14 @@ internal static class PayloadConverter
     /// Gets the version B property value from the version B ProtoBuf property value.
     /// </summary>
     /// <param name="propertyValue">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue"/>.</param>
-    /// <returns>The <see cref="VersionBData.PropertyValue"/>.</returns>
-    private static VersionBData.PropertyValue ConvertVersionBPropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue propertyValue)
-        => new VersionBData.PropertyValue
+    /// <returns>The <see cref="PropertyValue"/>.</returns>
+    private static PropertyValue ConvertVersionBPropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue propertyValue)
+        => new PropertyValue
         {
             DoubleValue = propertyValue.DoubleValue,
             PropertySetsValue = ConvertVersionBPropertySetList(propertyValue.PropertysetsValue),
             BooleanValue = propertyValue.BooleanValue,
-            ExtensionValue = new VersionBData.PropertyValueExtension
+            ExtensionValue = new PropertyValueExtension
             {
                 Details = propertyValue.ExtensionValue.Details
             },
@@ -751,9 +751,9 @@ internal static class PayloadConverter
     /// <summary>
     /// Gets the version B ProtoBuf property value from the version B property value.
     /// </summary>
-    /// <param name="propertyValue">The <see cref="VersionBData.PropertyValue"/>.</param>
+    /// <param name="propertyValue">The <see cref="PropertyValue"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue"/>.</returns>
-    private static VersionBProtoBuf.ProtoBufPayload.PropertyValue ConvertVersionBPropertyValue(VersionBData.PropertyValue propertyValue)
+    private static VersionBProtoBuf.ProtoBufPayload.PropertyValue ConvertVersionBPropertyValue(PropertyValue propertyValue)
     {
         VersionBProtoBuf.ProtoBufPayload.PropertyValue pbPropValue = new()
         {
