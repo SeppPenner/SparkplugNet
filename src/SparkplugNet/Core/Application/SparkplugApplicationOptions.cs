@@ -36,6 +36,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="reconnectInterval">The reconnect interval.</param>
     /// <param name="mqttProtocolVersion">The MQTT protocol version.</param>
     /// <param name="isPrimaryApplication">A value indicating whether the application is a primary application or not.</param>
+    /// <param name="metricScreenMethod">The screen method for incoming metrics.</param>
     /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
     /// <param name="webSocketParameters">The web socket parameters.</param>
     /// <param name="proxyOptions">The proxy options.</param>
@@ -51,6 +52,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
         string? scadaHostIdentifier = null,
         TimeSpan? reconnectInterval = null,
         SparkplugMqttProtocolVersion? mqttProtocolVersion = null,
+        MetricScreenMethod? metricScreenMethod = null,
         GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null,
@@ -66,6 +68,7 @@ public class SparkplugApplicationOptions : SparkplugBaseOptions
             scadaHostIdentifier,
             reconnectInterval,
             mqttProtocolVersion,
+            metricScreenMethod,
             getTlsParameters,
             webSocketParameters,
             proxyOptions)

@@ -52,7 +52,8 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         {
             return metrics.Where(m =>
                 // Remove the session number metric if a user might have added it.
-                !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
+                !string.Equals(m.Name, Constants.SessionNumberMetricName,
+                    StringComparison.InvariantCultureIgnoreCase) &&
                 // Remove all not known metrics.
                 this.ContainsKey(m.Name)
             );
@@ -69,6 +70,51 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
             {
                 throw new Exception($"Metric {metric.Name} is an unknown metric.");
             }
+        }
+
+        /// <summary>
+        /// Filters the incoming metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <returns>The filtered metrics.</returns>
+        public virtual IEnumerable<T> FilterIncomingMetrics(IEnumerable<T> metrics)
+            => metrics.Where(metric => this.ContainsKey(metric.Name) || IsSessionNumberMetric(metric));
+
+        /// <summary>
+        /// Checks whether the given metric equals the session number metric.
+        /// </summary>
+        /// <param name="metric">The metric.</param>
+        /// <returns>Whether the given metric equals the session number metric</returns>
+        private static bool IsSessionNumberMetric(T metric) =>
+            metric.Name.ToUpper().Equals(Constants.SessionNumberMetricName);
+
+        /// <summary>
+        /// Screens the incoming metrics based on the specified method.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="method">The screening method.</param>
+        /// <returns>The (filtered) metrics.</returns>
+        public virtual IEnumerable<T> ScreenIncomingMetrics(IEnumerable<T> metrics, MetricScreenMethod method)
+        {
+            switch (method)
+            {
+                // If we have any invalid metrics, filter them
+                case MetricScreenMethod.Filter:
+                    metrics = this.FilterIncomingMetrics(metrics);
+                    break;
+                // If we have any invalid metrics, throw an exception
+                case MetricScreenMethod.Validate:
+                    IEnumerable<T> metricsWithoutSequenceMetric =
+                        metrics.Where(m => !IsSessionNumberMetric(m));
+                    this.ValidateIncomingMetrics(metricsWithoutSequenceMetric);
+                    break;
+                // All metrics are allowed, do nothing
+                case MetricScreenMethod.None:
+                default:
+                    break;
+            }
+
+            return metrics;
         }
     }
 }

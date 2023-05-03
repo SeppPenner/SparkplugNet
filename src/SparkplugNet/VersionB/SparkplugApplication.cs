@@ -23,7 +23,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
-    public SparkplugApplication(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplication(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(
+        knownMetrics, logger)
     {
     }
 
@@ -34,7 +35,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="knownMetricsStorage">The metric names.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
-    public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(
+        knownMetricsStorage, logger)
     {
     }
 
@@ -47,7 +49,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishNodeCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+    protected override async Task PublishNodeCommandMessage(IEnumerable<VersionBData.Metric> metrics,
+        string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.Options is null)
         {
@@ -84,7 +87,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+    protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionBData.Metric> metrics,
+        string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         if (this.Options is null)
         {
@@ -141,10 +145,9 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task HandleMessagesForVersionBAsync(SparkplugMessageTopic topic, VersionBData.Payload payload)
     {
-        // If we have any not valid metric, throw an exception.
-        var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-
-        this.KnownMetricsStorage.ValidateIncomingMetrics(metricsWithoutSequenceMetric);
+        payload.Metrics = this.KnownMetricsStorage
+            .ScreenIncomingMetrics(payload.Metrics, MetricScreenMethod.Validate)
+            .ToList();
 
         switch (topic.MessageType)
         {
@@ -153,7 +156,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
-                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
+                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
+                    topic.DeviceIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
@@ -171,7 +175,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
 
                 foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
                 {
-                    await this.FireDeviceDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, metric);
+                    await this.FireDeviceDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
+                        topic.DeviceIdentifier, metric);
                 }
 
                 break;
@@ -186,7 +191,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                 }
 
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
-                await this.FireDeviceDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+                await this.FireDeviceDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
+                    topic.DeviceIdentifier);
                 break;
         }
     }
@@ -198,7 +204,8 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    private IEnumerable<VersionBData.Metric> ProcessPayload(SparkplugMessageTopic topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
+    private IEnumerable<VersionBData.Metric> ProcessPayload(SparkplugMessageTopic topic, VersionBData.Payload payload,
+        SparkplugMetricStatus metricStatus)
     {
         var metricState = new MetricState<VersionBData.Metric>
         {

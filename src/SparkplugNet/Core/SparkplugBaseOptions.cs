@@ -60,6 +60,11 @@ public abstract class SparkplugBaseOptions
     public const SparkplugMqttProtocolVersion DefaultMqttProtocolVersion = SparkplugMqttProtocolVersion.V311;
 
     /// <summary>
+    /// The default metric screen method.
+    /// </summary>
+    public const MetricScreenMethod DefaultMetricScreenMethod = MetricScreenMethod.Validate;
+
+    /// <summary>
     /// Returns a <see cref="MqttClientOptionsBuilderTlsParameters"/> instance or null.
     /// </summary>
     public delegate MqttClientOptionsBuilderTlsParameters? GetTlsParametersDelegate();
@@ -89,6 +94,7 @@ public abstract class SparkplugBaseOptions
         string? scadaHostIdentifier = null,
         TimeSpan? reconnectInterval = null,
         SparkplugMqttProtocolVersion? mqttProtocolVersion = null,
+        MetricScreenMethod? metricScreenMethod = null,
         GetTlsParametersDelegate? getTlsParameters = null,
         MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
         MqttClientWebSocketProxyOptions? proxyOptions = null)
@@ -99,9 +105,12 @@ public abstract class SparkplugBaseOptions
         this.UserName = string.IsNullOrWhiteSpace(userName) ? DefaultUserName : userName;
         this.Password = string.IsNullOrWhiteSpace(password) ? DefaultPassword : password;
         this.UseTls = useTls ?? DefaultUseTls;
-        this.ScadaHostIdentifier = string.IsNullOrWhiteSpace(scadaHostIdentifier) ? DefaultScadaHostIdentifier : scadaHostIdentifier;
+        this.ScadaHostIdentifier = string.IsNullOrWhiteSpace(scadaHostIdentifier)
+            ? DefaultScadaHostIdentifier
+            : scadaHostIdentifier;
         this.ReconnectInterval = reconnectInterval ?? DefaultReconnectInterval;
         this.MqttProtocolVersion = mqttProtocolVersion ?? DefaultMqttProtocolVersion;
+        this.MetricScreeningMethod = metricScreenMethod ?? DefaultMetricScreenMethod;
         this.GetTlsParameters = getTlsParameters;
         this.WebSocketParameters = webSocketParameters;
         this.ProxyOptions = proxyOptions;
@@ -159,6 +168,12 @@ public abstract class SparkplugBaseOptions
     /// </summary>
     [DefaultValue(DefaultMqttProtocolVersion)]
     public SparkplugMqttProtocolVersion MqttProtocolVersion { get; set; } = DefaultMqttProtocolVersion;
+
+    /// <summary>
+    /// Gets or sets the metric screening method.
+    /// </summary>
+    [DefaultValue(DefaultMetricScreenMethod)]
+    public MetricScreenMethod MetricScreeningMethod { get; set; } = MetricScreenMethod.Validate;
 
     /// <summary>
     /// Gets or sets the delegate to provide TLS parameters.
