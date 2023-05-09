@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.Tests;
 
+using System.Text.Json;
+
 /// <summary>
 /// A class to test the <see cref="SparkplugMessageGenerator"/> class.
 /// </summary>
@@ -52,7 +54,9 @@ public class SparkplugMessageGeneratorTest
         var message = SparkplugMessageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
 
         Assert.AreEqual("STATE/scada1", message.Topic);
-        Assert.AreEqual("ONLINE", message.ConvertPayloadToString());
+        string payloadString = message.ConvertPayloadToString();
+        JsonDocument jsonDoc = JsonDocument.Parse(payloadString);
+        Assert.IsTrue(jsonDoc.RootElement.TryGetProperty("online", out JsonElement value) && value.GetBoolean());
     }
 
     /// <summary>
@@ -64,7 +68,9 @@ public class SparkplugMessageGeneratorTest
         var message = SparkplugMessageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", false);
 
         Assert.AreEqual("STATE/scada1", message.Topic);
-        Assert.AreEqual("OFFLINE", message.ConvertPayloadToString());
+        string payloadString = message.ConvertPayloadToString();
+        JsonDocument jsonDoc = JsonDocument.Parse(payloadString);
+        Assert.IsTrue(jsonDoc.RootElement.TryGetProperty("online", out JsonElement value) && !value.GetBoolean());
     }
 
     /// <summary>

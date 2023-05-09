@@ -10,6 +10,8 @@
 
 namespace SparkplugNet.IntegrationTests;
 
+using Core.Enumerations;
+
 /// <summary>
 /// A class to test the <see cref="SparkplugNode" /> class with live MQTT Server and Sparkplug Host.
 /// These tests are designed to execute synchronously in alphabetic order. (e.g. T1_xxx, T2_yyy, T3_zzz)
@@ -56,13 +58,14 @@ public class SparkplugNodeSequentialTest
             Password,
             false,
             MqttServerUnderTest.ScadaHostIdentifier,
+            TimeSpan.FromSeconds(30),
+            SparkplugMqttProtocolVersion.V311,
+            MetricScreenMethod.Validate,
+            null,
+            null,
+            null,
             GroupIdentifier,
             EdgeNodeIdentifier,
-            MqttProtocolVersion.V311,
-            MqttQualityOfServiceLevel.AtMostOnce,
-            TimeSpan.FromSeconds(30),
-            null,
-            null,
             this.cancellationTokenSource.Token);
         metrics = GetTestMetrics();
 

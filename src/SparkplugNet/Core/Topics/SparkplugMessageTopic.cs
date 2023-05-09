@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.Core.Topics;
 
+using System.Diagnostics.CodeAnalysis;
+
 /// <inheritdoc cref="SparkplugTopic"/>
 /// <summary>
 /// The Sparkplug class for the message topic.
