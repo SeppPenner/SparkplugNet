@@ -1,7 +1,7 @@
 namespace SparkplugNet.VersionB.Data;
 
 /// <summary>
-/// Base Value class for Sparkplug Version B
+/// Base Value class for Sparkplug Version B.
 /// </summary>
 public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
 {

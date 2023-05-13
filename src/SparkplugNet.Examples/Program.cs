@@ -124,7 +124,7 @@ public class Program
                 .WriteTo.Console()
                 .CreateLogger();
 
-           // await RunVersionA();
+            //await RunVersionA();
             await RunVersionB();
 
             Log.Information("Simulation is done.");
