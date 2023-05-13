@@ -15,6 +15,78 @@ namespace SparkplugNet.Core;
 internal static class PayloadConverter
 {
     /// <summary>
+    /// Gets the version A payload converted from the ProtoBuf payload.
+    /// </summary>
+    /// <param name="payload">The <see cref="VersionAProtoBuf.ProtoBufPayload"/>.</param>
+    /// <returns>The <see cref="VersionAData.Payload"/>.</returns>
+    public static VersionAData.Payload ConvertVersionAPayload(VersionAProtoBuf.ProtoBufPayload payload)
+        => new VersionAData.Payload
+        {
+            Body = payload.Body,
+            Metrics = payload.Metrics.Select(m => new VersionAData.KuraMetric
+            {
+                Name = m.Name,
+                DataType = ConvertVersionADataType(m.Type),
+                BooleanValue = m.BoolValue ?? default,
+                BytesValue = m.BytesValue ?? Array.Empty<byte>(),
+                DoubleValue = m.DoubleValue ?? default,
+                FloatValue = m.FloatValue ?? default,
+                IntValue = m.IntValue ?? default,
+                LongValue = m.LongValue ?? default,
+                StringValue = m.StringValue ?? string.Empty
+            }).ToList(),
+            Position = new VersionAData.KuraPosition
+            {
+                Timestamp = payload.Position?.Timestamp ?? default,
+                Altitude = payload.Position?.Altitude ?? default,
+                Heading = payload.Position?.Heading ?? default,
+                Latitude = payload.Position?.Latitude ?? default,
+                Longitude = payload.Position?.Longitude ?? default,
+                Precision = payload.Position?.Precision ?? default,
+                Satellites = payload.Position?.Satellites ?? default,
+                Speed = payload.Position?.Speed ?? default,
+                Status = payload.Position?.Status ?? default
+            },
+            Timestamp = payload.Timestamp
+        };
+
+    /// <summary>
+    /// Gets the ProtoBuf payload converted from the version A payload.
+    /// </summary>
+    /// <param name="payload">The <see cref="VersionAData.Payload"/>.</param>
+    /// <returns>The <see cref="VersionAProtoBuf.ProtoBufPayload"/>.</returns>
+    public static VersionAProtoBuf.ProtoBufPayload ConvertVersionAPayload(VersionAData.Payload payload)
+        => new VersionAProtoBuf.ProtoBufPayload
+        {
+            Body = payload.Body,
+            Metrics = payload.Metrics.Select(m => new VersionAProtoBuf.ProtoBufPayload.KuraMetric
+            {
+                Type = ConvertVersionADataType(m.DataType),
+                BoolValue = m.BooleanValue,
+                BytesValue = m.BytesValue,
+                DoubleValue = m.DoubleValue,
+                FloatValue = m.FloatValue,
+                IntValue = m.IntValue,
+                LongValue = m.LongValue,
+                Name = m.Name,
+                StringValue = m.StringValue
+            }).ToList(),
+            Position = new VersionAProtoBuf.ProtoBufPayload.KuraPosition
+            {
+                Timestamp = payload.Position?.Timestamp ?? default,
+                Altitude = payload.Position?.Altitude ?? default,
+                Heading = payload.Position?.Heading ?? default,
+                Latitude = payload.Position?.Latitude ?? default,
+                Longitude = payload.Position?.Longitude ?? default,
+                Precision = payload.Position?.Precision ?? default,
+                Satellites = payload.Position?.Satellites ?? default,
+                Speed = payload.Position?.Speed ?? default,
+                Status = payload.Position?.Status ?? default
+            },
+            Timestamp = payload.Timestamp
+        };
+
+    /// <summary>
     /// Gets the version B payload converted from the ProtoBuf payload.
     /// </summary>
     /// <param name="payload">The <see cref="VersionBProtoBuf.ProtoBufPayload"/>.</param>
@@ -44,6 +116,42 @@ internal static class PayloadConverter
             Seq = payload.Seq,
             Timestamp = payload.Timestamp,
             Uuid = payload.Uuid
+        };
+
+    /// <summary>
+    /// Gets the version A data type from the version A ProtoBuf value type.
+    /// </summary>
+    /// <param name="type">The <see cref="VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType"/>.</param>
+    /// <returns>The <see cref="VersionAData.DataType"/>.</returns>
+    public static VersionAData.DataType ConvertVersionADataType(VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType type)
+        => type switch
+        {
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool => VersionAData.DataType.Boolean,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes => VersionAData.DataType.Bytes,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Double => VersionAData.DataType.Double,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Float => VersionAData.DataType.Float,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int32 => VersionAData.DataType.Int32,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int64 => VersionAData.DataType.Int64,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String => VersionAData.DataType.String,
+            _ => VersionAData.DataType.String
+        };
+
+    /// <summary>
+    /// Gets the version A ProtoBuf value type from the version A data type.
+    /// </summary>
+    /// <param name="type">The <see cref="VersionAData.DataType"/>.</param>
+    /// <returns>The <see cref="VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType"/>.</returns>
+    public static VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType ConvertVersionADataType(VersionAData.DataType type)
+        => type switch
+        {
+            VersionAData.DataType.Boolean => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool,
+            VersionAData.DataType.Bytes => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes,
+            VersionAData.DataType.Double => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Double,
+            VersionAData.DataType.Float => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Float,
+            VersionAData.DataType.Int32 => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int32,
+            VersionAData.DataType.Int64 => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int64,
+            VersionAData.DataType.String => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String,
+            _ => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String
         };
 
     /// <summary>

@@ -59,8 +59,10 @@ public class Metric : ValueBaseVersionB, IMetric
         this.Name = strName;
         this.SetValue(dataType, value);
 
-        if (timestamp != null)
+        if (timestamp is not null)
+        {
             this.Timestamp = (ulong)timestamp.Value.ToUnixTimeMilliseconds();
+        }
     }
 
     /// <summary>

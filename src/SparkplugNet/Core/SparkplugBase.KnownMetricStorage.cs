@@ -34,12 +34,22 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// <param name="knownMetrics">The known metrics.</param>
         public KnownMetricStorage(IEnumerable<T> knownMetrics) : base(StringComparer.InvariantCultureIgnoreCase)
         {
-            if (knownMetrics is not null)
+            foreach (var metric in knownMetrics)
             {
-                foreach (var metric in knownMetrics)
+                // Check the name of the metric.
+                if (string.IsNullOrWhiteSpace(metric.Name))
                 {
-                    this[metric.Name] = metric;
+                    throw new Exception($"A metric without a name is not allowed.");
                 }
+
+                // Check the value of the metric.
+                if (metric.Value is null)
+                {
+                    throw new Exception($"A metric without a current value is not allowed.");
+                }
+
+                // Hint: Data type doesn't need to be checked, is not nullable.
+                this[metric.Name] = metric;
             }
         }
 

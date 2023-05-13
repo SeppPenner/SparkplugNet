@@ -136,7 +136,7 @@ public class SparkplugMessageTopic : SparkplugTopic
     /// <exception cref="FormatException">Thrown if the namespace, message type or topic couldn't be parsed.</exception>
     private static bool TryParse(string topic, out SparkplugMessageTopic? parsedTopic, bool throwError)
     {
-        string[] splitTopics = topic.Split('/');
+        var splitTopics = topic.Split('/');
 
         if (splitTopics.Length == 4 || splitTopics.Length == 5)
         {

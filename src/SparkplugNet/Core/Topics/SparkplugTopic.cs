@@ -15,6 +15,11 @@ namespace SparkplugNet.Core.Topics;
 public class SparkplugTopic
 {
     /// <summary>
+    /// The namespace for Sparkplug A.
+    /// </summary>
+    public const string NamespaceSparkplugA = "spAv1.0";
+
+    /// <summary>
     /// The namespace for Sparkplug B.
     /// </summary>
     public const string NamespaceSparkplugB = "spBv1.0";
@@ -63,6 +68,7 @@ public class SparkplugTopic
     {
         return @namespace switch
         {
+            SparkplugNamespace.VersionA => NamespaceSparkplugA,
             SparkplugNamespace.VersionB => NamespaceSparkplugB,
             _ => throw new FormatException($"Namespace ${@namespace} is unknown!"),
         };
@@ -78,6 +84,9 @@ public class SparkplugTopic
     {
         switch (@namespace)
         {
+            case NamespaceSparkplugA:
+                sparkplugNamespace = SparkplugNamespace.VersionA;
+                return true;
             case NamespaceSparkplugB:
                 sparkplugNamespace = SparkplugNamespace.VersionB;
                 return true;

@@ -1,6 +1,7 @@
 #pragma warning disable IDE0065 // Die using-Anweisung wurde falsch platziert.
 global using System.Collections.Concurrent;
 global using System.ComponentModel;
+global using System.Diagnostics.CodeAnalysis;
 global using System.Text;
 global using System.Xml.Serialization;
 
@@ -28,6 +29,8 @@ global using SparkplugNet.Core.Node;
 global using SparkplugNet.Core.Topics;
 global using SparkplugNet.VersionB.Data;
 
+global using VersionAData = SparkplugNet.VersionA.Data;
+global using VersionAProtoBuf = SparkplugNet.VersionA.ProtoBuf;
 global using VersionBData = SparkplugNet.VersionB.Data;
 global using VersionBDataTypeEnum = SparkplugNet.VersionB.Data.DataType;
 global using VersionBProtoBuf = SparkplugNet.VersionB.ProtoBuf;

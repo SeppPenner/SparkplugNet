@@ -102,7 +102,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     /// <summary>
     /// Gets or sets the DataType.
     /// </summary>
-    public override VersionBDataTypeEnum DataType { get; set; } = default!;
+    public override VersionBDataTypeEnum DataType { get; set; } = default;
 
     /// <summary>
     /// Gets the value.
@@ -124,7 +124,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
         VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds((long)this.LongValue).DateTime,
         VersionBDataTypeEnum.Text => this.StringValue,
         VersionBDataTypeEnum.Uuid => Guid.Parse(this.StringValue),
-        _ => null,
+        _ => null
     };
 
     /// <summary>

@@ -7,14 +7,14 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.VersionB;
+namespace SparkplugNet.VersionA;
 
 /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
 /// <summary>
 ///   A class that handles a Sparkplug application.
 /// </summary>
 /// <seealso cref="SparkplugApplicationBase{T}"/>
-public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric>
+public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMetric>
 {
     /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
     /// <summary>
@@ -23,7 +23,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
-    public SparkplugApplication(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplication(IEnumerable<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
 
@@ -31,7 +31,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
-    /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="knownMetricsStorage">The known metrics storage.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
@@ -39,7 +39,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     }
 
     /// <summary>
-    /// Publishes a version B node command message.
+    /// Publishes a version A node command message.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
@@ -47,11 +47,16 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishNodeCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+    protected override async Task PublishNodeCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.Options is null)
         {
-            throw new ArgumentNullException(nameof(this.Options), "The options arent't set properly.");
+            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
+        }
+
+        if (this.KnownMetrics is null)
+        {
+            throw new Exception("Invalid metric type specified for version A metric.");
         }
 
         // Get the data message.
@@ -62,10 +67,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.UtcNow);
-
-        // Debug output.
-        this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
+            DateTimeOffset.Now);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
@@ -75,7 +77,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     }
 
     /// <summary>
-    /// Publishes a version B device command message.
+    /// Publishes a version A device command message.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
@@ -84,7 +86,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionBData.Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+    protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         if (this.Options is null)
         {
@@ -93,7 +95,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
 
         if (this.KnownMetrics is null)
         {
-            throw new Exception("Invalid metric type specified for version B metric.");
+            throw new Exception("Invalid metric type specified for version A metric.");
         }
 
         // Get the data message.
@@ -105,7 +107,10 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
             this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
             this.LastSequenceNumber,
             this.LastSessionNumber,
-            DateTimeOffset.UtcNow);
+            DateTimeOffset.Now);
+
+        // Debug output.
+        this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
@@ -122,12 +127,12 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
+        var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(payload);
 
-        if (payloadVersionB is not null)
+        if (payloadVersionA is not null)
         {
-            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
-            await this.HandleMessagesForVersionBAsync(topic, convertedPayload);
+            var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
+            await this.HandleMessagesForVersionA(topic, convertedPayload);
         }
     }
 
@@ -139,7 +144,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
     /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    private async Task HandleMessagesForVersionBAsync(SparkplugMessageTopic topic, VersionBData.Payload payload)
+    private async Task HandleMessagesForVersionA(SparkplugMessageTopic topic, VersionAData.Payload payload)
     {
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
@@ -153,7 +158,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
-                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
+                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
@@ -198,16 +203,17 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    private IEnumerable<VersionBData.Metric> ProcessPayload(SparkplugMessageTopic topic, VersionBData.Payload payload, SparkplugMetricStatus metricStatus)
+    private IEnumerable<VersionAData.KuraMetric> ProcessPayload(SparkplugMessageTopic topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus)
     {
-        var metricState = new MetricState<VersionBData.Metric>
+        var metricState = new MetricState<VersionAData.KuraMetric>
         {
             MetricStatus = metricStatus
         };
 
         if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
-            this.DeviceStates[topic.DeviceIdentifier] = metricState;
+            // No idea why we need a bang (!) operator here?!
+            this.DeviceStates[topic.DeviceIdentifier!] = metricState;
         }
         else
         {
@@ -216,7 +222,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
 
         foreach (var payloadMetric in payload.Metrics)
         {
-            if (payloadMetric is not VersionB.Data.Metric convertedMetric)
+            if (payloadMetric is not VersionAData.KuraMetric convertedMetric)
             {
                 throw new InvalidCastException("The metric cast didn't work properly.");
             }
