@@ -14,6 +14,7 @@ namespace SparkplugNet.VersionA;
 ///   A class that handles a Sparkplug node.
 /// </summary>
 /// <seealso cref="SparkplugNodeBase{T}"/>
+[Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
 public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
 {
     /// <inheritdoc cref="SparkplugNodeBase{T}"/>
@@ -23,6 +24,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
+    [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugNode(IEnumerable<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
     {
     }
@@ -34,6 +36,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// <param name="knownMetricsStorage">The metric names.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
+    [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugNode(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
     {
     }
@@ -45,6 +48,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
+    [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     protected override async Task<MqttClientPublishResult> PublishMessage(IEnumerable<VersionAData.KuraMetric> metrics)
     {
         if (this.Options is null)
@@ -84,6 +88,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// <param name="payload">The payload.</param>
     /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(payload);

@@ -12,6 +12,7 @@ namespace SparkplugNet.VersionA.Data;
 /// <summary>
 /// The externally used Sparkplug A Kura position class.
 /// </summary>
+[Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
 public class KuraPosition
 {
     /// <summary>

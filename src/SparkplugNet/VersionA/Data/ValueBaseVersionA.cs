@@ -1,8 +1,9 @@
 namespace SparkplugNet.VersionA.Data;
 
 /// <summary>
-/// Base class containing values using Sparkplug Version A
+/// Base class containing values using Sparkplug Version A.
 /// </summary>
+[Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
 public abstract class ValueBaseVersionA : ValueBase<DataType>
 {
     /// <summary>
