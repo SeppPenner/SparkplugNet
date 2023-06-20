@@ -146,7 +146,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     private async Task HandleMessagesForVersionBAsync(SparkplugMessageTopic topic, VersionBData.Payload payload)
     {
         payload.Metrics = this.KnownMetricsStorage
-            .ScreenIncomingMetrics(payload.Metrics, MetricScreenMethod.Validate)
+            .ScreenIncomingMetrics(payload.Metrics, this.Options.MetricScreeningMethod)
             .ToList();
 
         switch (topic.MessageType)

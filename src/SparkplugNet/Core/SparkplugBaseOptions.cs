@@ -173,7 +173,7 @@ public abstract class SparkplugBaseOptions
     /// Gets or sets the metric screening method.
     /// </summary>
     [DefaultValue(DefaultMetricScreenMethod)]
-    public MetricScreenMethod MetricScreeningMethod { get; set; } = MetricScreenMethod.Validate;
+    public MetricScreenMethod MetricScreeningMethod { get; set; } = DefaultMetricScreenMethod;
 
     /// <summary>
     /// Gets or sets the delegate to provide TLS parameters.
