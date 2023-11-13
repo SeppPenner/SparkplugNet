@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <AssemblyName>SparkplugNet</AssemblyName>
         <RootNamespace>SparkplugNet</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -40,10 +40,6 @@
         <PackageReference Include="MQTTnet" Version="4.2.0.706" />
         <PackageReference Include="protobuf-net" Version="3.2.16" />
         <PackageReference Include="Serilog" Version="2.12.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1'">
-        <PackageReference Include="System.Text.Json" Version="7.0.2" />
     </ItemGroup>
 
     <ItemGroup>
