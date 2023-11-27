@@ -411,7 +411,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 builder.WithWillContentType(willMessage.ContentType);
                 builder.WithWillCorrelationData(willMessage.CorrelationData);
                 builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
-                builder.WithWillPayload(willMessage.Payload);
+                builder.WithWillPayload(willMessage.PayloadSegment);
                 builder.WithWillPayloadFormatIndicator(willMessage.PayloadFormatIndicator);
                 builder.WithWillQualityOfServiceLevel(willMessage.QualityOfServiceLevel);
                 builder.WithWillResponseTopic(willMessage.ResponseTopic);
