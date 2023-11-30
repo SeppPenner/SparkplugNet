@@ -755,7 +755,7 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.PropertySet:
             case VersionBDataTypeEnum.PropertySetList:
             default:
-                pbMetric.ExtensionValue = (metric.ExtensionValue == null) ? null :
+                pbMetric.ExtensionValue = (metric.ExtensionValue is null) ? null :
                     new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension { Details = metric.ExtensionValue.Details };
                 break;
         }

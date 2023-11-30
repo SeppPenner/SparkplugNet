@@ -160,7 +160,7 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <returns>The metric.</returns>
     public override IValue<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object? value)
     {
-        this.IsNull = value == null;
+        this.IsNull = value is null;
 
         switch (dataType)
         {
