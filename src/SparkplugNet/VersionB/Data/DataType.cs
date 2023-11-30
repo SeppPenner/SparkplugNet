@@ -122,5 +122,70 @@ public enum DataType
     /// <summary>
     /// The property set list data type.
     /// </summary>
-    PropertySetList = 21
+    PropertySetList = 21,
+
+    /// <summary>
+    /// The 8 bit integer array data type.
+    /// </summary>
+    Int8Array = 22,
+
+    /// <summary>
+    /// The 16 bit integer array data type.
+    /// </summary>
+    Int16Array = 23,
+
+    /// <summary>
+    /// The 32 bit integer array data type.
+    /// </summary>
+    Int32Array = 24,
+
+    /// <summary>
+    /// The 64 bit integer array data type.
+    /// </summary>
+    Int64Array = 25,
+
+    /// <summary>
+    /// The unsigned 8 bit integer array data type.
+    /// </summary>
+    UInt8Array = 26,
+
+    /// <summary>
+    /// The unsigned 16 bit integer array data type.
+    /// </summary>
+    UInt16Array = 27,
+
+    /// <summary>
+    /// The unsigned 32 bit integer array data type.
+    /// </summary>
+    UInt32Array = 28,
+
+    /// <summary>
+    /// The unsigned 64 bit integer array data type.
+    /// </summary>
+    UInt64Array = 29,
+
+    /// <summary>
+    /// The float array data type.
+    /// </summary>
+    FloatArray = 30,
+
+    /// <summary>
+    /// The double array data type.
+    /// </summary>
+    DoubleArray = 31,
+
+    /// <summary>
+    /// The boolean array data type.
+    /// </summary>
+    BooleanArray = 32,
+
+    /// <summary>
+    /// The string array data type.
+    /// </summary>
+    StringArray = 33,
+
+    /// <summary>
+    /// The date time array data type.
+    /// </summary>
+    DateTimeArray = 34
 }
