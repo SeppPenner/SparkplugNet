@@ -18,23 +18,48 @@ namespace SparkplugNet.VersionB.ProtoBuf
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"timestamp")]
-        public ulong Timestamp { get; set; }
+        public ulong Timestamp
+        {
+            get => __pbn__Timestamp.GetValueOrDefault();
+            set => __pbn__Timestamp = value;
+        }
+        public bool ShouldSerializeTimestamp() => __pbn__Timestamp is not null;
+        public void ResetTimestamp() => __pbn__Timestamp = null;
+        private ulong? __pbn__Timestamp;
 
         [global::ProtoBuf.ProtoMember(2, Name = @"metrics")]
         public global::System.Collections.Generic.List<Metric> Metrics { get; set; } = new global::System.Collections.Generic.List<Metric>();
 
         [global::ProtoBuf.ProtoMember(3, Name = @"seq")]
-        public ulong Seq { get; set; }
+        public ulong Seq
+        {
+            get => __pbn__Seq.GetValueOrDefault();
+            set => __pbn__Seq = value;
+        }
+        public bool ShouldSerializeSeq() => __pbn__Seq is not null;
+        public void ResetSeq() => __pbn__Seq = null;
+        private ulong? __pbn__Seq;
 
         [global::ProtoBuf.ProtoMember(4, Name = @"uuid")]
         [global::System.ComponentModel.DefaultValue("")]
-        public string Uuid { get; set; } = string.Empty;
+        public string Uuid
+        {
+            get => __pbn__Uuid ?? string.Empty;
+            set => __pbn__Uuid = value;
+        }
+        public bool ShouldSerializeUuid() => __pbn__Uuid is not null;
+        public void ResetUuid() => __pbn__Uuid = null;
+        private string? __pbn__Uuid;
 
         [global::ProtoBuf.ProtoMember(5, Name = @"body")]
-        public byte[]? Body { get; set; } = Array.Empty<byte>();
-
-        [global::ProtoBuf.ProtoMember(6, Name = @"details")]
-        public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
+        public byte[] Body
+        {
+            get => __pbn__Body;
+            set => __pbn__Body = value;
+        }
+        public bool ShouldSerializeBody() => __pbn__Body is not null;
+        public void ResetBody() => __pbn__Body = Array.Empty<byte>();
+        private byte[] __pbn__Body = Array.Empty<byte>();
 
         [global::ProtoBuf.ProtoContract()]
         internal partial class Template : global::ProtoBuf.IExtensible
@@ -45,7 +70,14 @@ namespace SparkplugNet.VersionB.ProtoBuf
 
             [global::ProtoBuf.ProtoMember(1, Name = @"version")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string Version { get; set; } = string.Empty;
+            public string Version
+            {
+                get => __pbn__Version ?? string.Empty;
+                set => __pbn__Version = value;
+            }
+            public bool ShouldSerializeVersion() => __pbn__Version is not null;
+            public void ResetVersion() => __pbn__Version = null;
+            private string? __pbn__Version;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"metrics")]
             public global::System.Collections.Generic.List<Metric> Metrics { get; set; } = new global::System.Collections.Generic.List<Metric>();
@@ -55,13 +87,24 @@ namespace SparkplugNet.VersionB.ProtoBuf
 
             [global::ProtoBuf.ProtoMember(4, Name = @"template_ref")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string TemplateRef { get; set; } = string.Empty;
+            public string TemplateRef
+            {
+                get => __pbn__TemplateRef ?? string.Empty;
+                set => __pbn__TemplateRef = value;
+            }
+            public bool ShouldSerializeTemplateRef() => __pbn__TemplateRef is not null;
+            public void ResetTemplateRef() => __pbn__TemplateRef = null;
+            private string? __pbn__TemplateRef;
 
             [global::ProtoBuf.ProtoMember(5, Name = @"is_definition")]
-            public bool IsDefinition { get; set; }
-
-            [global::ProtoBuf.ProtoMember(6, Name = @"details")]
-            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
+            public bool IsDefinition
+            {
+                get => __pbn__IsDefinition.GetValueOrDefault();
+                set => __pbn__IsDefinition = value;
+            }
+            public bool ShouldSerializeIsDefinition() => __pbn__IsDefinition is not null;
+            public void ResetIsDefinition() => __pbn__IsDefinition = null;
+            private bool? __pbn__IsDefinition;
 
             [global::ProtoBuf.ProtoContract()]
             internal partial class Parameter : global::ProtoBuf.IExtensible
@@ -72,10 +115,24 @@ namespace SparkplugNet.VersionB.ProtoBuf
 
                 [global::ProtoBuf.ProtoMember(1, Name = @"name")]
                 [global::System.ComponentModel.DefaultValue("")]
-                public string Name { get; set; } = string.Empty;
+                public string Name
+                {
+                    get => __pbn__Name ?? string.Empty;
+                    set => __pbn__Name = value;
+                }
+                public bool ShouldSerializeName() => __pbn__Name is not null;
+                public void ResetName() => __pbn__Name = null;
+                private string? __pbn__Name;
 
                 [global::ProtoBuf.ProtoMember(2, Name = @"type")]
-                public uint Type { get; set; }
+                public uint Type
+                {
+                    get => __pbn__Type.GetValueOrDefault();
+                    set => __pbn__Type = value;
+                }
+                public bool ShouldSerializeType() => __pbn__Type is not null;
+                public void ResetType() => __pbn__Type = null;
+                private uint? __pbn__Type;
 
                 [global::ProtoBuf.ProtoMember(3, Name = @"int_value")]
                 public uint IntValue
@@ -128,34 +185,20 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 [global::System.ComponentModel.DefaultValue("")]
                 public string StringValue
                 {
-                    get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : "";
+                    get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : string.Empty;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(8, value);
                 }
                 public bool ShouldSerializeStringValue() => __pbn__value.Is(8);
                 public void ResetStringValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 8);
 
                 [global::ProtoBuf.ProtoMember(9, Name = @"extension_value")]
-                public ParameterValueExtension ExtensionValue
+                public ParameterValueExtension? ExtensionValue
                 {
-                    get => __pbn__value.Is(9) ? ((ParameterValueExtension)__pbn__value.Object) : new();
+                    get => __pbn__value.Is(9) ? ((ParameterValueExtension)__pbn__value.Object) : default;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(9, value);
                 }
                 public bool ShouldSerializeExtensionValue() => __pbn__value.Is(9);
                 public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 9);
-
-                public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
-
-                public enum ValueOneofCase
-                {
-                    None = 0,
-                    IntValue = 3,
-                    LongValue = 4,
-                    FloatValue = 5,
-                    DoubleValue = 6,
-                    BooleanValue = 7,
-                    StringValue = 8,
-                    ExtensionValue = 9,
-                }
 
                 [global::ProtoBuf.ProtoContract()]
                 internal partial class ParameterValueExtension : global::ProtoBuf.IExtensible
@@ -163,14 +206,8 @@ namespace SparkplugNet.VersionB.ProtoBuf
                     private global::ProtoBuf.IExtension? __pbn__extensionData;
                     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
                         => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-                    [global::ProtoBuf.ProtoMember(1, Name = @"extensions")]
-                    public global::System.Collections.Generic.List<byte> Extensions { get; set; } = new global::System.Collections.Generic.List<byte>();
-
                 }
-
             }
-
         }
 
         [global::ProtoBuf.ProtoContract()]
@@ -181,19 +218,23 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"num_of_columns")]
-            public ulong NumOfColumns { get; set; }
+            public ulong NumOfColumns
+            {
+                get => __pbn__NumOfColumns.GetValueOrDefault();
+                set => __pbn__NumOfColumns = value;
+            }
+            public bool ShouldSerializeNumOfColumns() => __pbn__NumOfColumns is not null;
+            public void ResetNumOfColumns() => __pbn__NumOfColumns = null;
+            private ulong? __pbn__NumOfColumns;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"columns")]
             public global::System.Collections.Generic.List<string> Columns { get; set; } = new global::System.Collections.Generic.List<string>();
 
-            [global::ProtoBuf.ProtoMember(3, Name = @"types", IsPacked = true)]
+            [global::ProtoBuf.ProtoMember(3, Name = @"types")]
             public uint[] Types { get; set; } = Array.Empty<uint>();
 
             [global::ProtoBuf.ProtoMember(4, Name = @"rows")]
             public global::System.Collections.Generic.List<Row> Rows { get; set; } = new global::System.Collections.Generic.List<Row>();
-
-            [global::ProtoBuf.ProtoMember(5, Name = @"details")]
-            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
 
             [global::ProtoBuf.ProtoContract()]
             internal partial class DataSetValue : global::ProtoBuf.IExtensible
@@ -253,34 +294,20 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 [global::System.ComponentModel.DefaultValue("")]
                 public string StringValue
                 {
-                    get => __pbn__value.Is(6) ? ((string)__pbn__value.Object) : "";
+                    get => __pbn__value.Is(6) ? ((string)__pbn__value.Object) : string.Empty;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(6, value);
                 }
                 public bool ShouldSerializeStringValue() => __pbn__value.Is(6);
                 public void ResetStringValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 6);
 
                 [global::ProtoBuf.ProtoMember(7, Name = @"extension_value")]
-                public DataSetValueExtension ExtensionValue
+                public DataSetValueExtension? ExtensionValue
                 {
-                    get => __pbn__value.Is(7) ? ((DataSetValueExtension)__pbn__value.Object) : new();
+                    get => __pbn__value.Is(7) ? ((DataSetValueExtension)__pbn__value.Object) : default;
                     set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(7, value);
                 }
                 public bool ShouldSerializeExtensionValue() => __pbn__value.Is(7);
                 public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 7);
-
-                public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
-
-                public enum ValueOneofCase
-                {
-                    None = 0,
-                    IntValue = 1,
-                    LongValue = 2,
-                    FloatValue = 3,
-                    DoubleValue = 4,
-                    BooleanValue = 5,
-                    StringValue = 6,
-                    ExtensionValue = 7,
-                }
 
                 [global::ProtoBuf.ProtoContract()]
                 internal partial class DataSetValueExtension : global::ProtoBuf.IExtensible
@@ -288,12 +315,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                     private global::ProtoBuf.IExtension? __pbn__extensionData;
                     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
                         => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-                    [global::ProtoBuf.ProtoMember(1, Name = @"details")]
-                    public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
-
                 }
-
             }
 
             [global::ProtoBuf.ProtoContract()]
@@ -305,12 +327,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
 
                 [global::ProtoBuf.ProtoMember(1, Name = @"elements")]
                 public global::System.Collections.Generic.List<DataSet.DataSetValue> Elements { get; set; } = new global::System.Collections.Generic.List<DataSet.DataSetValue>();
-
-                [global::ProtoBuf.ProtoMember(2, Name = @"details")]
-                public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
-
             }
-
         }
 
         [global::ProtoBuf.ProtoContract()]
@@ -321,10 +338,24 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"type")]
-            public uint Type { get; set; }
+            public uint Type
+            {
+                get => __pbn__Type.GetValueOrDefault();
+                set => __pbn__Type = value;
+            }
+            public bool ShouldSerializeType() => __pbn__Type is not null;
+            public void ResetType() => __pbn__Type = null;
+            private uint? __pbn__Type;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"is_null")]
-            public bool IsNull { get; set; }
+            public bool IsNull
+            {
+                get => __pbn__IsNull.GetValueOrDefault();
+                set => __pbn__IsNull = value;
+            }
+            public bool ShouldSerializeIsNull() => __pbn__IsNull is not null;
+            public void ResetIsNull() => __pbn__IsNull = null;
+            private bool? __pbn__IsNull;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"int_value")]
             public uint IntValue
@@ -377,7 +408,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::System.ComponentModel.DefaultValue("")]
             public string StringValue
             {
-                get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : "";
+                get => __pbn__value.Is(8) ? ((string)__pbn__value.Object) : string.Empty;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(8, value);
             }
             public bool ShouldSerializeStringValue() => __pbn__value.Is(8);
@@ -386,7 +417,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::ProtoBuf.ProtoMember(9, Name = @"propertyset_value")]
             public PropertySet? PropertysetValue
             {
-                get => __pbn__value.Is(9) ? ((PropertySet)__pbn__value.Object) : new();
+                get => __pbn__value.Is(9) ? ((PropertySet)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(9, value);
             }
             public bool ShouldSerializePropertysetValue() => __pbn__value.Is(9);
@@ -395,36 +426,20 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::ProtoBuf.ProtoMember(10, Name = @"propertysets_value")]
             public PropertySetList? PropertysetsValue
             {
-                get => __pbn__value.Is(10) ? ((PropertySetList)__pbn__value.Object) : new();
+                get => __pbn__value.Is(10) ? ((PropertySetList)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(10, value);
             }
             public bool ShouldSerializePropertysetsValue() => __pbn__value.Is(10);
             public void ResetPropertysetsValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 10);
 
             [global::ProtoBuf.ProtoMember(11, Name = @"extension_value")]
-            public PropertyValueExtension ExtensionValue
+            public PropertyValueExtension? ExtensionValue
             {
-                get => __pbn__value.Is(11) ? ((PropertyValueExtension)__pbn__value.Object) : new();
+                get => __pbn__value.Is(11) ? ((PropertyValueExtension)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(11, value);
             }
             public bool ShouldSerializeExtensionValue() => __pbn__value.Is(11);
             public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 11);
-
-            public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
-
-            public enum ValueOneofCase
-            {
-                None = 0,
-                IntValue = 3,
-                LongValue = 4,
-                FloatValue = 5,
-                DoubleValue = 6,
-                BooleanValue = 7,
-                StringValue = 8,
-                PropertysetValue = 9,
-                PropertysetsValue = 10,
-                ExtensionValue = 11,
-            }
 
             [global::ProtoBuf.ProtoContract()]
             internal partial class PropertyValueExtension : global::ProtoBuf.IExtensible
@@ -432,12 +447,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 private global::ProtoBuf.IExtension? __pbn__extensionData;
                 global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
                     => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-                [global::ProtoBuf.ProtoMember(1, Name = @"details")]
-                public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
-
             }
-
         }
 
         [global::ProtoBuf.ProtoContract()]
@@ -452,10 +462,6 @@ namespace SparkplugNet.VersionB.ProtoBuf
 
             [global::ProtoBuf.ProtoMember(2, Name = @"values")]
             public global::System.Collections.Generic.List<PropertyValue> Values { get; set; } = new global::System.Collections.Generic.List<PropertyValue>();
-
-            [global::ProtoBuf.ProtoMember(3, Name = @"details")]
-            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
-
         }
 
         [global::ProtoBuf.ProtoContract()]
@@ -467,10 +473,6 @@ namespace SparkplugNet.VersionB.ProtoBuf
 
             [global::ProtoBuf.ProtoMember(1, Name = @"propertyset")]
             public global::System.Collections.Generic.List<PropertySet> Propertysets { get; set; } = new global::System.Collections.Generic.List<PropertySet>();
-
-            [global::ProtoBuf.ProtoMember(2, Name = @"details")]
-            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
-
         }
 
         [global::ProtoBuf.ProtoContract()]
@@ -481,37 +483,89 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"is_multi_part")]
-            public bool IsMultiPart { get; set; }
+            public bool IsMultiPart
+            {
+                get => __pbn__IsMultiPart.GetValueOrDefault();
+                set => __pbn__IsMultiPart = value;
+            }
+            public bool ShouldSerializeIsMultiPart() => __pbn__IsMultiPart is not null;
+            public void ResetIsMultiPart() => __pbn__IsMultiPart = null;
+            private bool? __pbn__IsMultiPart;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"content_type")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string ContentType { get; set; } = string.Empty;
+            public string ContentType
+            {
+                get => __pbn__ContentType ?? string.Empty;
+                set => __pbn__ContentType = value;
+            }
+            public bool ShouldSerializeContentType() => __pbn__ContentType is not null;
+            public void ResetContentType() => __pbn__ContentType = null;
+            private string? __pbn__ContentType;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"size")]
-            public ulong Size { get; set; }
+            public ulong Size
+            {
+                get => __pbn__Size.GetValueOrDefault();
+                set => __pbn__Size = value;
+            }
+            public bool ShouldSerializeSize() => __pbn__Size is not null;
+            public void ResetSize() => __pbn__Size = null;
+            private ulong? __pbn__Size;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"seq")]
-            public ulong Seq { get; set; }
+            public ulong Seq
+            {
+                get => __pbn__Seq.GetValueOrDefault();
+                set => __pbn__Seq = value;
+            }
+            public bool ShouldSerializeSeq() => __pbn__Seq is not null;
+            public void ResetSeq() => __pbn__Seq = null;
+            private ulong? __pbn__Seq;
 
             [global::ProtoBuf.ProtoMember(5, Name = @"file_name")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string FileName { get; set; } = string.Empty;
+            public string FileName
+            {
+                get => __pbn__FileName ?? string.Empty;
+                set => __pbn__FileName = value;
+            }
+            public bool ShouldSerializeFileName() => __pbn__FileName is not null;
+            public void ResetFileName() => __pbn__FileName = null;
+            private string? __pbn__FileName;
 
             [global::ProtoBuf.ProtoMember(6, Name = @"file_type")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string FileType { get; set; } = string.Empty;
+            public string FileType
+            {
+                get => __pbn__FileType ?? string.Empty;
+                set => __pbn__FileType = value;
+            }
+            public bool ShouldSerializeFileType() => __pbn__FileType is not null;
+            public void ResetFileType() => __pbn__FileType = null;
+            private string? __pbn__FileType;
 
             [global::ProtoBuf.ProtoMember(7, Name = @"md5")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string Md5 { get; set; } = string.Empty;
+            public string Md5
+            {
+                get => __pbn__Md5 ?? string.Empty;
+                set => __pbn__Md5 = value;
+            }
+            public bool ShouldSerializeMd5() => __pbn__Md5 is not null;
+            public void ResetMd5() => __pbn__Md5 = null;
+            private string? __pbn__Md5;
 
             [global::ProtoBuf.ProtoMember(8, Name = @"description")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string Description { get; set; } = string.Empty;
-
-            [global::ProtoBuf.ProtoMember(9, Name = @"details")]
-            public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
-
+            public string Description
+            {
+                get => __pbn__Description ?? string.Empty;
+                set => __pbn__Description = value;
+            }
+            public bool ShouldSerializeDescription() => __pbn__Description is not null;
+            public void ResetDescription() => __pbn__Description = null;
+            private string? __pbn__Description;
         }
 
         [global::ProtoBuf.ProtoContract()]
@@ -523,31 +577,80 @@ namespace SparkplugNet.VersionB.ProtoBuf
 
             [global::ProtoBuf.ProtoMember(1, Name = @"name")]
             [global::System.ComponentModel.DefaultValue("")]
-            public string Name { get; set; } = string.Empty;
+            public string Name
+            {
+                get => __pbn__Name ?? string.Empty;
+                set => __pbn__Name = value;
+            }
+            public bool ShouldSerializeName() => __pbn__Name is not null;
+            public void ResetName() => __pbn__Name = null;
+            private string? __pbn__Name;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"alias")]
-            public ulong Alias { get; set; }
+            public ulong Alias
+            {
+                get => __pbn__Alias.GetValueOrDefault();
+                set => __pbn__Alias = value;
+            }
+            public bool ShouldSerializeAlias() => __pbn__Alias is not null;
+            public void ResetAlias() => __pbn__Alias = null;
+            private ulong? __pbn__Alias;
 
             [global::ProtoBuf.ProtoMember(3, Name = @"timestamp")]
-            public ulong Timestamp { get; set; }
+            public ulong Timestamp
+            {
+                get => __pbn__Timestamp.GetValueOrDefault();
+                set => __pbn__Timestamp = value;
+            }
+            public bool ShouldSerializeTimestamp() => __pbn__Timestamp is not null;
+            public void ResetTimestamp() => __pbn__Timestamp = null;
+            private ulong? __pbn__Timestamp;
 
             [global::ProtoBuf.ProtoMember(4, Name = @"datatype")]
-            public uint Datatype { get; set; }
+            public uint Datatype
+            {
+                get => __pbn__Datatype.GetValueOrDefault();
+                set => __pbn__Datatype = value;
+            }
+            public bool ShouldSerializeDatatype() => __pbn__Datatype is not null;
+            public void ResetDatatype() => __pbn__Datatype = null;
+            private uint? __pbn__Datatype;
 
             [global::ProtoBuf.ProtoMember(5, Name = @"is_historical")]
-            public bool IsHistorical { get; set; }
+            public bool IsHistorical
+            {
+                get => __pbn__IsHistorical.GetValueOrDefault();
+                set => __pbn__IsHistorical = value;
+            }
+            public bool ShouldSerializeIsHistorical() => __pbn__IsHistorical is not null;
+            public void ResetIsHistorical() => __pbn__IsHistorical = null;
+            private bool? __pbn__IsHistorical;
 
             [global::ProtoBuf.ProtoMember(6, Name = @"is_transient")]
-            public bool IsTransient { get; set; }
+            public bool IsTransient
+            {
+                get => __pbn__IsTransient.GetValueOrDefault();
+                set => __pbn__IsTransient = value;
+            }
+            public bool ShouldSerializeIsTransient() => __pbn__IsTransient is not null;
+            public void ResetIsTransient() => __pbn__IsTransient = null;
+            private bool? __pbn__IsTransient;
 
             [global::ProtoBuf.ProtoMember(7, Name = @"is_null")]
-            public bool IsNull { get; set; }
+            public bool IsNull
+            {
+                get => __pbn__IsNull.GetValueOrDefault();
+                set => __pbn__IsNull = value;
+            }
+            public bool ShouldSerializeIsNull() => __pbn__IsNull is not null;
+            public void ResetIsNull() => __pbn__IsNull = null;
+            private bool? __pbn__IsNull;
 
             [global::ProtoBuf.ProtoMember(8, Name = @"metadata")]
-            public MetaData? Metadata { get; set; } = new();
+            public MetaData? Metadata { get; set; }
 
             [global::ProtoBuf.ProtoMember(9, Name = @"properties")]
-            public PropertySet? Properties { get; set; } = new();
+            public PropertySet? Properties { get; set; }
 
             [global::ProtoBuf.ProtoMember(10, Name = @"int_value")]
             public uint IntValue
@@ -600,7 +703,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::System.ComponentModel.DefaultValue("")]
             public string StringValue
             {
-                get => __pbn__value.Is(15) ? ((string)__pbn__value.Object) : "";
+                get => __pbn__value.Is(15) ? ((string)__pbn__value.Object) : string.Empty;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(15, value);
             }
             public bool ShouldSerializeStringValue() => __pbn__value.Is(15);
@@ -616,9 +719,9 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetBytesValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 16);
 
             [global::ProtoBuf.ProtoMember(17, Name = @"dataset_value")]
-            public DataSet DatasetValue
+            public DataSet? DatasetValue
             {
-                get => __pbn__value.Is(17) ? ((DataSet)__pbn__value.Object) : new();
+                get => __pbn__value.Is(17) ? ((DataSet)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(17, value);
             }
             public bool ShouldSerializeDatasetValue() => __pbn__value.Is(17);
@@ -627,7 +730,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::ProtoBuf.ProtoMember(18, Name = @"template_value")]
             public Template? TemplateValue
             {
-                get => __pbn__value.Is(18) ? ((Template)__pbn__value.Object) : new();
+                get => __pbn__value.Is(18) ? ((Template)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(18, value);
             }
             public bool ShouldSerializeTemplateValue() => __pbn__value.Is(18);
@@ -636,28 +739,11 @@ namespace SparkplugNet.VersionB.ProtoBuf
             [global::ProtoBuf.ProtoMember(19, Name = @"extension_value")]
             public MetricValueExtension? ExtensionValue
             {
-                get => __pbn__value.Is(19) ? ((MetricValueExtension)__pbn__value.Object) : new();
+                get => __pbn__value.Is(19) ? ((MetricValueExtension)__pbn__value.Object) : default;
                 set => __pbn__value = new global::ProtoBuf.DiscriminatedUnion64Object(19, value);
             }
             public bool ShouldSerializeExtensionValue() => __pbn__value.Is(19);
             public void ResetExtensionValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref __pbn__value, 19);
-
-            public ValueOneofCase ValueCase => (ValueOneofCase)__pbn__value.Discriminator;
-
-            public enum ValueOneofCase
-            {
-                None = 0,
-                IntValue = 10,
-                LongValue = 11,
-                FloatValue = 12,
-                DoubleValue = 13,
-                BooleanValue = 14,
-                StringValue = 15,
-                BytesValue = 16,
-                DatasetValue = 17,
-                TemplateValue = 18,
-                ExtensionValue = 19,
-            }
 
             [global::ProtoBuf.ProtoContract()]
             internal partial class MetricValueExtension : global::ProtoBuf.IExtensible
@@ -665,16 +751,51 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 private global::ProtoBuf.IExtension? __pbn__extensionData;
                 global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
                     => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-
-                [global::ProtoBuf.ProtoMember(1, Name = @"details")]
-                public global::System.Collections.Generic.List<byte> Details { get; set; } = new global::System.Collections.Generic.List<byte>();
-
             }
-
         }
     }
-}
 
+    [global::ProtoBuf.ProtoContract()]
+    public enum DataType
+    {
+        Unknown = 0,
+        Int8 = 1,
+        Int16 = 2,
+        Int32 = 3,
+        Int64 = 4,
+        UInt8 = 5,
+        UInt16 = 6,
+        UInt32 = 7,
+        UInt64 = 8,
+        Float = 9,
+        Double = 10,
+        Boolean = 11,
+        String = 12,
+        DateTime = 13,
+        Text = 14,
+        [global::ProtoBuf.ProtoEnum(Name = @"UUID")]
+        Uuid = 15,
+        DataSet = 16,
+        Bytes = 17,
+        File = 18,
+        Template = 19,
+        PropertySet = 20,
+        PropertySetList = 21,
+        Int8Array = 22,
+        Int16Array = 23,
+        Int32Array = 24,
+        Int64Array = 25,
+        UInt8Array = 26,
+        UInt16Array = 27,
+        UInt32Array = 28,
+        UInt64Array = 29,
+        FloatArray = 30,
+        DoubleArray = 31,
+        BooleanArray = 32,
+        StringArray = 33,
+        DateTimeArray = 34,
+    }
+}
 #nullable disable
 #pragma warning restore CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
 #endregion
