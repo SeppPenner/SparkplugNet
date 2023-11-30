@@ -16,14 +16,13 @@ FOR /d /r . %%d in (bin,obj) DO (
 
 @ECHO on
 @ECHO.Building solution...
-cd .\SparkplugNet
-@dotnet build -c Release -o bin/publish
-@ECHO.Deleting *.pdb files...
-@cd bin/publish
-@del *.pdb
+@dotnet restore
+@dotnet build -c Release
+@cd .\SparkplugNet\bin\Release
 @ECHO.Build successful.
-
 dotnet nuget push *.nupkg -s "nuget.org" --skip-duplicate -k "%NUGET_API_KEY%"
+dotnet nuget push *.snupkg -s "nuget.org" --skip-duplicate -k "%NUGET_API_KEY%"
 dotnet nuget push *.nupkg -s "github" --skip-duplicate --api-key "%GITHUB_API_KEY%"
+dotnet nuget push *.snupkg -s "github" --skip-duplicate --api-key "%GITHUB_API_KEY%"
 @ECHO.Upload success. Press any key to exit.
 PAUSE
