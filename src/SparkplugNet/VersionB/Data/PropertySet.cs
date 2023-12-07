@@ -23,9 +23,4 @@ public class PropertySet
     /// Gets or sets the values.
     /// </summary>
     public List<PropertyValue> Values { get; set; } = new();
-
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
 }

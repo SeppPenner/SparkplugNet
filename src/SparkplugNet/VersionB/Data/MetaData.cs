@@ -58,9 +58,4 @@ public class MetaData
     /// </summary>
     [DefaultValue("")]
     public string Description { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
 }

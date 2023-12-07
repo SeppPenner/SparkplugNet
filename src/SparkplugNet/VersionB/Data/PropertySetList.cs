@@ -18,9 +18,4 @@ public class PropertySetList
     /// Gets or sets the property sets.
     /// </summary>
     public List<PropertySet> PropertySets { get; set; } = new();
-
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
 }

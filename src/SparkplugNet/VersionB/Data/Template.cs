@@ -40,9 +40,4 @@ public class Template
     /// Gets or sets a value indicating whether the template is a definition or not.
     /// </summary>
     public bool IsDefinition { get; set; }
-
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
 }

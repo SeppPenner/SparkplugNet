@@ -18,9 +18,4 @@ public class Row
     /// Gets or sets the elements.
     /// </summary>
     public List<DataSetValue> Elements { get; set; } = new();
-
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
 }

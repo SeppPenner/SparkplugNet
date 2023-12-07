@@ -35,11 +35,6 @@ public class DataSet
     public List<Row> Rows { get; set; } = new();
 
     /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
-
-    /// <summary>
     /// Initializes the DataSet
     /// </summary>
     public DataSet()

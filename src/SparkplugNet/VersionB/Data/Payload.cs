@@ -38,10 +38,5 @@ public class Payload
     /// <summary>
     /// Get sor sets the body.
     /// </summary>
-    public byte[]? Body { get; set; }
-
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
+    public byte[] Body { get; set; } = Array.Empty<byte>();
 }
