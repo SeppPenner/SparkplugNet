@@ -5,14 +5,14 @@ Using applications:
 ```csharp
 private readonly List<KuraMetric> VersionAMetrics = new ()
 {
-	new ()
-	{
-		Name = "Test", Type = DataType.Double, DoubleValue = 1.20
-	},
-	new ()
-	{
-		Name = "Test2", Type = DataType.Bool, BoolValue = true
-	}
+    new ()
+    {
+        Name = "Test", Type = DataType.Double, DoubleValue = 1.20
+    },
+    new ()
+    {
+        Name = "Test2", Type = DataType.Bool, BoolValue = true
+    }
 };
 
 var applicationMetrics = new List<KuraMetric>(VersionAMetrics);
@@ -51,17 +51,17 @@ var isApplicationConnected = application.IsConnected;
 
 private void OnApplicationDisconnected()
 {
-	// Do something.
+    // Do something.
 }
 
 private static void OnVersionANodeDataReceived(KuraMetric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 private static void OnVersionADeviceDataReceived(KuraMetric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 // Stopping an application.
@@ -72,14 +72,14 @@ Using nodes:
 ```csharp
 private readonly List<KuraMetric> VersionAMetrics = new ()
 {
-	new ()
-	{
-		Name = "Test", Type = DataType.Double, DoubleValue = 1.20
-	},
-	new ()
-	{
-		Name = "Test2", Type = DataType.Bool, BoolValue = true
-	}
+    new ()
+    {
+        Name = "Test", Type = DataType.Double, DoubleValue = 1.20
+    },
+    new ()
+    {
+        Name = "Test2", Type = DataType.Bool, BoolValue = true
+    }
 };
 
 var nodeMetrics = new List<KuraMetric>(VersionAMetrics);
@@ -103,7 +103,7 @@ node.OnDisconnected += OnVersionANodeDisconnected;
 
 private void OnVersionANodeDisconnected()
 {
-	// Do something.
+    // Do something.
 }
 
 // Handle the node's node command received event.
@@ -111,7 +111,7 @@ node.NodeCommandReceived += OnVersionANodeNodeCommandReceived;
 
 private void OnVersionANodeNodeCommandReceived(Metric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 // Handles the node's status message received event.
@@ -119,7 +119,7 @@ node.StatusMessageReceived += OnVersionANodeStatusMessageReceived;
 
 private void OnVersionANodeStatusMessageReceived(string status)
 {
-	// Do something.
+    // Do something.
 }
 
 // Get the known devices.
@@ -143,7 +143,7 @@ node.DeviceBirthReceived += OnVersionANodeDeviceBirthReceived;
 
 private void OnVersionANodeDeviceBirthReceived(KeyValuePair<string, List<KuraMetric>> deviceData)
 {
-	// Do something.
+    // Do something.
 }
 
 // Handle the node's device command received event.
@@ -151,7 +151,7 @@ node.DeviceCommandReceived += OnVersionANodeDeviceCommandReceived;
 
 private void OnVersionANodeDeviceCommandReceived(KuraMetric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 // Handle the node's device death received event.
@@ -159,7 +159,7 @@ node.DeviceDeathReceived += OnVersionANodeDeviceDeathReceived;
 
 private void OnVersionANodeDeviceDeathReceived(string deviceIdentifier)
 {
-	// Do something.
+    // Do something.
 }
 
 // Stopping a node.
@@ -171,15 +171,15 @@ Using applications:
 ```csharp
 private readonly List<Metric> VersionBMetrics = new ()
 {
-	new Metric
-	{
-		Name = "Test", DataType = (uint)DataType.Double, DoubleValue = 1.20
-	},
-	new Metric
-	{
-		Name = "Test2",
-		DataType = (uint)DataType.Boolean, BooleanValue = true
-	}
+    new Metric
+    {
+        Name = "Test", DataType = (uint)DataType.Double, DoubleValue = 1.20
+    },
+    new Metric
+    {
+        Name = "Test2",
+        DataType = (uint)DataType.Boolean, BooleanValue = true
+    }
 };
 
 var applicationMetrics = new List<Metric>(VersionBMetrics);
@@ -218,17 +218,17 @@ var isApplicationConnected = application.IsConnected;
 
 private void OnApplicationDisconnected()
 {
-	// Do something.
+    // Do something.
 }
 
 private static void OnVersionBNodeDataReceived(Metric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 private static void OnVersionBDeviceDataReceived(Metric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 // Stopping an application.
@@ -239,14 +239,14 @@ Using nodes:
 ```csharp
 private readonly List<Metric> VersionBMetrics = new ()
 {
-	new ()
-	{
-		Name = "Test", Type = DataType.Double, DoubleValue = 1.20
-	},
-	new ()
-	{
-		Name = "Test2", Type = DataType.Bool, BoolValue = true
-	}
+    new ()
+    {
+        Name = "Test", Type = DataType.Double, DoubleValue = 1.20
+    },
+    new ()
+    {
+        Name = "Test2", Type = DataType.Bool, BoolValue = true
+    }
 };
 
 var nodeMetrics = new List<Metric>(VersionBMetrics);
@@ -270,7 +270,7 @@ node.OnDisconnected += OnVersionBNodeDisconnected;
 
 private void OnVersionBNodeDisconnected()
 {
-	// Do something.
+    // Do something.
 }
 
 // Handle the node's node command received event.
@@ -278,7 +278,7 @@ node.NodeCommandReceived += OnVersionBNodeNodeCommandReceived;
 
 private void OnVersionBNodeNodeCommandReceived(Metric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 // Handles the node's status message received event.
@@ -286,7 +286,7 @@ node.StatusMessageReceived += OnVersionBNodeStatusMessageReceived;
 
 private void OnVersionBNodeStatusMessageReceived(string status)
 {
-	// Do something.
+    // Do something.
 }
 
 // Get the known devices.
@@ -310,7 +310,7 @@ node.DeviceBirthReceived += OnVersionBNodeDeviceBirthReceived;
 
 private void OnVersionBNodeDeviceBirthReceived(KeyValuePair<string, List<Metric>> deviceData)
 {
-	// Do something.
+    // Do something.
 }
 
 // Handle the node's device command received event.
@@ -318,7 +318,7 @@ node.DeviceCommandReceived += OnVersionBNodeDeviceCommandReceived;
 
 private void OnVersionBNodeDeviceCommandReceived(Metric metric)
 {
-	// Do something.
+    // Do something.
 }
 
 // Handle the node's device death received event.
@@ -326,7 +326,7 @@ node.DeviceDeathReceived += OnVersionBNodeDeviceDeathReceived;
 
 private void OnVersionBNodeDeviceDeathReceived(string deviceIdentifier)
 {
-	// Do something.
+    // Do something.
 }
 
 // Stopping a node.
