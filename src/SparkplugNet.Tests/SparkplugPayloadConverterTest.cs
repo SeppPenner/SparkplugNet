@@ -81,7 +81,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeDataSetValueFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeDataSetValue(new VersionBProtoBufPayload.DataSet.DataSetValue.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionBProtoBufPayload.DataSet.DataSetValue.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -91,7 +91,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeDataSetValueToProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeDataSetValue(new VersionB.Data.DataType());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionB.Data.DataType());
         Assert.IsNotNull(payload);
     }
 
@@ -101,7 +101,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeMetricFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeMetric(new VersionBProtoBufPayload.Metric.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionBProtoBufPayload.Metric.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -111,7 +111,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeMetricToProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeMetric(new VersionB.Data.DataType());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionB.Data.DataType());
         Assert.IsNotNull(payload);
     }
 
@@ -121,7 +121,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeParameterFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeParameter(new VersionBProtoBufPayload.Template.Parameter.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionBProtoBufPayload.Template.Parameter.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -131,7 +131,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeParameterToProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypeParameter(new VersionB.Data.DataType());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionB.Data.DataType());
         Assert.IsNotNull(payload);
     }
 
@@ -141,7 +141,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypePropertyValueFromProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypePropertyValue(new VersionBProtoBufPayload.PropertyValue.ValueOneofCase());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionBProtoBufPayload.PropertyValue.ValueOneofCase());
         Assert.IsNotNull(payload);
     }
 
@@ -151,7 +151,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypePropertyValueToProto()
     {
-        var payload = PayloadConverter.ConvertVersionBDataTypePropertyValue(new VersionB.Data.DataType());
+        var payload = PayloadConverter.ConvertVersionBDataType(new VersionB.Data.DataType());
         Assert.IsNotNull(payload);
     }
 
