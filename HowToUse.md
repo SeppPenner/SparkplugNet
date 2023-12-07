@@ -332,3 +332,6 @@ private void OnVersionBNodeDeviceDeathReceived(string deviceIdentifier)
 // Stopping a node.
 await node.Stop();
 ```
+
+## Connection via WebSocket to MQTT server
+As discussed in https://github.com/SeppPenner/SparkplugNet/issues/52, I don't want to stop using 1883 as default port. Therefore, when using WebSockets, you need to specify the complete url (e.g. `mqtt.eclipseprojects.io:443/mqtt` or maybe `test.something.com:443`) as option for `BrokerAddress`. `Port` is ignored in this case.
