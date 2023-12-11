@@ -51,14 +51,15 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 
 ## Recommended brokers
 * [MQTTnet.Server](https://github.com/chkr1011/MQTTnet.Server) for simple MQTT testing.
-* [HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Sparkplug InfluxDB Extension](https://github.com/hivemq/hivemq-sparkplug-influxdb-extension/) for Sparkplug testing.
-* [Ignition](https://inductiveautomation.com/ignition/) for Sparkplug testing.
+* [HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Eclipse™ Sparkplug™ Technology Compatibility Kit](https://github.com/eclipse-sparkplug/sparkplug/blob/develop/tck/UserGuide.adoc) for Sparkplug testing, following also issue https://github.com/SeppPenner/SparkplugNet/issues/39 for more details.
 
 ## Recommended clients
 * [MQTT.fx](http://www.mqttfx.jensd.de/) has a Sparkplug data decoder. The binaries for version 1.7.1 can also be taken from https://github.com/SeppPenner/mqttfx171-backup (The software is now under development by a company and requires a license for version 1.7.1+).
+* [mqttMultimeter](https://github.com/chkr1011/mqttMultimeter) for general MQTT debugging. I guess, a Sparkplug decoder could be added once this library here is up-to-date.
+* [MQTTExplorer](https://mqtt-explorer.com/) for general MQTT debugging.
 
 ## Supported Sparkplug standards
-* Version 1.3.0 and above: Sparkplug, version 3.0, spBv1.0.
+* Version 1.3.0 and above: Sparkplug, version 3.0, spAv1.0 (Marked as obsolete) and spBv1.0.
 * Version 1.2.0 and below: Sparkplug, version 2.2, spAv1.0 and spBv1.0.
 
 ## Special notes
