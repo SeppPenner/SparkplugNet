@@ -37,7 +37,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="MQTTnet" Version="4.3.2.930" />
+        <PackageReference Include="MQTTnet" Version="4.3.3.952" />
         <PackageReference Include="protobuf-net" Version="3.2.30" />
         <PackageReference Include="Serilog" Version="3.1.1" />
     </ItemGroup>
