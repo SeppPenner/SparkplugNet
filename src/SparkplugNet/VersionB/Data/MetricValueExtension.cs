@@ -14,8 +14,4 @@ namespace SparkplugNet.VersionB.Data;
 /// </summary>
 public class MetricValueExtension
 {
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    public List<byte> Details { get; set; } = new();
 }

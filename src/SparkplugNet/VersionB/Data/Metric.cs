@@ -116,9 +116,9 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the data set value.
     /// </summary>
-    public DataSet DataSetValue
+    public DataSet? DataSetValue
     {
-        get => this.dataSetValue ?? new();
+        get => this.dataSetValue;
         set
         {
             this.dataSetValue = value;

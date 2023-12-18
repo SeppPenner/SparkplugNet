@@ -56,13 +56,13 @@ public class SparkplugNodeSequentialTest
             Password,
             false,
             MqttServerUnderTest.ScadaHostIdentifier,
+            TimeSpan.FromSeconds(30),
+            SparkplugMqttProtocolVersion.V311,
+            null,
+            null,
+            null,
             GroupIdentifier,
             EdgeNodeIdentifier,
-            MqttProtocolVersion.V311,
-            MqttQualityOfServiceLevel.AtMostOnce,
-            TimeSpan.FromSeconds(30),
-            null,
-            null,
             this.cancellationTokenSource.Token);
         metrics = GetTestMetrics();
 
