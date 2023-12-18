@@ -1,6 +1,7 @@
 Change history
 --------------
 
+* **Version 1.3.0.0 (2023-12-18)**: Removed support for NetCore3.1, added support for Net8.0, updated NuGet packages, tried to get towards 3.0 compatibility, updated supported data types and adjusted data type handling (Use carefully, not yet fully tested).
 * **Version 1.2.0.0 (2022-11-20)**: Updated nuget packages, removed support for Net5.0, added support for Net7.0, fixed a bug with the device storage (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/31).
 * **Version 1.1.1.0 (2022-10-30)** : Fixed a bug within the metric conversion (Thanks to @49564B0F, https://github.com/SeppPenner/SparkplugNet/issues/30), fixed a bug with the device metrics on publishing (Thanks to @emmanuelbertho, https://github.com/SeppPenner/SparkplugNet/issues/28), unified even more things (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/29), updated NuGet packages.
 * **Version 1.1.0.0 (2022-10-04)** : Updated events (Thanks to @cjmurph, https://github.com/SeppPenner/SparkplugNet/pull/19), added abstract base classes (Thanks to @BoBiene, https://github.com/SeppPenner/SparkplugNet/pull/20), introducing interfaces, unified things, rework to async events (Thanks to @BoBiene, https://github.com/SeppPenner/SparkplugNet/pull/21), fixed version B metric conversion error (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/26), updated NuGet packages.
