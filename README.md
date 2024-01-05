@@ -17,7 +17,7 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?logo=paypal&logoColor=white)](https://paypal.me/th070795)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Available for
@@ -104,6 +104,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/geraldasp"><img src="https://avatars.githubusercontent.com/u/1334535?v=4?s=100" width="100px;" alt="Gerald Asp"/><br /><sub><b>Gerald Asp</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=geraldasp" title="Tests">⚠️</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=geraldasp" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/adityashahazilen"><img src="https://avatars.githubusercontent.com/u/132545158?v=4?s=100" width="100px;" alt="adityashahazilen"/><br /><sub><b>adityashahazilen</b></sub></a><br /><a href="https://github.com/SeppPenner/SparkplugNet/commits?author=adityashahazilen" title="Tests">⚠️</a> <a href="https://github.com/SeppPenner/SparkplugNet/commits?author=adityashahazilen" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
