@@ -144,6 +144,9 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
 
+        // Todo: Check if this might be needed / should be done in another way.
+        //this.KnownMetricsStorage.ValidateIncomingMetrics(metricsWithoutSequenceMetric);
+
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
