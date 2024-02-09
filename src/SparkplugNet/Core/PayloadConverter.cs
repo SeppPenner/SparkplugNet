@@ -329,18 +329,48 @@ internal static class PayloadConverter
     /// <param name="dataSetValue">The <see cref="DataSetValue"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue"/>.</returns>
     private static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue ConvertVersionBDataSetValue(DataSetValue dataSetValue)
-        => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+        => dataSetValue.DataType switch
         {
-            BooleanValue = dataSetValue.BooleanValue,
-            DoubleValue = dataSetValue.DoubleValue,
-            // Todo: How to handle this properly?
-            ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+            VersionBDataTypeEnum.Int8
+                or VersionBDataTypeEnum.Int16
+                or VersionBDataTypeEnum.Int32
+                or VersionBDataTypeEnum.UInt8
+                or VersionBDataTypeEnum.UInt16
+                or VersionBDataTypeEnum.UInt32 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    IntValue = dataSetValue.IntValue
+                },
+            VersionBDataTypeEnum.Int64
+                or VersionBDataTypeEnum.UInt64
+                or VersionBDataTypeEnum.DateTime => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    LongValue = dataSetValue.LongValue
+                },
+            VersionBDataTypeEnum.Float => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
+                FloatValue = dataSetValue.FloatValue
             },
-            FloatValue = dataSetValue.FloatValue,
-            IntValue = dataSetValue.IntValue,
-            LongValue = dataSetValue.LongValue,
-            StringValue = dataSetValue.StringValue
+            VersionBDataTypeEnum.Double => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+            {
+                DoubleValue = dataSetValue.DoubleValue
+            },
+            VersionBDataTypeEnum.Boolean => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+            {
+                BooleanValue = dataSetValue.BooleanValue
+            },
+            VersionBDataTypeEnum.String
+                or VersionBDataTypeEnum.Text
+                or VersionBDataTypeEnum.Uuid => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    StringValue = dataSetValue.StringValue
+                },
+            VersionBDataTypeEnum.Unknown
+                or _ => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
+                {
+                    ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
+                    {
+                    }
+                }
         };
 
     /// <summary>
@@ -525,7 +555,7 @@ internal static class PayloadConverter
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</returns>
     private static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(Metric metric)
     {
-        return new()
+        VersionBProtoBuf.ProtoBufPayload.Metric pbMetric = new()
         {
             Alias = metric.Alias,
             Datatype = metric.ValueCase,
@@ -535,20 +565,59 @@ internal static class PayloadConverter
             Metadata = ConvertVersionBMetaData(metric.Metadata),
             Name = metric.Name,
             Properties = ConvertVersionBPropertySet(metric.Properties),
-            Timestamp = metric.Timestamp,
-            DatasetValue = ConvertVersionBDataSet(metric.DataSetValue),
-            BooleanValue = metric.BooleanValue,
-            BytesValue = metric.BytesValue,
-            DoubleValue = metric.DoubleValue,
-            // Todo: How to handle this properly?
-            ExtensionValue = (metric.ExtensionValue is null) ? null :
-                new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension { },
-            FloatValue = metric.FloatValue,
-            IntValue = metric.IntValue,
-            LongValue = metric.LongValue,
-            StringValue = metric.StringValue,
-            TemplateValue = ConvertVersionBTemplate(metric.TemplateValue)
+            Timestamp = metric.Timestamp
         };
+
+        switch (metric.DataType)
+        {
+            case VersionBDataTypeEnum.Int8:
+            case VersionBDataTypeEnum.Int16:
+            case VersionBDataTypeEnum.Int32:
+            case VersionBDataTypeEnum.UInt8:
+            case VersionBDataTypeEnum.UInt16:
+            case VersionBDataTypeEnum.UInt32:
+                pbMetric.IntValue = metric.IntValue;
+                break;
+            case VersionBDataTypeEnum.Int64:
+            case VersionBDataTypeEnum.UInt64:
+            case VersionBDataTypeEnum.DateTime:
+                pbMetric.LongValue = metric.LongValue;
+                break;
+            case VersionBDataTypeEnum.Float:
+                pbMetric.FloatValue = metric.FloatValue;
+                break;
+            case VersionBDataTypeEnum.Double:
+                pbMetric.DoubleValue = metric.DoubleValue;
+                break;
+            case VersionBDataTypeEnum.Boolean:
+                pbMetric.BooleanValue = metric.BooleanValue;
+                break;
+            case VersionBDataTypeEnum.String:
+            case VersionBDataTypeEnum.Text:
+            case VersionBDataTypeEnum.Uuid:
+                pbMetric.StringValue = metric.StringValue;
+                break;
+            case VersionBDataTypeEnum.DataSet:
+                pbMetric.DatasetValue = ConvertVersionBDataSet(metric.DataSetValue);
+                break;
+            case VersionBDataTypeEnum.Template:
+                pbMetric.TemplateValue = ConvertVersionBTemplate(metric.TemplateValue);
+                break;
+            case VersionBDataTypeEnum.Bytes:
+                pbMetric.BytesValue = metric.BytesValue;
+                break;
+            case VersionBDataTypeEnum.Unknown:
+            case VersionBDataTypeEnum.File:
+            case VersionBDataTypeEnum.PropertySet:
+            case VersionBDataTypeEnum.PropertySetList:
+            default:
+                pbMetric.ExtensionValue = (metric.ExtensionValue is null)
+                    ? null
+                    : new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension { };
+                break;
+        }
+
+        return pbMetric;
     }
 
     /// <summary>
