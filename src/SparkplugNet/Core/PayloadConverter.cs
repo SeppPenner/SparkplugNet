@@ -370,6 +370,20 @@ internal static class PayloadConverter
             or VersionBDataTypeEnum.Template
             or VersionBDataTypeEnum.PropertySet
             or VersionBDataTypeEnum.PropertySetList
+            or VersionBDataTypeEnum.Int8Array
+            or VersionBDataTypeEnum.Int16Array
+            or VersionBDataTypeEnum.Int32Array
+            or VersionBDataTypeEnum.Int64Array
+            or VersionBDataTypeEnum.UInt8Array
+            or VersionBDataTypeEnum.UInt16Array
+            or VersionBDataTypeEnum.UInt32Array
+            or VersionBDataTypeEnum.UInt64Array
+            or VersionBDataTypeEnum.FloatArray
+            or VersionBDataTypeEnum.DoubleArray
+            or VersionBDataTypeEnum.BooleanArray
+            or VersionBDataTypeEnum.StringArray
+            or VersionBDataTypeEnum.DateTimeArray
+
             or _ => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
                 ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension
@@ -531,13 +545,33 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Uuid:
                 pbTplParam.StringValue = parameter.StringValue;
                 break;
-            case VersionBDataTypeEnum.Unknown:
-            case VersionBDataTypeEnum.DataSet:
-            case VersionBDataTypeEnum.Bytes:
-            case VersionBDataTypeEnum.File:
-            case VersionBDataTypeEnum.Template:
-            case VersionBDataTypeEnum.PropertySet:
-            case VersionBDataTypeEnum.PropertySetList:
+            case VersionBDataTypeEnum.Unknown
+                 or VersionBDataTypeEnum.DataSet
+                 or VersionBDataTypeEnum.Bytes
+                 or VersionBDataTypeEnum.File
+                 or VersionBDataTypeEnum.Template
+                 or VersionBDataTypeEnum.PropertySet
+                 or VersionBDataTypeEnum.PropertySetList
+                 or VersionBDataTypeEnum.Int8Array
+                 or VersionBDataTypeEnum.Int16Array
+                 or VersionBDataTypeEnum.Int32Array
+                 or VersionBDataTypeEnum.Int64Array
+                 or VersionBDataTypeEnum.UInt8Array
+                 or VersionBDataTypeEnum.UInt16Array
+                 or VersionBDataTypeEnum.UInt32Array
+                 or VersionBDataTypeEnum.UInt64Array
+                 or VersionBDataTypeEnum.FloatArray
+                 or VersionBDataTypeEnum.DoubleArray
+                 or VersionBDataTypeEnum.BooleanArray
+                 or VersionBDataTypeEnum.StringArray
+                 or VersionBDataTypeEnum.DateTimeArray:
+                pbTplParam.ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
+                {
+                    // Todo: How to handle this properly as there is no more extensions?
+                    //Extensions = parameter.ExtensionValue.Extensions
+                };
+                pbTplParam.StringValue = parameter.StringValue;
+                break;
             default:
                 pbTplParam.ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.Template.Parameter.ParameterValueExtension
                 {
@@ -643,10 +677,33 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Bytes:
                 pbMetric.BytesValue = metric.BytesValue;
                 break;
-            case VersionBDataTypeEnum.Unknown:
-            case VersionBDataTypeEnum.File:
-            case VersionBDataTypeEnum.PropertySet:
-            case VersionBDataTypeEnum.PropertySetList:
+            case VersionBDataTypeEnum.Unknown
+                 or VersionBDataTypeEnum.DataSet
+                 or VersionBDataTypeEnum.Bytes
+                 or VersionBDataTypeEnum.File
+                 or VersionBDataTypeEnum.Template
+                 or VersionBDataTypeEnum.PropertySet
+                 or VersionBDataTypeEnum.PropertySetList
+                 or VersionBDataTypeEnum.Int8Array
+                 or VersionBDataTypeEnum.Int16Array
+                 or VersionBDataTypeEnum.Int32Array
+                 or VersionBDataTypeEnum.Int64Array
+                 or VersionBDataTypeEnum.UInt8Array
+                 or VersionBDataTypeEnum.UInt16Array
+                 or VersionBDataTypeEnum.UInt32Array
+                 or VersionBDataTypeEnum.UInt64Array
+                 or VersionBDataTypeEnum.FloatArray
+                 or VersionBDataTypeEnum.DoubleArray
+                 or VersionBDataTypeEnum.BooleanArray
+                 or VersionBDataTypeEnum.StringArray
+                 or VersionBDataTypeEnum.DateTimeArray:
+                pbMetric.ExtensionValue = (metric.ExtensionValue is null) ? null :
+                   new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
+                   {
+                       // Todo: How to handle this properly as there is no more details?
+                       //Details = metric.ExtensionValue.Details
+                   };
+                break;
             default:
                 pbMetric.ExtensionValue = (metric.ExtensionValue is null) ? null :
                     new VersionBProtoBuf.ProtoBufPayload.Metric.MetricValueExtension
@@ -797,11 +854,32 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.PropertySetList:
                 pbPropValue.PropertysetsValue = ConvertVersionBPropertySetList(propertyValue.PropertySetsValue);
                 break;
-            case VersionBDataTypeEnum.DataSet:
-            case VersionBDataTypeEnum.Template:
-            case VersionBDataTypeEnum.Bytes:
-            case VersionBDataTypeEnum.Unknown:
-            case VersionBDataTypeEnum.File:
+            case VersionBDataTypeEnum.Unknown
+                 or VersionBDataTypeEnum.DataSet
+                 or VersionBDataTypeEnum.Bytes
+                 or VersionBDataTypeEnum.File
+                 or VersionBDataTypeEnum.Template
+                 or VersionBDataTypeEnum.PropertySet
+                 or VersionBDataTypeEnum.PropertySetList
+                 or VersionBDataTypeEnum.Int8Array
+                 or VersionBDataTypeEnum.Int16Array
+                 or VersionBDataTypeEnum.Int32Array
+                 or VersionBDataTypeEnum.Int64Array
+                 or VersionBDataTypeEnum.UInt8Array
+                 or VersionBDataTypeEnum.UInt16Array
+                 or VersionBDataTypeEnum.UInt32Array
+                 or VersionBDataTypeEnum.UInt64Array
+                 or VersionBDataTypeEnum.FloatArray
+                 or VersionBDataTypeEnum.DoubleArray
+                 or VersionBDataTypeEnum.BooleanArray
+                 or VersionBDataTypeEnum.StringArray
+                 or VersionBDataTypeEnum.DateTimeArray:
+                pbPropValue.ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
+                {
+                    // Todo: How to handle this properly as there is no more details?
+                    //Details = propertyValue.ExtensionValue.Details
+                };
+                break;
             default:
                 pbPropValue.ExtensionValue = new VersionBProtoBuf.ProtoBufPayload.PropertyValue.PropertyValueExtension
                 {

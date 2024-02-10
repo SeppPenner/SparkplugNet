@@ -82,6 +82,7 @@ public class SparkplugPayloadConverterTest
     [TestMethod]
     public void TestConvertVersionBDataTypeDataSetValueFromProto()
     {
+        // Todo: Rework tests to use new data types.
         //var payload = PayloadConverter.ConvertVersionBDataType(new VersionBProtoBufPayload.DataSet.DataSetValue.DataSetValueExtension().type);
         //Assert.IsNotNull(payload);
         Assert.AreEqual(1, 1);
