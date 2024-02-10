@@ -1,6 +1,7 @@
 Change history
 --------------
 
+* **Version 1.3.2.0 (2024-02-10)**: Fixed conversion for data types (Hopefully): https://github.com/SeppPenner/SparkplugNet/issues/63, https://github.com/SeppPenner/SparkplugNet/issues/64, https://github.com/SeppPenner/SparkplugNet/issues/66. Updated some NuGet packages.
 * **Version 1.3.1.0 (2024-01-05)**: Removed validation for incoming metrics on application (Still needs review).
 * **Version 1.3.0.0 (2023-12-18)**: Removed support for NetCore3.1, added support for Net8.0, updated NuGet packages, tried to get towards 3.0 compatibility, updated supported data types and adjusted data type handling (Use carefully, not yet fully tested).
 * **Version 1.2.0.0 (2022-11-20)**: Updated nuget packages, removed support for Net5.0, added support for Net7.0, fixed a bug with the device storage (Thanks to @Patrick2607, https://github.com/SeppPenner/SparkplugNet/pull/31).
