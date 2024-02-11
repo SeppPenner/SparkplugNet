@@ -6,7 +6,9 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <NoWarn>NU1803, CS0618</NoWarn>
+        <NoWarn>NU1803,CS0618,CS0809,NU1901,NU1902</NoWarn>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <NuGetAuditMode>all</NuGetAuditMode>
     </PropertyGroup>
 
     <ItemGroup>
