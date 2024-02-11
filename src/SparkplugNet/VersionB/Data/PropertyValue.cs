@@ -32,7 +32,7 @@ public class PropertyValue : ValueBaseVersionB
     /// <summary>
     /// Gets or sets a value indicating whether the property value is null or not.
     /// </summary>
-    public bool IsNull { get; set; }
+    public bool? IsNull { get; set; }
 
     /// <summary>
     /// Gets or sets the property set value.

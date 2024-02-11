@@ -17,7 +17,7 @@ public class MetaData
     /// <summary>
     /// Gets or sets a value indicating whether the meta data is a multi part data set or not.
     /// </summary>
-    public bool IsMultiPart { get; set; }
+    public bool? IsMultiPart { get; set; }
 
     /// <summary>
     /// Gets or sets the content type.
@@ -28,12 +28,12 @@ public class MetaData
     /// <summary>
     /// Gets or sets the size.
     /// </summary>
-    public ulong Size { get; set; }
+    public ulong? Size { get; set; }
 
     /// <summary>
     /// Gets or sets the SEQ number.
     /// </summary>
-    public ulong Seq { get; set; }
+    public ulong? Seq { get; set; }
 
     /// <summary>
     /// Gets or sets the file name.

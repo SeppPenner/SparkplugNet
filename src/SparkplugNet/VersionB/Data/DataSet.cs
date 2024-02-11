@@ -17,7 +17,7 @@ public class DataSet
     /// <summary>
     /// Gets or sets the number of columns.
     /// </summary>
-    public ulong NumOfColumns { get; set; }
+    public ulong? NumOfColumns { get; set; }
 
     /// <summary>
     /// Gets or sets the columns.

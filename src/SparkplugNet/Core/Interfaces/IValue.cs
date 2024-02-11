@@ -28,4 +28,3 @@ public interface IValue<DataTypeEnum> where DataTypeEnum : Enum
     /// <returns>The metric value.</returns>
     IValue<DataTypeEnum> SetValue(DataTypeEnum dataType, object? value);
 }
-

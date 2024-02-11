@@ -17,7 +17,7 @@ public class Payload
     /// <summary>
     /// Gets or sets the timestamp.
     /// </summary>
-    public ulong Timestamp { get; set; }
+    public ulong? Timestamp { get; set; }
 
     /// <summary>
     /// Gets or sets the metrics.
@@ -27,7 +27,7 @@ public class Payload
     /// <summary>
     /// Gets or sets the SEQ number.
     /// </summary>
-    public ulong Seq { get; set; }
+    public ulong? Seq { get; set; }
 
     /// <summary>
     /// Gets or sets the UUID.

@@ -39,5 +39,5 @@ public class Template
     /// <summary>
     /// Gets or sets a value indicating whether the template is a definition or not.
     /// </summary>
-    public bool IsDefinition { get; set; }
+    public bool? IsDefinition { get; set; }
 }

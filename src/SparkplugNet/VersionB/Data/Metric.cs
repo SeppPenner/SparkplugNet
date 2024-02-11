@@ -68,27 +68,27 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the alias.
     /// </summary>
-    public ulong Alias { get; set; }
+    public ulong? Alias { get; set; }
 
     /// <summary>
     /// Gets or sets the timestamp.
     /// </summary>
-    public ulong Timestamp { get; set; }
+    public ulong? Timestamp { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the metric is historical or not.
     /// </summary>
-    public bool IsHistorical { get; set; }
+    public bool? IsHistorical { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the metric is transient or not.
     /// </summary>
-    public bool IsTransient { get; set; }
+    public bool? IsTransient { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the metric is null or not.
     /// </summary>
-    public bool IsNull { get; set; }
+    public bool? IsNull { get; set; }
 
     /// <summary>
     /// Gets or sets the meta data.
@@ -98,7 +98,7 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the properties.
     /// </summary>
-    public PropertySet? Properties { get; set; }
+    public PropertySet? PropertySetValue { get; set; }
 
     /// <summary>
     /// Gets or sets the bytes value.
@@ -175,7 +175,7 @@ public class Metric : ValueBaseVersionB, IMetric
                 this.TemplateValue = value.ConvertOrDefaultTo<Template>();
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                this.Properties = value.ConvertOrDefaultTo<PropertySet>();
+                this.PropertySetValue = value.ConvertOrDefaultTo<PropertySet>();
                 break;
             default:
                 base.SetValue(dataType, value);
@@ -194,7 +194,7 @@ public class Metric : ValueBaseVersionB, IMetric
         or VersionBDataTypeEnum.File => this.BytesValue,
         VersionBDataTypeEnum.DataSet => this.DataSetValue,
         VersionBDataTypeEnum.Template => this.TemplateValue,
-        VersionBDataTypeEnum.PropertySet => this.Properties,
+        VersionBDataTypeEnum.PropertySet => this.PropertySetValue,
         _ => null,
     });
 }
