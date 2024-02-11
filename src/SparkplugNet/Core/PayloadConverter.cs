@@ -490,7 +490,7 @@ internal static class PayloadConverter
             LongValue = parameter.LongValue,
             Name = parameter.Name ?? string.Empty,
             StringValue = parameter.StringValue,
-            ValueCase = parameter.Type,
+            ValueCase = parameter.Type ?? throw new InvalidEnumArgumentException(nameof(parameter.Type)),
             DataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)parameter.Type)
         };
 
@@ -576,7 +576,7 @@ internal static class PayloadConverter
             BooleanValue = metric.BooleanValue,
             BytesValue = metric.BytesValue,
             DataSetValue = ConvertVersionBDataSet(metric.DataSetValue),
-            ValueCase = metric.DataType,
+            ValueCase = metric.DataType ?? throw new InvalidEnumArgumentException(nameof(metric.DataType)),
             ExtensionValue = (metric.Extension is not null) ? new MetricValueExtension
             {
                 // Todo: How to handle this properly as there is no more details?
@@ -769,7 +769,7 @@ internal static class PayloadConverter
             LongValue = propertyValue.LongValue,
             PropertySetValue = ConvertVersionBPropertySet(propertyValue.PropertySetValue),
             StringValue = propertyValue.StringValue,
-            ValueCase = propertyValue.Type,
+            ValueCase = propertyValue.Type ?? throw new InvalidEnumArgumentException(nameof(propertyValue.Type)),
             DataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)propertyValue.Type)
         };
 
