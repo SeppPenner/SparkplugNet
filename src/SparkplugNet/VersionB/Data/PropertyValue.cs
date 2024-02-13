@@ -50,7 +50,7 @@ public class PropertyValue : ValueBaseVersionB
     /// <summary>
     /// Gets or sets the property set list value.
     /// </summary>
-    public PropertySetList? PropertySetsValue
+    public PropertySetList? PropertySetListValue
     {
         get => this.propertySetListValue ?? new();
         set

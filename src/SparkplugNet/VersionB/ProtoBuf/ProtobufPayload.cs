@@ -65,7 +65,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 public string? Name { get; set; }
 
                 [global::ProtoBuf.ProtoMember(2, Name = @"type")]
-                public uint? Type { get; set; }
+                public uint? DataType { get; set; }
 
                 [global::ProtoBuf.ProtoMember(3, Name = @"int_value")]
                 public uint IntValue
@@ -151,7 +151,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref extensionValue, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"num_of_columns")]
-            public ulong? NumOfColumns { get; set; }
+            public ulong? NumberOfColumns { get; set; }
 
             [global::ProtoBuf.ProtoMember(2, Name = @"columns")]
             public global::System.Collections.Generic.List<string> Columns { get; set; } = new global::System.Collections.Generic.List<string>();
@@ -264,7 +264,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
                 => global::ProtoBuf.Extensible.GetExtensionObject(ref extensionValue, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"type")]
-            public uint? Type { get; set; }
+            public uint? DataType { get; set; }
 
             [global::ProtoBuf.ProtoMember(2, Name = @"is_null")]
             public bool? IsNull { get; set; }
@@ -336,7 +336,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetPropertysetValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref type, 9);
 
             [global::ProtoBuf.ProtoMember(10, Name = @"propertysets_value")]
-            public PropertySetList? PropertySetList
+            public PropertySetList? PropertySetListValue
             {
                 get => type.Is(10) ? ((PropertySetList)type.Object) : default;
                 set => type = new global::ProtoBuf.DiscriminatedUnion64Object(10, value);

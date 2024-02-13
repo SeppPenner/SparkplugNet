@@ -154,6 +154,11 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
+                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
+                {
+                    throw new InvalidOperationException($"The device identifier is invalid!");
+                }
+
                 await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;

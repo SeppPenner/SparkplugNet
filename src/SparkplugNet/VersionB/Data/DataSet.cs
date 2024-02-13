@@ -17,7 +17,7 @@ public class DataSet
     /// <summary>
     /// Gets or sets the number of columns.
     /// </summary>
-    public ulong? NumOfColumns { get; set; }
+    public ulong? NumberOfColumns { get; set; }
 
     /// <summary>
     /// Gets or sets the columns.
@@ -48,7 +48,7 @@ public class DataSet
     /// <param name="entries"></param>
     public DataSet(IDictionary<string, VersionBDataTypeEnum> entries)
     {
-        this.NumOfColumns = (ulong)entries.Count;
+        this.NumberOfColumns = (ulong)entries.Count;
         this.Columns = entries.Keys.ToList();
         this.Types = entries.Values.Select(type => (uint)type).ToArray();
     }

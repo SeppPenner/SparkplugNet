@@ -13,9 +13,9 @@ namespace SparkplugNet.VersionA.ProtoBuf
     [global::ProtoBuf.ProtoContract()]
     internal partial class ProtoBufPayload : global::ProtoBuf.IExtensible
     {
-        private global::ProtoBuf.IExtension? __pbn__extensionData;
+        private global::ProtoBuf.IExtension? extensionValue;
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref extensionValue, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"timestamp")]
         public long? Timestamp { get; set; }
@@ -32,9 +32,9 @@ namespace SparkplugNet.VersionA.ProtoBuf
         [global::ProtoBuf.ProtoContract()]
         internal partial class KuraMetric : global::ProtoBuf.IExtensible
         {
-            private global::ProtoBuf.IExtension? __pbn__extensionData;
+            private global::ProtoBuf.IExtension? extensionValue;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref extensionValue, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"name", IsRequired = true)]
             public string Name { get; set; } = string.Empty;
@@ -87,9 +87,9 @@ namespace SparkplugNet.VersionA.ProtoBuf
         [global::ProtoBuf.ProtoContract()]
         internal partial class KuraPosition : global::ProtoBuf.IExtensible
         {
-            private global::ProtoBuf.IExtension? __pbn__extensionData;
+            private global::ProtoBuf.IExtension? extensionValue;
             global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
-                => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+                => global::ProtoBuf.Extensible.GetExtensionObject(ref extensionValue, createIfMissing);
 
             [global::ProtoBuf.ProtoMember(1, Name = @"latitude", IsRequired = true)]
             public double Latitude { get; set; }

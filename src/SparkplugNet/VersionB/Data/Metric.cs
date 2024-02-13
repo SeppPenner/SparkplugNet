@@ -93,7 +93,7 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the meta data.
     /// </summary>
-    public MetaData? Metadata { get; set; }
+    public MetaData? MetaData { get; set; }
 
     /// <summary>
     /// Gets or sets the properties.
