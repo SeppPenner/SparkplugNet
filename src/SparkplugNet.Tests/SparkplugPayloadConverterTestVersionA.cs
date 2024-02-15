@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.Tests;
 
+using SparkplugNet.VersionA.Data;
+
 /// <summary>
 /// A class to test the <see cref="VersionA.PayloadConverter"/> class.
 /// </summary>
@@ -74,43 +76,43 @@ public class SparkplugPayloadConverterTestVersionA
             new()
             {
                 Name = "Test1",
-                DataType = VersionA.Data.DataType.Double,
+                DataType = DataType.Double,
                 DoubleValue = 1.0
             },
             new()
             {
                 Name = "Test2",
-                DataType = VersionA.Data.DataType.Float,
+                DataType = DataType.Float,
                 FloatValue = 2.0f
             },
             new()
             {
                 Name = "Test3",
-                DataType = VersionA.Data.DataType.Int64,
+                DataType = DataType.Int64,
                 LongValue = 3
             },
             new()
             {
                 Name = "Test4",
-                DataType = VersionA.Data.DataType.Int32,
+                DataType = DataType.Int32,
                 IntValue = 4
             },
             new()
             {
                 Name = "Test5",
-                DataType = VersionA.Data.DataType.Boolean,
+                DataType = DataType.Boolean,
                 BooleanValue = true
             },
             new()
             {
                 Name = "Test6",
-                DataType = VersionA.Data.DataType.String,
+                DataType = DataType.String,
                 StringValue = "6"
             },
             new()
             {
                 Name = "Test7",
-                DataType = VersionA.Data.DataType.Bytes,
+                DataType = DataType.Bytes,
                 BytesValue = [7, 8, 9, 10]
             }
         };
@@ -146,7 +148,14 @@ public class SparkplugPayloadConverterTestVersionA
         Assert.AreEqual(8, payload.Position.Status);
         Assert.AreEqual(9, payload.Position.Satellites);
         Assert.IsNotNull(payload.Metrics);
-        CollectionAssert.AreEqual(convertedMetrics, payload.Metrics);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+        MetricEquals(convertedMetrics[0], payload.Metrics[0]);
+        MetricEquals(convertedMetrics[1], payload.Metrics[1]);
+        MetricEquals(convertedMetrics[2], payload.Metrics[2]);
+        MetricEquals(convertedMetrics[3], payload.Metrics[3]);
+        MetricEquals(convertedMetrics[4], payload.Metrics[4]);
+        MetricEquals(convertedMetrics[5], payload.Metrics[5]);
+        MetricEquals(convertedMetrics[6], payload.Metrics[6]);
         Assert.IsNotNull(payload.Body);
         CollectionAssert.AreEqual(bodyData, payload.Body);
     }
@@ -160,100 +169,100 @@ public class SparkplugPayloadConverterTestVersionA
         var dateTime = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var bodyData = new byte[] { 1, 2, 3, 4 };
-        var metrics = new List<VersionA.Data.KuraMetric>
+        var metrics = new List<KuraMetric>
         {
             new()
             {
                 Name = "Test1",
-                DataType = VersionA.Data.DataType.Double,
+                DataType = DataType.Double,
                 DoubleValue = 1.0
             },
             new()
             {
                 Name = "Test2",
-                DataType = VersionA.Data.DataType.Float,
+                DataType = DataType.Float,
                 FloatValue = 2.0f
             },
             new()
             {
                 Name = "Test3",
-                DataType = VersionA.Data.DataType.Int64,
+                DataType = DataType.Int64,
                 LongValue = 3
             },
             new()
             {
                 Name = "Test4",
-                DataType = VersionA.Data.DataType.Int32,
+                DataType = DataType.Int32,
                 IntValue = 4
             },
             new()
             {
                 Name = "Test5",
-                DataType = VersionA.Data.DataType.Boolean,
+                DataType = DataType.Boolean,
                 BooleanValue = true
             },
             new()
             {
                 Name = "Test6",
-                DataType = VersionA.Data.DataType.String,
+                DataType = DataType.String,
                 StringValue = "6"
             },
             new()
             {
                 Name = "Test7",
-                DataType = VersionA.Data.DataType.Bytes,
+                DataType = DataType.Bytes,
                 BytesValue = [7, 8, 9, 10]
             }
         };
-        var convertedMetrics = new List<VersionA.Data.KuraMetric>
+        var convertedMetrics = new List<VersionAProtoBufPayload.KuraMetric>
         {
             new()
             {
                 Name = "Test1",
-                DataType = VersionA.Data.DataType.Double,
+                Type = VersionAProtoBufPayload.KuraMetric.ValueType.Double,
                 DoubleValue = 1.0
             },
             new()
             {
                 Name = "Test2",
-                DataType = VersionA.Data.DataType.Float,
+                Type = VersionAProtoBufPayload.KuraMetric.ValueType.Float,
                 FloatValue = 2.0f
             },
             new()
             {
                 Name = "Test3",
-                DataType = VersionA.Data.DataType.Int64,
+               Type = VersionAProtoBufPayload.KuraMetric.ValueType.Int64,
                 LongValue = 3
             },
             new()
             {
                 Name = "Test4",
-                DataType = VersionA.Data.DataType.Int32,
+                Type = VersionAProtoBufPayload.KuraMetric.ValueType.Int32,
                 IntValue = 4
             },
             new()
             {
                 Name = "Test5",
-                DataType = VersionA.Data.DataType.Boolean,
-                BooleanValue = true
+                Type = VersionAProtoBufPayload.KuraMetric.ValueType.Bool,
+                BoolValue = true
             },
             new()
             {
                 Name = "Test6",
-                DataType = VersionA.Data.DataType.String,
+               Type = VersionAProtoBufPayload.KuraMetric.ValueType.String,
                 StringValue = "6"
             },
             new()
             {
                 Name = "Test7",
-                DataType = VersionA.Data.DataType.Bytes,
+                Type = VersionAProtoBufPayload.KuraMetric.ValueType.Bytes,
                 BytesValue = [7, 8, 9, 10]
             }
         };
-        var oldPayload = new VersionA.Data.Payload
+        var oldPayload = new Payload
         {
             Timestamp = dateTime.ToUnixTimeMilliseconds(),
-            Position = new VersionA.Data.KuraPosition
+            Position = new KuraPosition
             {
                 Heading = 1.0,
                 Latitude = 2.0,
@@ -282,8 +291,52 @@ public class SparkplugPayloadConverterTestVersionA
         Assert.AreEqual(8, payload.Position.Status);
         Assert.AreEqual(9, payload.Position.Satellites);
         Assert.IsNotNull(payload.Metrics);
-        CollectionAssert.AreEqual(convertedMetrics, payload.Metrics);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+        MetricEquals(convertedMetrics[0], payload.Metrics[0]);
+        MetricEquals(convertedMetrics[1], payload.Metrics[1]);
+        MetricEquals(convertedMetrics[2], payload.Metrics[2]);
+        MetricEquals(convertedMetrics[3], payload.Metrics[3]);
+        MetricEquals(convertedMetrics[4], payload.Metrics[4]);
+        MetricEquals(convertedMetrics[5], payload.Metrics[5]);
+        MetricEquals(convertedMetrics[6], payload.Metrics[6]);
         Assert.IsNotNull(payload.Body);
         CollectionAssert.AreEqual(bodyData, payload.Body);
+    }
+
+    /// <summary>
+    /// Tests the two given metrics for equality.
+    /// </summary>
+    /// <param name="expected">The expected metric.</param>
+    /// <param name="newMetric">The new metric.</param>
+    private static void MetricEquals(KuraMetric expected, KuraMetric newMetric)
+    {
+        Assert.AreEqual(expected.BooleanValue, newMetric.BooleanValue);
+        CollectionAssert.AreEqual(expected.BytesValue, newMetric.BytesValue);
+        Assert.AreEqual(expected.DataType, newMetric.DataType);
+        Assert.AreEqual(expected.DoubleValue, newMetric.DoubleValue);
+        Assert.AreEqual(expected.FloatValue, newMetric.FloatValue);
+        Assert.AreEqual(expected.IntValue, newMetric.IntValue);
+        Assert.AreEqual(expected.LongValue, newMetric.LongValue);
+        Assert.AreEqual(expected.Name, newMetric.Name);
+        Assert.AreEqual(expected.StringValue, newMetric.StringValue);
+        Assert.AreEqual(expected.ValueCase, newMetric.ValueCase);
+    }
+
+    /// <summary>
+    /// Tests the two given metrics for equality.
+    /// </summary>
+    /// <param name="expected">The expected metric.</param>
+    /// <param name="newMetric">The new metric.</param>
+    private static void MetricEquals(VersionAProtoBufPayload.KuraMetric expected, VersionAProtoBufPayload.KuraMetric newMetric)
+    {
+        Assert.AreEqual(expected.BoolValue, newMetric.BoolValue);
+        CollectionAssert.AreEqual(expected.BytesValue, newMetric.BytesValue);
+        Assert.AreEqual(expected.DoubleValue, newMetric.DoubleValue);
+        Assert.AreEqual(expected.FloatValue, newMetric.FloatValue);
+        Assert.AreEqual(expected.IntValue, newMetric.IntValue);
+        Assert.AreEqual(expected.LongValue, newMetric.LongValue);
+        Assert.AreEqual(expected.Name, newMetric.Name);
+        Assert.AreEqual(expected.StringValue, newMetric.StringValue);
+        Assert.AreEqual(expected.Type, newMetric.Type);
     }
 }
