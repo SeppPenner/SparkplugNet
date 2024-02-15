@@ -538,7 +538,7 @@ namespace SparkplugNet.VersionB.ProtoBuf
             public void ResetTemplateValue() => global::ProtoBuf.DiscriminatedUnion64Object.Reset(ref type, 18);
 
             [global::ProtoBuf.ProtoMember(19, Name = @"extension_value")]
-            public MetricValueExtension? Extension
+            public MetricValueExtension? ExtensionValue
             {
                 get => type.Is(19) ? ((MetricValueExtension)type.Object) : default;
                 set => type = new global::ProtoBuf.DiscriminatedUnion64Object(19, value);

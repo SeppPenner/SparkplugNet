@@ -74,13 +74,13 @@ internal static class PayloadConverter
         var newMetric = new VersionAProtoBuf.ProtoBufPayload.KuraMetric
         {
             Name = metric.Name,
-            Type = ConvertVersionADataType(metric.DataType)
+            DataType = ConvertVersionADataType(metric.DataType)
         };
 
-        switch (newMetric.Type)
+        switch (newMetric.DataType)
         {
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool:
-                newMetric.BoolValue = metric.BooleanValue;
+                newMetric.BooleanValue = metric.BooleanValue;
                 break;
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes:
                 newMetric.BytesValue = metric.BytesValue;
@@ -115,13 +115,13 @@ internal static class PayloadConverter
         var newMetric = new VersionAData.KuraMetric
         {
             Name = metric.Name,
-            DataType = ConvertVersionADataType(metric.Type)
+            DataType = ConvertVersionADataType(metric.DataType)
         };
 
         switch (newMetric.DataType)
         {
             case VersionAData.DataType.Boolean:
-                newMetric.BooleanValue = metric.BoolValue ?? default;
+                newMetric.BooleanValue = metric.BooleanValue ?? default;
                 break;
             case VersionAData.DataType.Bytes:
                 newMetric.BytesValue = metric.BytesValue ?? Array.Empty<byte>();

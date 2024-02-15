@@ -12,5 +12,6 @@ global using SparkplugNet.Core.Messages;
 global using VersionAProtoBufPayload = SparkplugNet.VersionA.ProtoBuf.ProtoBufPayload;
 global using VersionBProtoBufPayload = SparkplugNet.VersionB.ProtoBuf.ProtoBufPayload;
 
-global using VersionBDataTypeEnum = SparkplugNet.VersionB.Data.DataType;
+global using VersionAData = SparkplugNet.VersionA.Data;
+global using VersionBData = SparkplugNet.VersionB.Data;
 #pragma warning restore IDE0065 // Die using-Anweisung wurde falsch platziert.

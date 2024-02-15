@@ -40,7 +40,7 @@ namespace SparkplugNet.VersionA.ProtoBuf
             public string Name { get; set; } = string.Empty;
 
             [global::ProtoBuf.ProtoMember(2, Name = @"type", IsRequired = true)]
-            public ValueType Type { get; set; }
+            public ValueType DataType { get; set; }
 
             [global::ProtoBuf.ProtoMember(3, Name = @"double_value")]
             public double? DoubleValue { get; set; }
@@ -55,10 +55,9 @@ namespace SparkplugNet.VersionA.ProtoBuf
             public int? IntValue { get; set; }
 
             [global::ProtoBuf.ProtoMember(7, Name = @"bool_value")]
-            public bool? BoolValue { get; set; }
+            public bool? BooleanValue { get; set; }
 
             [global::ProtoBuf.ProtoMember(8, Name = @"string_value")]
-            [global::System.ComponentModel.DefaultValue("")]
             public string? StringValue { get; set; }
 
             [global::ProtoBuf.ProtoMember(9, Name = @"bytes_value")]

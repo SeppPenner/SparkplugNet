@@ -34,7 +34,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int8,
+                DataType = (uint?)VersionBData.DataType.Int8,
                 IntValue = 1
             },
             new()
@@ -45,7 +45,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int16,
+                DataType = (uint?)VersionBData.DataType.Int16,
                 IntValue = 2
             },
             new()
@@ -56,7 +56,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int32,
+                DataType = (uint?)VersionBData.DataType.Int32,
                 IntValue = 3
             },
             new()
@@ -67,7 +67,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int64,
+                DataType = (uint?)VersionBData.DataType.Int64,
                 LongValue = 4
             },
             new()
@@ -78,7 +78,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt8,
+                DataType = (uint?)VersionBData.DataType.UInt8,
                 IntValue = 5
             },
             new()
@@ -89,7 +89,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt16,
+                DataType = (uint?)VersionBData.DataType.UInt16,
                 IntValue = 6
             },
             new()
@@ -100,7 +100,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt32,
+                DataType = (uint?)VersionBData.DataType.UInt32,
                 LongValue = 7
             },
             new()
@@ -111,7 +111,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt64,
+                DataType = (uint?)VersionBData.DataType.UInt64,
                 LongValue = 8
             },
             new()
@@ -122,7 +122,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Float,
+                DataType = (uint?)VersionBData.DataType.Float,
                 FloatValue = 9
             },
             new()
@@ -133,7 +133,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Double,
+                DataType = (uint?)VersionBData.DataType.Double,
                 DoubleValue = 10
             },
             new()
@@ -144,7 +144,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Boolean,
+                DataType = (uint?)VersionBData.DataType.Boolean,
                 BooleanValue = true
             },
             new()
@@ -155,7 +155,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.String,
+                DataType = (uint?)VersionBData.DataType.String,
                 StringValue = "12"
             },
             new()
@@ -166,7 +166,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.DateTime,
+                DataType = (uint?)VersionBData.DataType.DateTime,
                 LongValue = 13
             },
             new()
@@ -177,7 +177,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.DateTime,
+                DataType = (uint?)VersionBData.DataType.DateTime,
                 LongValue = 13
             },
             new()
@@ -188,7 +188,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Text,
+                DataType = (uint?)VersionBData.DataType.Text,
                 StringValue = "14"
             },
             new()
@@ -199,7 +199,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Text,
+                DataType = (uint?)VersionBData.DataType.Text,
                 StringValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             },
             new()
@@ -210,7 +210,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.DataSet,
+                DataType = (uint?)VersionBData.DataType.DataSet,
                 DataSetValue = new VersionBProtoBufPayload.DataSet
                 {
                     Columns = ["Test1", "Test2"],
@@ -243,7 +243,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Bytes,
+                DataType = (uint?)VersionBData.DataType.Bytes,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -265,7 +265,7 @@ public class SparkplugPayloadConverterTestVersionB
                     Seq = 1,
                     Size = 1
                 },
-                DataType = (uint?)VersionBDataTypeEnum.File,
+                DataType = (uint?)VersionBData.DataType.File,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -276,7 +276,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Template,
+                DataType = (uint?)VersionBData.DataType.Template,
                 TemplateValue = new VersionBProtoBufPayload.Template
                 {
                     IsDefinition = true,
@@ -287,12 +287,12 @@ public class SparkplugPayloadConverterTestVersionB
                         new()
                         {
                             Name = "Test1",
-                            DataType = (uint?)VersionBDataTypeEnum.Int8,
+                            DataType = (uint?)VersionBData.DataType.Int8,
                             IntValue = 1
                         },
                         new()
                         {
-                            DataType = (uint?)VersionBDataTypeEnum.Float,
+                            DataType = (uint?)VersionBData.DataType.Float,
                             Name = "Test2",
                             FloatValue = 2
                         }
@@ -307,7 +307,7 @@ public class SparkplugPayloadConverterTestVersionB
                             IsHistorical = true,
                             IsTransient = true,
                             IsNull = true,
-                            DataType = (uint?)VersionBDataTypeEnum.Int16,
+                            DataType = (uint?)VersionBData.DataType.Int16,
                             IntValue = 1
                         },
                         new()
@@ -318,7 +318,7 @@ public class SparkplugPayloadConverterTestVersionB
                             IsHistorical = true,
                             IsTransient = true,
                             IsNull = true,
-                            DataType = (uint?)VersionBDataTypeEnum.Double,
+                            DataType = (uint?)VersionBData.DataType.Double,
                             DoubleValue = 1
                         }
                     ]
@@ -332,7 +332,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.PropertySet,
+                DataType = (uint?)VersionBData.DataType.PropertySet,
                 PropertySetValue = new VersionBProtoBufPayload.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
@@ -341,13 +341,13 @@ public class SparkplugPayloadConverterTestVersionB
                         new()
                         {
                             IsNull = true,
-                            DataType = (uint?)VersionBDataTypeEnum.Int8,
+                            DataType = (uint?)VersionBData.DataType.Int8,
                             IntValue = 1
                         },
                         new()
                         {
                             IsNull = true,
-                            DataType = (uint?)VersionBDataTypeEnum.Int64,
+                            DataType = (uint?)VersionBData.DataType.Int64,
                             LongValue = 2
                         }
                     ]
@@ -362,7 +362,7 @@ public class SparkplugPayloadConverterTestVersionB
             //    IsHistorical = true,
             //    IsTransient = true,
             //    IsNull = true,
-            //    DataType = (uint?)VersionBDataTypeEnum.PropertySetList,
+            //    DataType = (uint?)VersionBData.DataType.PropertySetList,
             //    PropertySetListValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             //},
             new()
@@ -373,7 +373,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int8Array,
+                DataType = (uint?)VersionBData.DataType.Int8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -384,7 +384,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int16Array,
+                DataType = (uint?)VersionBData.DataType.Int16Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -395,7 +395,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int32Array,
+                DataType = (uint?)VersionBData.DataType.Int32Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -406,7 +406,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.Int64Array,
+                DataType = (uint?)VersionBData.DataType.Int64Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -417,7 +417,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt8Array,
+                DataType = (uint?)VersionBData.DataType.UInt8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -428,7 +428,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt16Array,
+                DataType = (uint?)VersionBData.DataType.UInt16Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -439,7 +439,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt32Array,
+                DataType = (uint?)VersionBData.DataType.UInt32Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -450,7 +450,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.UInt64Array,
+                DataType = (uint?)VersionBData.DataType.UInt64Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -461,7 +461,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.FloatArray,
+                DataType = (uint?)VersionBData.DataType.FloatArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -472,7 +472,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.DoubleArray,
+                DataType = (uint?)VersionBData.DataType.DoubleArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -483,7 +483,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.BooleanArray,
+                DataType = (uint?)VersionBData.DataType.BooleanArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -494,7 +494,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.StringArray,
+                DataType = (uint?)VersionBData.DataType.StringArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -505,11 +505,11 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = (uint?)VersionBDataTypeEnum.DateTimeArray,
+                DataType = (uint?)VersionBData.DataType.DateTimeArray,
                 BytesValue = [1, 2, 3, 4]
             }
         };
-        var convertedMetrics = new List<VersionB.Data.Metric>
+        var convertedMetrics = new List<VersionBData.Metric>
         {
             new()
             {
@@ -519,7 +519,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int8,
+                DataType = VersionBData.DataType.Int8,
                 IntValue = 1
             },
             new()
@@ -530,7 +530,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int16,
+                DataType = VersionBData.DataType.Int16,
                 IntValue = 2
             },
             new()
@@ -541,7 +541,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int32,
+                DataType = VersionBData.DataType.Int32,
                 IntValue = 3
             },
             new()
@@ -552,7 +552,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int64,
+                DataType = VersionBData.DataType.Int64,
                 LongValue = 4
             },
             new()
@@ -563,7 +563,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt8,
+                DataType = VersionBData.DataType.UInt8,
                 IntValue = 5
             },
             new()
@@ -574,7 +574,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt16,
+                DataType = VersionBData.DataType.UInt16,
                 IntValue = 6
             },
             new()
@@ -585,7 +585,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt32,
+                DataType = VersionBData.DataType.UInt32,
                 LongValue = 7
             },
             new()
@@ -596,7 +596,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt64,
+                DataType = VersionBData.DataType.UInt64,
                 LongValue = 8
             },
             new()
@@ -607,7 +607,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Float,
+                DataType = VersionBData.DataType.Float,
                 FloatValue = 9
             },
             new()
@@ -618,7 +618,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Double,
+                DataType = VersionBData.DataType.Double,
                 DoubleValue = 10
             },
             new()
@@ -629,7 +629,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Boolean,
+                DataType = VersionBData.DataType.Boolean,
                 BooleanValue = true
             },
             new()
@@ -640,7 +640,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.String,
+                DataType = VersionBData.DataType.String,
                 StringValue = "12"
             },
             new()
@@ -651,7 +651,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.DateTime,
+                DataType = VersionBData.DataType.DateTime,
                 LongValue = 13
             },
             new()
@@ -662,7 +662,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.DateTime,
+                DataType = VersionBData.DataType.DateTime,
                 LongValue = 13
             },
             new()
@@ -673,7 +673,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Text,
+                DataType = VersionBData.DataType.Text,
                 StringValue = "14"
             },
             new()
@@ -684,7 +684,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Text,
+                DataType = VersionBData.DataType.Text,
                 StringValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             },
             new()
@@ -695,14 +695,14 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.DataSet,
-                DataSetValue = new VersionB.Data.DataSet
+                DataType = VersionBData.DataType.DataSet,
+                DataSetValue = new VersionBData.DataSet
                 {
                     Columns = ["Test1", "Test2"],
                     NumberOfColumns = 2,
                     Rows =
                     [
-                        new VersionB.Data.Row
+                        new VersionBData.Row
                         {
                             Elements =
                             [
@@ -728,7 +728,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Bytes,
+                DataType = VersionBData.DataType.Bytes,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -739,7 +739,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                MetaData = new VersionB.Data.MetaData
+                MetaData = new VersionBData.MetaData
                 {
                     ContentType = "application/json",
                     Description = "Test",
@@ -750,7 +750,7 @@ public class SparkplugPayloadConverterTestVersionB
                     Seq = 1,
                     Size = 1
                 },
-                DataType = VersionBDataTypeEnum.File,
+                DataType = VersionBData.DataType.File,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -761,8 +761,8 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Template,
-                TemplateValue = new VersionB.Data.Template
+                DataType = VersionBData.DataType.Template,
+                TemplateValue = new VersionBData.Template
                 {
                     IsDefinition = true,
                     Version = "1.0",
@@ -772,12 +772,12 @@ public class SparkplugPayloadConverterTestVersionB
                         new()
                         {
                             Name = "Test1",
-                            DataType = VersionBDataTypeEnum.Int8,
+                            DataType = VersionBData.DataType.Int8,
                             IntValue = 1
                         },
                         new()
                         {
-                            DataType = VersionBDataTypeEnum.Float,
+                            DataType = VersionBData.DataType.Float,
                             Name = "Test2",
                             FloatValue = 2
                         }
@@ -792,7 +792,7 @@ public class SparkplugPayloadConverterTestVersionB
                             IsHistorical = true,
                             IsTransient = true,
                             IsNull = true,
-                            DataType = VersionBDataTypeEnum.Int16,
+                            DataType = VersionBData.DataType.Int16,
                             IntValue = 1
                         },
                         new()
@@ -803,7 +803,7 @@ public class SparkplugPayloadConverterTestVersionB
                             IsHistorical = true,
                             IsTransient = true,
                             IsNull = true,
-                            DataType = VersionBDataTypeEnum.Double,
+                            DataType = VersionBData.DataType.Double,
                             DoubleValue = 1
                         }
                     ]
@@ -817,8 +817,8 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.PropertySet,
-                PropertySetValue = new VersionB.Data.PropertySet
+                DataType = VersionBData.DataType.PropertySet,
+                PropertySetValue = new VersionBData.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
                     Values =
@@ -826,13 +826,13 @@ public class SparkplugPayloadConverterTestVersionB
                         new()
                         {
                             IsNull = true,
-                            DataType = VersionBDataTypeEnum.Int8,
+                            DataType = VersionBData.DataType.Int8,
                             IntValue = 1
                         },
                         new()
                         {
                             IsNull = true,
-                            DataType = VersionBDataTypeEnum.Int64,
+                            DataType = VersionBData.DataType.Int64,
                             LongValue = 2
                         }
                     ]
@@ -847,7 +847,7 @@ public class SparkplugPayloadConverterTestVersionB
             //    IsHistorical = true,
             //    IsTransient = true,
             //    IsNull = true,
-            //    DataType = VersionBDataTypeEnum.PropertySetList,
+            //    DataType = VersionBData.DataType.PropertySetList,
             //    PropertySetListValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             //},
             new()
@@ -858,7 +858,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int8Array,
+                DataType = VersionBData.DataType.Int8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -869,7 +869,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int16Array,
+                DataType = VersionBData.DataType.Int16Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -880,7 +880,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int32Array,
+                DataType = VersionBData.DataType.Int32Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -891,7 +891,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.Int64Array,
+                DataType = VersionBData.DataType.Int64Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -902,7 +902,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt8Array,
+                DataType = VersionBData.DataType.UInt8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -913,7 +913,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt16Array,
+                DataType = VersionBData.DataType.UInt16Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -924,7 +924,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt32Array,
+                DataType = VersionBData.DataType.UInt32Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -935,7 +935,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.UInt64Array,
+                DataType = VersionBData.DataType.UInt64Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -946,7 +946,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.FloatArray,
+                DataType = VersionBData.DataType.FloatArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -957,7 +957,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.DoubleArray,
+                DataType = VersionBData.DataType.DoubleArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -968,7 +968,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.BooleanArray,
+                DataType = VersionBData.DataType.BooleanArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -979,7 +979,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.StringArray,
+                DataType = VersionBData.DataType.StringArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
@@ -990,7 +990,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = true,
-                DataType = VersionBDataTypeEnum.DateTimeArray,
+                DataType = VersionBData.DataType.DateTimeArray,
                 BytesValue = [1, 2, 3, 4]
             }
         };
@@ -1008,7 +1008,14 @@ public class SparkplugPayloadConverterTestVersionB
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payload.Timestamp);
         Assert.AreEqual((ulong)1, payload.Seq);
         Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
-        CollectionAssert.AreEqual(convertedMetrics, payload.Metrics);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+
+        var count = 0;
+
+        foreach (var metric in payload.Metrics)
+        {
+            MetricEquals(convertedMetrics[count++], metric);
+        }
     }
 
     /// <summary>
@@ -1017,7 +1024,7 @@ public class SparkplugPayloadConverterTestVersionB
     [TestMethod]
     public void TestConvertVersionBPayloadToProto()
     {
-        var oldPayload = new VersionB.Data.Payload();
+        var oldPayload = new VersionBData.Payload();
         var payload = VersionB.PayloadConverter.ConvertVersionBPayload(oldPayload);
         Assert.IsNotNull(payload);
     }
@@ -1029,11 +1036,11 @@ public class SparkplugPayloadConverterTestVersionB
     [TestMethod]
     public void TestConvertVersionBMetricsWithByteValues()
     {
-        var oldPayload = new VersionB.Data.Payload
+        var oldPayload = new VersionBData.Payload
         {
             Metrics =
             [
-                new VersionB.Data.Metric()
+                new VersionBData.Metric()
                 {
                     BytesValue = [1, 2, 3, 4]
                 }
@@ -1050,5 +1057,69 @@ public class SparkplugPayloadConverterTestVersionB
         Assert.IsNotNull(payload.Metrics[0]);
         CollectionAssert.AreEqual(new byte[] { 1, 2, 3, 4 }, payload.Metrics[0].BytesValue);
         Assert.AreEqual((uint)17, payload.Metrics[0].DataType);
+    }
+
+    /// <summary>
+    /// Tests the two given metrics for equality.
+    /// </summary>
+    /// <param name="expected">The expected metric.</param>
+    /// <param name="newMetric">The new metric.</param>
+    private static void MetricEquals(VersionBData.Metric expected, VersionBData.Metric newMetric)
+    {
+        Assert.AreEqual(expected.Alias, newMetric.Alias);
+        Assert.AreEqual(expected.BooleanValue, newMetric.BooleanValue);
+        CollectionAssert.AreEqual(expected.BytesValue, newMetric.BytesValue);
+        // Todo:
+        Assert.AreEqual(expected.DataSetValue, newMetric.DataSetValue);
+        Assert.AreEqual(expected.DataType, newMetric.DataType);
+        Assert.AreEqual(expected.DoubleValue, newMetric.DoubleValue);
+        // Todo:
+        Assert.AreEqual(expected.ExtensionValue, newMetric.ExtensionValue);
+        Assert.AreEqual(expected.FloatValue, newMetric.FloatValue);
+        Assert.AreEqual(expected.IntValue, newMetric.IntValue);
+        Assert.AreEqual(expected.IsHistorical, newMetric.IsHistorical);
+        Assert.AreEqual(expected.IsNull, newMetric.IsNull);
+        Assert.AreEqual(expected.IsTransient, newMetric.IsTransient);
+        Assert.AreEqual(expected.LongValue, newMetric.LongValue);
+        // Todo:
+        Assert.AreEqual(expected.MetaData, newMetric.MetaData);
+        Assert.AreEqual(expected.Name, newMetric.Name);
+        // Todo:
+        Assert.AreEqual(expected.PropertySetValue, newMetric.PropertySetValue);
+        Assert.AreEqual(expected.StringValue, newMetric.StringValue);
+        Assert.AreEqual(expected.TemplateValue, newMetric.TemplateValue);
+        Assert.AreEqual(expected.Timestamp, newMetric.Timestamp);
+    }
+
+    /// <summary>
+    /// Tests the two given metrics for equality.
+    /// </summary>
+    /// <param name="expected">The expected metric.</param>
+    /// <param name="newMetric">The new metric.</param>
+    private static void MetricEquals(VersionBProtoBufPayload.Metric expected, VersionBProtoBufPayload.Metric newMetric)
+    {
+        Assert.AreEqual(expected.Alias, newMetric.Alias);
+        Assert.AreEqual(expected.BooleanValue, newMetric.BooleanValue);
+        CollectionAssert.AreEqual(expected.BytesValue, newMetric.BytesValue);
+        // Todo:
+        Assert.AreEqual(expected.DataSetValue, newMetric.DataSetValue);
+        Assert.AreEqual(expected.DataType, newMetric.DataType);
+        Assert.AreEqual(expected.DoubleValue, newMetric.DoubleValue);
+        // Todo:
+        Assert.AreEqual(expected.ExtensionValue, newMetric.ExtensionValue);
+        Assert.AreEqual(expected.FloatValue, newMetric.FloatValue);
+        Assert.AreEqual(expected.IntValue, newMetric.IntValue);
+        Assert.AreEqual(expected.IsHistorical, newMetric.IsHistorical);
+        Assert.AreEqual(expected.IsNull, newMetric.IsNull);
+        Assert.AreEqual(expected.IsTransient, newMetric.IsTransient);
+        Assert.AreEqual(expected.LongValue, newMetric.LongValue);
+        // Todo:
+        Assert.AreEqual(expected.MetaData, newMetric.MetaData);
+        Assert.AreEqual(expected.Name, newMetric.Name);
+        // Todo:
+        Assert.AreEqual(expected.PropertySetValue, newMetric.PropertySetValue);
+        Assert.AreEqual(expected.StringValue, newMetric.StringValue);
+        Assert.AreEqual(expected.TemplateValue, newMetric.TemplateValue);
+        Assert.AreEqual(expected.Timestamp, newMetric.Timestamp);
     }
 }
