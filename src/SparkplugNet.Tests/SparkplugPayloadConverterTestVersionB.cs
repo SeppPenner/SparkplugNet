@@ -1069,11 +1069,26 @@ public class SparkplugPayloadConverterTestVersionB
         Assert.AreEqual(expected.Alias, newMetric.Alias);
         Assert.AreEqual(expected.BooleanValue, newMetric.BooleanValue);
         CollectionAssert.AreEqual(expected.BytesValue, newMetric.BytesValue);
-        // Todo:
-        Assert.AreEqual(expected.DataSetValue, newMetric.DataSetValue);
+
+        if (expected.DataSetValue is not null && newMetric.DataSetValue is not null)
+        {
+            CollectionAssert.AreEqual(expected.DataSetValue.Columns, newMetric.DataSetValue.Columns);
+            Assert.AreEqual(expected.DataSetValue.NumberOfColumns, newMetric.DataSetValue.NumberOfColumns);
+            // Todo:
+            Assert.AreEqual(expected.DataSetValue.Rows, newMetric.DataSetValue.Rows);
+            CollectionAssert.AreEqual(expected.DataSetValue.Types, newMetric.DataSetValue.Types);
+        }
+        else if (expected.DataSetValue is null && newMetric.DataSetValue is null)
+        {
+            // Do nothing here.
+        }
+        else
+        {
+            Assert.Fail("The data set values are not equal.");
+        }
+
         Assert.AreEqual(expected.DataType, newMetric.DataType);
         Assert.AreEqual(expected.DoubleValue, newMetric.DoubleValue);
-        // Todo:
         Assert.AreEqual(expected.ExtensionValue, newMetric.ExtensionValue);
         Assert.AreEqual(expected.FloatValue, newMetric.FloatValue);
         Assert.AreEqual(expected.IntValue, newMetric.IntValue);
@@ -1081,11 +1096,44 @@ public class SparkplugPayloadConverterTestVersionB
         Assert.AreEqual(expected.IsNull, newMetric.IsNull);
         Assert.AreEqual(expected.IsTransient, newMetric.IsTransient);
         Assert.AreEqual(expected.LongValue, newMetric.LongValue);
-        // Todo:
-        Assert.AreEqual(expected.MetaData, newMetric.MetaData);
+
+        if (expected.MetaData is not null && newMetric.MetaData is not null)
+        {
+            Assert.AreEqual(expected.MetaData.IsMultiPart, newMetric.MetaData.IsMultiPart);
+            Assert.AreEqual(expected.MetaData.ContentType, newMetric.MetaData.ContentType);
+            Assert.AreEqual(expected.MetaData.Size, newMetric.MetaData.Size);
+            Assert.AreEqual(expected.MetaData.Seq, newMetric.MetaData.Seq);
+            Assert.AreEqual(expected.MetaData.FileName, newMetric.MetaData.FileName);
+            Assert.AreEqual(expected.MetaData.FileType, newMetric.MetaData.FileType);
+            Assert.AreEqual(expected.MetaData.Md5, newMetric.MetaData.Md5);
+            Assert.AreEqual(expected.MetaData.Description, newMetric.MetaData.Description);
+        }
+        else if (expected.MetaData is null && newMetric.MetaData is null)
+        {
+            // Do nothing here.
+        }
+        else
+        {
+            Assert.Fail("The meta data values are not equal.");
+        }
+
         Assert.AreEqual(expected.Name, newMetric.Name);
-        // Todo:
-        Assert.AreEqual(expected.PropertySetValue, newMetric.PropertySetValue);
+
+        if (expected.PropertySetValue is not null && newMetric.PropertySetValue is not null)
+        {
+            CollectionAssert.AreEqual(expected.PropertySetValue.Keys, newMetric.PropertySetValue.Keys);
+            // Todo:
+            Assert.AreEqual(expected.PropertySetValue.Values, newMetric.PropertySetValue.Values);
+        }
+        else if (expected.PropertySetValue is null && newMetric.PropertySetValue is null)
+        {
+            // Do nothing here.
+        }
+        else
+        {
+            Assert.Fail("The property set values are not equal.");
+        }
+
         Assert.AreEqual(expected.StringValue, newMetric.StringValue);
         Assert.AreEqual(expected.TemplateValue, newMetric.TemplateValue);
         Assert.AreEqual(expected.Timestamp, newMetric.Timestamp);
