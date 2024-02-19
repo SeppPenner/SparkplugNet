@@ -15,24 +15,6 @@ namespace SparkplugNet.VersionB.Data;
 public class DataSetValue : ValueBaseVersionB
 {
     /// <summary>
-    /// The extension value.
-    /// </summary>
-    private DataSetValueExtension? extensionValue;
-
-    /// <summary>
-    /// Gets or sets the extension value.
-    /// </summary>
-    public DataSetValueExtension ExtensionValue
-    {
-        get => this.extensionValue ?? new();
-        set
-        {
-            this.extensionValue = value;
-            this.DataType = VersionBDataTypeEnum.Unknown;
-        }
-    }
-
-    /// <summary>
     /// Initializes the DataSetValue
     /// </summary>
     public DataSetValue()
@@ -46,4 +28,9 @@ public class DataSetValue : ValueBaseVersionB
     {
         this.SetValue(type, value);
     }
+
+    /// <summary>
+    /// Gets or sets the extension value.
+    /// </summary>
+    public DataSetValueExtension? ExtensionValue { get; set; }
 }

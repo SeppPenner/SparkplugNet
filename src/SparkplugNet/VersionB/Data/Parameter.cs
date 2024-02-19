@@ -15,11 +15,6 @@ namespace SparkplugNet.VersionB.Data;
 public class Parameter : ValueBaseVersionB, IMetric
 {
     /// <summary>
-    /// The extension value.
-    /// </summary>
-    private ParameterValueExtension? extensionValue;
-
-    /// <summary>
     /// Gets or sets the name.
     /// </summary>
     [DefaultValue("")]
@@ -28,13 +23,5 @@ public class Parameter : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the extension value.
     /// </summary>
-    public ParameterValueExtension ExtensionValue
-    {
-        get => this.extensionValue ?? new();
-        set
-        {
-            this.extensionValue = value;
-            this.DataType = VersionBDataTypeEnum.Unknown;
-        }
-    }
+    public ParameterValueExtension? ExtensionValue { get; set; }
 }

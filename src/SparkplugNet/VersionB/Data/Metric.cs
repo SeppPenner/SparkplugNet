@@ -21,51 +21,6 @@ public class Metric : ValueBaseVersionB, IMetric
     public virtual string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// The bytes value.
-    /// </summary>
-    private byte[]? bytesValue;
-
-    /// <summary>
-    /// The template value.
-    /// </summary>
-    private Template? templateValue;
-
-    /// <summary>
-    /// The data set value.
-    /// </summary>
-    private DataSet? dataSetValue;
-
-    /// <summary>
-    /// The extension value.
-    /// </summary>
-    private MetricValueExtension? extensionValue;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Metric"/> class.
-    /// </summary>
-    public Metric()
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Metric"/> class.
-    /// </summary>
-    /// <param name="strName">Name of the string.</param>
-    /// <param name="dataType">Type of the data.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="timestamp">The timestamp.</param>
-    public Metric(string strName, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
-    {
-        this.Name = strName;
-        this.SetValue(dataType, value);
-
-        if (timestamp is not null)
-        {
-            this.Timestamp = (ulong)timestamp.Value.ToUnixTimeMilliseconds();
-        }
-    }
-
-    /// <summary>
     /// Gets or sets the alias.
     /// </summary>
     public ulong? Alias { get; set; }
@@ -103,52 +58,45 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the bytes value.
     /// </summary>
-    public virtual byte[] BytesValue
-    {
-        get => this.bytesValue ?? Array.Empty<byte>();
-        set
-        {
-            this.bytesValue = value;
-            this.DataType = VersionBDataTypeEnum.Bytes;
-        }
-    }
+    public virtual byte[] BytesValue { get; set; } = Array.Empty<byte>();
 
     /// <summary>
     /// Gets or sets the data set value.
     /// </summary>
-    public DataSet? DataSetValue
-    {
-        get => this.dataSetValue;
-        set
-        {
-            this.dataSetValue = value;
-            this.DataType = VersionBDataTypeEnum.DataSet;
-        }
-    }
+    public DataSet? DataSetValue { get; set; }
 
     /// <summary>
     /// Gets or sets the template value.
     /// </summary>
-    public Template? TemplateValue
-    {
-        get => this.templateValue;
-        set
-        {
-            this.templateValue = value;
-            this.DataType = VersionBDataTypeEnum.Template;
-        }
-    }
+    public Template? TemplateValue { get; set; }
 
     /// <summary>
     /// Gets or sets the extension value.
     /// </summary>
-    public MetricValueExtension? ExtensionValue
+    public MetricValueExtension? ExtensionValue { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    public Metric()
     {
-        get => this.extensionValue;
-        set
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="dataType">The data type.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="timestamp">The timestamp.</param>
+    public Metric(string name, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    {
+        this.Name = name;
+        this.SetValue(dataType, value);
+
+        if (timestamp is not null)
         {
-            this.extensionValue = value;
-            this.DataType = VersionBDataTypeEnum.Unknown;
+            this.Timestamp = (ulong)timestamp.Value.ToUnixTimeMilliseconds();
         }
     }
 

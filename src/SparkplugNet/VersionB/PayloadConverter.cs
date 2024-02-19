@@ -378,7 +378,7 @@ internal static class PayloadConverter
         return new DataSet
         {
             Columns = protoDataSet.Columns,
-            NumberOfColumns = protoDataSet.NumberOfColumns,
+            NumberOfColumns = protoDataSet.NumberOfColumns ?? 0,
             Rows = rows,
             Types = protoDataSet.Types
         };

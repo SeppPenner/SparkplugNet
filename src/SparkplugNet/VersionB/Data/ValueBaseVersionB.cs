@@ -6,89 +6,35 @@ namespace SparkplugNet.VersionB.Data;
 public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
 {
     /// <summary>
-    /// The integer value.
-    /// </summary>
-    private uint? intValue;
-
-    /// <summary>
-    /// The long value.
-    /// </summary>
-    private ulong? longValue;
-
-    /// <summary>
     /// Gets or sets the integer value.
     /// </summary>
-    public virtual uint IntValue
-    {
-        get => this.intValue ?? default;
-        set
-        {
-            this.intValue = value;
-            this.DataType = VersionBDataTypeEnum.Int32;
-        }
-    }
+    public virtual uint IntValue { get; set; }
 
     /// <summary>
     /// Gets or sets the long value.
     /// </summary>
-    public virtual ulong LongValue
-    {
-        get => this.longValue ?? default;
-        set
-        {
-            this.longValue = value;
-            this.DataType = VersionBDataTypeEnum.Int64;
-        }
-    }
+    public virtual ulong LongValue { get; set; }
 
     /// <summary>
     /// Gets or sets the float value.
     /// </summary>
-    public override float FloatValue
-    {
-        set
-        {
-            base.FloatValue = value;
-            this.DataType = VersionBDataTypeEnum.Float;
-        }
-    }
+    public override float FloatValue { get; set; }
 
     /// <summary>
     /// Gets or sets the double value.
     /// </summary>
-    public override double DoubleValue
-    {
-        set
-        {
-            base.DoubleValue = value;
-            this.DataType = VersionBDataTypeEnum.Double;
-        }
-    }
+    public override double DoubleValue { get; set; }
 
     /// <summary>
     /// Gets or sets the boolean value.
     /// </summary>
-    public override bool BooleanValue
-    {
-        set
-        {
-            base.BooleanValue = value;
-            this.DataType = VersionBDataTypeEnum.Boolean;
-        }
-    }
+    public override bool BooleanValue { get; set; }
 
     /// <summary>
     /// Gets or sets the string value.
     /// </summary>
     [DefaultValue("")]
-    public override string StringValue
-    {
-        set
-        {
-            base.StringValue = value;
-            this.DataType = VersionBDataTypeEnum.String;
-        }
-    }
+    public override string StringValue { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the ValueCase.

@@ -7,107 +7,40 @@ namespace SparkplugNet.VersionA.Data;
 public abstract class ValueBaseVersionA : ValueBase<DataType>
 {
     /// <summary>
-    /// The integer value.
-    /// </summary>
-    private int? intValue;
-
-    /// <summary>
-    /// The long value.
-    /// </summary>
-    private long? longValue;
-
-    /// <summary>
-    /// The bytes value.
-    /// </summary>
-    private byte[]? bytesValue;
-
-    /// <summary>
     /// Gets or sets the integer value.
     /// </summary>
-    public virtual int IntValue
-    {
-        get => this.intValue ?? default;
-        set
-        {
-            this.intValue = value;
-            this.DataType = DataType.Int32;
-        }
-    }
+    public virtual int IntValue { get; set; }
 
     /// <summary>
     /// Gets or sets the long value.
     /// </summary>
-    public virtual long LongValue
-    {
-        get => this.longValue ?? default;
-        set
-        {
-            this.longValue = value;
-            this.DataType = DataType.Int64;
-        }
-    }
+    public virtual long LongValue { get; set; }
 
     /// <summary>
     /// Gets or sets the float value.
     /// </summary>
-    public override float FloatValue
-    {
-        set
-        {
-            base.FloatValue = value;
-            this.DataType = DataType.Float;
-        }
-    }
+    public override float FloatValue { get; set; }
 
     /// <summary>
     /// Gets or sets the double value.
     /// </summary>
-    public override double DoubleValue
-    {
-        set
-        {
-            base.DoubleValue = value;
-            this.DataType = DataType.Double;
-        }
-    }
+    public override double DoubleValue { get; set; }
 
     /// <summary>
     /// Gets or sets the boolean value.
     /// </summary>
-    public override bool BooleanValue
-    {
-        set
-        {
-            base.BooleanValue = value;
-            this.DataType = DataType.Boolean;
-        }
-    }
+    public override bool BooleanValue { get; set; }
 
     /// <summary>
     /// Gets or sets the string value.
     /// </summary>
     [DefaultValue("")]
-    public override string StringValue
-    {
-        set
-        {
-            base.StringValue = value;
-            this.DataType = DataType.String;
-        }
-    }
+    public override string StringValue { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the bytes value.
     /// </summary>
-    public virtual byte[] BytesValue
-    {
-        get => this.bytesValue ?? Array.Empty<byte>();
-        set
-        {
-            this.bytesValue = value;
-            this.DataType = DataType.Bytes;
-        }
-    }
+    public virtual byte[] BytesValue { get; set; } = Array.Empty<byte>();
 
     /// <summary>
     /// Gets or sets the Value Case.

@@ -16,12 +16,6 @@ namespace SparkplugNet.VersionA.Data;
 public class KuraMetric : ValueBaseVersionA, IMetric
 {
     /// <summary>
-    /// Gets or sets the name.
-    /// </summary>
-    [DefaultValue("")]
-    public virtual string Name { get; set; } = string.Empty;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="KuraMetric"/> class.
     /// </summary>
     public KuraMetric()
@@ -31,12 +25,18 @@ public class KuraMetric : ValueBaseVersionA, IMetric
     /// <summary>
     /// Initializes a new instance of the <see cref="KuraMetric"/> class.
     /// </summary>
-    /// <param name="strName">Name of the string.</param>
-    /// <param name="dataType">Type of the data.</param>
+    /// <param name="name">The name.</param>
+    /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
-    public KuraMetric(string strName, DataType dataType, object value)
+    public KuraMetric(string name, DataType dataType, object value)
     {
-        this.Name = strName;
+        this.Name = name;
         this.SetValue(dataType, value);
     }
+
+    /// <summary>
+    /// Gets or sets the name.
+    /// </summary>
+    [DefaultValue("")]
+    public virtual string Name { get; set; } = string.Empty;
 }

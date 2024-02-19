@@ -16,18 +16,9 @@ namespace SparkplugNet.VersionA.Data;
 public class Payload
 {
     /// <summary>
-    /// The timestamp.
-    /// </summary>
-    private long? timestamp;
-
-    /// <summary>
     /// Gets or sets the timestamp.
     /// </summary>
-    public long? Timestamp
-    {
-        get => this.timestamp.GetValueOrDefault();
-        set => this.timestamp = value;
-    }
+    public long? Timestamp { get; set; }
 
     /// <summary>
     /// Gets or sets the position.

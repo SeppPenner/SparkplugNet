@@ -15,26 +15,6 @@ namespace SparkplugNet.VersionB.Data;
 public class DataSet
 {
     /// <summary>
-    /// Gets or sets the number of columns.
-    /// </summary>
-    public ulong? NumberOfColumns { get; set; }
-
-    /// <summary>
-    /// Gets or sets the columns.
-    /// </summary>
-    public List<string> Columns { get; set; } = new();
-
-    /// <summary>
-    /// Gets or sets the types.
-    /// </summary>
-    public uint[] Types { get; set; } = Array.Empty<uint>();
-
-    /// <summary>
-    /// Gets or sets the rows.
-    /// </summary>
-    public List<Row> Rows { get; set; } = new();
-
-    /// <summary>
     /// Initializes the DataSet
     /// </summary>
     public DataSet()
@@ -52,4 +32,24 @@ public class DataSet
         this.Columns = entries.Keys.ToList();
         this.Types = entries.Values.Select(type => (uint)type).ToArray();
     }
+
+    /// <summary>
+    /// Gets or sets the number of columns.
+    /// </summary>
+    public ulong NumberOfColumns { get; set; }
+
+    /// <summary>
+    /// Gets or sets the columns.
+    /// </summary>
+    public List<string> Columns { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the types.
+    /// </summary>
+    public uint[] Types { get; set; } = Array.Empty<uint>();
+
+    /// <summary>
+    /// Gets or sets the rows.
+    /// </summary>
+    public List<Row> Rows { get; set; } = new();
 }
