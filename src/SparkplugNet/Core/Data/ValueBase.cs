@@ -1,5 +1,4 @@
 namespace SparkplugNet.Core.Data;
-using System;
 
 /// <summary>
 /// Base Value class for shared properties amongst Data classes
@@ -8,76 +7,35 @@ using System;
 public abstract class ValueBase<DataTypeEnum> : IValue<DataTypeEnum> where DataTypeEnum : Enum
 {
     /// <summary>
-    /// The float value.
-    /// </summary>
-    private float? floatValue;
-
-    /// <summary>
-    /// The double value.
-    /// </summary>
-    private double? doubleValue;
-
-    /// <summary>
-    /// The boolean value.
-    /// </summary>
-    private bool? booleanValue;
-
-    /// <summary>
-    /// The string value.
-    /// </summary>
-    private string? stringValue;
-
-    /// <summary>
     /// Gets or sets the float value.
     /// </summary>
-    public virtual float FloatValue
-    {
-        get => this.floatValue ?? default;
-        set => this.floatValue = value;
-    }
+    public float FloatValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the double value.
     /// </summary>
-    public virtual double DoubleValue
-    {
-        get => this.doubleValue ?? default;
-        set => this.doubleValue = value;
-    }
+    public double DoubleValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the boolean value.
     /// </summary>
-    public virtual bool BooleanValue
-    {
-        get => this.booleanValue ?? default;
-        set => this.booleanValue = value;
-    }
+    public bool BooleanValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the string value.
     /// </summary>
     [DefaultValue("")]
-    public virtual string StringValue
-    {
-        get => this.stringValue ?? string.Empty;
-        set => this.stringValue = value;
-    }
+    public string StringValue { get; protected set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the DataType.
+    /// </summary>
+    public DataTypeEnum DataType { get; protected set; } = default!;
 
     /// <summary>
     /// Gets the value.
     /// </summary>
     public abstract object? Value { get; }
-
-    /// <summary>
-    /// Gets or sets the Value Case.
-    /// </summary>
-    public abstract uint ValueCase { get; set; }
-
-    /// <summary>
-    /// Gets or sets the DataType.
-    /// </summary>
-    public abstract DataTypeEnum DataType { get; set; }
 
     /// <summary>
     /// Sets the value.

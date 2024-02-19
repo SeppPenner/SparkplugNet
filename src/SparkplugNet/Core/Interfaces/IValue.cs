@@ -11,14 +11,9 @@ public interface IValue<DataTypeEnum> where DataTypeEnum : Enum
     object? Value { get; }
 
     /// <summary>
-    /// Gets or sets the Value Case.
-    /// </summary>
-    uint ValueCase { get; set; }
-
-    /// <summary>
     /// Gets or sets the DataType.
     /// </summary>
-    DataTypeEnum DataType { get; set; }
+    DataTypeEnum DataType { get; }
 
     /// <summary>
     /// Sets the value.

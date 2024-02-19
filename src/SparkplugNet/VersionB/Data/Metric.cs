@@ -85,13 +85,11 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Initializes a new instance of the <see cref="Metric"/> class.
     /// </summary>
-    /// <param name="name">The name.</param>
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
     /// <param name="timestamp">The timestamp.</param>
-    public Metric(string name, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    public Metric(VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
     {
-        this.Name = name;
         this.SetValue(dataType, value);
 
         if (timestamp is not null)

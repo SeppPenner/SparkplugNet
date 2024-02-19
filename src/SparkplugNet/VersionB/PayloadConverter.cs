@@ -11,7 +11,6 @@ namespace SparkplugNet.VersionB;
 
 // Todo:
 // Checks für V2.2 und V3.0 einbauen
-// Logik anpassen, dass Metriken nur per Setter gestzt werden können (Nicht per Property)
 
 /// <summary>
 /// A helper class for the payload conversions from internal ProtoBuf model to external data and vice versa for version B.
@@ -55,10 +54,12 @@ internal static class PayloadConverter
     /// <returns>The <see cref="Metric"/>.</returns>
     public static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric)
     {
+        // Todo: Remove this once it works.
+        var dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
+
         var metric = new Metric()
         {
             Alias = protoMetric.Alias,
-            DataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType),
             IsHistorical = protoMetric.IsHistorical,
             IsNull = protoMetric.IsNull,
             IsTransient = protoMetric.IsTransient,
@@ -70,6 +71,8 @@ internal static class PayloadConverter
         switch (metric.DataType)
         {
             case VersionBDataTypeEnum.Int8:
+                metric.SetValue(VersionBDataTypeEnum.Int8, protoMetric.IntValue);
+                break;
             case VersionBDataTypeEnum.Int16:
             case VersionBDataTypeEnum.Int32:
             case VersionBDataTypeEnum.UInt8:

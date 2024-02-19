@@ -9,62 +9,27 @@ public abstract class ValueBaseVersionA : ValueBase<DataType>
     /// <summary>
     /// Gets or sets the integer value.
     /// </summary>
-    public virtual int IntValue { get; set; }
+    public int IntValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the long value.
     /// </summary>
-    public virtual long LongValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the float value.
-    /// </summary>
-    public override float FloatValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the double value.
-    /// </summary>
-    public override double DoubleValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the boolean value.
-    /// </summary>
-    public override bool BooleanValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the string value.
-    /// </summary>
-    [DefaultValue("")]
-    public override string StringValue { get; set; } = string.Empty;
+    public long LongValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the bytes value.
     /// </summary>
-    public virtual byte[] BytesValue { get; set; } = Array.Empty<byte>();
-
-    /// <summary>
-    /// Gets or sets the Value Case.
-    /// </summary>
-    public override uint ValueCase
-    {
-        get => (uint)this.DataType;
-        set => this.DataType = (DataType)value;
-    }
-
-    /// <summary>
-    /// Gets or sets the DataType.
-    /// </summary>
-    public override DataType DataType { get; set; } = default;
+    public byte[] BytesValue { get; protected set; } = Array.Empty<byte>();
 
     /// <summary>
     /// Gets the value.
     /// </summary>
     public override object? Value => this.DataType switch
     {
-        DataType.Int32 => this.IntValue,
-        DataType.Int64 => this.LongValue,
-        DataType.Float => this.FloatValue,
         DataType.Double => this.DoubleValue,
+        DataType.Float => this.FloatValue,
+        DataType.Int64 => this.LongValue,
+        DataType.Int32 => this.IntValue,
         DataType.Boolean => this.BooleanValue,
         DataType.String => this.StringValue,
         DataType.Bytes => this.BytesValue,

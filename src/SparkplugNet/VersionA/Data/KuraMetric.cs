@@ -17,6 +17,7 @@ public class KuraMetric : ValueBaseVersionA, IMetric
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="KuraMetric"/> class.
+    /// Don't use this constructor, it's only for internal purposes.
     /// </summary>
     public KuraMetric()
     {
@@ -25,12 +26,10 @@ public class KuraMetric : ValueBaseVersionA, IMetric
     /// <summary>
     /// Initializes a new instance of the <see cref="KuraMetric"/> class.
     /// </summary>
-    /// <param name="name">The name.</param>
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
-    public KuraMetric(string name, DataType dataType, object value)
+    public KuraMetric(DataType dataType, object value)
     {
-        this.Name = name;
         this.SetValue(dataType, value);
     }
 
@@ -38,5 +37,5 @@ public class KuraMetric : ValueBaseVersionA, IMetric
     /// Gets or sets the name.
     /// </summary>
     [DefaultValue("")]
-    public virtual string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 }

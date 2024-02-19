@@ -8,51 +8,17 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     /// <summary>
     /// Gets or sets the integer value.
     /// </summary>
-    public virtual uint IntValue { get; set; }
+    public virtual uint IntValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the long value.
     /// </summary>
-    public virtual ulong LongValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the float value.
-    /// </summary>
-    public override float FloatValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the double value.
-    /// </summary>
-    public override double DoubleValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the boolean value.
-    /// </summary>
-    public override bool BooleanValue { get; set; }
-
-    /// <summary>
-    /// Gets or sets the string value.
-    /// </summary>
-    [DefaultValue("")]
-    public override string StringValue { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the ValueCase.
-    /// </summary>
-    public override uint ValueCase
-    {
-        get => (uint)this.DataType;
-        set => this.DataType = (VersionBDataTypeEnum)value;
-    }
-
-    /// <summary>
-    /// Gets or sets the DataType.
-    /// </summary>
-    public override VersionBDataTypeEnum DataType { get; set; } = default;
+    public virtual ulong LongValue { get; protected set; }
 
     /// <summary>
     /// Gets the value.
     /// </summary>
+    // Todo: Fix this?!
     public override object? Value => this.DataType switch
     {
         VersionBDataTypeEnum.Int8 => (sbyte)this.IntValue,
@@ -79,6 +45,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     /// <param name="dataType">Type of the data.</param>
     /// <param name="value">The value.</param>
     /// <returns>The metric.</returns>
+    // Todo: Fix this?!
     public override IValue<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object? value)
     {
         switch (dataType)
