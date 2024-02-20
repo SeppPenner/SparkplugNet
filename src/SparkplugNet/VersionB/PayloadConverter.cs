@@ -51,9 +51,6 @@ internal static class PayloadConverter
     /// <returns>The <see cref="Metric"/>.</returns>
     public static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric)
     {
-        // Todo: Remove this once it works.
-        var dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
-
         var metric = new Metric()
         {
             Alias = protoMetric.Alias,
@@ -65,65 +62,106 @@ internal static class PayloadConverter
             Timestamp = protoMetric.Timestamp
         };
 
-        // Todo: Adjust set value method
         switch (metric.DataType)
         {
             case VersionBDataTypeEnum.Int8:
                 metric.SetValue(VersionBDataTypeEnum.Int8, protoMetric.IntValue);
                 break;
             case VersionBDataTypeEnum.Int16:
+                metric.SetValue(VersionBDataTypeEnum.Int16, protoMetric.IntValue);
+                break;
             case VersionBDataTypeEnum.Int32:
+                metric.SetValue(VersionBDataTypeEnum.Int32, protoMetric.IntValue);
+                break;
             case VersionBDataTypeEnum.UInt8:
+                metric.SetValue(VersionBDataTypeEnum.UInt8, protoMetric.IntValue);
+                break;
             case VersionBDataTypeEnum.UInt16:
-                metric.IntValue = protoMetric.IntValue;
+                metric.SetValue(VersionBDataTypeEnum.UInt16, protoMetric.IntValue);
                 break;
             case VersionBDataTypeEnum.Int64:
+                metric.SetValue(VersionBDataTypeEnum.Int64, protoMetric.LongValue);
+                break;
             case VersionBDataTypeEnum.UInt32:
+                metric.SetValue(VersionBDataTypeEnum.UInt32, protoMetric.LongValue);
+                break;
             case VersionBDataTypeEnum.UInt64:
+                metric.SetValue(VersionBDataTypeEnum.UInt64, protoMetric.LongValue);
+                break;
             case VersionBDataTypeEnum.DateTime:
-                metric.LongValue = protoMetric.LongValue;
+                metric.SetValue(VersionBDataTypeEnum.DateTime, protoMetric.LongValue);
                 break;
             case VersionBDataTypeEnum.Float:
-                metric.FloatValue = protoMetric.FloatValue;
+                metric.SetValue(VersionBDataTypeEnum.Float, protoMetric.FloatValue);
                 break;
             case VersionBDataTypeEnum.Double:
-                metric.DoubleValue = protoMetric.DoubleValue;
+                metric.SetValue(VersionBDataTypeEnum.Double, protoMetric.DoubleValue);
                 break;
             case VersionBDataTypeEnum.Boolean:
-                metric.BooleanValue = protoMetric.BooleanValue;
+                metric.SetValue(VersionBDataTypeEnum.Boolean, protoMetric.BooleanValue);
                 break;
             case VersionBDataTypeEnum.String:
+                metric.SetValue(VersionBDataTypeEnum.String, protoMetric.StringValue);
+                break;
             case VersionBDataTypeEnum.Text:
+                metric.SetValue(VersionBDataTypeEnum.Text, protoMetric.StringValue);
+                break;
             case VersionBDataTypeEnum.Uuid:
-                metric.StringValue = protoMetric.StringValue;
+                metric.SetValue(VersionBDataTypeEnum.Uuid, protoMetric.StringValue);
                 break;
             case VersionBDataTypeEnum.Bytes:
+                metric.SetValue(VersionBDataTypeEnum.Bytes, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.File:
-                metric.BytesValue = protoMetric.BytesValue;
+                metric.SetValue(VersionBDataTypeEnum.File, protoMetric.BytesValue);
                 break;
             case VersionBDataTypeEnum.DataSet:
-                metric.DataSetValue = ConvertVersionBDataSet(protoMetric.DataSetValue);
+                metric.SetValue(VersionBDataTypeEnum.DataSet, ConvertVersionBDataSet(protoMetric.DataSetValue));
                 break;
             case VersionBDataTypeEnum.Template:
-                metric.TemplateValue = ConvertVersionBTemplate(protoMetric.TemplateValue);
+                metric.SetValue(VersionBDataTypeEnum.Template, ConvertVersionBTemplate(protoMetric.TemplateValue));
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                metric.PropertySetValue = ConvertVersionBPropertySet(protoMetric.PropertySetValue);
+                metric.SetValue(VersionBDataTypeEnum.PropertySet, ConvertVersionBPropertySet(protoMetric.PropertySetValue));
                 break;
             case VersionBDataTypeEnum.Int8Array:
+                metric.SetValue(VersionBDataTypeEnum.Int8Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.Int16Array:
+                metric.SetValue(VersionBDataTypeEnum.Int16Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.Int32Array:
+                metric.SetValue(VersionBDataTypeEnum.Int32Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.Int64Array:
+                metric.SetValue(VersionBDataTypeEnum.Int64Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.UInt8Array:
+                metric.SetValue(VersionBDataTypeEnum.UInt8Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.UInt16Array:
+                metric.SetValue(VersionBDataTypeEnum.UInt16Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.UInt32Array:
+                metric.SetValue(VersionBDataTypeEnum.UInt32Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.UInt64Array:
+                metric.SetValue(VersionBDataTypeEnum.UInt64Array, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.FloatArray:
+                metric.SetValue(VersionBDataTypeEnum.FloatArray, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.DoubleArray:
+                metric.SetValue(VersionBDataTypeEnum.DoubleArray, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.BooleanArray:
+                metric.SetValue(VersionBDataTypeEnum.BooleanArray, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.StringArray:
+                metric.SetValue(VersionBDataTypeEnum.StringArray, protoMetric.BytesValue);
+                break;
             case VersionBDataTypeEnum.DateTimeArray:
-                metric.BytesValue = protoMetric.BytesValue;
+                metric.SetValue(VersionBDataTypeEnum.DateTimeArray, protoMetric.BytesValue);
                 break;
             case VersionBDataTypeEnum.PropertySetList:
             case VersionBDataTypeEnum.Unknown:

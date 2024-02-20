@@ -22,17 +22,17 @@ internal class SparkplugMessageGenerator
     /// <summary>
     /// The Sparkplug specification version.
     /// </summary>
-    private readonly SparkplugSpecificationVersion sparkplugSpecificationVersion;
+    private readonly SparkplugSpecificationVersion specificationVersion;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugMessageGenerator"/> class.
     /// </summary>
     /// <param name="logger">The logger.</param>
-    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
-    public SparkplugMessageGenerator(ILogger? logger, SparkplugSpecificationVersion sparkplugSpecificationVersion)
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    public SparkplugMessageGenerator(ILogger? logger, SparkplugSpecificationVersion specificationVersion)
     {
         this.logger = logger;
-        this.sparkplugSpecificationVersion = sparkplugSpecificationVersion;
+        this.specificationVersion = specificationVersion;
     }
 
     /// <summary>
@@ -585,7 +585,7 @@ internal class SparkplugMessageGenerator
     {
         var stateString = string.Empty;
 
-        switch (this.sparkplugSpecificationVersion)
+        switch (this.specificationVersion)
         {
             case SparkplugSpecificationVersion.Version22:
                 stateString = online ? "ONLINE" : "OFFLINE";

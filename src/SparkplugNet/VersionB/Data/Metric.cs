@@ -126,24 +126,90 @@ public class Metric : ValueBaseVersionB, IMetric
     {
         this.IsNull = value is null;
 
-        switch (dataType)
+        // Todo: This is the correct code, test if anything is missing
+        //switch (dataType)
+        //{
+        //    case VersionBDataTypeEnum.Bytes:
+        //    case VersionBDataTypeEnum.File:
+        //        this.BytesValue = value.ConvertOrDefaultTo<byte[]>();
+        //        break;
+        //    case VersionBDataTypeEnum.DataSet:
+        //        this.DataSetValue = value.ConvertOrDefaultTo<DataSet>();
+        //        break;
+        //    case VersionBDataTypeEnum.Template:
+        //        this.TemplateValue = value.ConvertOrDefaultTo<Template>();
+        //        break;
+        //    case VersionBDataTypeEnum.PropertySet:
+        //        this.PropertySetValue = value.ConvertOrDefaultTo<PropertySet>();
+        //        break;
+        //    default:
+        //        base.SetValue(dataType, value);
+        //        break;
+        //}
+
+        switch (metric.DataType)
         {
+            case VersionBDataTypeEnum.Int8:
+                metric.SetValue(VersionBDataTypeEnum.Int8, protoMetric.IntValue);
+                break;
+            case VersionBDataTypeEnum.Int16:
+            case VersionBDataTypeEnum.Int32:
+            case VersionBDataTypeEnum.UInt8:
+            case VersionBDataTypeEnum.UInt16:
+                metric.IntValue = protoMetric.IntValue;
+                break;
+            case VersionBDataTypeEnum.Int64:
+            case VersionBDataTypeEnum.UInt32:
+            case VersionBDataTypeEnum.UInt64:
+            case VersionBDataTypeEnum.DateTime:
+                metric.LongValue = protoMetric.LongValue;
+                break;
+            case VersionBDataTypeEnum.Float:
+                metric.FloatValue = protoMetric.FloatValue;
+                break;
+            case VersionBDataTypeEnum.Double:
+                metric.DoubleValue = protoMetric.DoubleValue;
+                break;
+            case VersionBDataTypeEnum.Boolean:
+                metric.BooleanValue = protoMetric.BooleanValue;
+                break;
+            case VersionBDataTypeEnum.String:
+            case VersionBDataTypeEnum.Text:
+            case VersionBDataTypeEnum.Uuid:
+                metric.StringValue = protoMetric.StringValue;
+                break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
-                this.BytesValue = value.ConvertOrDefaultTo<byte[]>();
+                metric.BytesValue = protoMetric.BytesValue;
                 break;
             case VersionBDataTypeEnum.DataSet:
-                this.DataSetValue = value.ConvertOrDefaultTo<DataSet>();
+                metric.DataSetValue = ConvertVersionBDataSet(protoMetric.DataSetValue);
                 break;
             case VersionBDataTypeEnum.Template:
-                this.TemplateValue = value.ConvertOrDefaultTo<Template>();
+                metric.TemplateValue = ConvertVersionBTemplate(protoMetric.TemplateValue);
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                this.PropertySetValue = value.ConvertOrDefaultTo<PropertySet>();
+                metric.PropertySetValue = ConvertVersionBPropertySet(protoMetric.PropertySetValue);
                 break;
+            case VersionBDataTypeEnum.Int8Array:
+            case VersionBDataTypeEnum.Int16Array:
+            case VersionBDataTypeEnum.Int32Array:
+            case VersionBDataTypeEnum.Int64Array:
+            case VersionBDataTypeEnum.UInt8Array:
+            case VersionBDataTypeEnum.UInt16Array:
+            case VersionBDataTypeEnum.UInt32Array:
+            case VersionBDataTypeEnum.UInt64Array:
+            case VersionBDataTypeEnum.FloatArray:
+            case VersionBDataTypeEnum.DoubleArray:
+            case VersionBDataTypeEnum.BooleanArray:
+            case VersionBDataTypeEnum.StringArray:
+            case VersionBDataTypeEnum.DateTimeArray:
+                metric.BytesValue = protoMetric.BytesValue;
+                break;
+            case VersionBDataTypeEnum.PropertySetList:
+            case VersionBDataTypeEnum.Unknown:
             default:
-                base.SetValue(dataType, value);
-                break;
+                throw new ArgumentOutOfRangeException(nameof(protoMetric.DataType), protoMetric.DataType, "Unknown metric data type");
         }
 
         return this;

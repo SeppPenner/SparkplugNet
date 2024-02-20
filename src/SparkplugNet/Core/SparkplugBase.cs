@@ -37,11 +37,11 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
-    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="ISparkplugConnection"/>
-    public SparkplugBase(IEnumerable<T> knownMetrics, SparkplugSpecificationVersion sparkplugSpecificationVersion, ILogger? logger = null)
-        : this(new KnownMetricStorage(knownMetrics), sparkplugSpecificationVersion, logger)
+    public SparkplugBase(IEnumerable<T> knownMetrics, SparkplugSpecificationVersion specificationVersion, ILogger? logger = null)
+        : this(new KnownMetricStorage(knownMetrics), specificationVersion, logger)
     {
     }
 
@@ -50,10 +50,10 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The known metrics storage.</param>
-    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="ISparkplugConnection"/>
-    public SparkplugBase(KnownMetricStorage knownMetricsStorage, SparkplugSpecificationVersion sparkplugSpecificationVersion, ILogger? logger = null)
+    public SparkplugBase(KnownMetricStorage knownMetricsStorage, SparkplugSpecificationVersion specificationVersion, ILogger? logger = null)
     {
         this.knownMetrics = knownMetricsStorage;
 
@@ -69,7 +69,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         this.client = new MqttFactory().CreateMqttClient();
         this.Logger = logger;
 
-        this.messageGenerator = new SparkplugMessageGenerator(logger, sparkplugSpecificationVersion);
+        this.messageGenerator = new SparkplugMessageGenerator(logger, specificationVersion);
     }
 
     /// <summary>

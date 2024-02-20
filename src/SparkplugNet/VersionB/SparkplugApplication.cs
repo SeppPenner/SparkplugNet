@@ -21,14 +21,14 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
-    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     public SparkplugApplication(
         IEnumerable<VersionBData.Metric> knownMetrics,
-        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        SparkplugSpecificationVersion specificationVersion,
         ILogger? logger = null)
-        : base(knownMetrics, sparkplugSpecificationVersion, logger)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -37,14 +37,14 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
-    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     public SparkplugApplication(
         KnownMetricStorage knownMetricsStorage,
-        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        SparkplugSpecificationVersion specificationVersion,
         ILogger? logger = null)
-        : base(knownMetricsStorage, sparkplugSpecificationVersion, logger)
+        : base(knownMetricsStorage, specificationVersion, logger)
     {
     }
 

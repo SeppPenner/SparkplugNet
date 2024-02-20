@@ -96,10 +96,15 @@ internal static class SparkplugTopicGenerator
     /// Gets the STATE message topic.
     /// </summary>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <returns>The STATE message topic as <see cref="string"/>.</returns>
-    public static string GetSparkplugStateMessageTopic(string scadaHostIdentifier)
+    public static string GetSparkplugStateMessageTopic(string scadaHostIdentifier, SparkplugSpecificationVersion specificationVersion)
     {
-        // Todo: For B, use spv1.0B/STATE/SCADA_HOST_IDENTIFIER or something???
-        return $"{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}";
+        return specificationVersion switch
+        {
+            SparkplugSpecificationVersion.Version22 => $"{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}",
+            SparkplugSpecificationVersion.Version30 => $"spv1.0B/{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}",
+            _ => throw new NotImplementedException("Unknown Sparkplug specification version")
+        };
     }
 }

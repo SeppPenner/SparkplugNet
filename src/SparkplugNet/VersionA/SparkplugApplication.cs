@@ -22,15 +22,15 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
-    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugApplication(
         IEnumerable<VersionAData.KuraMetric> knownMetrics,
-        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        SparkplugSpecificationVersion specificationVersion,
         ILogger? logger = null)
-        : base(knownMetrics, sparkplugSpecificationVersion, logger)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -39,15 +39,15 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The known metrics storage.</param>
-    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
+    /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugApplication(
         KnownMetricStorage knownMetricsStorage,
-        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        SparkplugSpecificationVersion specificationVersion,
         ILogger? logger = null)
-        : base(knownMetricsStorage, sparkplugSpecificationVersion, logger)
+        : base(knownMetricsStorage, specificationVersion, logger)
     {
     }
 
