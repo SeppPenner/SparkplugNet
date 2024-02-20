@@ -23,7 +23,7 @@ public class Parameter : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the extension value.
     /// </summary>
-    public ParameterValueExtension? ExtensionValue { get; set; }
+    public ParameterValueExtension? ExtensionValue { get; protected set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Parameter"/> class.
@@ -37,7 +37,7 @@ public class Parameter : ValueBaseVersionB, IMetric
     /// </summary>
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
-    public Parameter(VersionBDataTypeEnum dataType, object value)
+    public Parameter(VersionBDataTypeEnum dataType, object? value)
     {
         this.SetValue(dataType, value);
     }
@@ -48,7 +48,7 @@ public class Parameter : ValueBaseVersionB, IMetric
     /// <param name="name">The name.</param>
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
-    public Parameter(string name, VersionBDataTypeEnum dataType, object value)
+    public Parameter(string name, VersionBDataTypeEnum dataType, object? value)
     {
         this.Name = name;
         this.SetValue(dataType, value);

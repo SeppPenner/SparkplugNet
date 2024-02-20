@@ -32,5 +32,5 @@ public class DataSetValue : ValueBaseVersionB
     /// <summary>
     /// Gets or sets the extension value.
     /// </summary>
-    public DataSetValueExtension? ExtensionValue { get; set; }
+    public DataSetValueExtension? ExtensionValue { get; protected set; }
 }

@@ -511,181 +511,95 @@ public class SparkplugPayloadConverterTestVersionB
         };
         var convertedMetrics = new List<VersionBData.Metric>
         {
-            new()
+            new("Test1", VersionBData.DataType.Int8, (sbyte)1, dateTime2)
             {
-                Name = "Test1",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 1,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Int8,
-                IntValue = 1
+                IsTransient = true
             },
-            new()
+            new("Test2", VersionBData.DataType.Int16, (short)2, dateTime2)
             {
-                Name = "Test2",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 2,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Int16,
-                IntValue = 2
+                IsTransient = true
             },
-            new()
+            new("Test3", VersionBData.DataType.Int32, (int)3, dateTime2)
             {
-                Name = "Test3",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 3,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Int32,
-                IntValue = 3
+                IsTransient = true
             },
-            new()
+            new("Test4", VersionBData.DataType.Int64, (long)4, dateTime2)
             {
-                Name = "Test4",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 4,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Int64,
-                LongValue = 4
+                IsTransient = true
             },
-            new()
+            new("Test5", VersionBData.DataType.UInt8, (byte)5, dateTime2)
             {
-                Name = "Test5",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 5,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.UInt8,
-                IntValue = 5
+                IsTransient = true
             },
-            new()
+            new("Test6", VersionBData.DataType.UInt16, (ushort)6, dateTime2)
             {
-                Name = "Test6",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 6,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.UInt16,
-                IntValue = 6
+                IsTransient = true
             },
-            new()
+            new("Test7", VersionBData.DataType.UInt32, (uint)7, dateTime2)
             {
-                Name = "Test7",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 7,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.UInt32,
-                LongValue = 7
+                IsTransient = true
             },
-            new()
+            new("Test8", VersionBData.DataType.UInt64, (ulong)8, dateTime2)
             {
-                Name = "Test8",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 8,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.UInt64,
-                LongValue = 8
+                IsTransient = true
             },
-            new()
+            new("Test9", VersionBData.DataType.Float, 9f, dateTime2)
             {
-                Name = "Test9",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 9,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Float,
-                FloatValue = 9
+                IsTransient = true
             },
-            new()
+            new("Test10", VersionBData.DataType.Double, 10.0, dateTime2)
             {
-                Name = "Test10",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 10,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Double,
-                DoubleValue = 10
+                IsTransient = true
             },
-            new()
+            new("Test11", VersionBData.DataType.Boolean, true, dateTime2)
             {
-                Name = "Test11",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 11,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Boolean,
-                BooleanValue = true
+                IsTransient = true
             },
-            new()
+            new("Test12", VersionBData.DataType.String, "12", dateTime2)
             {
-                Name = "Test12",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 12,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.String,
-                StringValue = "12"
+                IsTransient = true
             },
-            new()
+            new("Test13", VersionBData.DataType.DateTime, dateTime2, dateTime2)
             {
-                Name = "Test13",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 13,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.DateTime,
-                LongValue = 13
+                IsTransient = true
             },
-            new()
+            new("Test14", VersionBData.DataType.Text, "14", dateTime2)
             {
-                Name = "Test13",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
-                Alias = 13,
-                IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.DateTime,
-                LongValue = 13
-            },
-            new()
-            {
-                Name = "Test14",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 14,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Text,
-                StringValue = "14"
+                IsTransient = true
             },
-            new()
+            new("Test15", VersionBData.DataType.Uuid, "c609f36e-92f9-4103-92f0-bf9d95c18be9", dateTime2)
             {
-                Name = "Test15",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
                 Alias = 15,
                 IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = VersionBData.DataType.Text,
-                StringValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
+                IsTransient = true
             },
             new()
             {

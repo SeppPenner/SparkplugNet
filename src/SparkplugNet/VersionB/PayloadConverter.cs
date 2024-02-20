@@ -748,72 +748,44 @@ internal static class PayloadConverter
     /// <param name="protoPropertyValue">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue"/>.</param>
     /// <returns>The <see cref="PropertyValue"/>.</returns>
     public static PropertyValue ConvertVersionBPropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue protoPropertyValue)
-    {
-        var propertyValue = new PropertyValue()
+        => (VersionBDataTypeEnum?)protoPropertyValue.DataType switch
         {
-            IsNull = protoPropertyValue.IsNull,
-            DataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoPropertyValue.DataType)
+            VersionBDataTypeEnum.Int8 => new PropertyValue(VersionBDataTypeEnum.Int8, protoPropertyValue.IntValue),
+            VersionBDataTypeEnum.Int16 => new PropertyValue(VersionBDataTypeEnum.Int16, protoPropertyValue.IntValue),
+            VersionBDataTypeEnum.Int32 => new PropertyValue(VersionBDataTypeEnum.Int32, protoPropertyValue.IntValue),
+            VersionBDataTypeEnum.UInt8 => new PropertyValue(VersionBDataTypeEnum.UInt8, protoPropertyValue.IntValue),
+            VersionBDataTypeEnum.UInt16 => new PropertyValue(VersionBDataTypeEnum.UInt16, protoPropertyValue.IntValue),
+            VersionBDataTypeEnum.Int64 => new PropertyValue(VersionBDataTypeEnum.Int64, protoPropertyValue.LongValue),
+            VersionBDataTypeEnum.UInt32 => new PropertyValue(VersionBDataTypeEnum.UInt32, protoPropertyValue.LongValue),
+            VersionBDataTypeEnum.UInt64 => new PropertyValue(VersionBDataTypeEnum.UInt64, protoPropertyValue.LongValue),
+            VersionBDataTypeEnum.DateTime => new PropertyValue(VersionBDataTypeEnum.DateTime, protoPropertyValue.LongValue),
+            VersionBDataTypeEnum.Float => new PropertyValue(VersionBDataTypeEnum.Float, protoPropertyValue.FloatValue),
+            VersionBDataTypeEnum.Double => new PropertyValue(VersionBDataTypeEnum.Double, protoPropertyValue.DoubleValue),
+            VersionBDataTypeEnum.Boolean => new PropertyValue(VersionBDataTypeEnum.Boolean, protoPropertyValue.BooleanValue),
+            VersionBDataTypeEnum.String => new PropertyValue(VersionBDataTypeEnum.String, protoPropertyValue.StringValue),
+            VersionBDataTypeEnum.Text => new PropertyValue(VersionBDataTypeEnum.Text, protoPropertyValue.StringValue),
+            VersionBDataTypeEnum.Uuid => new PropertyValue(VersionBDataTypeEnum.Uuid, protoPropertyValue.StringValue),
+            VersionBDataTypeEnum.PropertySet => new PropertyValue(VersionBDataTypeEnum.PropertySet, ConvertVersionBPropertySet(protoPropertyValue.PropertySetValue)),
+            VersionBDataTypeEnum.PropertySetList => new PropertyValue(VersionBDataTypeEnum.PropertySetList, ConvertVersionBPropertySetList(protoPropertyValue.PropertySetListValue)),
+            VersionBDataTypeEnum.Bytes
+             or VersionBDataTypeEnum.File
+             or VersionBDataTypeEnum.DataSet
+             or VersionBDataTypeEnum.Template
+             or VersionBDataTypeEnum.Int8Array
+             or VersionBDataTypeEnum.Int16Array
+             or VersionBDataTypeEnum.Int32Array
+             or VersionBDataTypeEnum.Int64Array
+             or VersionBDataTypeEnum.UInt8Array
+             or VersionBDataTypeEnum.UInt16Array
+             or VersionBDataTypeEnum.UInt32Array
+             or VersionBDataTypeEnum.UInt64Array
+             or VersionBDataTypeEnum.FloatArray
+             or VersionBDataTypeEnum.DoubleArray
+             or VersionBDataTypeEnum.BooleanArray
+             or VersionBDataTypeEnum.StringArray
+             or VersionBDataTypeEnum.DateTimeArray
+             or _ => throw new ArgumentOutOfRangeException(nameof(protoPropertyValue), (VersionBDataTypeEnum?)protoPropertyValue.DataType, "Unknown property value data type")
         };
-
-        switch ((VersionBProtoBuf.DataType?)protoPropertyValue.DataType)
-        {
-            case VersionBProtoBuf.DataType.Int8:
-            case VersionBProtoBuf.DataType.Int16:
-            case VersionBProtoBuf.DataType.Int32:
-            case VersionBProtoBuf.DataType.UInt8:
-            case VersionBProtoBuf.DataType.UInt16:
-                propertyValue.IntValue = protoPropertyValue.IntValue;
-                break;
-            case VersionBProtoBuf.DataType.Int64:
-            case VersionBProtoBuf.DataType.UInt32:
-            case VersionBProtoBuf.DataType.UInt64:
-            case VersionBProtoBuf.DataType.DateTime:
-                propertyValue.LongValue = protoPropertyValue.LongValue;
-                break;
-            case VersionBProtoBuf.DataType.Float:
-                propertyValue.FloatValue = protoPropertyValue.FloatValue;
-                break;
-            case VersionBProtoBuf.DataType.Double:
-                propertyValue.DoubleValue = protoPropertyValue.DoubleValue;
-                break;
-            case VersionBProtoBuf.DataType.Boolean:
-                propertyValue.BooleanValue = protoPropertyValue.BooleanValue;
-                break;
-            case VersionBProtoBuf.DataType.String:
-            case VersionBProtoBuf.DataType.Text:
-            case VersionBProtoBuf.DataType.Uuid:
-                propertyValue.StringValue = protoPropertyValue.StringValue;
-                break;
-            case VersionBProtoBuf.DataType.PropertySet:
-                propertyValue.PropertySetValue = ConvertVersionBPropertySet(protoPropertyValue.PropertySetValue);
-                break;
-            case VersionBProtoBuf.DataType.PropertySetList:
-                propertyValue.PropertySetListValue = ConvertVersionBPropertySetList(protoPropertyValue.PropertySetListValue);
-                break;
-            case VersionBProtoBuf.DataType.Bytes:
-            case VersionBProtoBuf.DataType.File:
-            case VersionBProtoBuf.DataType.DataSet:
-            case VersionBProtoBuf.DataType.Template:
-            case VersionBProtoBuf.DataType.Int8Array:
-            case VersionBProtoBuf.DataType.Int16Array:
-            case VersionBProtoBuf.DataType.Int32Array:
-            case VersionBProtoBuf.DataType.Int64Array:
-            case VersionBProtoBuf.DataType.UInt8Array:
-            case VersionBProtoBuf.DataType.UInt16Array:
-            case VersionBProtoBuf.DataType.UInt32Array:
-            case VersionBProtoBuf.DataType.UInt64Array:
-            case VersionBProtoBuf.DataType.FloatArray:
-            case VersionBProtoBuf.DataType.DoubleArray:
-            case VersionBProtoBuf.DataType.BooleanArray:
-            case VersionBProtoBuf.DataType.StringArray:
-            case VersionBProtoBuf.DataType.DateTimeArray:
-            case VersionBProtoBuf.DataType.Unknown:
-            default:
-                throw new ArgumentOutOfRangeException(nameof(protoPropertyValue.DataType), protoPropertyValue.DataType, "Unknown property value data type");
-        }
-
-        return propertyValue;
-    }
 
     /// <summary>
     /// Gets the version B ProtoBuf property value from the version B property value.

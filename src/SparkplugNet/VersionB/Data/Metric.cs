@@ -27,7 +27,7 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
     /// <param name="timestamp">The timestamp.</param>
-    public Metric(VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    public Metric(VersionBDataTypeEnum dataType, object? value, DateTimeOffset? timestamp = null)
     {
         this.SetValue(dataType, value);
 
@@ -44,7 +44,7 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
     /// <param name="timestamp">The timestamp.</param>
-    public Metric(string name, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    public Metric(string name, VersionBDataTypeEnum dataType, object? value, DateTimeOffset? timestamp = null)
     {
         this.Name = name;
         this.SetValue(dataType, value);
@@ -151,10 +151,10 @@ public class Metric : ValueBaseVersionB, IMetric
                     var originalData = value?.ConvertTo<sbyte[]>()?.ToList() ?? new();
                     var data = new List<byte>();
 
-                    foreach (var number in originalData)
+                    for (var index = 0; index < originalData.Count; index++)
                     {
-                        var bytes = BitConverter.GetBytes(number);
-                        data.AddRange(bytes);
+                        var number = originalData[index];
+                        data.Add((byte)number);
                     }
 
                     this.BytesValue = data.ToArray();
