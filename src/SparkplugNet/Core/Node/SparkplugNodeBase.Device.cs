@@ -36,13 +36,13 @@ public partial class SparkplugNodeBase<T>
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.Client.IsConnected)
+        if (!this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
 
         // Get the device birth message.
-        var deviceBirthMessage = this.MessageGenerator.GetSparkPlugDeviceBirthMessage(
+        var deviceBirthMessage = this.messageGenerator.GetSparkPlugDeviceBirthMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -63,7 +63,7 @@ public partial class SparkplugNodeBase<T>
 
         // Publish the message.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
-        return await this.Client.PublishAsync(deviceBirthMessage, this.Options.CancellationToken.Value);
+        return await this.client.PublishAsync(deviceBirthMessage, this.Options.CancellationToken.Value);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public partial class SparkplugNodeBase<T>
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.Client.IsConnected)
+        if (!this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -109,7 +109,7 @@ public partial class SparkplugNodeBase<T>
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.Client.IsConnected)
+        if (!this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -120,7 +120,7 @@ public partial class SparkplugNodeBase<T>
         }
 
         // Get the device death message.
-        var deviceDeathMessage = this.MessageGenerator.GetSparkPlugDeviceDeathMessage(
+        var deviceDeathMessage = this.messageGenerator.GetSparkPlugDeviceDeathMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -138,7 +138,7 @@ public partial class SparkplugNodeBase<T>
         this.KnownDevices.TryRemove(deviceIdentifier, out _);
         // Publish the message.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
-        return await this.Client.PublishAsync(deviceDeathMessage, this.Options.CancellationToken.Value);
+        return await this.client.PublishAsync(deviceDeathMessage, this.Options.CancellationToken.Value);
     }
 
     /// <summary>
@@ -167,7 +167,7 @@ public partial class SparkplugNodeBase<T>
         }
 
         // Get the data message.
-        var dataMessage = this.MessageGenerator.GetSparkPlugDeviceDataMessage(
+        var dataMessage = this.messageGenerator.GetSparkPlugDeviceDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -181,6 +181,6 @@ public partial class SparkplugNodeBase<T>
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        return await this.Client.PublishAsync(dataMessage);
+        return await this.client.PublishAsync(dataMessage);
     }
 }

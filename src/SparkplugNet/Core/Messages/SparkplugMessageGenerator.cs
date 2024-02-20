@@ -20,13 +20,19 @@ internal class SparkplugMessageGenerator
     private readonly ILogger? logger;
 
     /// <summary>
+    /// The Sparkplug specification version.
+    /// </summary>
+    private readonly SparkplugSpecificationVersion sparkplugSpecificationVersion;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugMessageGenerator"/> class.
     /// </summary>
     /// <param name="logger">The logger.</param>
-    // Todo: Add spec version here!
-    public SparkplugMessageGenerator(ILogger? logger)
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
+    public SparkplugMessageGenerator(ILogger? logger, SparkplugSpecificationVersion sparkplugSpecificationVersion)
     {
         this.logger = logger;
+        this.sparkplugSpecificationVersion = sparkplugSpecificationVersion;
     }
 
     /// <summary>
@@ -38,7 +44,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the SCADA host identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-    public static MqttApplicationMessage GetSparkplugStateMessage(
+    public MqttApplicationMessage GetSparkplugStateMessage(
         SparkplugNamespace nameSpace,
         string scadaHostIdentifier,
         bool online)
@@ -50,8 +56,8 @@ internal class SparkplugMessageGenerator
 
         return nameSpace switch
         {
-            SparkplugNamespace.VersionA => GetSparkplugStateMessageA(scadaHostIdentifier, online),
-            SparkplugNamespace.VersionB => GetSparkplugStateMessageB(scadaHostIdentifier, online),
+            SparkplugNamespace.VersionA => this.GetSparkplugStateMessageA(scadaHostIdentifier, online),
+            SparkplugNamespace.VersionB => this.GetSparkplugStateMessageB(scadaHostIdentifier, online),
             _ => throw new ArgumentOutOfRangeException(nameof(nameSpace))
         };
     }
@@ -415,7 +421,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    public static MqttApplicationMessage GetSparkPlugNodeCommandMessage<T>(
+    public MqttApplicationMessage GetSparkPlugNodeCommandMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -474,7 +480,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    public static MqttApplicationMessage GetSparkPlugDeviceCommandMessage<T>(
+    public MqttApplicationMessage GetSparkPlugDeviceCommandMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -537,12 +543,7 @@ internal class SparkplugMessageGenerator
         // Add a BDSEQ metric.
         return metrics.Concat(new VersionAData.KuraMetric[]
         {
-            new VersionAData.KuraMetric
-            {
-                Name = Constants.SessionNumberMetricName,
-                LongValue = sessionSequenceNumber,
-                DataType = VersionAData.DataType.Int64
-            }
+            new VersionAData.KuraMetric(Constants.SessionNumberMetricName, VersionADataTypeEnum.Int64, sessionSequenceNumber)
         });
     }
 
@@ -557,12 +558,7 @@ internal class SparkplugMessageGenerator
         // Add a BDSEQ metric.
         return metrics.Concat(new Metric[]
         {
-            new Metric
-            {
-                Name = Constants.SessionNumberMetricName,
-                LongValue = (ulong)sessionSequenceNumber,
-                ValueCase = (uint)DataType.Int64
-            }
+            new VersionBData.Metric(Constants.SessionNumberMetricName, VersionBDataTypeEnum.Int64, sessionSequenceNumber)
         });
     }
 
@@ -572,7 +568,7 @@ internal class SparkplugMessageGenerator
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="online">A value indicating whether the message sender is online or not.</param>
     /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugStateMessageA(string scadaHostIdentifier, bool online)
+    private MqttApplicationMessage GetSparkplugStateMessageA(string scadaHostIdentifier, bool online)
     {
         return new MqttApplicationMessageBuilder()
             .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
@@ -585,9 +581,20 @@ internal class SparkplugMessageGenerator
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="online">A value indicating whether the message sender is online or not.</param>
     /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online)
+    private MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online)
     {
-        var stateString = GetSparkplugStateMessage(online);
+        var stateString = string.Empty;
+
+        switch (this.sparkplugSpecificationVersion)
+        {
+            case SparkplugSpecificationVersion.Version22:
+                stateString = online ? "ONLINE" : "OFFLINE";
+                break;
+            case SparkplugSpecificationVersion.Version30:
+                stateString = GetSparkplugStateMessage(online);
+                break;
+        }
+
         return new MqttApplicationMessageBuilder()
             .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
             .WithPayload(stateString)

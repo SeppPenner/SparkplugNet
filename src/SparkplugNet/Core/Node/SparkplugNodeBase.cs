@@ -89,7 +89,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     public async Task Stop()
     {
         this.IsRunning = false;
-        await this.Client.DisconnectAsync();
+        await this.client.DisconnectAsync();
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.Client.IsConnected)
+        if (!this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -158,8 +158,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     private void AddEventHandler()
     {
-        this.Client.DisconnectedAsync += this.OnClientDisconnected;
-        this.Client.ConnectedAsync += this.OnClientConnectedAsync;
+        this.client.DisconnectedAsync += this.OnClientDisconnected;
+        this.client.ConnectedAsync += this.OnClientConnectedAsync;
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     private void AddMessageReceivedHandler()
     {
-        this.Client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
+        this.client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
     }
 
     /// <summary>
@@ -255,7 +255,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         this.ResetLastSequenceNumber();
 
         // Get the will message.
-        var willMessage = this.MessageGenerator.GetSparkPlugNodeDeathMessage(
+        var willMessage = this.messageGenerator.GetSparkPlugNodeDeathMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -344,7 +344,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         // Debug output.
         this.Logger?.Debug("CONNECT Message: {@ClientOptions}.", this.ClientOptions);
 
-        await this.Client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
+        await this.client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
     }
 
     /// <summary>
@@ -360,7 +360,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         // Get the online message.
-        var onlineMessage = this.MessageGenerator.GetSparkPlugNodeBirthMessage<T>(
+        var onlineMessage = this.messageGenerator.GetSparkPlugNodeBirthMessage<T>(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -379,7 +379,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.Client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
+        await this.client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
 
         if (this.Options.PublishKnownDeviceMetricsOnReconnect)
         {
@@ -403,12 +403,12 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         var nodeCommandSubscribeTopic = SparkplugTopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.Options.GroupIdentifier, this.Options.EdgeNodeIdentifier);
-        await this.Client.SubscribeAsync(nodeCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(nodeCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
         var deviceCommandSubscribeTopic = SparkplugTopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.Options.GroupIdentifier, this.Options.EdgeNodeIdentifier);
-        await this.Client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
         var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);
-        await this.Client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
     }
 }

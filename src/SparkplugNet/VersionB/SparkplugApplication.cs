@@ -71,7 +71,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.Client.PublishAsync(dataMessage);
+        await this.client.PublishAsync(dataMessage);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.Client.PublishAsync(dataMessage);
+        await this.client.PublishAsync(dataMessage);
     }
 
     /// <summary>

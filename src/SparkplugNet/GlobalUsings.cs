@@ -33,6 +33,7 @@ global using VersionAProtoBuf = SparkplugNet.VersionA.ProtoBuf;
 global using VersionBData = SparkplugNet.VersionB.Data;
 global using VersionBProtoBuf = SparkplugNet.VersionB.ProtoBuf;
 
+global using VersionADataTypeEnum = SparkplugNet.VersionA.Data.DataType;
 global using VersionBDataTypeEnum = SparkplugNet.VersionB.Data.DataType;
 global using SystemCancellationToken = System.Threading.CancellationToken;
 #pragma warning restore IDE0065 // Die using-Anweisung wurde falsch platziert.

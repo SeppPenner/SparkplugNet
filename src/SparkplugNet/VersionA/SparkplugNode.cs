@@ -62,7 +62,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
         }
 
         // Get the data message.
-        var dataMessage = this.MessageGenerator.GetSparkPlugNodeDataMessage(
+        var dataMessage = this.messageGenerator.GetSparkPlugNodeDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -78,7 +78,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        return await this.Client.PublishAsync(dataMessage);
+        return await this.client.PublishAsync(dataMessage);
     }
 
     /// <summary>

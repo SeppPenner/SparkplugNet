@@ -98,7 +98,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     public async Task Stop()
     {
         this.IsRunning = false;
-        await this.Client.DisconnectAsync();
+        await this.client.DisconnectAsync();
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.Client.IsConnected)
+        if (!this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -156,7 +156,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.Client.IsConnected)
+        if (!this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -276,8 +276,8 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     private void AddEventHandler()
     {
-        this.Client.DisconnectedAsync += this.OnClientDisconnectedAsync;
-        this.Client.ConnectedAsync += this.OnClientConnectedAsync;
+        this.client.DisconnectedAsync += this.OnClientDisconnectedAsync;
+        this.client.ConnectedAsync += this.OnClientConnectedAsync;
     }
 
     /// <summary>
@@ -286,7 +286,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     private void AddMessageReceivedHandler()
     {
-        this.Client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
+        this.client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
     }
 
     /// <summary>
@@ -428,7 +428,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             }
 
             this.ClientOptions = builder.Build();
-            await this.Client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
+            await this.client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
 
         }
         catch (Exception ex)
@@ -464,7 +464,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             // Publish message.
             this.Options.CancellationToken ??= SystemCancellationToken.None;
-            await this.Client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
+            await this.client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
         }
     }
 
@@ -475,7 +475,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     private async Task SubscribeInternal()
     {
         var topic = SparkplugTopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);
-        await this.Client.SubscribeAsync(topic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(topic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
     }
 
     /// <summary>

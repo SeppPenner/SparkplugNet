@@ -68,6 +68,7 @@ internal static class PayloadConverter
             Timestamp = protoMetric.Timestamp
         };
 
+        // Todo: Adjust set value method
         switch (metric.DataType)
         {
             case VersionBDataTypeEnum.Int8:

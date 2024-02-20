@@ -34,6 +34,18 @@ public class KuraMetric : ValueBaseVersionA, IMetric
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="KuraMetric"/> class.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="dataType">The data type.</param>
+    /// <param name="value">The value.</param>
+    public KuraMetric(string name, DataType dataType, object value)
+    {
+        this.Name = name;
+        this.SetValue(dataType, value);
+    }
+
+    /// <summary>
     /// Gets or sets the name.
     /// </summary>
     [DefaultValue("")]

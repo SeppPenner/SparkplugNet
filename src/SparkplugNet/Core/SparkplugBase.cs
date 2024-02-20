@@ -20,12 +20,12 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// The message generator.
     /// </summary>
-    internal readonly SparkplugMessageGenerator MessageGenerator;
+    private readonly SparkplugMessageGenerator messageGenerator;
 
     /// <summary>
     /// The MQTT client.
     /// </summary>
-    internal readonly IMqttClient Client;
+    private readonly IMqttClient client;
 
     /// <summary>
     /// The known metrics.
@@ -37,10 +37,11 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="ISparkplugConnection"/>
-    public SparkplugBase(IEnumerable<T> knownMetrics, ILogger? logger = null)
-        : this(new KnownMetricStorage(knownMetrics), logger)
+    public SparkplugBase(IEnumerable<T> knownMetrics, SparkplugSpecificationVersion sparkplugSpecificationVersion, ILogger? logger = null)
+        : this(new KnownMetricStorage(knownMetrics), sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -49,9 +50,10 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// Initializes a new instance of the <see cref="SparkplugBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The known metrics storage.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="ISparkplugConnection"/>
-    public SparkplugBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null)
+    public SparkplugBase(KnownMetricStorage knownMetricsStorage, SparkplugSpecificationVersion sparkplugSpecificationVersion, ILogger? logger = null)
     {
         this.knownMetrics = knownMetricsStorage;
 
@@ -64,10 +66,10 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
             this.NameSpace = SparkplugNamespace.VersionB;
         }
 
-        this.Client = new MqttFactory().CreateMqttClient();
+        this.client = new MqttFactory().CreateMqttClient();
         this.Logger = logger;
 
-        this.MessageGenerator = new SparkplugMessageGenerator(logger);
+        this.messageGenerator = new SparkplugMessageGenerator(logger, sparkplugSpecificationVersion);
     }
 
     /// <summary>
@@ -98,7 +100,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// Gets a value indicating whether this instance is connected.
     /// </summary>
-    public bool IsConnected => this.Client.IsConnected;
+    public bool IsConnected => this.client.IsConnected;
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is running.

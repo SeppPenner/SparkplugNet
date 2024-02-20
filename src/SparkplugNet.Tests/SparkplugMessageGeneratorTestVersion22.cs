@@ -1,19 +1,19 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugMessageGeneratorTest.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugMessageGeneratorTestVersion22.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>
-//   A class to test the <see cref="SparkplugMessageGenerator"/> class.
+//   A class to test the <see cref="SparkplugMessageGenerator"/> class with specification version 2.2.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Tests;
 
 /// <summary>
-/// A class to test the <see cref="SparkplugMessageGenerator"/> class.
+/// A class to test the <see cref="SparkplugMessageGenerator"/> class with specification version 2.2.
 /// </summary>
 [TestClass]
-public class SparkplugMessageGeneratorTest
+public class SparkplugMessageGeneratorTestVersion22
 {
     /// <summary>
     /// The metrics for namespace A.
@@ -64,7 +64,8 @@ public class SparkplugMessageGeneratorTest
     /// <summary>
     /// The message generator.
     /// </summary>
-    private readonly SparkplugMessageGenerator messageGenerator = new(new LoggerConfiguration().WriteTo.Console().CreateLogger());
+    private readonly SparkplugMessageGenerator messageGenerator = new(new LoggerConfiguration().WriteTo.Console().CreateLogger(),
+        SparkplugSpecificationVersion.Version22);
 
     /// <summary>
     /// Tests the Sparkplug message generator with a message with a version A namespace and a online state.
@@ -72,7 +73,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestStateMessageNamespaceAOnline()
     {
-        var message = SparkplugMessageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionA, "scada1", true);
+        var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionA, "scada1", true);
 
         Assert.AreEqual("STATE/scada1", message.Topic);
         Assert.AreEqual("ONLINE", message.ConvertPayloadToString());
@@ -84,7 +85,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestStateMessageNamespaceAOffline()
     {
-        var message = SparkplugMessageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionA, "scada1", false);
+        var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionA, "scada1", false);
 
         Assert.AreEqual("STATE/scada1", message.Topic);
         Assert.AreEqual("OFFLINE", message.ConvertPayloadToString());
@@ -96,7 +97,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestStateMessageNamespaceBOnline()
     {
-        var message = SparkplugMessageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
+        var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
 
         Assert.AreEqual("STATE/scada1", message.Topic);
         Assert.AreEqual("ONLINE", message.ConvertPayloadToString());
@@ -108,7 +109,7 @@ public class SparkplugMessageGeneratorTest
     [TestMethod]
     public void TestStateMessageNamespaceBOffline()
     {
-        var message = SparkplugMessageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", false);
+        var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", false);
 
         Assert.AreEqual("STATE/scada1", message.Topic);
         Assert.AreEqual("OFFLINE", message.ConvertPayloadToString());
@@ -389,7 +390,7 @@ public class SparkplugMessageGeneratorTest
     public void TestDeviceCommandMessageNamespaceA()
     {
         var dateTime = DateTimeOffset.Now;
-        var message = SparkplugMessageGenerator.GetSparkPlugDeviceCommandMessage(SparkplugNamespace.VersionA, "group1", "edge1", "device1", this.metricsA, 0, 1, dateTime);
+        var message = this.messageGenerator.GetSparkPlugDeviceCommandMessage(SparkplugNamespace.VersionA, "group1", "edge1", "device1", this.metricsA, 0, 1, dateTime);
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
         Assert.AreEqual("spAv1.0/group1/DCMD/edge1/device1", message.Topic);
@@ -413,7 +414,7 @@ public class SparkplugMessageGeneratorTest
     public void TestDeviceCommandMessageNamespaceB()
     {
         var dateTime = DateTimeOffset.UtcNow;
-        var message = SparkplugMessageGenerator.GetSparkPlugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
+        var message = this.messageGenerator.GetSparkPlugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
         Assert.AreEqual("spBv1.0/group1/DCMD/edge1/device1", message.Topic);
@@ -437,7 +438,7 @@ public class SparkplugMessageGeneratorTest
     public void TestNodeCommandMessageNamespaceA()
     {
         var dateTime = DateTimeOffset.Now;
-        var message = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(SparkplugNamespace.VersionA, "group1", "edge1", this.metricsA, 0, 1, dateTime);
+        var message = this.messageGenerator.GetSparkPlugNodeCommandMessage(SparkplugNamespace.VersionA, "group1", "edge1", this.metricsA, 0, 1, dateTime);
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBufPayload>(message.Payload);
 
         Assert.AreEqual("spAv1.0/group1/NCMD/edge1", message.Topic);
@@ -461,7 +462,7 @@ public class SparkplugMessageGeneratorTest
     public void TestNodeCommandMessageNamespaceB()
     {
         var dateTime = DateTimeOffset.UtcNow;
-        var message = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
+        var message = this.messageGenerator.GetSparkPlugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
         Assert.AreEqual("spBv1.0/group1/NCMD/edge1", message.Topic);

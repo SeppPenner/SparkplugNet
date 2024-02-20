@@ -15,10 +15,51 @@ namespace SparkplugNet.VersionB.Data;
 public class Metric : ValueBaseVersionB, IMetric
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    public Metric()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    /// <param name="dataType">The data type.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="timestamp">The timestamp.</param>
+    public Metric(VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    {
+        this.SetValue(dataType, value);
+
+        if (timestamp is not null)
+        {
+            this.Timestamp = (ulong)timestamp.Value.ToUnixTimeMilliseconds();
+        }
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Metric"/> class.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="dataType">The data type.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="timestamp">The timestamp.</param>
+    public Metric(string name, VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
+    {
+        this.Name = name;
+        this.SetValue(dataType, value);
+
+        if (timestamp is not null)
+        {
+            this.Timestamp = (ulong)timestamp.Value.ToUnixTimeMilliseconds();
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the name.
     /// </summary>
     [DefaultValue("")]
-    public virtual string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the alias.
@@ -74,29 +115,6 @@ public class Metric : ValueBaseVersionB, IMetric
     /// Gets or sets the extension value.
     /// </summary>
     public MetricValueExtension? ExtensionValue { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Metric"/> class.
-    /// </summary>
-    public Metric()
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Metric"/> class.
-    /// </summary>
-    /// <param name="dataType">The data type.</param>
-    /// <param name="value">The value.</param>
-    /// <param name="timestamp">The timestamp.</param>
-    public Metric(VersionBDataTypeEnum dataType, object value, DateTimeOffset? timestamp = null)
-    {
-        this.SetValue(dataType, value);
-
-        if (timestamp is not null)
-        {
-            this.Timestamp = (ulong)timestamp.Value.ToUnixTimeMilliseconds();
-        }
-    }
 
     /// <summary>
     /// Sets the value.
