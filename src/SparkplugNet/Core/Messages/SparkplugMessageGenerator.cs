@@ -556,7 +556,7 @@ internal class SparkplugMessageGenerator
         long sessionSequenceNumber)
     {
         // Add a BDSEQ metric.
-        return metrics.Concat(new Metric[]
+        return metrics.Concat(new VersionBData.Metric[]
         {
             new VersionBData.Metric(Constants.SessionNumberMetricName, VersionBDataTypeEnum.Int64, sessionSequenceNumber)
         });
@@ -571,7 +571,7 @@ internal class SparkplugMessageGenerator
     private MqttApplicationMessage GetSparkplugStateMessageA(string scadaHostIdentifier, bool online)
     {
         return new MqttApplicationMessageBuilder()
-            .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
+            .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier, this.specificationVersion))
             .WithPayload(online ? "ONLINE" : "OFFLINE").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce).WithRetainFlag().Build();
     }
 
@@ -596,7 +596,7 @@ internal class SparkplugMessageGenerator
         }
 
         return new MqttApplicationMessageBuilder()
-            .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier))
+            .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier, this.specificationVersion))
             .WithPayload(stateString)
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .WithRetainFlag()
