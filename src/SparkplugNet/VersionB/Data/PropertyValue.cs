@@ -22,15 +22,15 @@ public class PropertyValue : ValueBaseVersionB
     /// <summary>
     /// Gets or sets the property set value.
     /// </summary>
-    public PropertySet? PropertySetValue { get; set; }
+    public PropertySet? PropertySetValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the property set list value.
     /// </summary>
-    public PropertySetList? PropertySetListValue { get; set; }
+    public PropertySetList? PropertySetListValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the extension value.
     /// </summary>
-    public PropertyValueExtension? ExtensionValue { get; set; }
+    public PropertyValueExtension? ExtensionValue { get; protected set; }
 }

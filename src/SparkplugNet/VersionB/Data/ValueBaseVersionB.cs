@@ -18,7 +18,6 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     /// <summary>
     /// Gets the value.
     /// </summary>
-    // Todo: Fix this?!
     public override object? Value => this.DataType switch
     {
         VersionBDataTypeEnum.Int8 => (sbyte)this.IntValue,
@@ -45,13 +44,10 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
     /// <param name="dataType">Type of the data.</param>
     /// <param name="value">The value.</param>
     /// <returns>The metric.</returns>
-    // Todo: Fix this?!
     public override IValue<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object? value)
     {
         switch (dataType)
         {
-            case VersionBDataTypeEnum.PropertySetList:
-            case VersionBDataTypeEnum.Unknown:
             case VersionBDataTypeEnum.Int8:
             case VersionBDataTypeEnum.Int16:
             case VersionBDataTypeEnum.Int32:
@@ -63,6 +59,9 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
             case VersionBDataTypeEnum.Int64:
             case VersionBDataTypeEnum.UInt64:
                 this.LongValue = value.ConvertTo<ulong>();
+                break;
+            case VersionBDataTypeEnum.DateTime:
+                this.LongValue = (ulong)new DateTimeOffset(value.ConvertTo<DateTime>()).ToUnixTimeMilliseconds();
                 break;
             case VersionBDataTypeEnum.Float:
                 this.FloatValue = value.ConvertTo<float>();
@@ -78,9 +77,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
             case VersionBDataTypeEnum.Uuid:
                 this.StringValue = value.ConvertOrDefaultTo<string>();
                 break;
-            case VersionBDataTypeEnum.DateTime:
-                this.LongValue = (ulong)new DateTimeOffset(value.ConvertTo<DateTime>()).ToUnixTimeMilliseconds();
-                break;
+            case VersionBDataTypeEnum.Unknown:
             default:
                 throw new NotImplementedException($"Type {dataType} is not supported yet");
         }

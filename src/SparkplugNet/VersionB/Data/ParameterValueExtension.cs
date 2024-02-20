@@ -14,8 +14,4 @@ namespace SparkplugNet.VersionB.Data;
 /// </summary>
 public class ParameterValueExtension
 {
-    /// <summary>
-    /// Gets or sets the extensions.
-    /// </summary>
-    public List<byte> Extensions { get; set; } = new();
 }

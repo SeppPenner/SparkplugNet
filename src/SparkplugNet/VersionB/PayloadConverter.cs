@@ -55,7 +55,6 @@ internal static class PayloadConverter
         {
             Alias = protoMetric.Alias,
             IsHistorical = protoMetric.IsHistorical,
-            IsNull = protoMetric.IsNull,
             IsTransient = protoMetric.IsTransient,
             MetaData = ConvertVersionBMetaData(protoMetric.MetaData),
             Name = protoMetric.Name ?? string.Empty,
@@ -526,60 +525,42 @@ internal static class PayloadConverter
     /// <param name="protoDataType">The data type.</param>
     /// <returns>The <see cref="DataSetValue"/>.</returns>
     public static DataSetValue ConvertVersionBDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue protoDataSetValue, uint protoDataType)
-        => (VersionBProtoBuf.DataType?)protoDataType switch
+        => (VersionBDataTypeEnum?)protoDataType switch
         {
-            VersionBProtoBuf.DataType.Int8
-             or VersionBProtoBuf.DataType.Int16
-             or VersionBProtoBuf.DataType.Int32
-             or VersionBProtoBuf.DataType.UInt8
-             or VersionBProtoBuf.DataType.UInt16 => new DataSetValue
-             {
-                 IntValue = protoDataSetValue.IntValue
-             },
-            VersionBProtoBuf.DataType.Int64
-             or VersionBProtoBuf.DataType.UInt32
-             or VersionBProtoBuf.DataType.UInt64
-             or VersionBProtoBuf.DataType.DateTime => new DataSetValue
-             {
-                 LongValue = protoDataSetValue.LongValue
-             },
-            VersionBProtoBuf.DataType.Float => new DataSetValue
-            {
-                FloatValue = protoDataSetValue.FloatValue
-            },
-            VersionBProtoBuf.DataType.Double => new DataSetValue
-            {
-                DoubleValue = protoDataSetValue.DoubleValue
-            },
-            VersionBProtoBuf.DataType.Boolean => new DataSetValue
-            {
-                BooleanValue = protoDataSetValue.BooleanValue
-            },
-            VersionBProtoBuf.DataType.String
-             or VersionBProtoBuf.DataType.Text
-             or VersionBProtoBuf.DataType.Uuid => new DataSetValue
-             {
-                 StringValue = protoDataSetValue.StringValue
-             },
-            VersionBProtoBuf.DataType.Bytes
-             or VersionBProtoBuf.DataType.File
-             or VersionBProtoBuf.DataType.DataSet
-             or VersionBProtoBuf.DataType.Template
-             or VersionBProtoBuf.DataType.PropertySet
-             or VersionBProtoBuf.DataType.PropertySetList
-             or VersionBProtoBuf.DataType.Int8Array
-             or VersionBProtoBuf.DataType.Int16Array
-             or VersionBProtoBuf.DataType.Int32Array
-             or VersionBProtoBuf.DataType.Int64Array
-             or VersionBProtoBuf.DataType.UInt8Array
-             or VersionBProtoBuf.DataType.UInt16Array
-             or VersionBProtoBuf.DataType.UInt32Array
-             or VersionBProtoBuf.DataType.UInt64Array
-             or VersionBProtoBuf.DataType.FloatArray
-             or VersionBProtoBuf.DataType.DoubleArray
-             or VersionBProtoBuf.DataType.BooleanArray
-             or VersionBProtoBuf.DataType.StringArray
-             or VersionBProtoBuf.DataType.DateTimeArray
+            VersionBDataTypeEnum.Int8 => new DataSetValue(VersionBDataTypeEnum.Int8, protoDataSetValue.IntValue),
+            VersionBDataTypeEnum.Int16 => new DataSetValue(VersionBDataTypeEnum.Int16, protoDataSetValue.IntValue),
+            VersionBDataTypeEnum.Int32 => new DataSetValue(VersionBDataTypeEnum.Int32, protoDataSetValue.IntValue),
+            VersionBDataTypeEnum.UInt8 => new DataSetValue(VersionBDataTypeEnum.UInt8, protoDataSetValue.IntValue),
+            VersionBDataTypeEnum.UInt16 => new DataSetValue(VersionBDataTypeEnum.UInt16, protoDataSetValue.IntValue),
+            VersionBDataTypeEnum.Int64 => new DataSetValue(VersionBDataTypeEnum.Int64, protoDataSetValue.LongValue),
+            VersionBDataTypeEnum.UInt32 => new DataSetValue(VersionBDataTypeEnum.UInt32, protoDataSetValue.LongValue),
+            VersionBDataTypeEnum.UInt64 => new DataSetValue(VersionBDataTypeEnum.UInt64, protoDataSetValue.LongValue),
+            VersionBDataTypeEnum.DateTime => new DataSetValue(VersionBDataTypeEnum.DateTime, protoDataSetValue.LongValue),
+            VersionBDataTypeEnum.Float => new DataSetValue(VersionBDataTypeEnum.Float, protoDataSetValue.FloatValue),
+            VersionBDataTypeEnum.Double => new DataSetValue(VersionBDataTypeEnum.Double, protoDataSetValue.DoubleValue),
+            VersionBDataTypeEnum.Boolean => new DataSetValue(VersionBDataTypeEnum.Boolean, protoDataSetValue.BooleanValue),
+            VersionBDataTypeEnum.String => new DataSetValue(VersionBDataTypeEnum.String, protoDataSetValue.StringValue),
+            VersionBDataTypeEnum.Text => new DataSetValue(VersionBDataTypeEnum.Text, protoDataSetValue.StringValue),
+            VersionBDataTypeEnum.Uuid => new DataSetValue(VersionBDataTypeEnum.Uuid, protoDataSetValue.StringValue),
+            VersionBDataTypeEnum.Bytes
+             or VersionBDataTypeEnum.File
+             or VersionBDataTypeEnum.DataSet
+             or VersionBDataTypeEnum.Template
+             or VersionBDataTypeEnum.PropertySet
+             or VersionBDataTypeEnum.PropertySetList
+             or VersionBDataTypeEnum.Int8Array
+             or VersionBDataTypeEnum.Int16Array
+             or VersionBDataTypeEnum.Int32Array
+             or VersionBDataTypeEnum.Int64Array
+             or VersionBDataTypeEnum.UInt8Array
+             or VersionBDataTypeEnum.UInt16Array
+             or VersionBDataTypeEnum.UInt32Array
+             or VersionBDataTypeEnum.UInt64Array
+             or VersionBDataTypeEnum.FloatArray
+             or VersionBDataTypeEnum.DoubleArray
+             or VersionBDataTypeEnum.BooleanArray
+             or VersionBDataTypeEnum.StringArray
+             or VersionBDataTypeEnum.DateTimeArray
              or _ => throw new ArgumentOutOfRangeException(nameof(protoDataType), (VersionBDataTypeEnum?)protoDataType, "Unknown data set value data type")
         };
 
@@ -653,68 +634,44 @@ internal static class PayloadConverter
     /// <param name="protoParameter">The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter"/>.</param>
     /// <returns>The <see cref="Parameter"/>.</returns>
     public static Parameter ConvertVersionBParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter protoParameter)
+    => (VersionBDataTypeEnum?)protoParameter.DataType switch
     {
-        var parameter = new Parameter()
-        {
-            Name = protoParameter.Name ?? string.Empty,
-            DataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoParameter.DataType)
-        };
-
-        switch ((VersionBProtoBuf.DataType?)protoParameter.DataType)
-        {
-            case VersionBProtoBuf.DataType.Int8:
-            case VersionBProtoBuf.DataType.Int16:
-            case VersionBProtoBuf.DataType.Int32:
-            case VersionBProtoBuf.DataType.UInt8:
-            case VersionBProtoBuf.DataType.UInt16:
-                parameter.IntValue = protoParameter.IntValue;
-                break;
-            case VersionBProtoBuf.DataType.Int64:
-            case VersionBProtoBuf.DataType.UInt32:
-            case VersionBProtoBuf.DataType.UInt64:
-            case VersionBProtoBuf.DataType.DateTime:
-                parameter.LongValue = protoParameter.LongValue;
-                break;
-            case VersionBProtoBuf.DataType.Float:
-                parameter.FloatValue = protoParameter.FloatValue;
-                break;
-            case VersionBProtoBuf.DataType.Double:
-                parameter.DoubleValue = protoParameter.DoubleValue;
-                break;
-            case VersionBProtoBuf.DataType.Boolean:
-                parameter.BooleanValue = protoParameter.BooleanValue;
-                break;
-            case VersionBProtoBuf.DataType.String:
-            case VersionBProtoBuf.DataType.Text:
-            case VersionBProtoBuf.DataType.Uuid:
-                parameter.StringValue = protoParameter.StringValue;
-                break;
-            case VersionBProtoBuf.DataType.Bytes:
-            case VersionBProtoBuf.DataType.File:
-            case VersionBProtoBuf.DataType.DataSet:
-            case VersionBProtoBuf.DataType.Template:
-            case VersionBProtoBuf.DataType.PropertySet:
-            case VersionBProtoBuf.DataType.PropertySetList:
-            case VersionBProtoBuf.DataType.Int8Array:
-            case VersionBProtoBuf.DataType.Int16Array:
-            case VersionBProtoBuf.DataType.Int32Array:
-            case VersionBProtoBuf.DataType.Int64Array:
-            case VersionBProtoBuf.DataType.UInt8Array:
-            case VersionBProtoBuf.DataType.UInt16Array:
-            case VersionBProtoBuf.DataType.UInt32Array:
-            case VersionBProtoBuf.DataType.UInt64Array:
-            case VersionBProtoBuf.DataType.FloatArray:
-            case VersionBProtoBuf.DataType.DoubleArray:
-            case VersionBProtoBuf.DataType.BooleanArray:
-            case VersionBProtoBuf.DataType.StringArray:
-            case VersionBProtoBuf.DataType.DateTimeArray:
-            case VersionBProtoBuf.DataType.Unknown:
-            default:
-                throw new ArgumentOutOfRangeException(nameof(protoParameter.DataType), (VersionBProtoBuf.DataType?)protoParameter.DataType, "Unknown parameter data type");
-        }
-
-        return parameter;
-    }
+        VersionBDataTypeEnum.Int8 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int8, protoParameter.IntValue),
+        VersionBDataTypeEnum.Int16 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int16, protoParameter.IntValue),
+        VersionBDataTypeEnum.Int32 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int32, protoParameter.IntValue),
+        VersionBDataTypeEnum.UInt8 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt8, protoParameter.IntValue),
+        VersionBDataTypeEnum.UInt16 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt16, protoParameter.IntValue),
+        VersionBDataTypeEnum.Int64 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int64, protoParameter.LongValue),
+        VersionBDataTypeEnum.UInt32 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt32, protoParameter.LongValue),
+        VersionBDataTypeEnum.UInt64 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt64, protoParameter.LongValue),
+        VersionBDataTypeEnum.DateTime => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.DateTime, protoParameter.LongValue),
+        VersionBDataTypeEnum.Float => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Float, protoParameter.FloatValue),
+        VersionBDataTypeEnum.Double => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Double, protoParameter.DoubleValue),
+        VersionBDataTypeEnum.Boolean => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Boolean, protoParameter.BooleanValue),
+        VersionBDataTypeEnum.String => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.String, protoParameter.StringValue),
+        VersionBDataTypeEnum.Text => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Text, protoParameter.StringValue),
+        VersionBDataTypeEnum.Uuid => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Uuid, protoParameter.StringValue),
+        VersionBDataTypeEnum.Bytes
+         or VersionBDataTypeEnum.File
+         or VersionBDataTypeEnum.DataSet
+         or VersionBDataTypeEnum.Template
+         or VersionBDataTypeEnum.PropertySet
+         or VersionBDataTypeEnum.PropertySetList
+         or VersionBDataTypeEnum.Int8Array
+         or VersionBDataTypeEnum.Int16Array
+         or VersionBDataTypeEnum.Int32Array
+         or VersionBDataTypeEnum.Int64Array
+         or VersionBDataTypeEnum.UInt8Array
+         or VersionBDataTypeEnum.UInt16Array
+         or VersionBDataTypeEnum.UInt32Array
+         or VersionBDataTypeEnum.UInt64Array
+         or VersionBDataTypeEnum.FloatArray
+         or VersionBDataTypeEnum.DoubleArray
+         or VersionBDataTypeEnum.BooleanArray
+         or VersionBDataTypeEnum.StringArray
+         or VersionBDataTypeEnum.DateTimeArray
+         or _ => throw new ArgumentOutOfRangeException(nameof(protoParameter), (VersionBDataTypeEnum?)protoParameter.DataType, "Unknown parameter data type")
+    };
 
     /// <summary>
     /// Gets the version B ProtoBuf parameter from the version B parameter.

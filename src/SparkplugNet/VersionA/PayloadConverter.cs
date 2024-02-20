@@ -112,34 +112,33 @@ internal static class PayloadConverter
     /// <returns>The <see cref="VersionAData.KuraMetric"/>.</returns>
     public static VersionAData.KuraMetric ConvertVersionAMetric(VersionAProtoBuf.ProtoBufPayload.KuraMetric metric)
     {
-        var newMetric = new VersionAData.KuraMetric
+        var newMetric = new VersionAData.KuraMetric()
         {
-            Name = metric.Name,
-            DataType = ConvertVersionADataType(metric.DataType)
+            Name = metric.Name
         };
 
         switch (newMetric.DataType)
         {
-            case VersionAData.DataType.Boolean:
-                newMetric.BooleanValue = metric.BooleanValue ?? default;
+            case VersionADataTypeEnum.Boolean:
+                newMetric.SetValue(VersionADataTypeEnum.Boolean, metric.BooleanValue);
                 break;
-            case VersionAData.DataType.Bytes:
-                newMetric.BytesValue = metric.BytesValue ?? Array.Empty<byte>();
+            case VersionADataTypeEnum.Bytes:
+                newMetric.SetValue(VersionADataTypeEnum.Bytes, metric.BytesValue);
                 break;
-            case VersionAData.DataType.Double:
-                newMetric.DoubleValue = metric.DoubleValue ?? default;
+            case VersionADataTypeEnum.Double:
+                newMetric.SetValue(VersionADataTypeEnum.Double, metric.DoubleValue);
                 break;
-            case VersionAData.DataType.Float:
-                newMetric.FloatValue = metric.FloatValue ?? default;
+            case VersionADataTypeEnum.Float:
+                newMetric.SetValue(VersionADataTypeEnum.Float, metric.FloatValue);
                 break;
-            case VersionAData.DataType.Int32:
-                newMetric.IntValue = metric.IntValue ?? default;
+            case VersionADataTypeEnum.Int32:
+                newMetric.SetValue(VersionADataTypeEnum.Int32, metric.IntValue);
                 break;
-            case VersionAData.DataType.Int64:
-                newMetric.LongValue = metric.LongValue ?? default;
+            case VersionADataTypeEnum.Int64:
+                newMetric.SetValue(VersionADataTypeEnum.Int64, metric.LongValue);
                 break;
-            case VersionAData.DataType.String:
-                newMetric.StringValue = metric.StringValue ?? string.Empty;
+            case VersionADataTypeEnum.String:
+                newMetric.SetValue(VersionADataTypeEnum.String, metric.StringValue);
                 break;
         }
 
@@ -151,17 +150,17 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="type">The <see cref="VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType"/>.</param>
     /// <returns>The <see cref="VersionAData.DataType"/>.</returns>
-    public static VersionAData.DataType ConvertVersionADataType(VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType type)
+    public static VersionADataTypeEnum ConvertVersionADataType(VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType type)
         => type switch
         {
-            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool => VersionAData.DataType.Boolean,
-            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes => VersionAData.DataType.Bytes,
-            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Double => VersionAData.DataType.Double,
-            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Float => VersionAData.DataType.Float,
-            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int32 => VersionAData.DataType.Int32,
-            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int64 => VersionAData.DataType.Int64,
-            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String => VersionAData.DataType.String,
-            _ => VersionAData.DataType.String
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool => VersionADataTypeEnum.Boolean,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes => VersionADataTypeEnum.Bytes,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Double => VersionADataTypeEnum.Double,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Float => VersionADataTypeEnum.Float,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int32 => VersionADataTypeEnum.Int32,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int64 => VersionADataTypeEnum.Int64,
+            VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String => VersionADataTypeEnum.String,
+            _ => VersionADataTypeEnum.String
         };
 
     /// <summary>
@@ -169,16 +168,16 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="type">The <see cref="VersionAData.DataType"/>.</param>
     /// <returns>The <see cref="VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType"/>.</returns>
-    public static VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType ConvertVersionADataType(VersionAData.DataType type)
+    public static VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType ConvertVersionADataType(VersionADataTypeEnum type)
         => type switch
         {
-            VersionAData.DataType.Boolean => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool,
-            VersionAData.DataType.Bytes => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes,
-            VersionAData.DataType.Double => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Double,
-            VersionAData.DataType.Float => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Float,
-            VersionAData.DataType.Int32 => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int32,
-            VersionAData.DataType.Int64 => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int64,
-            VersionAData.DataType.String => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String,
+            VersionADataTypeEnum.Boolean => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool,
+            VersionADataTypeEnum.Bytes => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes,
+            VersionADataTypeEnum.Double => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Double,
+            VersionADataTypeEnum.Float => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Float,
+            VersionADataTypeEnum.Int32 => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int32,
+            VersionADataTypeEnum.Int64 => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int64,
+            VersionADataTypeEnum.String => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String,
             _ => VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String
         };
 }

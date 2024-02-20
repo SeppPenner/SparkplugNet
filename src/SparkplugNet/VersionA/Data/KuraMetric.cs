@@ -28,7 +28,7 @@ public class KuraMetric : ValueBaseVersionA, IMetric
     /// </summary>
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
-    public KuraMetric(DataType dataType, object value)
+    public KuraMetric(VersionADataTypeEnum dataType, object value)
     {
         this.SetValue(dataType, value);
     }
@@ -39,7 +39,7 @@ public class KuraMetric : ValueBaseVersionA, IMetric
     /// <param name="name">The name.</param>
     /// <param name="dataType">The data type.</param>
     /// <param name="value">The value.</param>
-    public KuraMetric(string name, DataType dataType, object value)
+    public KuraMetric(string name, VersionADataTypeEnum dataType, object value)
     {
         this.Name = name;
         this.SetValue(dataType, value);
