@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Tests;
+namespace SparkplugNet.Tests.Payloads;
 
 /// <summary>
 /// A class to test the <see cref="VersionB.PayloadConverter"/> class.

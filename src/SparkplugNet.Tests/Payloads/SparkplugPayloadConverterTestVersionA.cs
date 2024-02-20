@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Tests;
+namespace SparkplugNet.Tests.Payloads;
 
 /// <summary>
 /// A class to test the <see cref="VersionA.PayloadConverter"/> class.
@@ -228,7 +228,7 @@ public class SparkplugPayloadConverterTestVersionA
         {
             MetricEquals(convertedMetrics[count++], metric);
         }
-        
+
         Assert.IsNotNull(payload.Body);
         CollectionAssert.AreEqual(bodyData, payload.Body);
     }

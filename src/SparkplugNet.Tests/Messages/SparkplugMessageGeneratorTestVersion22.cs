@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace SparkplugNet.Tests;
+namespace SparkplugNet.Tests.Messages;
 
 /// <summary>
 /// A class to test the <see cref="SparkplugMessageGenerator"/> class with specification version 2.2.
