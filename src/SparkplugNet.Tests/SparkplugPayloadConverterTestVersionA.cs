@@ -69,50 +69,15 @@ public class SparkplugPayloadConverterTestVersionA
                 BytesValue = [7, 8, 9, 10]
             }
         };
-        var convertedMetrics = new List<VersionA.Data.KuraMetric>
+        var convertedMetrics = new List<VersionAData.KuraMetric>
         {
-            new()
-            {
-                Name = "Test1",
-                DataType = VersionAData.DataType.Double,
-                DoubleValue = 1.0
-            },
-            new()
-            {
-                Name = "Test2",
-                DataType = VersionAData.DataType.Float,
-                FloatValue = 2.0f
-            },
-            new()
-            {
-                Name = "Test3",
-                DataType = VersionAData.DataType.Int64,
-                LongValue = 3
-            },
-            new()
-            {
-                Name = "Test4",
-                DataType = VersionAData.DataType.Int32,
-                IntValue = 4
-            },
-            new()
-            {
-                Name = "Test5",
-                DataType = VersionAData.DataType.Boolean,
-                BooleanValue = true
-            },
-            new()
-            {
-                Name = "Test6",
-                DataType = VersionAData.DataType.String,
-                StringValue = "6"
-            },
-            new()
-            {
-                Name = "Test7",
-                DataType = VersionAData.DataType.Bytes,
-                BytesValue = [7, 8, 9, 10]
-            }
+            new("Test1", VersionAData.DataType.Double, 1.0),
+            new("Test2", VersionAData.DataType.Float, 2.0f),
+            new("Test3", VersionAData.DataType.Int64, 3),
+            new("Test4", VersionAData.DataType.Int32, 4),
+            new("Test5", VersionAData.DataType.Boolean, true),
+            new("Test6", VersionAData.DataType.String, "6"),
+            new("Test7", VersionAData.DataType.Bytes, new byte[] { 7, 8, 9, 10 })
         };
         var oldPayload = new VersionAProtoBufPayload
         {
@@ -170,48 +135,13 @@ public class SparkplugPayloadConverterTestVersionA
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionAData.KuraMetric>
         {
-            new()
-            {
-                Name = "Test1",
-                DataType = VersionAData.DataType.Double,
-                DoubleValue = 1.0
-            },
-            new()
-            {
-                Name = "Test2",
-                DataType = VersionAData.DataType.Float,
-                FloatValue = 2.0f
-            },
-            new()
-            {
-                Name = "Test3",
-                DataType = VersionAData.DataType.Int64,
-                LongValue = 3
-            },
-            new()
-            {
-                Name = "Test4",
-                DataType = VersionAData.DataType.Int32,
-                IntValue = 4
-            },
-            new()
-            {
-                Name = "Test5",
-                DataType = VersionAData.DataType.Boolean,
-                BooleanValue = true
-            },
-            new()
-            {
-                Name = "Test6",
-                DataType = VersionAData.DataType.String,
-                StringValue = "6"
-            },
-            new()
-            {
-                Name = "Test7",
-                DataType = VersionAData.DataType.Bytes,
-                BytesValue = [7, 8, 9, 10]
-            }
+            new("Test1", VersionAData.DataType.Double, 1.0),
+            new("Test2", VersionAData.DataType.Float, 2.0f),
+            new("Test3", VersionAData.DataType.Int64, 3),
+            new("Test4", VersionAData.DataType.Int32, 4),
+            new("Test5", VersionAData.DataType.Boolean, true),
+            new("Test6", VersionAData.DataType.String, "6"),
+            new("Test7", VersionAData.DataType.Bytes, new byte[] {7, 8, 9, 10 })
         };
         var convertedMetrics = new List<VersionAProtoBufPayload.KuraMetric>
         {
@@ -319,7 +249,6 @@ public class SparkplugPayloadConverterTestVersionA
         Assert.AreEqual(expected.LongValue, newMetric.LongValue);
         Assert.AreEqual(expected.Name, newMetric.Name);
         Assert.AreEqual(expected.StringValue, newMetric.StringValue);
-        Assert.AreEqual(expected.ValueCase, newMetric.ValueCase);
     }
 
     /// <summary>
