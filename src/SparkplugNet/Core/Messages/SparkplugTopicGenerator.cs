@@ -99,6 +99,7 @@ internal static class SparkplugTopicGenerator
     /// <returns>The STATE message topic as <see cref="string"/>.</returns>
     public static string GetSparkplugStateMessageTopic(string scadaHostIdentifier)
     {
+        // Todo: For B, use spv1.0B/STATE/SCADA_HOST_IDENTIFIER or something???
         return $"{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}";
     }
 }

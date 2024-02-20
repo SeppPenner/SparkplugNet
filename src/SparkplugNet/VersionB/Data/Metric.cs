@@ -94,27 +94,27 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets or sets the properties.
     /// </summary>
-    public PropertySet? PropertySetValue { get; set; }
+    public PropertySet? PropertySetValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the bytes value.
     /// </summary>
-    public virtual byte[] BytesValue { get; set; } = Array.Empty<byte>();
+    public byte[] BytesValue { get; protected set; } = Array.Empty<byte>();
 
     /// <summary>
     /// Gets or sets the data set value.
     /// </summary>
-    public DataSet? DataSetValue { get; set; }
+    public DataSet? DataSetValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the template value.
     /// </summary>
-    public Template? TemplateValue { get; set; }
+    public Template? TemplateValue { get; protected set; }
 
     /// <summary>
     /// Gets or sets the extension value.
     /// </summary>
-    public MetricValueExtension? ExtensionValue { get; set; }
+    public MetricValueExtension? ExtensionValue { get; protected set; }
 
     /// <summary>
     /// Sets the value.

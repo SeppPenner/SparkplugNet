@@ -9,9 +9,6 @@
 
 namespace SparkplugNet.VersionB;
 
-// Todo:
-// Checks für V2.2 und V3.0 einbauen
-
 /// <summary>
 /// A helper class for the payload conversions from internal ProtoBuf model to external data and vice versa for version B.
 /// </summary>
