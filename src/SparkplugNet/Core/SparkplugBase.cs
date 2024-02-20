@@ -20,12 +20,12 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// The message generator.
     /// </summary>
-    private readonly SparkplugMessageGenerator messageGenerator;
+    internal readonly SparkplugMessageGenerator messageGenerator;
 
     /// <summary>
     /// The MQTT client.
     /// </summary>
-    private readonly IMqttClient client;
+    internal readonly IMqttClient client;
 
     /// <summary>
     /// The known metrics.

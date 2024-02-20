@@ -21,9 +21,14 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
-    public SparkplugApplication(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplication(
+        IEnumerable<VersionBData.Metric> knownMetrics,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetrics, sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -32,9 +37,14 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
-    public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    public SparkplugApplication(
+        KnownMetricStorage knownMetricsStorage,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetricsStorage, sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -55,7 +65,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         }
 
         // Get the data message.
-        var dataMessage = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(
+        var dataMessage = this.messageGenerator.GetSparkPlugNodeCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
@@ -97,7 +107,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric
         }
 
         // Get the data message.
-        var dataMessage = SparkplugMessageGenerator.GetSparkPlugDeviceCommandMessage(
+        var dataMessage = this.messageGenerator.GetSparkPlugDeviceCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,

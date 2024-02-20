@@ -21,9 +21,14 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
-    public SparkplugNode(IEnumerable<VersionBData.Metric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugNode(
+        IEnumerable<VersionBData.Metric> knownMetrics,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetrics, sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -32,9 +37,14 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
     /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
-    public SparkplugNode(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    public SparkplugNode(
+        KnownMetricStorage knownMetricsStorage,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetricsStorage, sparkplugSpecificationVersion, logger)
     {
     }
 

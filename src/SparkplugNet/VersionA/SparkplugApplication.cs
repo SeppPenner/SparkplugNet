@@ -22,10 +22,15 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-    public SparkplugApplication(IEnumerable<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplication(
+        IEnumerable<VersionAData.KuraMetric> knownMetrics,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetrics, sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -34,10 +39,15 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The known metrics storage.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-    public SparkplugApplication(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    public SparkplugApplication(
+        KnownMetricStorage knownMetricsStorage,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetricsStorage, sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -51,7 +61,10 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-    protected override async Task PublishNodeCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier)
+    protected override async Task PublishNodeCommandMessage(
+        IEnumerable<VersionAData.KuraMetric> metrics,
+        string groupIdentifier,
+        string edgeNodeIdentifier)
     {
         if (this.Options is null)
         {
@@ -64,7 +77,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
         }
 
         // Get the data message.
-        var dataMessage = SparkplugMessageGenerator.GetSparkPlugNodeCommandMessage(
+        var dataMessage = this.messageGenerator.GetSparkPlugNodeCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
@@ -91,7 +104,11 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-    protected override async Task PublishDeviceCommandMessage(IEnumerable<VersionAData.KuraMetric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+    protected override async Task PublishDeviceCommandMessage(
+        IEnumerable<VersionAData.KuraMetric> metrics,
+        string groupIdentifier,
+        string edgeNodeIdentifier,
+        string deviceIdentifier)
     {
         if (this.Options is null)
         {
@@ -104,7 +121,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
         }
 
         // Get the data message.
-        var dataMessage = SparkplugMessageGenerator.GetSparkPlugDeviceCommandMessage(
+        var dataMessage = this.messageGenerator.GetSparkPlugDeviceCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
@@ -209,7 +226,10 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
     /// <param name="payload">The payload.</param>
     /// <param name="metricStatus">The metric status.</param>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    private IEnumerable<VersionAData.KuraMetric> ProcessPayload(SparkplugMessageTopic topic, VersionAData.Payload payload, SparkplugMetricStatus metricStatus)
+    private IEnumerable<VersionAData.KuraMetric> ProcessPayload(
+        SparkplugMessageTopic topic,
+        VersionAData.Payload payload,
+        SparkplugMetricStatus metricStatus)
     {
         var metricState = new MetricState<VersionAData.KuraMetric>
         {

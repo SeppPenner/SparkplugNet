@@ -22,10 +22,15 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-    public SparkplugNode(IEnumerable<VersionAData.KuraMetric> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugNode(
+        IEnumerable<VersionAData.KuraMetric> knownMetrics,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetrics, sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -34,10 +39,15 @@ public class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// Initializes a new instance of the <see cref="SparkplugNode"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-    public SparkplugNode(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    public SparkplugNode(
+        KnownMetricStorage knownMetricsStorage,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetricsStorage, sparkplugSpecificationVersion, logger)
     {
     }
 

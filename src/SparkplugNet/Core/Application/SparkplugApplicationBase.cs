@@ -21,9 +21,14 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetrics">The known metric names.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
-    public SparkplugApplicationBase(IEnumerable<T> knownMetrics, ILogger? logger = null) : base(knownMetrics, logger)
+    public SparkplugApplicationBase(
+        IEnumerable<T> knownMetrics,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetrics, sparkplugSpecificationVersion, logger)
     {
     }
 
@@ -32,9 +37,14 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
     /// </summary>
     /// <param name="knownMetricsStorage">The known metric storage.</param>
+    /// <param name="sparkplugSpecificationVersion">The Sparkplug specification version.</param>
     /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
-    public SparkplugApplicationBase(KnownMetricStorage knownMetricsStorage, ILogger? logger = null) : base(knownMetricsStorage, logger)
+    public SparkplugApplicationBase(
+        KnownMetricStorage knownMetricsStorage,
+        SparkplugSpecificationVersion sparkplugSpecificationVersion,
+        ILogger? logger = null)
+        : base(knownMetricsStorage, sparkplugSpecificationVersion,logger)
     {
     }
 
@@ -342,7 +352,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             this.IncrementLastSessionNumber();
 
             // Get the will message.
-            var willMessage = SparkplugMessageGenerator.GetSparkplugStateMessage(
+            var willMessage = this.messageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
                 this.Options.ScadaHostIdentifier,
                 false);
@@ -454,7 +464,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         if (this.Options.IsPrimaryApplication)
         {
             // Get the online message.
-            var onlineMessage = SparkplugMessageGenerator.GetSparkplugStateMessage(
+            var onlineMessage = this.messageGenerator.GetSparkplugStateMessage(
                 this.NameSpace,
                 this.Options.ScadaHostIdentifier,
                 true);
