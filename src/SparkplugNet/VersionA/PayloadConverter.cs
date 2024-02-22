@@ -80,25 +80,25 @@ internal static class PayloadConverter
         switch (newMetric.DataType)
         {
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bool:
-                newMetric.BooleanValue = metric.BooleanValue;
+                newMetric.BooleanValue = metric.Value.ConvertOrDefaultTo<bool>();
                 break;
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Bytes:
-                newMetric.BytesValue = metric.BytesValue;
+                newMetric.BytesValue = metric.Value.ConvertOrDefaultTo<byte[]>();
                 break;
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Double:
-                newMetric.DoubleValue = metric.DoubleValue;
+                newMetric.DoubleValue = metric.Value.ConvertOrDefaultTo<double>();
                 break;
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Float:
-                newMetric.FloatValue = metric.FloatValue;
+                newMetric.FloatValue = metric.Value.ConvertOrDefaultTo<float>();
                 break;
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int32:
-                newMetric.IntValue = metric.IntValue;
+                newMetric.IntValue = metric.Value.ConvertOrDefaultTo<int>();
                 break;
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.Int64:
-                newMetric.LongValue = metric.LongValue;
+                newMetric.LongValue = metric.Value.ConvertOrDefaultTo<long>();
                 break;
             case VersionAProtoBuf.ProtoBufPayload.KuraMetric.ValueType.String:
-                newMetric.StringValue = metric.StringValue;
+                newMetric.StringValue = metric.Value.ConvertOrDefaultTo<string>();
                 break;
         }
 

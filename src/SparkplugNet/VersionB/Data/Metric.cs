@@ -92,31 +92,6 @@ public class Metric : ValueBaseVersionB, IMetric
     public MetaData? MetaData { get; set; }
 
     /// <summary>
-    /// Gets or sets the properties.
-    /// </summary>
-    public PropertySet? PropertySetValue { get; protected set; }
-
-    /// <summary>
-    /// Gets or sets the bytes value.
-    /// </summary>
-    public byte[] BytesValue { get; protected set; } = Array.Empty<byte>();
-
-    /// <summary>
-    /// Gets or sets the data set value.
-    /// </summary>
-    public DataSet? DataSetValue { get; protected set; }
-
-    /// <summary>
-    /// Gets or sets the template value.
-    /// </summary>
-    public Template? TemplateValue { get; protected set; }
-
-    /// <summary>
-    /// Gets or sets the extension value.
-    /// </summary>
-    public MetricValueExtension? ExtensionValue { get; protected set; }
-
-    /// <summary>
     /// Gets the value.
     /// </summary>
     public override object? Value => base.Value ?? this.GetValue();
@@ -133,18 +108,63 @@ public class Metric : ValueBaseVersionB, IMetric
 
         switch (dataType)
         {
+            case VersionBDataTypeEnum.Int8:
+                base.SetValue(VersionBDataTypeEnum.Int8, this.Value);
+                break;
+            case VersionBDataTypeEnum.Int16:
+                base.SetValue(VersionBDataTypeEnum.Int16, this.Value);
+                break;
+            case VersionBDataTypeEnum.Int32:
+                base.SetValue(VersionBDataTypeEnum.Int32, this.Value);
+                break;
+            case VersionBDataTypeEnum.Int64:
+                base.SetValue(VersionBDataTypeEnum.Int64, this.Value);
+                break;
+            case VersionBDataTypeEnum.UInt8:
+                base.SetValue(VersionBDataTypeEnum.UInt8, this.Value);
+                break;
+            case VersionBDataTypeEnum.UInt16:
+                base.SetValue(VersionBDataTypeEnum.UInt16, this.Value);
+                break;
+            case VersionBDataTypeEnum.UInt32:
+                base.SetValue(VersionBDataTypeEnum.UInt32, this.Value);
+                break;
+            case VersionBDataTypeEnum.UInt64:
+                base.SetValue(VersionBDataTypeEnum.UInt64, this.Value);
+                break;
+            case VersionBDataTypeEnum.DateTime:
+                base.SetValue(VersionBDataTypeEnum.DateTime, this.Value);
+                break;
+            case VersionBDataTypeEnum.Float:
+                base.SetValue(VersionBDataTypeEnum.Float, this.Value);
+                break;
+            case VersionBDataTypeEnum.Double:
+                base.SetValue(VersionBDataTypeEnum.Double, this.Value);
+                break;
+            case VersionBDataTypeEnum.Boolean:
+                base.SetValue(VersionBDataTypeEnum.Boolean, this.Value);
+                break;
+            case VersionBDataTypeEnum.String:
+                base.SetValue(VersionBDataTypeEnum.String, this.Value);
+                break;
+            case VersionBDataTypeEnum.Text:
+                base.SetValue(VersionBDataTypeEnum.Text, this.Value);
+                break;
+            case VersionBDataTypeEnum.Uuid:
+                base.SetValue(VersionBDataTypeEnum.Uuid, this.Value);
+                break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
-                this.BytesValue = value.ConvertOrDefaultTo<byte[]>();
+                this.Value = value.ConvertOrDefaultTo<byte[]>();
                 break;
             case VersionBDataTypeEnum.DataSet:
-                this.DataSetValue = value.ConvertOrDefaultTo<DataSet>();
+                this.Value = value.ConvertOrDefaultTo<DataSet>();
                 break;
             case VersionBDataTypeEnum.Template:
-                this.TemplateValue = value.ConvertOrDefaultTo<Template>();
+                this.Value = value.ConvertOrDefaultTo<Template>();
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                this.PropertySetValue = value.ConvertOrDefaultTo<PropertySet>();
+                this.Value = value.ConvertOrDefaultTo<PropertySet>();
                 break;
             case VersionBDataTypeEnum.Int8Array:
                 {
@@ -157,7 +177,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.Add((byte)number);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
@@ -172,7 +192,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
@@ -187,11 +207,11 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
-            case VersionBDataTypeEnum.Int64:
+            case VersionBDataTypeEnum.Int64Array:
                 {
                     var originalData = value?.ConvertTo<long[]>()?.ToList() ?? new();
                     var data = new List<byte>();
@@ -202,17 +222,17 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
             case VersionBDataTypeEnum.UInt8Array:
                 {
-                    this.BytesValue = value?.ConvertTo<byte[]>() ?? Array.Empty<byte>();
+                    this.Value = value?.ConvertTo<byte[]>() ?? Array.Empty<byte>();
                 }
 
                 break;
-            case VersionBDataTypeEnum.UInt16:
+            case VersionBDataTypeEnum.UInt16Array:
                 {
                     var originalData = value?.ConvertTo<ushort[]>()?.ToList() ?? new();
                     var data = new List<byte>();
@@ -223,11 +243,11 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
-            case VersionBDataTypeEnum.UInt32:
+            case VersionBDataTypeEnum.UInt32Array:
                 {
                     var originalData = value?.ConvertTo<uint[]>()?.ToList() ?? new();
                     var data = new List<byte>();
@@ -238,11 +258,11 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
-            case VersionBDataTypeEnum.UInt64:
+            case VersionBDataTypeEnum.UInt64Array:
                 {
                     var originalData = value?.ConvertTo<ulong[]>()?.ToList() ?? new();
                     var data = new List<byte>();
@@ -253,7 +273,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
@@ -268,7 +288,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
@@ -283,7 +303,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
@@ -298,7 +318,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
@@ -313,7 +333,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.BytesValue = data.ToArray();
+                    this.Value = data.ToArray();
                 }
 
                 break;
@@ -329,12 +349,14 @@ public class Metric : ValueBaseVersionB, IMetric
                 //        data.AddRange(bytes);
                 //    }
 
-                //    this.BytesValue = data.ToArray();
+                //    this.Value = data.ToArray();
                 //}
 
                 break;
             // Todo: What to do here?
             case VersionBDataTypeEnum.PropertySetList:
+                break;
+            case VersionBDataTypeEnum.Unknown:
             default:
                 break;
         }
@@ -357,97 +379,97 @@ public class Metric : ValueBaseVersionB, IMetric
         {
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
-                return this.BytesValue;
+                return this.Value.ConvertOrDefaultTo<byte[]>();
             case VersionBDataTypeEnum.DataSet:
-                return this.DataSetValue;
+                return this.Value.ConvertOrDefaultTo<DataSet>();
             case VersionBDataTypeEnum.Template:
-                return this.TemplateValue;
+                return this.Value.ConvertOrDefaultTo<Template>();
             case VersionBDataTypeEnum.PropertySet:
-                return this.PropertySetValue;
+                return this.Value.ConvertOrDefaultTo<PropertySet>();
             case VersionBDataTypeEnum.Int8Array:
-                return this.BytesValue.Select(b => (sbyte)b).ToArray();
+                return this.Value.ConvertOrDefaultTo<byte[]>().Select(b => (sbyte)b).ToArray();
             case VersionBDataTypeEnum.Int16Array:
                 {
-                    var size = this.BytesValue.Count() / sizeof(short);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(short);
                     var data = new short[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToInt16(this.BytesValue, index * sizeof(short));
+                        data[index] = BitConverter.ToInt16(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(short));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.Int32Array:
                 {
-                    var size = this.BytesValue.Count() / sizeof(int);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(int);
                     var data = new int[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToInt32(this.BytesValue, index * sizeof(int));
+                        data[index] = BitConverter.ToInt32(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(int));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.Int64Array:
                 {
-                    var size = this.BytesValue.Count() / sizeof(long);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(long);
                     var data = new long[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToInt64(this.BytesValue, index * sizeof(long));
+                        data[index] = BitConverter.ToInt64(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(long));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.UInt8Array:
-                return this.BytesValue;
+                return this.Value.ConvertOrDefaultTo<byte[]>();
             case VersionBDataTypeEnum.UInt16Array:
                 {
-                    var size = this.BytesValue.Count() / sizeof(ushort);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(ushort);
                     var data = new ushort[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToUInt16(this.BytesValue, index * sizeof(ushort));
+                        data[index] = BitConverter.ToUInt16(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(ushort));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.UInt32Array:
                 {
-                    var size = this.BytesValue.Count() / sizeof(uint);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(uint);
                     var data = new uint[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToUInt32(this.BytesValue, index * sizeof(uint));
+                        data[index] = BitConverter.ToUInt32(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(uint));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.UInt64Array:
                 {
-                    var size = this.BytesValue.Count() / sizeof(ulong);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(ulong);
                     var data = new ulong[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToUInt64(this.BytesValue, index * sizeof(ulong));
+                        data[index] = BitConverter.ToUInt64(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(ulong));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.DateTimeArray:
                 {
-                    var size = this.BytesValue.Count() / sizeof(long);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(long);
                     var data = new DateTimeOffset[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        var number = BitConverter.ToInt64(this.BytesValue, index * sizeof(long));
+                        var number = BitConverter.ToInt64(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(long));
                         data[index] = DateTimeOffset.FromUnixTimeMilliseconds(number);
                     }
 
@@ -455,36 +477,36 @@ public class Metric : ValueBaseVersionB, IMetric
                 }
             case VersionBDataTypeEnum.FloatArray:
                 {
-                    var size = this.BytesValue.Count() / sizeof(float);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(float);
                     var data = new float[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToSingle(this.BytesValue, index * sizeof(float));
+                        data[index] = BitConverter.ToSingle(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(float));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.DoubleArray:
                 {
-                    var size = this.BytesValue.Count() / sizeof(double);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(double);
                     var data = new double[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToDouble(this.BytesValue, index * sizeof(double));
+                        data[index] = BitConverter.ToDouble(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(double));
                     }
 
                     return data;
                 }
             case VersionBDataTypeEnum.BooleanArray:
                 {
-                    var size = this.BytesValue.Count() / sizeof(bool);
+                    var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(bool);
                     var data = new bool[size];
 
                     for (var index = 0; index < size; index++)
                     {
-                        data[index] = BitConverter.ToBoolean(this.BytesValue, index * sizeof(bool));
+                        data[index] = BitConverter.ToBoolean(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(bool));
                     }
 
                     return data;
@@ -494,12 +516,12 @@ public class Metric : ValueBaseVersionB, IMetric
                 {
                     return null;
 
-                    //var size = this.BytesValue.Count() / sizeof(string);
+                    //var size = this.Value.ConvertOrDefaultTo<byte[]>().Count() / sizeof(string);
                     //var data = new string[size];
 
                     //for (var index = 0; index < size; index++)
                     //{
-                    //    data[index] = Encoding.UTF8.ToString(this.BytesValue, index * sizeof(string));
+                    //    data[index] = Encoding.UTF8.ToString(this.Value.ConvertOrDefaultTo<byte[]>(), index * sizeof(string));
                     //}
 
                     //return data;
@@ -507,7 +529,7 @@ public class Metric : ValueBaseVersionB, IMetric
             // Todo: What to do here?
             case VersionBDataTypeEnum.PropertySetList:
             default:
-                return null;
+                return base.Value;
         }
     }
 }

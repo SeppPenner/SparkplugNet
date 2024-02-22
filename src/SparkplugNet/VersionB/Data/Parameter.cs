@@ -21,11 +21,6 @@ public class Parameter : ValueBaseVersionB, IMetric
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the extension value.
-    /// </summary>
-    public ParameterValueExtension? ExtensionValue { get; protected set; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="Parameter"/> class.
     /// </summary>
     public Parameter()

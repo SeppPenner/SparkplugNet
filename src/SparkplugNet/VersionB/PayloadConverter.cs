@@ -197,40 +197,40 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int32:
             case VersionBDataTypeEnum.UInt8:
             case VersionBDataTypeEnum.UInt16:
-                protoMetric.IntValue = metric.IntValue;
+                protoMetric.IntValue = metric.Value.ConvertOrDefaultTo<uint>();
                 break;
             case VersionBDataTypeEnum.Int64:
             case VersionBDataTypeEnum.UInt32:
             case VersionBDataTypeEnum.UInt64:
             case VersionBDataTypeEnum.DateTime:
-                protoMetric.LongValue = metric.LongValue;
+                protoMetric.LongValue = metric.Value.ConvertOrDefaultTo<ulong>();
                 break;
             case VersionBDataTypeEnum.Float:
-                protoMetric.FloatValue = metric.FloatValue;
+                protoMetric.FloatValue = metric.Value.ConvertOrDefaultTo<uint>();
                 break;
             case VersionBDataTypeEnum.Double:
-                protoMetric.DoubleValue = metric.DoubleValue;
+                protoMetric.DoubleValue = metric.Value.ConvertOrDefaultTo<double>();
                 break;
             case VersionBDataTypeEnum.Boolean:
-                protoMetric.BooleanValue = metric.BooleanValue;
+                protoMetric.BooleanValue = metric.Value.ConvertOrDefaultTo<bool>();
                 break;
             case VersionBDataTypeEnum.String:
             case VersionBDataTypeEnum.Text:
             case VersionBDataTypeEnum.Uuid:
-                protoMetric.StringValue = metric.StringValue;
+                protoMetric.StringValue = metric.Value.ConvertOrDefaultTo<string>();
                 break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
-                protoMetric.BytesValue = metric.BytesValue;
+                protoMetric.BytesValue = metric.Value.ConvertOrDefaultTo<byte[]>();
                 break;
             case VersionBDataTypeEnum.DataSet:
-                protoMetric.DataSetValue = ConvertVersionBDataSet(metric.DataSetValue);
+                protoMetric.DataSetValue = ConvertVersionBDataSet(metric.Value.ConvertOrDefaultTo<DataSet>());
                 break;
             case VersionBDataTypeEnum.Template:
-                protoMetric.TemplateValue = ConvertVersionBTemplate(metric.TemplateValue);
+                protoMetric.TemplateValue = ConvertVersionBTemplate(metric.Value.ConvertOrDefaultTo<Template>());
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                protoMetric.PropertySetValue = ConvertVersionBPropertySet(metric.PropertySetValue);
+                protoMetric.PropertySetValue = ConvertVersionBPropertySet(metric.Value.ConvertOrDefaultTo<PropertySet>());
                 break;
             case VersionBDataTypeEnum.Int8Array:
             case VersionBDataTypeEnum.Int16Array:
@@ -245,7 +245,7 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.BooleanArray:
             case VersionBDataTypeEnum.StringArray:
             case VersionBDataTypeEnum.DateTimeArray:
-                protoMetric.BytesValue = metric.BytesValue;
+                protoMetric.BytesValue = metric.ConvertOrDefaultTo<byte[]>();
                 break;
             case VersionBDataTypeEnum.PropertySetList:
             case VersionBDataTypeEnum.Unknown:
@@ -579,32 +579,32 @@ internal static class PayloadConverter
              or VersionBDataTypeEnum.UInt8
              or VersionBDataTypeEnum.UInt16 => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
              {
-                 IntValue = dataSetValue.IntValue
+                 IntValue = dataSetValue.Value.ConvertOrDefaultTo<uint>()
              },
             VersionBDataTypeEnum.Int64
              or VersionBDataTypeEnum.UInt32
              or VersionBDataTypeEnum.UInt64
              or VersionBDataTypeEnum.DateTime => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
              {
-                 LongValue = dataSetValue.LongValue
+                 LongValue = dataSetValue.Value.ConvertOrDefaultTo<ulong>()
              },
             VersionBDataTypeEnum.Float => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
-                FloatValue = dataSetValue.FloatValue
+                FloatValue = dataSetValue.Value.ConvertOrDefaultTo<float>()
             },
             VersionBDataTypeEnum.Double => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
-                DoubleValue = dataSetValue.DoubleValue
+                DoubleValue = dataSetValue.Value.ConvertOrDefaultTo<double>()
             },
             VersionBDataTypeEnum.Boolean => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
             {
-                BooleanValue = dataSetValue.BooleanValue
+                BooleanValue = dataSetValue.Value.ConvertOrDefaultTo<bool>()
             },
             VersionBDataTypeEnum.String
              or VersionBDataTypeEnum.Text
              or VersionBDataTypeEnum.Uuid => new VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue
              {
-                 StringValue = dataSetValue.StringValue
+                 StringValue = dataSetValue.Value.ConvertOrDefaultTo<string>()
              },
             VersionBDataTypeEnum.Bytes
              or VersionBDataTypeEnum.File
@@ -693,27 +693,27 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int32:
             case VersionBDataTypeEnum.UInt8:
             case VersionBDataTypeEnum.UInt16:
-                protoParameter.IntValue = parameter.IntValue;
+                protoParameter.IntValue = parameter.Value.ConvertOrDefaultTo<uint>();
                 break;
             case VersionBDataTypeEnum.Int64:
             case VersionBDataTypeEnum.UInt32:
             case VersionBDataTypeEnum.UInt64:
             case VersionBDataTypeEnum.DateTime:
-                protoParameter.LongValue = parameter.LongValue;
+                protoParameter.LongValue = parameter.Value.ConvertOrDefaultTo<ulong>();
                 break;
             case VersionBDataTypeEnum.Float:
-                protoParameter.FloatValue = parameter.FloatValue;
+                protoParameter.FloatValue = parameter.Value.ConvertOrDefaultTo<float>();
                 break;
             case VersionBDataTypeEnum.Double:
-                protoParameter.DoubleValue = parameter.DoubleValue;
+                protoParameter.DoubleValue = parameter.Value.ConvertOrDefaultTo<double>();
                 break;
             case VersionBDataTypeEnum.Boolean:
-                protoParameter.BooleanValue = parameter.BooleanValue;
+                protoParameter.BooleanValue = parameter.Value.ConvertOrDefaultTo<bool>();
                 break;
             case VersionBDataTypeEnum.String:
             case VersionBDataTypeEnum.Text:
             case VersionBDataTypeEnum.Uuid:
-                protoParameter.StringValue = parameter.StringValue;
+                protoParameter.StringValue = parameter.Value.ConvertOrDefaultTo<string>();
                 break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
@@ -807,33 +807,33 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int32:
             case VersionBDataTypeEnum.UInt8:
             case VersionBDataTypeEnum.UInt16:
-                protoPropertyValue.IntValue = propertyValue.IntValue;
+                protoPropertyValue.IntValue = propertyValue.Value.ConvertOrDefaultTo<uint>();
                 break;
             case VersionBDataTypeEnum.Int64:
             case VersionBDataTypeEnum.UInt32:
             case VersionBDataTypeEnum.UInt64:
             case VersionBDataTypeEnum.DateTime:
-                protoPropertyValue.LongValue = propertyValue.LongValue;
+                protoPropertyValue.LongValue = propertyValue.Value.ConvertOrDefaultTo<ulong>();
                 break;
             case VersionBDataTypeEnum.Float:
-                protoPropertyValue.FloatValue = propertyValue.FloatValue;
+                protoPropertyValue.FloatValue = propertyValue.Value.ConvertOrDefaultTo<float>();
                 break;
             case VersionBDataTypeEnum.Double:
-                protoPropertyValue.DoubleValue = propertyValue.DoubleValue;
+                protoPropertyValue.DoubleValue = propertyValue.Value.ConvertOrDefaultTo<double>();
                 break;
             case VersionBDataTypeEnum.Boolean:
-                protoPropertyValue.BooleanValue = propertyValue.BooleanValue;
+                protoPropertyValue.BooleanValue = propertyValue.Value.ConvertOrDefaultTo<bool>();
                 break;
             case VersionBDataTypeEnum.String:
             case VersionBDataTypeEnum.Text:
             case VersionBDataTypeEnum.Uuid:
-                protoPropertyValue.StringValue = propertyValue.StringValue;
+                protoPropertyValue.StringValue = propertyValue.Value.ConvertOrDefaultTo<string>();
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                protoPropertyValue.PropertySetValue = ConvertVersionBPropertySet(propertyValue.PropertySetValue);
+                protoPropertyValue.PropertySetValue = ConvertVersionBPropertySet(propertyValue.Value.ConvertOrDefaultTo<PropertySet>());
                 break;
             case VersionBDataTypeEnum.PropertySetList:
-                protoPropertyValue.PropertySetListValue = ConvertVersionBPropertySetList(propertyValue.PropertySetListValue);
+                protoPropertyValue.PropertySetListValue = ConvertVersionBPropertySetList(propertyValue.Value.ConvertOrDefaultTo<PropertySetList>());
                 break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:

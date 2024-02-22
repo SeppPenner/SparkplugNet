@@ -20,21 +20,6 @@ public class PropertyValue : ValueBaseVersionB
     public bool? IsNull { get; protected set; }
 
     /// <summary>
-    /// Gets or sets the property set value.
-    /// </summary>
-    public PropertySet? PropertySetValue { get; protected set; }
-
-    /// <summary>
-    /// Gets or sets the property set list value.
-    /// </summary>
-    public PropertySetList? PropertySetListValue { get; protected set; }
-
-    /// <summary>
-    /// Gets or sets the extension value.
-    /// </summary>
-    public PropertyValueExtension? ExtensionValue { get; protected set; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="PropertyValue"/> class.
     /// </summary>
     public PropertyValue()

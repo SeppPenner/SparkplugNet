@@ -6,35 +6,25 @@ namespace SparkplugNet.VersionB.Data;
 public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
 {
     /// <summary>
-    /// Gets or sets the integer value.
-    /// </summary>
-    public virtual uint IntValue { get; protected set; }
-
-    /// <summary>
-    /// Gets or sets the long value.
-    /// </summary>
-    public virtual ulong LongValue { get; protected set; }
-
-    /// <summary>
     /// Gets the value.
     /// </summary>
     public override object? Value => this.DataType switch
     {
-        VersionBDataTypeEnum.Int8 => (sbyte)this.IntValue,
-        VersionBDataTypeEnum.Int16 => (short)this.IntValue,
-        VersionBDataTypeEnum.Int32 => (int)this.IntValue,
-        VersionBDataTypeEnum.Int64 => (long)this.LongValue,
-        VersionBDataTypeEnum.UInt8 => (byte)this.IntValue,
-        VersionBDataTypeEnum.UInt16 => (ushort)this.IntValue,
-        VersionBDataTypeEnum.UInt32 => this.IntValue,
-        VersionBDataTypeEnum.UInt64 => this.LongValue,
-        VersionBDataTypeEnum.Float => this.FloatValue,
-        VersionBDataTypeEnum.Double => this.DoubleValue,
-        VersionBDataTypeEnum.Boolean => this.BooleanValue,
-        VersionBDataTypeEnum.String => this.StringValue,
-        VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds((long)this.LongValue).DateTime,
-        VersionBDataTypeEnum.Text => this.StringValue,
-        VersionBDataTypeEnum.Uuid => Guid.Parse(this.StringValue),
+        VersionBDataTypeEnum.Int8 => this.Value.ConvertOrDefaultTo<sbyte>(),
+        VersionBDataTypeEnum.Int16 => this.Value.ConvertOrDefaultTo<short>(),
+        VersionBDataTypeEnum.Int32 => this.Value.ConvertOrDefaultTo<int>(),
+        VersionBDataTypeEnum.Int64 => this.Value.ConvertOrDefaultTo<long>(),
+        VersionBDataTypeEnum.UInt8 => this.Value.ConvertOrDefaultTo<byte>(),
+        VersionBDataTypeEnum.UInt16 => this.Value.ConvertOrDefaultTo<ushort>(),
+        VersionBDataTypeEnum.UInt32 => this.Value.ConvertOrDefaultTo<uint>(),
+        VersionBDataTypeEnum.UInt64 => this.Value.ConvertOrDefaultTo<ulong>(),
+        VersionBDataTypeEnum.Float => this.Value.ConvertOrDefaultTo<float>(),
+        VersionBDataTypeEnum.Double => this.Value.ConvertOrDefaultTo<double>(),
+        VersionBDataTypeEnum.Boolean => this.Value.ConvertOrDefaultTo<bool>(),
+        VersionBDataTypeEnum.String => this.Value.ConvertOrDefaultTo<string>(),
+        VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds(this.Value.ConvertOrDefaultTo<long>()).DateTime,
+        VersionBDataTypeEnum.Text => this.Value.ConvertOrDefaultTo<string>(),
+        VersionBDataTypeEnum.Uuid => Guid.Parse(this.Value.ConvertOrDefaultTo<string>()),
         _ => null
     };
 
@@ -49,33 +39,49 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
         switch (dataType)
         {
             case VersionBDataTypeEnum.Int8:
+                this.Value = value.ConvertOrDefaultTo<sbyte>();
+                break;
             case VersionBDataTypeEnum.Int16:
+                this.Value = value.ConvertOrDefaultTo<short>();
+                break;
             case VersionBDataTypeEnum.Int32:
-            case VersionBDataTypeEnum.UInt8:
-            case VersionBDataTypeEnum.UInt16:
-            case VersionBDataTypeEnum.UInt32:
-                this.IntValue = value.ConvertTo<uint>();
+                this.Value = value.ConvertOrDefaultTo<int>();
                 break;
             case VersionBDataTypeEnum.Int64:
+                this.Value = value.ConvertOrDefaultTo<long>();
+                break;
+            case VersionBDataTypeEnum.UInt8:
+                this.Value = value.ConvertOrDefaultTo<byte>();
+                break;
+            case VersionBDataTypeEnum.UInt16:
+                this.Value = value.ConvertOrDefaultTo<ushort>();
+                break;
+            case VersionBDataTypeEnum.UInt32:
+                this.Value = value.ConvertOrDefaultTo<uint>();
+                break;
             case VersionBDataTypeEnum.UInt64:
-                this.LongValue = value.ConvertTo<ulong>();
+                this.Value = value.ConvertOrDefaultTo<ulong>();
                 break;
             case VersionBDataTypeEnum.DateTime:
-                this.LongValue = (ulong)new DateTimeOffset(value.ConvertTo<DateTime>()).ToUnixTimeMilliseconds();
+                this.Value = (ulong)new DateTimeOffset(value.ConvertOrDefaultTo<DateTime>()).ToUnixTimeMilliseconds();
                 break;
             case VersionBDataTypeEnum.Float:
-                this.FloatValue = value.ConvertTo<float>();
+                this.Value = value.ConvertTo<float>();
                 break;
             case VersionBDataTypeEnum.Double:
-                this.DoubleValue = value.ConvertTo<double>();
+                this.Value = value.ConvertTo<double>();
                 break;
             case VersionBDataTypeEnum.Boolean:
-                this.BooleanValue = value.ConvertTo<bool>();
+                this.Value = value.ConvertTo<bool>();
                 break;
             case VersionBDataTypeEnum.String:
+                this.Value = value.ConvertOrDefaultTo<string>();
+                break;
             case VersionBDataTypeEnum.Text:
+                this.Value = value.ConvertOrDefaultTo<string>();
+                break;
             case VersionBDataTypeEnum.Uuid:
-                this.StringValue = value.ConvertOrDefaultTo<string>();
+                this.Value = value.ConvertOrDefaultTo<string>();
                 break;
             case VersionBDataTypeEnum.Unknown:
             default:

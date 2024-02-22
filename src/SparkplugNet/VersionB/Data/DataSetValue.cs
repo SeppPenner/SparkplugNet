@@ -28,9 +28,4 @@ public class DataSetValue : ValueBaseVersionB
     {
         this.SetValue(type, value);
     }
-
-    /// <summary>
-    /// Gets or sets the extension value.
-    /// </summary>
-    public DataSetValueExtension? ExtensionValue { get; protected set; }
 }
