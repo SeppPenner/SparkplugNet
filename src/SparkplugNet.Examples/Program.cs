@@ -24,14 +24,8 @@ public class Program
     /// </summary>
     private static readonly List<VersionAData.KuraMetric> VersionAMetricsApplication = new()
     {
-        new ()
-        {
-            Name = "temperatureApplication", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
-        },
-        new ()
-        {
-            Name = "climateactiveApplication", DataType = VersionAData.DataType.Boolean, BooleanValue = true
-        }
+        new ("temperatureApplication", VersionAData.DataType.Double, 1.20),
+        new ("climateactiveApplication", VersionAData.DataType.Boolean, true)
     };
 
     /// <summary>
@@ -39,14 +33,8 @@ public class Program
     /// </summary>
     private static readonly List<VersionAData.KuraMetric> VersionAMetricsNode = new()
     {
-        new ()
-        {
-            Name = "temperatureNode", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
-        },
-        new ()
-        {
-            Name = "climateactiveNode", DataType = VersionAData.DataType.Boolean, BooleanValue = true
-        }
+        new ("temperatureNode", VersionAData.DataType.Double, 1.20),
+        new ("climateactiveNode", VersionAData.DataType.Boolean, true)
     };
 
     /// <summary>
@@ -54,14 +42,8 @@ public class Program
     /// </summary>
     private static readonly List<VersionAData.KuraMetric> VersionAMetricsDevice = new()
     {
-        new ()
-        {
-            Name = "temperatureDevice", DataType = VersionAData.DataType.Double, DoubleValue = 1.20
-        },
-        new ()
-        {
-            Name = "climateactiveDevice", DataType = VersionAData.DataType.Boolean, BooleanValue = true
-        }
+        new ("temperatureDevice", VersionAData.DataType.Double, 1.20),
+        new ("climateactiveDevice", VersionAData.DataType.Boolean, true)
     };
 
     /// <summary>
@@ -69,15 +51,8 @@ public class Program
     /// </summary>
     private static readonly List<VersionBData.Metric> VersionBMetricsApplication = new()
     {
-        new VersionBData.Metric
-        {
-            Name = "temperatureApplication", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.20f
-        },
-        new VersionBData.Metric
-        {
-            Name = "climateactiveApplication",
-            ValueCase = (uint)VersionBData.DataType.Boolean, BooleanValue = true
-        }
+        new VersionBData.Metric("temperatureApplication", VersionBData.DataType.Float, 1.20f),
+        new VersionBData.Metric("climateactiveApplication", VersionBData.DataType.Boolean, true)
     };
 
     /// <summary>
@@ -85,15 +60,8 @@ public class Program
     /// </summary>
     private static readonly List<VersionBData.Metric> VersionBMetricsNode = new()
     {
-        new VersionBData.Metric
-        {
-            Name = "temperatureNode", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.243f
-        },
-        new VersionBData.Metric
-        {
-            Name = "climateactiveNode",
-            ValueCase = (uint)VersionBData.DataType.Boolean, BooleanValue = true
-        }
+        new VersionBData.Metric("temperatureNode", VersionBData.DataType.Float, 1.243f),
+        new VersionBData.Metric("climateactiveNode", VersionBData.DataType.Boolean, true)
     };
 
     /// <summary>
@@ -101,15 +69,8 @@ public class Program
     /// </summary>
     private static readonly List<VersionBData.Metric> VersionBMetricsDevice = new()
     {
-        new VersionBData.Metric
-        {
-            Name = "temperatureDevice", ValueCase = (uint)VersionBData.DataType.Float, FloatValue = 1.243f
-        },
-        new VersionBData.Metric
-        {
-            Name = "climateactiveDevice",
-            ValueCase = (uint)VersionBData.DataType.Boolean, BooleanValue = true
-        }
+        new VersionBData.Metric("temperatureDevice", VersionBData.DataType.Float, 1.243f),
+        new VersionBData.Metric("climateactiveDevice", VersionBData.DataType.Boolean, true)
     };
 
     /// <summary>
@@ -180,7 +141,7 @@ public class Program
              null,
              true,
              CancellationTokenSource.Token);
-        var application = new VersionA.SparkplugApplication(VersionAMetricsApplication, Log.Logger);
+        var application = new VersionA.SparkplugApplication(VersionAMetricsApplication, SparkplugSpecificationVersion.Version22, Log.Logger);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -248,7 +209,7 @@ public class Program
             "group1",
             "node1",
             CancellationTokenSource.Token);
-        var node = new VersionA.SparkplugNode(VersionAMetricsNode, Log.Logger);
+        var node = new VersionA.SparkplugNode(VersionAMetricsNode, SparkplugSpecificationVersion.Version22, Log.Logger);
 
         // Start a node.
         Log.Information("Starting node...");
@@ -320,7 +281,7 @@ public class Program
             null,
             true,
             CancellationTokenSource.Token);
-        var application = new VersionB.SparkplugApplication(VersionBMetricsApplication, Log.Logger);
+        var application = new VersionB.SparkplugApplication(VersionBMetricsApplication, SparkplugSpecificationVersion.Version22, Log.Logger);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -388,7 +349,7 @@ public class Program
             "group1",
             "node1",
             CancellationTokenSource.Token);
-        var node = new VersionB.SparkplugNode(VersionBMetricsNode, Log.Logger);
+        var node = new VersionB.SparkplugNode(VersionBMetricsNode, SparkplugSpecificationVersion.Version22, Log.Logger);
 
         // Start a node.
         Log.Information("Starting node...");

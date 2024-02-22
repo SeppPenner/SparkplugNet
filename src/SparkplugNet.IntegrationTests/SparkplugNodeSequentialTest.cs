@@ -67,7 +67,7 @@ public class SparkplugNodeSequentialTest
         metrics = GetTestMetrics();
 
         // Create and start new instance of a Sparkplug node.
-        node = new SparkplugNode(metrics, Log.Logger);
+        node = new SparkplugNode(metrics, SparkplugSpecificationVersion.Version22, Log.Logger);
         await node.Start(nodeOptions);
         Assert.IsTrue(node.IsConnected);
     }
@@ -122,13 +122,13 @@ public class SparkplugNodeSequentialTest
     private static List<Metric> GetTestMetrics()
     {
         var random = new Random();
-        var unixNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var utcNow = DateTimeOffset.UtcNow;
 
         var testMetrics = new List<Metric>
         {
-            new () { Name = "General/Name", Timestamp = unixNow, ValueCase = (uint)DataType.String, StringValue = "Some Name" },
-            new () { Name = "General/Some Int Value", Timestamp = unixNow, ValueCase = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) },
-            new () { Name = "General/Aggregates/Some Int Value", Timestamp = unixNow, ValueCase = (uint)DataType.Int64, LongValue = (ulong)random.Next(0, int.MaxValue) }
+            new ("General/Name", DataType.String, "Some Name", utcNow),
+            new ("General/Some Int Value", DataType.UInt32, (uint)random.Next(0, int.MaxValue), utcNow),
+            new ("General/Aggregates/Some Int Value", DataType.Int64, (long)random.Next(0, int.MaxValue), utcNow)
         };
 
         return testMetrics;
@@ -141,16 +141,10 @@ public class SparkplugNodeSequentialTest
     private static void UpdateTestMetrics(ICollection<Metric> newMetrics)
     {
         var random = new Random();
-        var unixUtcNow = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var utcNow = DateTimeOffset.UtcNow;
 
         // Add extra metric after NBIRTH.
-        newMetrics.Add(new Metric
-        {
-            Name = "General/Extra Metric",
-            Timestamp = unixUtcNow,
-            ValueCase = (uint)DataType.Int64,
-            LongValue = (ulong)random.Next(0, int.MaxValue)
-        });
+        newMetrics.Add(new Metric("General/Extra Metric", DataType.Int64, (long)random.Next(0, int.MaxValue), utcNow));
 
         foreach (var metric in newMetrics)
         {
@@ -159,45 +153,66 @@ public class SparkplugNodeSequentialTest
                 return;
             }
 
-            metric.Timestamp = unixUtcNow;
-            switch (metric.ValueCase)
+            metric.Timestamp = (ulong)utcNow.ToUnixTimeMilliseconds();
+
+            switch (metric.DataType)
             {
-                case (int)DataType.String:
-                case (int)DataType.Text:
-                case (int)DataType.Uuid:
-                    metric.StringValue = metric.StringValue;
+                case DataType.String:
+                    metric.SetValue(DataType.String, metric.StringValue);
                     break;
-                case (int)DataType.Int8:
-                case (int)DataType.UInt8:
-                case (int)DataType.Int16:
-                case (int)DataType.UInt16:
-                case (int)DataType.Int32:
-                case (int)DataType.UInt32:
-                    metric.IntValue = (uint)random.Next(0, int.MaxValue);
+                case DataType.Text:
+                    metric.SetValue(DataType.Text, metric.StringValue);
                     break;
-                case (int)DataType.Int64:
-                case (int)DataType.UInt64:
-                case (int)DataType.DateTime:
-                    metric.LongValue = (ulong)random.Next(0, int.MaxValue);
+                case DataType.Uuid:
+                    metric.SetValue(DataType.Uuid, metric.StringValue);
                     break;
-                case (int)DataType.Float:
-                    metric.FloatValue = random.Next(0, int.MaxValue);
+                case DataType.Int8:
+                    metric.SetValue(DataType.Int8, random.Next(0, int.MaxValue));
                     break;
-                case (int)DataType.Double:
-                    metric.DoubleValue = random.Next(0, int.MaxValue);
+                case DataType.UInt8:
+                    metric.SetValue(DataType.UInt8, random.Next(0, int.MaxValue));
                     break;
-                case (int)DataType.Boolean:
-                    metric.BooleanValue = !metric.BooleanValue;
+                case DataType.Int16:
+                    metric.SetValue(DataType.Int16, random.Next(0, int.MaxValue));
                     break;
-                case (int)DataType.Bytes:
-                case (int)DataType.File:
-                    metric.BytesValue = metric.BytesValue;
+                case DataType.UInt16:
+                    metric.SetValue(DataType.UInt16, random.Next(0, int.MaxValue));
                     break;
-                case (int)DataType.DataSet:
-                    metric.DataSetValue = metric.DataSetValue;
+                case DataType.Int32:
+                    metric.SetValue(DataType.Int32, random.Next(0, int.MaxValue));
                     break;
-                case (int)DataType.Template:
-                    metric.TemplateValue = metric.TemplateValue;
+                case DataType.UInt32:
+                    metric.SetValue(DataType.UInt32, random.Next(0, int.MaxValue));
+                    break;
+                case DataType.Int64:
+                    metric.SetValue(DataType.Int64, random.Next(0, int.MaxValue));
+                    break;
+                case DataType.UInt64:
+                    metric.SetValue(DataType.UInt64, (ulong)random.Next(0, int.MaxValue));
+                    break;
+                case DataType.DateTime:
+                    metric.SetValue(DataType.DateTime, (ulong)random.Next(0, int.MaxValue));
+                    break;
+                case DataType.Float:
+                    metric.SetValue(DataType.Float, (float)random.Next(0, int.MaxValue));
+                    break;
+                case DataType.Double:
+                    metric.SetValue(DataType.Double, (double)random.Next(0, int.MaxValue));
+                    break;
+                case DataType.Boolean:
+                    metric.SetValue(DataType.Boolean, !metric.BooleanValue);
+                    break;
+                case DataType.Bytes:
+                    metric.SetValue(DataType.Bytes, metric.BytesValue);
+                    break;
+                case DataType.File:
+                    metric.SetValue(DataType.File, metric.BytesValue);
+                    break;
+                case DataType.DataSet:
+                    metric.SetValue(DataType.DataSet, metric.DataSetValue);
+                    break;
+                case DataType.Template:
+                    metric.SetValue(DataType.Template, metric.TemplateValue);
                     break;
                 default:
                     throw new NotSupportedException();
