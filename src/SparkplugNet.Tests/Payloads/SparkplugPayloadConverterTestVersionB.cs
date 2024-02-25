@@ -1663,24 +1663,13 @@ public class SparkplugPayloadConverterTestVersionB
     private static void MetricEquals(VersionBData.Metric expectedMetric, VersionBData.Metric newMetric)
     {
         Assert.AreEqual(expectedMetric.Alias, newMetric.Alias);
-        Assert.AreEqual(expectedMetric.BooleanValue, newMetric.BooleanValue);
-        CollectionAssert.AreEqual(expectedMetric.BytesValue, newMetric.BytesValue);
-        DataSetEquals(expectedMetric.DataSetValue, newMetric.DataSetValue);
+        Assert.AreEqual(expectedMetric.Value, newMetric.Value);
         Assert.AreEqual(expectedMetric.DataType, newMetric.DataType);
-        Assert.AreEqual(expectedMetric.DoubleValue, newMetric.DoubleValue);
-        // Todo: How to handle extension value?
-        //Assert.AreEqual(expectedMetric.ExtensionValue, newMetric.ExtensionValue);
-        Assert.AreEqual(expectedMetric.FloatValue, newMetric.FloatValue);
-        Assert.AreEqual(expectedMetric.IntValue, newMetric.IntValue);
         Assert.AreEqual(expectedMetric.IsHistorical, newMetric.IsHistorical);
         Assert.AreEqual(expectedMetric.IsNull, newMetric.IsNull);
         Assert.AreEqual(expectedMetric.IsTransient, newMetric.IsTransient);
-        Assert.AreEqual(expectedMetric.LongValue, newMetric.LongValue);
         MetaDataEquals(expectedMetric.MetaData, newMetric.MetaData);
         Assert.AreEqual(expectedMetric.Name, newMetric.Name);
-        PropertySetValueEquals(expectedMetric.PropertySetValue, newMetric.PropertySetValue);
-        Assert.AreEqual(expectedMetric.StringValue, newMetric.StringValue);
-        Assert.AreEqual(expectedMetric.TemplateValue, newMetric.TemplateValue);
         Assert.AreEqual(expectedMetric.Timestamp, newMetric.Timestamp);
     }
 
@@ -1734,15 +1723,7 @@ public class SparkplugPayloadConverterTestVersionB
     /// <param name="newDataSetValue">The new data set value.</param>
     private static void DataSetValueEquals(VersionBData.DataSetValue expectedDataSetValue, VersionBData.DataSetValue newDataSetValue)
     {
-        Assert.AreEqual(expectedDataSetValue.BooleanValue, newDataSetValue.BooleanValue);
         Assert.AreEqual(expectedDataSetValue.DataType, newDataSetValue.DataType);
-        Assert.AreEqual(expectedDataSetValue.DoubleValue, newDataSetValue.DoubleValue);
-        // Todo: How to handle extension value?
-        //Assert.AreEqual(expectedDataSetValue.ExtensionValue, newDataSetValue.ExtensionValue);
-        Assert.AreEqual(expectedDataSetValue.FloatValue, newDataSetValue.FloatValue);
-        Assert.AreEqual(expectedDataSetValue.IntValue, newDataSetValue.IntValue);
-        Assert.AreEqual(expectedDataSetValue.LongValue, newDataSetValue.LongValue);
-        Assert.AreEqual(expectedDataSetValue.StringValue, newDataSetValue.StringValue);
         Assert.AreEqual(expectedDataSetValue.Value, newDataSetValue.Value);
     }
 
@@ -1811,38 +1792,8 @@ public class SparkplugPayloadConverterTestVersionB
     /// <param name="newDataSetValue">The new property value.</param>
     private static void PropertyValueEquals(VersionBData.PropertyValue expectedDataSetValue, VersionBData.PropertyValue newDataSetValue)
     {
-        Assert.AreEqual(expectedDataSetValue.BooleanValue, newDataSetValue.BooleanValue);
         Assert.AreEqual(expectedDataSetValue.DataType, newDataSetValue.DataType);
-        Assert.AreEqual(expectedDataSetValue.DoubleValue, newDataSetValue.DoubleValue);
-        // Todo: How to handle extension value?
-        //Assert.AreEqual(expectedDataSetValue.ExtensionValue, newDataSetValue.ExtensionValue);
-        Assert.AreEqual(expectedDataSetValue.FloatValue, newDataSetValue.FloatValue);
-        Assert.AreEqual(expectedDataSetValue.IntValue, newDataSetValue.IntValue);
         Assert.AreEqual(expectedDataSetValue.IsNull, newDataSetValue.IsNull);
-        Assert.AreEqual(expectedDataSetValue.LongValue, newDataSetValue.LongValue);
-
-        if (expectedDataSetValue.PropertySetListValue is not null && newDataSetValue.PropertySetListValue is not null)
-        {
-            var propertyIndex = 0;
-
-            foreach (var propertySetValue in newDataSetValue.PropertySetListValue.PropertySets)
-            {
-                var expectedPropertySetValue = expectedDataSetValue.PropertySetListValue.PropertySets[propertyIndex];
-                PropertySetValueEquals(expectedPropertySetValue, propertySetValue);
-                propertyIndex++;
-            }
-        }
-        else if (expectedDataSetValue.PropertySetListValue is null && newDataSetValue.PropertySetListValue is null)
-        {
-            // Do nothing here.
-        }
-        else
-        {
-            Assert.Fail("The property set list values are not equal.");
-        }
-
-        PropertySetValueEquals(expectedDataSetValue.PropertySetValue, newDataSetValue.PropertySetValue);
-        Assert.AreEqual(expectedDataSetValue.StringValue, newDataSetValue.StringValue);
         Assert.AreEqual(expectedDataSetValue.Value, newDataSetValue.Value);
     }
 

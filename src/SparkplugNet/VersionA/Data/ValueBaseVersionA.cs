@@ -11,13 +11,13 @@ public abstract class ValueBaseVersionA : ValueBase<VersionADataTypeEnum>
     /// </summary>
     public override object? Value => this.DataType switch
     {
-        VersionADataTypeEnum.Double => this.Value.ConvertOrDefaultTo<double>(),
-        VersionADataTypeEnum.Float => this.Value.ConvertOrDefaultTo<float>(),
-        VersionADataTypeEnum.Int64 => this.Value.ConvertOrDefaultTo<long>(),
-        VersionADataTypeEnum.Int32 => this.Value.ConvertOrDefaultTo<int>(),
-        VersionADataTypeEnum.Boolean => this.Value.ConvertOrDefaultTo<bool>(),
-        VersionADataTypeEnum.String => this.Value.ConvertOrDefaultTo<string>(),
-        VersionADataTypeEnum.Bytes => this.Value.ConvertOrDefaultTo<byte[]>(),
+        VersionADataTypeEnum.Double => this.ObjectValue.ConvertOrDefaultTo<double>(),
+        VersionADataTypeEnum.Float => this.ObjectValue.ConvertOrDefaultTo<float>(),
+        VersionADataTypeEnum.Int64 => this.ObjectValue.ConvertOrDefaultTo<long>(),
+        VersionADataTypeEnum.Int32 => this.ObjectValue.ConvertOrDefaultTo<int>(),
+        VersionADataTypeEnum.Boolean => this.ObjectValue.ConvertOrDefaultTo<bool>(),
+        VersionADataTypeEnum.String => this.ObjectValue.ConvertOrDefaultTo<string>(),
+        VersionADataTypeEnum.Bytes => this.ObjectValue.ConvertOrDefaultTo<byte[]>(),
         _ => null
     };
 
@@ -28,28 +28,30 @@ public abstract class ValueBaseVersionA : ValueBase<VersionADataTypeEnum>
     /// <param name="value">The value.</param>
     public override IValue<VersionADataTypeEnum> SetValue(VersionADataTypeEnum dataType, object? value)
     {
+        this.DataType = dataType;
+
         switch (dataType)
         {
             case VersionADataTypeEnum.Double:
-                this.Value = value.ConvertOrDefaultTo<double>();
+                this.ObjectValue = value.ConvertOrDefaultTo<double>();
                 break;
             case VersionADataTypeEnum.Float:
-                this.Value = value.ConvertOrDefaultTo<float>();
+                this.ObjectValue = value.ConvertOrDefaultTo<float>();
                 break;
             case VersionADataTypeEnum.Int64:
-                this.Value = value.ConvertOrDefaultTo<long>();
+                this.ObjectValue = value.ConvertOrDefaultTo<long>();
                 break;
             case VersionADataTypeEnum.Int32:
-                this.Value = value.ConvertOrDefaultTo<int>();
+                this.ObjectValue = value.ConvertOrDefaultTo<int>();
                 break;
             case VersionADataTypeEnum.Boolean:
-                this.Value = value.ConvertOrDefaultTo<bool>();
+                this.ObjectValue = value.ConvertOrDefaultTo<bool>();
                 break;
             case VersionADataTypeEnum.String:
-                this.Value = value.ConvertOrDefaultTo<string>();
+                this.ObjectValue = value.ConvertOrDefaultTo<string>();
                 break;
             case VersionADataTypeEnum.Bytes:
-                this.Value = value.ConvertOrDefaultTo<byte[]>();
+                this.ObjectValue = value.ConvertOrDefaultTo<byte[]>();
                 break;
             default:
                 throw new NotImplementedException($"Type {dataType} is not supported yet");

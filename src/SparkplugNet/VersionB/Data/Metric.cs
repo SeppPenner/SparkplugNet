@@ -105,66 +105,67 @@ public class Metric : ValueBaseVersionB, IMetric
     public override IValue<VersionBDataTypeEnum> SetValue(VersionBDataTypeEnum dataType, object? value)
     {
         this.IsNull = value is null;
+        this.DataType = dataType;
 
         switch (dataType)
         {
             case VersionBDataTypeEnum.Int8:
-                base.SetValue(VersionBDataTypeEnum.Int8, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Int8, value);
                 break;
             case VersionBDataTypeEnum.Int16:
-                base.SetValue(VersionBDataTypeEnum.Int16, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Int16, value);
                 break;
             case VersionBDataTypeEnum.Int32:
-                base.SetValue(VersionBDataTypeEnum.Int32, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Int32, value);
                 break;
             case VersionBDataTypeEnum.Int64:
-                base.SetValue(VersionBDataTypeEnum.Int64, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Int64, value);
                 break;
             case VersionBDataTypeEnum.UInt8:
-                base.SetValue(VersionBDataTypeEnum.UInt8, this.Value);
+                base.SetValue(VersionBDataTypeEnum.UInt8, value);
                 break;
             case VersionBDataTypeEnum.UInt16:
-                base.SetValue(VersionBDataTypeEnum.UInt16, this.Value);
+                base.SetValue(VersionBDataTypeEnum.UInt16, value);
                 break;
             case VersionBDataTypeEnum.UInt32:
-                base.SetValue(VersionBDataTypeEnum.UInt32, this.Value);
+                base.SetValue(VersionBDataTypeEnum.UInt32, value);
                 break;
             case VersionBDataTypeEnum.UInt64:
-                base.SetValue(VersionBDataTypeEnum.UInt64, this.Value);
+                base.SetValue(VersionBDataTypeEnum.UInt64, value);
                 break;
             case VersionBDataTypeEnum.DateTime:
-                base.SetValue(VersionBDataTypeEnum.DateTime, this.Value);
+                base.SetValue(VersionBDataTypeEnum.DateTime, value);
                 break;
             case VersionBDataTypeEnum.Float:
-                base.SetValue(VersionBDataTypeEnum.Float, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Float, value);
                 break;
             case VersionBDataTypeEnum.Double:
-                base.SetValue(VersionBDataTypeEnum.Double, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Double, value);
                 break;
             case VersionBDataTypeEnum.Boolean:
-                base.SetValue(VersionBDataTypeEnum.Boolean, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Boolean, value);
                 break;
             case VersionBDataTypeEnum.String:
-                base.SetValue(VersionBDataTypeEnum.String, this.Value);
+                base.SetValue(VersionBDataTypeEnum.String, value);
                 break;
             case VersionBDataTypeEnum.Text:
-                base.SetValue(VersionBDataTypeEnum.Text, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Text, value);
                 break;
             case VersionBDataTypeEnum.Uuid:
-                base.SetValue(VersionBDataTypeEnum.Uuid, this.Value);
+                base.SetValue(VersionBDataTypeEnum.Uuid, value);
                 break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
-                this.Value = value.ConvertOrDefaultTo<byte[]>();
+                this.ObjectValue = value.ConvertOrDefaultTo<byte[]>();
                 break;
             case VersionBDataTypeEnum.DataSet:
-                this.Value = value.ConvertOrDefaultTo<DataSet>();
+                this.ObjectValue = value.ConvertOrDefaultTo<DataSet>();
                 break;
             case VersionBDataTypeEnum.Template:
-                this.Value = value.ConvertOrDefaultTo<Template>();
+                this.ObjectValue = value.ConvertOrDefaultTo<Template>();
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                this.Value = value.ConvertOrDefaultTo<PropertySet>();
+                this.ObjectValue = value.ConvertOrDefaultTo<PropertySet>();
                 break;
             case VersionBDataTypeEnum.Int8Array:
                 {
@@ -177,7 +178,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.Add((byte)number);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -192,7 +193,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -207,7 +208,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -222,13 +223,13 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
             case VersionBDataTypeEnum.UInt8Array:
                 {
-                    this.Value = value?.ConvertTo<byte[]>() ?? Array.Empty<byte>();
+                    this.ObjectValue = value?.ConvertTo<byte[]>() ?? Array.Empty<byte>();
                 }
 
                 break;
@@ -243,7 +244,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -258,7 +259,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -273,7 +274,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -288,7 +289,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -303,7 +304,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -318,7 +319,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -333,7 +334,7 @@ public class Metric : ValueBaseVersionB, IMetric
                         data.AddRange(bytes);
                     }
 
-                    this.Value = data.ToArray();
+                    this.ObjectValue = data.ToArray();
                 }
 
                 break;
@@ -349,7 +350,7 @@ public class Metric : ValueBaseVersionB, IMetric
                 //        data.AddRange(bytes);
                 //    }
 
-                //    this.Value = data.ToArray();
+                //    this.ObjectValue = data.ToArray();
                 //}
 
                 break;

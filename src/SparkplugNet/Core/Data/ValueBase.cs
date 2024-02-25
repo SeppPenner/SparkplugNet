@@ -7,6 +7,11 @@ namespace SparkplugNet.Core.Data;
 public abstract class ValueBase<DataTypeEnum> : IValue<DataTypeEnum> where DataTypeEnum : Enum
 {
     /// <summary>
+    /// Gets or sets the value.
+    /// </summary>
+    protected object? ObjectValue;
+
+    /// <summary>
     /// Gets or sets the DataType.
     /// </summary>
     public DataTypeEnum DataType { get; protected set; } = default!;
