@@ -103,7 +103,7 @@ internal static class SparkplugTopicGenerator
         return specificationVersion switch
         {
             SparkplugSpecificationVersion.Version22 => $"{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}",
-            SparkplugSpecificationVersion.Version30 => $"spv1.0B/{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}",
+            SparkplugSpecificationVersion.Version30 => $"{SparkplugTopic.NamespaceSparkplugB}/{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}",
             _ => throw new NotImplementedException("Unknown Sparkplug specification version")
         };
     }

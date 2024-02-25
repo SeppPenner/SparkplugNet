@@ -41,7 +41,7 @@ public class SparkplugMessageGeneratorTestVersion30
     public void TestStateMessageNamespaceBOnline()
     {
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
-        var payloadVersionB = PayloadHelper.Deserialize<StateMessage>(message.Payload);
+        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -57,7 +57,7 @@ public class SparkplugMessageGeneratorTestVersion30
     public void TestStateMessageNamespaceBOffline()
     {
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", false);
-        var payloadVersionB = PayloadHelper.Deserialize<StateMessage>(message.Payload);
+        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -82,11 +82,11 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((uint?)this.metricsB.First().Value, payloadVersionB.Metrics.ElementAt(0).IntValue);
+        Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(1).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
     }
 
@@ -106,11 +106,11 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((uint?)this.metricsB.First().Value, payloadVersionB.Metrics.ElementAt(0).IntValue);
+        Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(1).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
     }
 
@@ -130,7 +130,7 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(0).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(0).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
     }
 
@@ -148,7 +148,7 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(0).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(0).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
     }
 
@@ -168,11 +168,11 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((uint?)this.metricsB.First().Value, payloadVersionB.Metrics.ElementAt(0).IntValue);
+        Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(1).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
     }
 
@@ -192,11 +192,11 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((uint?)this.metricsB.First().Value, payloadVersionB.Metrics.ElementAt(0).IntValue);
+        Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(1).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
     }
 
@@ -216,11 +216,11 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((uint?)this.metricsB.First().Value, payloadVersionB.Metrics.ElementAt(0).IntValue);
+        Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(1).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
     }
 
@@ -240,11 +240,11 @@ public class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
-        Assert.AreEqual((uint?)this.metricsB.First().Value, payloadVersionB.Metrics.ElementAt(0).IntValue);
+        Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual((ulong?)this.seqMetricB.Value, payloadVersionB.Metrics.ElementAt(1).LongValue);
+        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
     }
 }
