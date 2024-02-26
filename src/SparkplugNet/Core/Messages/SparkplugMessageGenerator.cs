@@ -76,7 +76,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugNodeBirthMessage<T>(
+    public MqttApplicationMessage GetSparkplugNodeBirthMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -101,14 +101,14 @@ internal class SparkplugMessageGenerator
             case SparkplugNamespace.VersionA:
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric> ?? new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return this.GetSparkplugNodeBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
                     var newMetrics = metrics as IEnumerable<Metric> ?? new List<Metric>();
-                    return this.GetSparkPlugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return this.GetSparkplugNodeBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -132,7 +132,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugDeviceBirthMessage<T>(
+    public MqttApplicationMessage GetSparkplugDeviceBirthMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -164,7 +164,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugDeviceBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                    return this.GetSparkplugDeviceBirthA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                          AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
@@ -172,7 +172,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<Metric> ?? new List<Metric>();
 
-                    return this.GetSparkPlugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                    return this.GetSparkplugDeviceBirthB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -191,7 +191,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugNodeDeathMessage(
+    public MqttApplicationMessage GetSparkplugNodeDeathMessage(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -212,14 +212,14 @@ internal class SparkplugMessageGenerator
             case SparkplugNamespace.VersionA:
                 {
                     var metrics = new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return this.GetSparkplugNodeDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(metrics, sessionNumber));
                 }
 
             case SparkplugNamespace.VersionB:
                 {
                     var metrics = new List<Metric>();
-                    return this.GetSparkPlugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return this.GetSparkplugNodeDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(metrics, sessionNumber));
                 }
 
@@ -241,7 +241,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugDeviceDeathMessage(
+    public MqttApplicationMessage GetSparkplugDeviceDeathMessage(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -270,14 +270,14 @@ internal class SparkplugMessageGenerator
             case SparkplugNamespace.VersionA:
                 {
                     var metrics = new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                    return this.GetSparkplugDeviceDeathA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                         AddSessionNumberToMetrics(metrics, sessionNumber), dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
                 {
                     var metrics = new List<Metric>();
-                    return this.GetSparkPlugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                    return this.GetSparkplugDeviceDeathB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                         AddSessionNumberToMetrics(metrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -300,7 +300,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugNodeDataMessage<T>(
+    public MqttApplicationMessage GetSparkplugNodeDataMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -326,7 +326,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return this.GetSparkplugNodeDataA(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
@@ -334,7 +334,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<Metric>
                                      ?? new List<Metric>();
-                    return this.GetSparkPlugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return this.GetSparkplugNodeDataB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -358,7 +358,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugDeviceDataMessage<T>(
+    public MqttApplicationMessage GetSparkplugDeviceDataMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -390,7 +390,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    return this.GetSparkPlugDeviceDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                    return this.GetSparkplugDeviceDataA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
@@ -398,7 +398,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<Metric>
                                      ?? new List<Metric>();
-                    return this.GetSparkPlugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
+                    return this.GetSparkplugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
                          AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -421,7 +421,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugNodeCommandMessage<T>(
+    public MqttApplicationMessage GetSparkplugNodeCommandMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -447,7 +447,7 @@ internal class SparkplugMessageGenerator
                 {
                     var newMetrics = metrics as IEnumerable<VersionAData.KuraMetric>
                                      ?? new List<VersionAData.KuraMetric>();
-                    return GetSparkPlugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return GetSparkplugNodeCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier,
                         AddSessionNumberToMetrics(newMetrics, sessionNumber), dateTime);
                 }
 
@@ -456,7 +456,7 @@ internal class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<Metric>
                                      ?? new List<Metric>();
 
-                    return GetSparkPlugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return GetSparkplugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                          AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -480,7 +480,7 @@ internal class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkPlugDeviceCommandMessage<T>(
+    public MqttApplicationMessage GetSparkplugDeviceCommandMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -514,7 +514,7 @@ internal class SparkplugMessageGenerator
                                      ?? new List<VersionAData.KuraMetric>();
                     newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
-                    return GetSparkPlugDeviceCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime);
+                    return GetSparkplugDeviceCommandA(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, dateTime);
                 }
 
             case SparkplugNamespace.VersionB:
@@ -524,7 +524,7 @@ internal class SparkplugMessageGenerator
 
                     newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
-                    return GetSparkPlugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
+                    return GetSparkplugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
                 }
 
             default:
@@ -626,7 +626,7 @@ internal class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugNodeBirthA(
+    private MqttApplicationMessage GetSparkplugNodeBirthA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -667,7 +667,7 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugNodeBirthB(
+    private MqttApplicationMessage GetSparkplugNodeBirthB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -712,7 +712,7 @@ internal class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugDeviceBirthA(
+    private MqttApplicationMessage GetSparkplugDeviceBirthA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -756,7 +756,7 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugDeviceBirthB(
+    private MqttApplicationMessage GetSparkplugDeviceBirthB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -800,7 +800,7 @@ internal class SparkplugMessageGenerator
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugNodeDeathA(
+    private MqttApplicationMessage GetSparkplugNodeDeathA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -838,7 +838,7 @@ internal class SparkplugMessageGenerator
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugNodeDeathB(
+    private MqttApplicationMessage GetSparkplugNodeDeathB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -879,7 +879,7 @@ internal class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugDeviceDeathA(
+    private MqttApplicationMessage GetSparkplugDeviceDeathA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -923,7 +923,7 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugDeviceDeathB(
+    private MqttApplicationMessage GetSparkplugDeviceDeathB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -968,7 +968,7 @@ internal class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugNodeDataA(
+    private MqttApplicationMessage GetSparkplugNodeDataA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1010,7 +1010,7 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugNodeDataB(
+    private MqttApplicationMessage GetSparkplugNodeDataB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1055,7 +1055,7 @@ internal class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugDeviceDataA(
+    private MqttApplicationMessage GetSparkplugDeviceDataA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1099,7 +1099,7 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkPlugDeviceDataB(
+    private MqttApplicationMessage GetSparkplugDeviceDataB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1144,7 +1144,7 @@ internal class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkPlugNodeCommandA(
+    private static MqttApplicationMessage GetSparkplugNodeCommandA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1182,7 +1182,7 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkPlugNodeCommandB(
+    private static MqttApplicationMessage GetSparkplugNodeCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1223,7 +1223,7 @@ internal class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkPlugDeviceCommandA(
+    private static MqttApplicationMessage GetSparkplugDeviceCommandA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1263,7 +1263,7 @@ internal class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkPlugDeviceCommandB(
+    private static MqttApplicationMessage GetSparkplugDeviceCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,

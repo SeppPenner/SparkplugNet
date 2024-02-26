@@ -42,7 +42,7 @@ public partial class SparkplugNodeBase<T>
         }
 
         // Get the device birth message.
-        var deviceBirthMessage = this.messageGenerator.GetSparkPlugDeviceBirthMessage(
+        var deviceBirthMessage = this.messageGenerator.GetSparkplugDeviceBirthMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -120,7 +120,7 @@ public partial class SparkplugNodeBase<T>
         }
 
         // Get the device death message.
-        var deviceDeathMessage = this.messageGenerator.GetSparkPlugDeviceDeathMessage(
+        var deviceDeathMessage = this.messageGenerator.GetSparkplugDeviceDeathMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -167,7 +167,7 @@ public partial class SparkplugNodeBase<T>
         }
 
         // Get the data message.
-        var dataMessage = this.messageGenerator.GetSparkPlugDeviceDataMessage(
+        var dataMessage = this.messageGenerator.GetSparkplugDeviceDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,

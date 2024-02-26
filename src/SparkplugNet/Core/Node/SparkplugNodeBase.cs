@@ -265,7 +265,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         this.ResetLastSequenceNumber();
 
         // Get the will message.
-        var willMessage = this.messageGenerator.GetSparkPlugNodeDeathMessage(
+        var willMessage = this.messageGenerator.GetSparkplugNodeDeathMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -370,7 +370,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         // Get the online message.
-        var onlineMessage = this.messageGenerator.GetSparkPlugNodeBirthMessage<T>(
+        var onlineMessage = this.messageGenerator.GetSparkplugNodeBirthMessage<T>(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,

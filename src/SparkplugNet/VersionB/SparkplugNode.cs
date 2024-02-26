@@ -68,7 +68,7 @@ public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
         }
 
         // Get the data message.
-        var dataMessage = this.messageGenerator.GetSparkPlugNodeDataMessage(
+        var dataMessage = this.messageGenerator.GetSparkplugNodeDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,

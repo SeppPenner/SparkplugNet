@@ -77,7 +77,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
         }
 
         // Get the data message.
-        var dataMessage = this.messageGenerator.GetSparkPlugNodeCommandMessage(
+        var dataMessage = this.messageGenerator.GetSparkplugNodeCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
@@ -121,7 +121,7 @@ public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMe
         }
 
         // Get the data message.
-        var dataMessage = this.messageGenerator.GetSparkPlugDeviceCommandMessage(
+        var dataMessage = this.messageGenerator.GetSparkplugDeviceCommandMessage(
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
