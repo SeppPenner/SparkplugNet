@@ -13,6 +13,7 @@ namespace SparkplugNet.VersionA.Data;
 /// The externally used Sparkplug A Kura metric class.
 /// </summary>
 [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
+[DebuggerDisplay("{Name}|{Value}")]
 public class KuraMetric : ValueBaseVersionA, IMetric
 {
     /// <summary>

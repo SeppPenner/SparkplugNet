@@ -240,7 +240,15 @@ public class SparkplugPayloadConverterTestVersionA
     /// <param name="newMetric">The new metric.</param>
     private static void MetricEquals(VersionAData.KuraMetric expected, VersionAData.KuraMetric newMetric)
     {
-        Assert.AreEqual(expected.Value, newMetric.Value);
+        if (expected.Value is not null && expected.Value.GetType() == typeof(byte[]))
+        {
+            CollectionAssert.AreEqual((byte[]?)expected.Value, (byte[]?)newMetric.Value);
+        }
+        else
+        {
+            Assert.AreEqual(expected.Value, newMetric.Value);
+        }
+
         Assert.AreEqual(expected.DataType, newMetric.DataType);
         Assert.AreEqual(expected.Name, newMetric.Name);
     }

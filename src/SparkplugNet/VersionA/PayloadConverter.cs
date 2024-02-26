@@ -117,7 +117,9 @@ internal static class PayloadConverter
             Name = metric.Name
         };
 
-        switch (newMetric.DataType)
+        var dataType = ConvertVersionADataType(metric.DataType);
+
+        switch (dataType)
         {
             case VersionADataTypeEnum.Boolean:
                 newMetric.SetValue(VersionADataTypeEnum.Boolean, metric.BooleanValue);
