@@ -48,6 +48,6 @@ internal static class DataTypeExtensions
             : typeof(T) == typeof(DataSet) ? (T)(object)new DataSet()
             : typeof(T) == typeof(Template) ? (T)(object)new Template()
             : typeof(T) == typeof(PropertySet) ? (T)(object)new PropertySet()
-            : (T)(object)new(); // Last Resort
+            : (T)(object)new(); // Last resort
     }
 }
