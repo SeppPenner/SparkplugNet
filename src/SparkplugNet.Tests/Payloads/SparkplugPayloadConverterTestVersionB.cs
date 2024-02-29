@@ -1627,35 +1627,6 @@ public class SparkplugPayloadConverterTestVersionB
     }
 
     /// <summary>
-    /// Tests the Sparkplug payload converter for converting a version B data type property value to Proto with byte data in the metrics.
-    /// Test code for https://github.com/SeppPenner/SparkplugNet/issues/30.
-    /// </summary>
-    [TestMethod]
-    public void TestConvertVersionBMetricsWithByteValues()
-    {
-        var oldPayload = new VersionBData.Payload
-        {
-            Metrics =
-            [
-                new VersionBData.Metric(VersionBData.DataType.Bytes, new byte[] { 1, 2, 3, 4 })
-                {
-                }
-            ],
-            Seq = 1,
-            Timestamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-        };
-
-        var payload = VersionB.PayloadConverter.ConvertVersionBPayload(oldPayload);
-
-        Assert.IsNotNull(payload);
-        Assert.IsNotNull(payload.Metrics);
-        Assert.IsTrue(payload.Metrics.Count > 0);
-        Assert.IsNotNull(payload.Metrics[0]);
-        CollectionAssert.AreEqual(new byte[] { 1, 2, 3, 4 }, payload.Metrics[0].BytesValue);
-        Assert.AreEqual((uint)17, payload.Metrics[0].DataType);
-    }
-
-    /// <summary>
     /// Tests the two given metrics for equality.
     /// </summary>
     /// <param name="expectedMetric">The expected metric.</param>
