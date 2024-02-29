@@ -65,8 +65,30 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                 this.ObjectValue = value.ConvertOrDefaultTo<ulong>();
                 break;
             case VersionBDataTypeEnum.DateTime:
-                this.ObjectValue = (ulong)new DateTimeOffset(value.ConvertOrDefaultTo<DateTime>()).ToUnixTimeMilliseconds();
-                break;
+                if (value is null)
+                {
+                    return this;
+                }
+
+                if (value is DateTimeOffset dateTimeOffset)
+                {
+                    this.ObjectValue = (ulong)dateTimeOffset.ToUnixTimeMilliseconds();
+                    break;
+                }
+                else if (value is DateTime dateTime)
+                {
+                    this.ObjectValue = (ulong)new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+                    break;
+                }
+                else if (value is ulong ulongValue)
+                {
+                    this.ObjectValue = ulongValue;
+                    break;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Value {value} is not a valid date time value");
+                }
             case VersionBDataTypeEnum.Float:
                 this.ObjectValue = value.ConvertTo<float>();
                 break;
