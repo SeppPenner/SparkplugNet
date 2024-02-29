@@ -61,7 +61,9 @@ internal static class PayloadConverter
             Timestamp = protoMetric.Timestamp
         };
 
-        switch (metric.DataType)
+        var dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
+
+        switch (dataType)
         {
             case VersionBDataTypeEnum.Int8:
                 metric.SetValue(VersionBDataTypeEnum.Int8, protoMetric.IntValue);
