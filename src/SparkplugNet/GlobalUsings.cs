@@ -1,7 +1,9 @@
 #pragma warning disable IDE0065 // Die using-Anweisung wurde falsch platziert.
+global using System.Buffers.Binary;
 global using System.Collections.Concurrent;
 global using System.ComponentModel;
 global using System.Diagnostics;
+global using System.Runtime.InteropServices;
 global using System.Text;
 global using System.Xml.Serialization;
 
