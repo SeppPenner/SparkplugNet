@@ -217,26 +217,46 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int64:
             case VersionBDataTypeEnum.UInt32:
             case VersionBDataTypeEnum.UInt64:
+                protoMetric.LongValue = metric.Value is not null ? metric.Value.ConvertOrDefaultTo<ulong>() : default;
+                break;
             case VersionBDataTypeEnum.DateTime:
-                protoMetric.LongValue = metric.Value.ConvertOrDefaultTo<ulong>();
+                if (metric.Value is null)
+                {
+                    protoMetric.LongValue = default;
+                }
+                else if (metric.Value is DateTimeOffset dateTimeOffset)
+                {
+                    protoMetric.LongValue = (ulong)dateTimeOffset.ToUnixTimeMilliseconds();
+                }
+                else if (metric.Value is DateTime dateTime)
+                {
+                    protoMetric.LongValue = (ulong)new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+                }
+                else
+                {
+                    protoMetric.LongValue = metric.Value.ConvertOrDefaultTo<ulong>();
+                }
+
                 break;
             case VersionBDataTypeEnum.Float:
-                protoMetric.FloatValue = metric.Value.ConvertOrDefaultTo<uint>();
+                protoMetric.FloatValue = metric.Value is not null ? (float)metric.Value : default;
                 break;
             case VersionBDataTypeEnum.Double:
-                protoMetric.DoubleValue = metric.Value.ConvertOrDefaultTo<double>();
+                protoMetric.DoubleValue = metric.Value is not null ? (double)metric.Value : default;
                 break;
             case VersionBDataTypeEnum.Boolean:
-                protoMetric.BooleanValue = metric.Value.ConvertOrDefaultTo<bool>();
+                protoMetric.BooleanValue = (bool?)metric.Value ?? default;
                 break;
             case VersionBDataTypeEnum.String:
             case VersionBDataTypeEnum.Text:
+                protoMetric.StringValue = (string?)metric.Value ?? string.Empty;
+                break;
             case VersionBDataTypeEnum.Uuid:
-                protoMetric.StringValue = metric.Value.ConvertOrDefaultTo<string>();
+                protoMetric.StringValue = ((Guid?)metric.Value)?.ToString() ?? string.Empty;
                 break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
-                protoMetric.BytesValue = metric.Value.ConvertOrDefaultTo<byte[]>();
+                protoMetric.BytesValue = (byte[]?)metric.Value ?? [];
                 break;
             case VersionBDataTypeEnum.DataSet:
                 protoMetric.DataSetValue = ConvertVersionBDataSet(metric.Value.ConvertOrDefaultTo<DataSet>());
@@ -477,9 +497,23 @@ internal static class PayloadConverter
 
         foreach (var row in dataSet.Rows)
         {
+            var elements = new List<VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue>();
+            var elementIndex = 0;
+
+            foreach (var element in row.Elements)
+            {
+                if (element.Value is null)
+                {
+                    continue;
+                }
+
+                elements.Add(ConvertVersionBDataSetValue(element, dataSet.Types[elementIndex]));
+                elementIndex++;
+            }
+
             rows.Add(new VersionBProtoBuf.ProtoBufPayload.DataSet.Row
             {
-                Elements = row.Elements.Select(e => ConvertVersionBDataSetValue(e, dataSet.Types[index])).ToList()
+                Elements = elements
             });
 
             index++;

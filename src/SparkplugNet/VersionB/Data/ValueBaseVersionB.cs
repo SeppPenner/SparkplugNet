@@ -70,12 +70,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                     return this;
                 }
 
-                if (value is DateTimeOffset dateTimeOffset)
-                {
-                    this.ObjectValue = (ulong)dateTimeOffset.ToUnixTimeMilliseconds();
-                    break;
-                }
-                else if (value is DateTime dateTime)
+                if (value is DateTime dateTime)
                 {
                     this.ObjectValue = (ulong)new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
                     break;
@@ -105,8 +100,25 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                 this.ObjectValue = value.ConvertOrDefaultTo<string>();
                 break;
             case VersionBDataTypeEnum.Uuid:
-                this.ObjectValue = value.ConvertOrDefaultTo<string>();
-                break;
+                if (value is null)
+                {
+                    return this;
+                }
+
+                if (value is string stringValue)
+                {
+                    this.ObjectValue = stringValue;
+                    break;
+                }
+                else if (value is Guid guidValue)
+                {
+                    this.ObjectValue = guidValue.ToString();
+                    break;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Value {value} is not a valid Guid value");
+                }
             case VersionBDataTypeEnum.Unknown:
             default:
                 throw new NotImplementedException($"Type {dataType} is not supported yet");

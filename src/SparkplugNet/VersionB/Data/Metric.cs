@@ -193,8 +193,25 @@ public class Metric : ValueBaseVersionB, IMetric
                 this.ObjectValue = value.ConvertOrDefaultTo<ulong[]>();
                 break;
             case VersionBDataTypeEnum.DateTimeArray:
-                this.ObjectValue = value.ConvertOrDefaultTo<ulong[]>();
-                break;
+                if (value is null)
+                {
+                    return this;
+                }
+
+                if (value is DateTime[] dateTimes)
+                {
+                    this.ObjectValue = dateTimes.Select(d => (ulong)new DateTimeOffset(d).ToUnixTimeMilliseconds()).ToArray();
+                    break;
+                }
+                else if (value is ulong[] ulongValues)
+                {
+                    this.ObjectValue = ulongValues;
+                    break;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Value {value} is not a valid date time array value");
+                }
             case VersionBDataTypeEnum.FloatArray:
                 this.ObjectValue = value.ConvertOrDefaultTo<float[]>();
                 break;
@@ -257,8 +274,7 @@ public class Metric : ValueBaseVersionB, IMetric
             case VersionBDataTypeEnum.UInt64Array:
                 return this.ObjectValue.ConvertOrDefaultTo<ulong[]>();
             case VersionBDataTypeEnum.DateTimeArray:
-                // Todo: Convert?
-                return this.ObjectValue.ConvertOrDefaultTo<ulong[]>();
+                return this.ObjectValue.ConvertOrDefaultTo<ulong[]>().Select(v => DateTimeOffset.FromUnixTimeMilliseconds((long)v).DateTime).ToArray();
             case VersionBDataTypeEnum.FloatArray:
                 return this.ObjectValue.ConvertOrDefaultTo<float[]>();
             case VersionBDataTypeEnum.DoubleArray:

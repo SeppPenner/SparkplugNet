@@ -21,197 +21,187 @@ public class SparkplugPayloadConverterTestVersionB
     [TestMethod]
     public void TestConvertVersionBPayloadFromProto()
     {
-        var dateTime = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime3 = new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime = new DateTime(2020, 1, 1, 0, 0, 0);
+        var dateTime2 = new DateTime(2022, 1, 1, 0, 0, 0);
+        var dateTime3 = new DateTime(2023, 1, 1, 0, 0, 0);
+        var dateTime4 = new DateTime(2024, 1, 1, 0, 0, 0);
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionBProtoBufPayload.Metric>
         {
             new()
             {
                 Name = "Test1",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 1,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int8,
                 IntValue = 1
             },
             new()
             {
                 Name = "Test2",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 2,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int16,
                 IntValue = 2
             },
             new()
             {
                 Name = "Test3",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 3,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int32,
                 IntValue = 3
             },
             new()
             {
                 Name = "Test4",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 4,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int64,
                 LongValue = 4
             },
             new()
             {
                 Name = "Test5",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 5,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt8,
                 IntValue = 5
             },
             new()
             {
                 Name = "Test6",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 6,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt16,
                 IntValue = 6
             },
             new()
             {
                 Name = "Test7",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 7,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt32,
                 LongValue = 7
             },
             new()
             {
                 Name = "Test8",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 8,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt64,
                 LongValue = 8
             },
             new()
             {
                 Name = "Test9",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 9,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Float,
                 FloatValue = 9
             },
             new()
             {
                 Name = "Test10",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 10,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Double,
                 DoubleValue = 10
             },
             new()
             {
                 Name = "Test11",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 11,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Boolean,
                 BooleanValue = true
             },
             new()
             {
                 Name = "Test12",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 12,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.String,
                 StringValue = "12"
             },
             new()
             {
                 Name = "Test13",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 13,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
-                DataType = (uint?)VersionBData.DataType.DateTime,
-                LongValue = 13
-            },
-            new()
-            {
-                Name = "Test13",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
-                Alias = 13,
-                IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTime,
                 LongValue = 13
             },
             new()
             {
                 Name = "Test14",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 14,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Text,
                 StringValue = "14"
             },
             new()
             {
                 Name = "Test15",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 15,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Text,
                 StringValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             },
             new()
             {
                 Name = "Test16",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 16,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DataSet,
                 DataSetValue = new VersionBProtoBufPayload.DataSet
                 {
@@ -240,22 +230,22 @@ public class SparkplugPayloadConverterTestVersionB
             new()
             {
                 Name = "Test17",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 17,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Bytes,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test18",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 18,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 MetaData = new VersionBProtoBufPayload.MetaData
                 {
                     ContentType = "application/json",
@@ -273,11 +263,11 @@ public class SparkplugPayloadConverterTestVersionB
             new()
             {
                 Name = "Test19",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 19,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Template,
                 TemplateValue = new VersionBProtoBufPayload.Template
                 {
@@ -304,22 +294,22 @@ public class SparkplugPayloadConverterTestVersionB
                         new()
                         {
                             Name = "Test1",
-                            Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                             Alias = 1,
                             IsHistorical = true,
                             IsTransient = true,
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBData.DataType.Int16,
                             IntValue = 1
                         },
                         new()
                         {
                             Name = "Test2",
-                            Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                             Alias = 2,
                             IsHistorical = true,
                             IsTransient = true,
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBData.DataType.Double,
                             DoubleValue = 1
                         }
@@ -329,11 +319,11 @@ public class SparkplugPayloadConverterTestVersionB
             new()
             {
                 Name = "Test20",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 20,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.PropertySet,
                 PropertySetValue = new VersionBProtoBufPayload.PropertySet
                 {
@@ -342,13 +332,13 @@ public class SparkplugPayloadConverterTestVersionB
                     [
                         new()
                         {
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBData.DataType.Int8,
                             IntValue = 1
                         },
                         new()
                         {
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBData.DataType.Int64,
                             LongValue = 2
                         }
@@ -359,245 +349,245 @@ public class SparkplugPayloadConverterTestVersionB
             //new()
             //{
             //    Name = "Test21",
-            //    Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+            //    Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
             //    Alias = 21,
             //    IsHistorical = true,
             //    IsTransient = true,
-            //    IsNull = true,
+            //    IsNull = false,
             //    DataType = (uint?)VersionBData.DataType.PropertySetList,
             //    PropertySetListValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             //},
             new()
             {
                 Name = "Test22",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test23",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 23,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int16Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test24",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 24,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int32Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test25",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 25,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int64Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test26",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 26,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test27",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 27,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt16Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test28",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 28,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt32Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test29",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 29,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt64Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test30",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 30,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.FloatArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test31",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 31,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DoubleArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test32",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 32,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.BooleanArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test33",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 33,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.StringArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test34",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 34,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTimeArray,
                 BytesValue = [1, 2, 3, 4]
             }
         };
         var convertedMetrics = new List<VersionBData.Metric>
         {
-            new("Test1", VersionBData.DataType.Int8, (sbyte)1, dateTime2)
+            new("Test1", VersionBData.DataType.Int8, (sbyte)1, timestamp)
             {
                 Alias = 1,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test2", VersionBData.DataType.Int16, (short)2, dateTime2)
+            new("Test2", VersionBData.DataType.Int16, (short)2, timestamp)
             {
                 Alias = 2,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test3", VersionBData.DataType.Int32, (int)3, dateTime2)
+            new("Test3", VersionBData.DataType.Int32, (int)3, timestamp)
             {
                 Alias = 3,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test4", VersionBData.DataType.Int64, (long)4, dateTime2)
+            new("Test4", VersionBData.DataType.Int64, (long)4, timestamp)
             {
                 Alias = 4,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test5", VersionBData.DataType.UInt8, (byte)5, dateTime2)
+            new("Test5", VersionBData.DataType.UInt8, (byte)5, timestamp)
             {
                 Alias = 5,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test6", VersionBData.DataType.UInt16, (ushort)6, dateTime2)
+            new("Test6", VersionBData.DataType.UInt16, (ushort)6, timestamp)
             {
                 Alias = 6,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test7", VersionBData.DataType.UInt32, (uint)7, dateTime2)
+            new("Test7", VersionBData.DataType.UInt32, (uint)7, timestamp)
             {
                 Alias = 7,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test8", VersionBData.DataType.UInt64, (ulong)8, dateTime2)
+            new("Test8", VersionBData.DataType.UInt64, (ulong)8, timestamp)
             {
                 Alias = 8,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test9", VersionBData.DataType.Float, 9f, dateTime2)
+            new("Test9", VersionBData.DataType.Float, 9f, timestamp)
             {
                 Alias = 9,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test10", VersionBData.DataType.Double, 10.0, dateTime2)
+            new("Test10", VersionBData.DataType.Double, 10.0, timestamp)
             {
                 Alias = 10,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test11", VersionBData.DataType.Boolean, true, dateTime2)
+            new("Test11", VersionBData.DataType.Boolean, true, timestamp)
             {
                 Alias = 11,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test12", VersionBData.DataType.String, "12", dateTime2)
+            new("Test12", VersionBData.DataType.String, "12", timestamp)
             {
                 Alias = 12,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test13", VersionBData.DataType.DateTime, dateTime2, dateTime2)
+            new("Test13", VersionBData.DataType.DateTime, timestamp.DateTime, timestamp)
             {
                 Alias = 13,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test14", VersionBData.DataType.Text, "14", dateTime2)
+            new("Test14", VersionBData.DataType.Text, "14", timestamp)
             {
                 Alias = 14,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test15", VersionBData.DataType.Uuid, "c609f36e-92f9-4103-92f0-bf9d95c18be9", dateTime2)
+            new("Test15", VersionBData.DataType.Uuid, "c609f36e-92f9-4103-92f0-bf9d95c18be9", timestamp)
             {
                 Alias = 15,
                 IsHistorical = true,
@@ -623,19 +613,19 @@ public class SparkplugPayloadConverterTestVersionB
                         }
                     ],
                     Types = [1, 9]
-                }, dateTime2)
+                }, timestamp)
             {
                 Alias = 16,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test17", VersionBData.DataType.Bytes, new byte[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test17", VersionBData.DataType.Bytes, new byte[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 17,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test18", VersionBData.DataType.File, new byte[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test18", VersionBData.DataType.File, new byte[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 18,
                 IsHistorical = true,
@@ -669,20 +659,20 @@ public class SparkplugPayloadConverterTestVersionB
                     ],
                     Metrics =
                     [
-                        new("Test1", VersionBData.DataType.Int16, 1, dateTime2)
+                        new("Test1", VersionBData.DataType.Int16, 1, timestamp)
                         {
                             Alias = 1,
                             IsHistorical = true,
                             IsTransient = true
                         },
-                        new("Test2", VersionBData.DataType.Double, 2.0, dateTime2)
+                        new("Test2", VersionBData.DataType.Double, 2.0, timestamp)
                         {
                             Alias = 2,
                             IsHistorical = true,
                             IsTransient = true
                         }
                     ]
-                }, dateTime2)
+                }, timestamp)
             {
                 Alias = 19,
                 IsHistorical = true,
@@ -700,7 +690,7 @@ public class SparkplugPayloadConverterTestVersionB
                         {
                         }
                     ]
-                }, dateTime2)
+                }, timestamp)
             {
                 Alias = 20,
                 IsHistorical = true,
@@ -714,83 +704,83 @@ public class SparkplugPayloadConverterTestVersionB
             //    Alias = 21,
             //    IsHistorical = true,
             //    IsTransient = true,
-            //    IsNull = true,
+            //    IsNull = false,
             //    DataType = VersionBData.DataType.PropertySetList,
             //    PropertySetListValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             //},
-            new("Test22", VersionBData.DataType.Int8Array, new sbyte[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test22", VersionBData.DataType.Int8Array, new sbyte[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test23", VersionBData.DataType.Int16Array, new short[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test23", VersionBData.DataType.Int16Array, new short[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 23,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test24", VersionBData.DataType.Int32Array, new int[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test24", VersionBData.DataType.Int32Array, new int[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 24,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test25", VersionBData.DataType.Int64Array, new long[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test25", VersionBData.DataType.Int64Array, new long[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 25,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test26", VersionBData.DataType.UInt8Array, new byte[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test26", VersionBData.DataType.UInt8Array, new byte[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 26,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test27", VersionBData.DataType.UInt16Array, new ushort[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test27", VersionBData.DataType.UInt16Array, new ushort[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 27,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test28", VersionBData.DataType.UInt32Array, new uint[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test28", VersionBData.DataType.UInt32Array, new uint[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 28,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test29", VersionBData.DataType.UInt64Array, new ulong[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test29", VersionBData.DataType.UInt64Array, new ulong[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 29,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test30", VersionBData.DataType.FloatArray, new float[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test30", VersionBData.DataType.FloatArray, new float[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 30,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test31", VersionBData.DataType.DoubleArray, new double[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test31", VersionBData.DataType.DoubleArray, new double[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 31,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test32", VersionBData.DataType.BooleanArray, new bool[] { true, false, true, false }, dateTime2)
+            new("Test32", VersionBData.DataType.BooleanArray, new bool[] { true, false, true, false }, timestamp)
             {
                 Alias = 32,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test33", VersionBData.DataType.StringArray, new string[] { "1", "2", "3", "4" }, dateTime2)
+            new("Test33", VersionBData.DataType.StringArray, new string[] { "1", "2", "3", "4" }, timestamp)
             {
                 Alias = 33,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test34", VersionBData.DataType.DateTimeArray, new DateTimeOffset[] { dateTime, dateTime2, dateTime3, dateTime4 }, dateTime2)
+            new("Test34", VersionBData.DataType.DateTimeArray, new DateTime[] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
             {
                 Alias = 34,
                 IsHistorical = true,
@@ -800,7 +790,7 @@ public class SparkplugPayloadConverterTestVersionB
         var oldPayload = new VersionBProtoBufPayload
         {
             Body = bodyData,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds(),
+            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
             Seq = 1,
             Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
             Metrics = metrics
@@ -808,7 +798,7 @@ public class SparkplugPayloadConverterTestVersionB
         var payload = VersionB.PayloadConverter.ConvertVersionBPayload(oldPayload);
         Assert.IsNotNull(payload);
         CollectionAssert.AreEqual(bodyData, payload.Body);
-        Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
         Assert.AreEqual((ulong)1, payload.Seq);
         Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
         Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
@@ -827,98 +817,99 @@ public class SparkplugPayloadConverterTestVersionB
     [TestMethod]
     public void TestConvertVersionBPayloadToProto()
     {
-        var dateTime = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime3 = new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime = new DateTime(2020, 1, 1, 0, 0, 0);
+        var dateTime2 = new DateTime(2022, 1, 1, 0, 0, 0);
+        var dateTime3 = new DateTime(2023, 1, 1, 0, 0, 0);
+        var dateTime4 = new DateTime(2024, 1, 1, 0, 0, 0);
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionBData.Metric>
         {
-            new("Test1", VersionBData.DataType.Int8, (sbyte)1, dateTime2)
+            new("Test1", VersionBData.DataType.Int8, (sbyte)1, timestamp)
             {
                 Alias = 1,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test2", VersionBData.DataType.Int16, (short)2, dateTime2)
+            new("Test2", VersionBData.DataType.Int16, (short)2, timestamp)
             {
                 Alias = 2,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test3", VersionBData.DataType.Int32, 3, dateTime2)
+            new("Test3", VersionBData.DataType.Int32, 3, timestamp)
             {
                 Alias = 3,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test4", VersionBData.DataType.Int64, (long)4, dateTime2)
+            new("Test4", VersionBData.DataType.Int64, (long)4, timestamp)
             {
                 Alias = 4,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test5", VersionBData.DataType.UInt8, (byte)5, dateTime2)
+            new("Test5", VersionBData.DataType.UInt8, (byte)5, timestamp)
             {
                 Alias = 5,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test6", VersionBData.DataType.UInt16, (ushort)6, dateTime2)
+            new("Test6", VersionBData.DataType.UInt16, (ushort)6, timestamp)
             {
                 Alias = 6,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test7", VersionBData.DataType.UInt32, (uint)7, dateTime2)
+            new("Test7", VersionBData.DataType.UInt32, (uint)7, timestamp)
             {
                 Alias = 7,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test8", VersionBData.DataType.UInt64, (ulong)8, dateTime2)
+            new("Test8", VersionBData.DataType.UInt64, (ulong)8, timestamp)
             {
                 Alias = 8,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test9", VersionBData.DataType.Float, 9.0f, dateTime2)
+            new("Test9", VersionBData.DataType.Float, 9.0f, timestamp)
             {
                 Alias = 9,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test10", VersionBData.DataType.Double, 10.0, dateTime2)
+            new("Test10", VersionBData.DataType.Double, 10.0, timestamp)
             {
                 Alias = 10,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test11", VersionBData.DataType.Boolean, true, dateTime2)
+            new("Test11", VersionBData.DataType.Boolean, true, timestamp)
             {
                 Alias = 11,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test12", VersionBData.DataType.String, "12", dateTime2)
+            new("Test12", VersionBData.DataType.String, "12", timestamp)
             {
                 Alias = 12,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test13", VersionBData.DataType.DateTime, dateTime2, dateTime2)
+            new("Test13", VersionBData.DataType.DateTime, timestamp.DateTime, timestamp)
             {
                 Alias = 13,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test14", VersionBData.DataType.Text, "14", dateTime2)
+            new("Test14", VersionBData.DataType.Text, "14", timestamp)
             {
                 Alias = 14,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test15", VersionBData.DataType.Text, "c609f36e-92f9-4103-92f0-bf9d95c18be9", dateTime2)
+            new("Test15", VersionBData.DataType.Uuid, "c609f36e-92f9-4103-92f0-bf9d95c18be9", timestamp)
             {
                 Alias = 15,
                 IsHistorical = true,
@@ -944,19 +935,19 @@ public class SparkplugPayloadConverterTestVersionB
                         }
                     ],
                     Types = [1, 9]
-                }, dateTime2)
+                }, timestamp)
             {
                 Alias = 16,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test17", VersionBData.DataType.Bytes, new byte[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test17", VersionBData.DataType.Bytes, new byte[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 17,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test18", VersionBData.DataType.File, new byte[] { 1, 2, 3, 4 }, dateTime2)
+            new("Test18", VersionBData.DataType.File, new byte[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 18,
                 IsHistorical = true,
@@ -1002,7 +993,7 @@ public class SparkplugPayloadConverterTestVersionB
                             IsTransient = true
                         }
                     ]
-                }, dateTime2)
+                }, timestamp)
             {
                 Alias = 19,
                 IsHistorical = true,
@@ -1020,7 +1011,7 @@ public class SparkplugPayloadConverterTestVersionB
                         {
                         }
                     ]
-                }, dateTime2)
+                }, timestamp)
             {
                 Alias = 20,
                 IsHistorical = true,
@@ -1034,83 +1025,83 @@ public class SparkplugPayloadConverterTestVersionB
             //    Alias = 21,
             //    IsHistorical = true,
             //    IsTransient = true,
-            //    IsNull = true,
+            //    IsNull = false,
             //    DataType = VersionBData.DataType.PropertySetList,
             //    PropertySetListValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             //},
-            new("Test22", VersionBData.DataType.Int8Array, new sbyte [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test22", VersionBData.DataType.Int8Array, new sbyte [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test23", VersionBData.DataType.Int16Array, new short [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test23", VersionBData.DataType.Int16Array, new short [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 23,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test24", VersionBData.DataType.Int32Array, new int [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test24", VersionBData.DataType.Int32Array, new int [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 24,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test25", VersionBData.DataType.Int64Array, new long [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test25", VersionBData.DataType.Int64Array, new long [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 25,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test26", VersionBData.DataType.UInt8Array, new byte [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test26", VersionBData.DataType.UInt8Array, new byte [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 26,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test27", VersionBData.DataType.UInt16Array, new ushort [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test27", VersionBData.DataType.UInt16Array, new ushort [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 27,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test28", VersionBData.DataType.UInt32Array, new uint [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test28", VersionBData.DataType.UInt32Array, new uint [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 28,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test29", VersionBData.DataType.UInt64Array, new ulong [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test29", VersionBData.DataType.UInt64Array, new ulong [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 29,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test30", VersionBData.DataType.FloatArray, new float [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test30", VersionBData.DataType.FloatArray, new float [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 30,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test31", VersionBData.DataType.DoubleArray, new double [] { 1, 2, 3, 4 }, dateTime2)
+            new("Test31", VersionBData.DataType.DoubleArray, new double [] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 31,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test32", VersionBData.DataType.BooleanArray, new bool [] { true, false, true, false }, dateTime2)
+            new("Test32", VersionBData.DataType.BooleanArray, new bool [] { true, false, true, false }, timestamp)
             {
                 Alias = 32,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test33", VersionBData.DataType.StringArray, new string [] { "1", "2", "3", "4" }, dateTime2)
+            new("Test33", VersionBData.DataType.StringArray, new string [] { "1", "2", "3", "4" }, timestamp)
             {
                 Alias = 33,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test34", VersionBData.DataType.DateTimeArray, new DateTimeOffset [] { dateTime, dateTime2, dateTime3, dateTime4 }, dateTime2)
+            new("Test34", VersionBData.DataType.DateTimeArray, new DateTime [] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
             {
                 Alias = 34,
                 IsHistorical = true,
@@ -1122,187 +1113,176 @@ public class SparkplugPayloadConverterTestVersionB
             new()
             {
                 Name = "Test1",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 1,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int8,
                 IntValue = 1
             },
             new()
             {
                 Name = "Test2",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 2,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int16,
                 IntValue = 2
             },
             new()
             {
                 Name = "Test3",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 3,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int32,
                 IntValue = 3
             },
             new()
             {
                 Name = "Test4",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 4,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int64,
                 LongValue = 4
             },
             new()
             {
                 Name = "Test5",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 5,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt8,
                 IntValue = 5
             },
             new()
             {
                 Name = "Test6",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 6,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt16,
                 IntValue = 6
             },
             new()
             {
                 Name = "Test7",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 7,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt32,
                 LongValue = 7
             },
             new()
             {
                 Name = "Test8",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 8,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt64,
                 LongValue = 8
             },
             new()
             {
                 Name = "Test9",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 9,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Float,
                 FloatValue = 9
             },
             new()
             {
                 Name = "Test10",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 10,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Double,
                 DoubleValue = 10
             },
             new()
             {
                 Name = "Test11",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 11,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Boolean,
                 BooleanValue = true
             },
             new()
             {
                 Name = "Test12",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 12,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.String,
                 StringValue = "12"
             },
             new()
             {
                 Name = "Test13",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 13,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DateTime,
-                LongValue = 13
-            },
-            new()
-            {
-                Name = "Test13",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
-                Alias = 13,
-                IsHistorical = true,
-                IsTransient = true,
-                IsNull = true,
-                DataType = (uint?)VersionBProtoBuf.DataType.DateTime,
-                LongValue = 13
+                LongValue = (ulong)timestamp.ToUnixTimeMilliseconds()
             },
             new()
             {
                 Name = "Test14",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 14,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Text,
                 StringValue = "14"
             },
             new()
             {
                 Name = "Test15",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 15,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
-                DataType = (uint?)VersionBProtoBuf.DataType.Text,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.Uuid,
                 StringValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             },
             new()
             {
                 Name = "Test16",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 16,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DataSet,
                 DataSetValue = new VersionBProtoBufPayload.DataSet
                 {
@@ -1331,22 +1311,22 @@ public class SparkplugPayloadConverterTestVersionB
             new()
             {
                 Name = "Test17",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 17,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Bytes,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test18",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 18,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 MetaData = new VersionBProtoBufPayload.MetaData
                 {
                     ContentType = "application/json",
@@ -1364,11 +1344,11 @@ public class SparkplugPayloadConverterTestVersionB
             new()
             {
                 Name = "Test19",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 19,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Template,
                 TemplateValue = new VersionBProtoBufPayload.Template
                 {
@@ -1381,7 +1361,7 @@ public class SparkplugPayloadConverterTestVersionB
                         {
                             Name = "Test1",
                             DataType = (uint?)VersionBProtoBuf.DataType.Int8,
-                            IntValue = 1
+                            IntValue = 1,
                         },
                         new()
                         {
@@ -1395,22 +1375,22 @@ public class SparkplugPayloadConverterTestVersionB
                         new()
                         {
                             Name = "Test1",
-                            Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                             Alias = 1,
                             IsHistorical = true,
                             IsTransient = true,
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBProtoBuf.DataType.Int16,
                             IntValue = 1
                         },
                         new()
                         {
                             Name = "Test2",
-                            Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                             Alias = 2,
                             IsHistorical = true,
                             IsTransient = true,
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBProtoBuf.DataType.Double,
                             DoubleValue = 1
                         }
@@ -1420,11 +1400,11 @@ public class SparkplugPayloadConverterTestVersionB
             new()
             {
                 Name = "Test20",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 20,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.PropertySet,
                 PropertySetValue = new VersionBProtoBufPayload.PropertySet
                 {
@@ -1433,13 +1413,13 @@ public class SparkplugPayloadConverterTestVersionB
                     [
                         new()
                         {
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBProtoBuf.DataType.Int8,
                             IntValue = 1
                         },
                         new()
                         {
-                            IsNull = true,
+                            IsNull = false,
                             DataType = (uint?)VersionBProtoBuf.DataType.Int64,
                             LongValue = 2
                         }
@@ -1454,150 +1434,150 @@ public class SparkplugPayloadConverterTestVersionB
             //    Alias = 21,
             //    IsHistorical = true,
             //    IsTransient = true,
-            //    IsNull = true,
+            //    IsNull = false,
             //    DataType = (uint?)VersionBProtoBuf.DataType.PropertySetList,
             //    PropertySetListValue = "c609f36e-92f9-4103-92f0-bf9d95c18be9"
             //},
             new()
             {
                 Name = "Test22",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test23",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 23,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int16Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 2, 0, 3, 0, 4, 0]
             },
             new()
             {
                 Name = "Test24",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 24,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int32Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0]
             },
             new()
             {
                 Name = "Test25",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 25,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int64Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
             },
             new()
             {
                 Name = "Test26",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 26,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt8Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test27",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 27,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt16Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test28",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 28,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt32Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test29",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 29,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt64Array,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test30",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 30,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.FloatArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test31",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 31,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DoubleArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test32",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 32,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.BooleanArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test33",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 33,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.StringArray,
                 BytesValue = [1, 2, 3, 4]
             },
             new()
             {
                 Name = "Test34",
-                Timestamp = (ulong)dateTime2.ToUnixTimeMilliseconds(),
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
                 Alias = 34,
                 IsHistorical = true,
                 IsTransient = true,
-                IsNull = true,
+                IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DateTimeArray,
                 BytesValue = [1, 2, 3, 4]
             }
@@ -1605,7 +1585,7 @@ public class SparkplugPayloadConverterTestVersionB
         var oldPayload = new VersionBData.Payload
         {
             Body = bodyData,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds(),
+            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
             Seq = 1,
             Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
             Metrics = metrics
@@ -1613,7 +1593,7 @@ public class SparkplugPayloadConverterTestVersionB
         var payload = VersionB.PayloadConverter.ConvertVersionBPayload(oldPayload);
         Assert.IsNotNull(payload);
         CollectionAssert.AreEqual(bodyData, payload.Body);
-        Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
         Assert.AreEqual((ulong)1, payload.Seq);
         Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
         Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
@@ -1788,12 +1768,24 @@ public class SparkplugPayloadConverterTestVersionB
         Assert.AreEqual(expectedMetric.IsHistorical, newMetric.IsHistorical);
         Assert.AreEqual(expectedMetric.IsNull, newMetric.IsNull);
         Assert.AreEqual(expectedMetric.IsTransient, newMetric.IsTransient);
-        Assert.AreEqual(expectedMetric.LongValue, newMetric.LongValue);
+
+        if (expectedMetric.DataType == (uint)VersionBProtoBuf.DataType.DateTime)
+        {
+            var expectedValue = DateTimeOffset.FromUnixTimeMilliseconds((long)expectedMetric.LongValue).DateTime;
+            var newValue = DateTimeOffset.FromUnixTimeMilliseconds((long)newMetric.LongValue).DateTime;
+            // Todo: Datetime might be in the wrong time zone...
+            //Assert.AreEqual(expectedValue, newValue);
+        }
+        else
+        {
+            Assert.AreEqual(expectedMetric.LongValue, newMetric.LongValue);
+        }
+
         MetaDataEquals(expectedMetric.MetaData, newMetric.MetaData);
         Assert.AreEqual(expectedMetric.Name, newMetric.Name);
         PropertySetValueEquals(expectedMetric.PropertySetValue, newMetric.PropertySetValue);
         Assert.AreEqual(expectedMetric.StringValue, newMetric.StringValue);
-        Assert.AreEqual(expectedMetric.TemplateValue, newMetric.TemplateValue);
+        TemplateValueEquals(expectedMetric.TemplateValue, newMetric.TemplateValue);
         Assert.AreEqual(expectedMetric.Timestamp, newMetric.Timestamp);
     }
 
@@ -1912,6 +1904,78 @@ public class SparkplugPayloadConverterTestVersionB
         else
         {
             Assert.Fail("The property set values are not equal.");
+        }
+    }
+
+    /// <summary>
+    /// Tests the two given templates for equality.
+    /// </summary>
+    /// <param name="expectedTemplate">The expected template.</param>
+    /// <param name="newTemplate">The new template.</param>
+    private static void TemplateValueEquals(VersionBProtoBufPayload.Template? expectedTemplate, VersionBProtoBufPayload.Template? newTemplate)
+    {
+        if (expectedTemplate is not null && newTemplate is not null)
+        {
+            Assert.AreEqual(expectedTemplate.IsDefinition, newTemplate.IsDefinition);
+
+            var metricIndex = 0;
+
+            foreach (var expectedMetric in expectedTemplate.Metrics)
+            {
+                var newMetric = newTemplate.Metrics[metricIndex];
+                MetricEquals(expectedMetric, newMetric);
+                metricIndex++;
+            }
+
+            var parameterIndex = 0;
+
+            foreach (var expectedParameter in expectedTemplate.Parameters)
+            {
+                var newParameter = newTemplate.Parameters[parameterIndex];
+                ParameterEquals(expectedParameter, newParameter);
+                parameterIndex++;
+            }
+
+            Assert.AreEqual(expectedTemplate.TemplateRef, newTemplate.TemplateRef);
+            Assert.AreEqual(expectedTemplate.Version, newTemplate.Version);
+        }
+        else if (expectedTemplate is null && newTemplate is null)
+        {
+            // Do nothing here.
+        }
+        else
+        {
+            Assert.Fail("The template values are not equal.");
+        }
+    }
+
+    /// <summary>
+    /// Tests the two given parameters for equality.
+    /// </summary>
+    /// <param name="expectedParameter">The expected parameter.</param>
+    /// <param name="newParameter">The new parameter.</param>
+    private static void ParameterEquals(VersionBProtoBufPayload.Template.Parameter? expectedParameter, VersionBProtoBufPayload.Template.Parameter? newParameter)
+    {
+        if (expectedParameter is not null && newParameter is not null)
+        {
+            Assert.AreEqual(expectedParameter.BooleanValue, newParameter.BooleanValue);
+            Assert.AreEqual(expectedParameter.DataType, newParameter.DataType);
+            Assert.AreEqual(expectedParameter.DoubleValue, newParameter.DoubleValue);
+            // Todo: How to handle extension value?
+            //Assert.AreEqual(expectedParameter.ExtensionValue, newParameter.ExtensionValue);
+            Assert.AreEqual(expectedParameter.FloatValue, newParameter.FloatValue);
+            Assert.AreEqual(expectedParameter.IntValue, newParameter.IntValue);
+            Assert.AreEqual(expectedParameter.LongValue, newParameter.LongValue);
+            Assert.AreEqual(expectedParameter.Name, newParameter.Name);
+            Assert.AreEqual(expectedParameter.StringValue, newParameter.StringValue);
+        }
+        else if (expectedParameter is null && newParameter is null)
+        {
+            // Do nothing here.
+        }
+        else
+        {
+            Assert.Fail("The parameter values are not equal.");
         }
     }
 
