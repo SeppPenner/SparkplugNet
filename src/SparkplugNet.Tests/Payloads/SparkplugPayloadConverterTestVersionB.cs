@@ -738,19 +738,19 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test27", VersionBData.DataType.UInt16Array, new ushort[] { 1, 2, 3, 4 }, timestamp)
+            new("Test27", VersionBData.DataType.UInt16Array, new ushort[] { 1, 0, 2, 0, 3, 0, 4, 0 }, timestamp)
             {
                 Alias = 27,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test28", VersionBData.DataType.UInt32Array, new uint[] { 1, 2, 3, 4 }, timestamp)
+            new("Test28", VersionBData.DataType.UInt32Array, new uint[] { 1, 0, 0, 2, 0, 0, 3, 0, 0, 4, 0, 0 }, timestamp)
             {
                 Alias = 28,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test29", VersionBData.DataType.UInt64Array, new ulong[] { 1, 2, 3, 4 }, timestamp)
+            new("Test29", VersionBData.DataType.UInt64Array, new ulong[] { 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0 }, timestamp)
             {
                 Alias = 29,
                 IsHistorical = true,
@@ -984,13 +984,15 @@ public class SparkplugPayloadConverterTestVersionB
                         {
                             Alias = 1,
                             IsHistorical = true,
-                            IsTransient = true
+                            IsTransient = true,
+                            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds()
                         },
                         new("Test2", VersionBData.DataType.Double, 2.0)
                         {
                             Alias = 2,
                             IsHistorical = true,
-                            IsTransient = true
+                            IsTransient = true,
+                            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds()
                         }
                     ]
                 }, timestamp)
@@ -1392,7 +1394,7 @@ public class SparkplugPayloadConverterTestVersionB
                             IsTransient = true,
                             IsNull = false,
                             DataType = (uint?)VersionBProtoBuf.DataType.Double,
-                            DoubleValue = 1
+                            DoubleValue = 2
                         }
                     ]
                 }
@@ -1447,7 +1449,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int8Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [ 1, 2, 3, 4 ]
             },
             new()
             {
@@ -1502,7 +1504,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt16Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 2, 0, 3, 0, 4, 0]
             },
             new()
             {
@@ -1513,7 +1515,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt32Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0]
             },
             new()
             {
@@ -1524,7 +1526,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt64Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
             },
             new()
             {
@@ -1535,7 +1537,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.FloatArray,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x40, 0x40, 0x00, 0x00, 0x80, 0x40]
             },
             new()
             {
@@ -1546,7 +1548,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DoubleArray,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x40]
             },
             new()
             {
@@ -1757,7 +1759,7 @@ public class SparkplugPayloadConverterTestVersionB
     {
         Assert.AreEqual(expectedMetric.Alias, newMetric.Alias);
         Assert.AreEqual(expectedMetric.BooleanValue, newMetric.BooleanValue);
-        CollectionAssert.AreEqual(expectedMetric.BytesValue, newMetric.BytesValue);
+        ByteArrayEquals(expectedMetric.BytesValue, newMetric.BytesValue);
         DataSetEquals(expectedMetric.DataSetValue, newMetric.DataSetValue);
         Assert.AreEqual(expectedMetric.DataType, newMetric.DataType);
         Assert.AreEqual(expectedMetric.DoubleValue, newMetric.DoubleValue);
@@ -1787,6 +1789,53 @@ public class SparkplugPayloadConverterTestVersionB
         Assert.AreEqual(expectedMetric.StringValue, newMetric.StringValue);
         TemplateValueEquals(expectedMetric.TemplateValue, newMetric.TemplateValue);
         Assert.AreEqual(expectedMetric.Timestamp, newMetric.Timestamp);
+    }
+
+    private static void ByteArrayEquals(byte[] expectedArray, byte[] newArray)
+    {
+        if (newArray.GetType() == typeof(sbyte[]))
+        {
+            var convertedExpectedArray = expectedArray.Select(b => (sbyte)b).ToArray();
+            CollectionAssert.AreEqual(convertedExpectedArray, newArray);
+        }
+        else if (newArray.GetType() == typeof(short[]))
+        {
+            var convertedExpectedArray = expectedArray.Select(b => (short)b).ToArray();
+            CollectionAssert.AreEqual(convertedExpectedArray, newArray);
+        }
+        else if (newArray.GetType() == typeof(int[]))
+        {
+            var convertedExpectedArray = expectedArray.Select(b => (short)b).ToArray();
+            CollectionAssert.AreEqual(convertedExpectedArray, newArray);
+        }
+        else if (newArray.GetType() == typeof(long[]))
+        {
+            var convertedExpectedArray = expectedArray.Select(b => (short)b).ToArray();
+            CollectionAssert.AreEqual(convertedExpectedArray, newArray);
+        }
+        else if (newArray.GetType() == typeof(byte[]))
+        {
+            CollectionAssert.AreEqual(expectedArray, newArray);
+        }
+        else if (newArray.GetType() == typeof(ushort[]))
+        {
+            var convertedExpectedArray = expectedArray.Select(b => (short)b).ToArray();
+            CollectionAssert.AreEqual(convertedExpectedArray, newArray);
+        }
+        else if (newArray.GetType() == typeof(uint[]))
+        {
+            var convertedExpectedArray = expectedArray.Select(b => (short)b).ToArray();
+            CollectionAssert.AreEqual(convertedExpectedArray, newArray);
+        }
+        else if (newArray.GetType() == typeof(ulong[]))
+        {
+            var convertedExpectedArray = expectedArray.Select(b => (short)b).ToArray();
+            CollectionAssert.AreEqual(convertedExpectedArray, newArray);
+        }
+        else
+        {
+            throw new InvalidCastException("The array type is not supported.");
+        }
     }
 
     /// <summary>

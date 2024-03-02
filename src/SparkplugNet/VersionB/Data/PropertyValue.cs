@@ -33,6 +33,7 @@ public class PropertyValue : ValueBaseVersionB
     /// <param name="value">The value.</param>
     public PropertyValue(VersionBDataTypeEnum dataType, object? value)
     {
+        this.IsNull = value is null;
         this.SetValue(dataType, value);
     }
 }
