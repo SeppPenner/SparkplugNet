@@ -469,9 +469,18 @@ internal static class PayloadConverter
 
         foreach (var row in protoDataSet.Rows)
         {
+            var elements = new List<DataSetValue>();
+            var elementIndex = 0;
+
+            foreach (var element in row.Elements)
+            {
+                elements.Add(ConvertVersionBDataSetValue(element, protoDataSet.Types[elementIndex]));
+                elementIndex++;
+            }
+
             rows.Add(new Row
             {
-                Elements = row.Elements.Select(e => ConvertVersionBDataSetValue(e, protoDataSet.Types[index])).ToList()
+                Elements = elements
             });
 
             index++;

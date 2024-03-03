@@ -11,6 +11,8 @@ global using SparkplugNet.Core;
 global using SparkplugNet.Core.Enumerations;
 global using SparkplugNet.Core.Messages;
 
+global using SparkplugNet.Tests.Helpers;
+
 global using VersionAProtoBufPayload = SparkplugNet.VersionA.ProtoBuf.ProtoBufPayload;
 global using VersionBProtoBufPayload = SparkplugNet.VersionB.ProtoBuf.ProtoBufPayload;
 global using VersionBProtoBuf = SparkplugNet.VersionB.ProtoBuf;
