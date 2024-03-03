@@ -27,17 +27,17 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         /// <param name="sender">The sender.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-        /// <param name="metric">The metric.</param>
-        public NodeCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, T metric)
+        /// <param name="metrics">The metrics.</param>
+        public NodeCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, IEnumerable<T> metrics)
             : base(sender, groupIdentifier, edgeNodeIdentifier)
         {
-            this.Metric = metric;
+            this.Metrics = metrics;
         }
 
         /// <summary>
-        /// Gets the metric.
+        /// Gets the metrics.
         /// </summary>
-        public T Metric { get; }
+        public IEnumerable<T> Metrics { get; }
     }
 
     /// <inheritdoc cref="NodeCommandEventArgs"/>
@@ -55,10 +55,10 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <seealso cref="NodeCommandEventArgs"/>
-        public DeviceCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, T metric)
-           : base(sender, groupIdentifier, edgeNodeIdentifier, metric)
+        public DeviceCommandEventArgs(SparkplugNodeBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
+           : base(sender, groupIdentifier, edgeNodeIdentifier, metrics)
         {
             this.DeviceIdentifier = deviceIdentifier;
         }

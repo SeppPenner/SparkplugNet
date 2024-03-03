@@ -59,7 +59,7 @@ public partial class SparkplugNodeBase<T>
         this.KnownDevices.TryAdd(deviceIdentifier, new KnownMetricStorage(knownMetrics));
 
         // Invoke the device birth event.
-        await this.FireDeviceBirthPublishingAsync(deviceIdentifier, knownMetrics);
+        await this.FireDeviceBirthPublishing(deviceIdentifier, knownMetrics);
 
         // Publish the message.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
@@ -133,7 +133,7 @@ public partial class SparkplugNodeBase<T>
         this.IncrementLastSequenceNumber();
 
         // Invoke the device death event.
-        await this.FireDeviceDeathPublishingAsync(deviceIdentifier);
+        await this.FireDeviceDeathPublishing(deviceIdentifier);
 
         this.KnownDevices.TryRemove(deviceIdentifier, out _);
         // Publish the message.

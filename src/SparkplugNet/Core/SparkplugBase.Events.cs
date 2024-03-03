@@ -25,7 +25,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// Occurs when the disconnected event was received.
     /// </summary>
-    public event Func<SparkplugEventArgs, Task> DisconnectedAsync
+    public event Func<SparkplugEventArgs, Task> Disconnected
     {
         add => this.disconnectedEvent.AddHandler(value);
         remove => this.disconnectedEvent.RemoveHandler(value);
@@ -35,7 +35,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// Fires the disconnected event asynchronously.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected Task FireDisconnectedAsync()
+    protected Task FireDisconnected()
     {
         return this.disconnectedEvent.InvokeAsync(new SparkplugEventArgs(this));
     }
@@ -50,7 +50,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// Occurs when the connected event was received.
     /// </summary>
-    public event Func<SparkplugEventArgs, Task> ConnectedAsync
+    public event Func<SparkplugEventArgs, Task> Connected
     {
         add => this.connectedEvent.AddHandler(value);
         remove => this.connectedEvent.RemoveHandler(value);
@@ -60,7 +60,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// Fires the disconnected event asynchronously.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected Task FireConnectedAsync()
+    protected Task FireConnected()
     {
         return this.connectedEvent.InvokeAsync(new SparkplugEventArgs(this));
     }

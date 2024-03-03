@@ -149,18 +149,18 @@ public sealed class Program
         Log.Information("Application started...");
 
         // Handles the application's connected and disconnected events.
-        application.ConnectedAsync += OnApplicationVersionAConnected;
-        application.DisconnectedAsync += OnApplicationVersionADisconnected;
+        application.Connected += OnApplicationVersionAConnected;
+        application.Disconnected += OnApplicationVersionADisconnected;
 
         // Handles the application's device related events.
-        application.DeviceBirthReceivedAsync += OnApplicationVersionADeviceBirthReceived;
-        application.DeviceDataReceivedAsync += OnApplicationVersionADeviceDataReceived;
-        application.DeviceDeathReceivedAsync += OnApplicationVersionADeviceDeathReceived;
+        application.DeviceBirthReceived += OnApplicationVersionADeviceBirthReceived;
+        application.DeviceDataReceived += OnApplicationVersionADeviceDataReceived;
+        application.DeviceDeathReceived += OnApplicationVersionADeviceDeathReceived;
 
         // Handles the application's node related events.
-        application.NodeBirthReceivedAsync += OnApplicationVersionANodeBirthReceived;
-        application.NodeDataReceivedAsync += OnApplicationVersionANodeDataReceived;
-        application.NodeDeathReceivedAsync += OnApplicationVersionANodeDeathReceived;
+        application.NodeBirthReceived += OnApplicationVersionANodeBirthReceived;
+        application.NodeDataReceived += OnApplicationVersionANodeDataReceived;
+        application.NodeDeathReceived += OnApplicationVersionANodeDeathReceived;
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -226,19 +226,19 @@ public sealed class Program
         var isApplicationConnected = node.IsConnected;
 
         // Handles the node's connected and disconnected events.
-        node.ConnectedAsync += OnVersionANodeConnected;
-        node.DisconnectedAsync += OnVersionANodeDisconnected;
+        node.Connected += OnVersionANodeConnected;
+        node.Disconnected += OnVersionANodeDisconnected;
 
         // Handles the node's device related events.
-        node.DeviceBirthPublishingAsync += OnVersionANodeDeviceBirthPublishing;
-        node.DeviceCommandReceivedAsync += OnVersionANodeDeviceCommandReceived;
-        node.DeviceDeathPublishingAsync += OnVersionANodeDeviceDeathPublishing;
+        node.DeviceBirthPublishing += OnVersionANodeDeviceBirthPublishing;
+        node.DeviceCommandReceived += OnVersionANodeDeviceCommandReceived;
+        node.DeviceDeathPublishing += OnVersionANodeDeviceDeathPublishing;
 
         // Handles the node's node command received event.
-        node.NodeCommandReceivedAsync += OnVersionANodeNodeCommandReceived;
+        node.NodeCommandReceived += OnVersionANodeNodeCommandReceived;
 
         // Handles the node's status message received event.
-        node.StatusMessageReceivedAsync += OnVersionANodeStatusMessageReceived;
+        node.StatusMessageReceived += OnVersionANodeStatusMessageReceived;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -289,18 +289,18 @@ public sealed class Program
         Log.Information("Application started...");
 
         // Handles the application's connected and disconnected events.
-        application.ConnectedAsync += OnApplicationVersionBConnected;
-        application.DisconnectedAsync += OnApplicationVersionBDisconnected;
+        application.Connected += OnApplicationVersionBConnected;
+        application.Disconnected += OnApplicationVersionBDisconnected;
 
         // Handles the application's device related events.
-        application.DeviceBirthReceivedAsync += OnApplicationVersionBDeviceBirthReceived;
-        application.DeviceDataReceivedAsync += OnApplicationVersionBDeviceDataReceived;
-        application.DeviceDeathReceivedAsync += OnApplicationVersionBDeviceDeathReceived;
+        application.DeviceBirthReceived += OnApplicationVersionBDeviceBirthReceived;
+        application.DeviceDataReceived += OnApplicationVersionBDeviceDataReceived;
+        application.DeviceDeathReceived += OnApplicationVersionBDeviceDeathReceived;
 
         // Handles the application's node related events.
-        application.NodeBirthReceivedAsync += OnApplicationVersionBNodeBirthReceived;
-        application.NodeDataReceivedAsync += OnApplicationVersionBNodeDataReceived;
-        application.NodeDeathReceivedAsync += OnApplicationVersionBNodeDeathReceived;
+        application.NodeBirthReceived += OnApplicationVersionBNodeBirthReceived;
+        application.NodeDataReceived += OnApplicationVersionBNodeDataReceived;
+        application.NodeDeathReceived += OnApplicationVersionBNodeDeathReceived;
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -366,19 +366,19 @@ public sealed class Program
         var isApplicationConnected = node.IsConnected;
 
         // Handles the node's connected and disconnected events.
-        node.ConnectedAsync += OnVersionBNodeConnected;
-        node.DisconnectedAsync += OnVersionBNodeDisconnected;
+        node.Connected += OnVersionBNodeConnected;
+        node.Disconnected += OnVersionBNodeDisconnected;
 
         // Handles the node's device related events.
-        node.DeviceBirthPublishingAsync += OnVersionBNodeDeviceBirthPublishing;
-        node.DeviceCommandReceivedAsync += OnVersionBNodeDeviceCommandReceived;
-        node.DeviceDeathPublishingAsync += OnVersionBNodeDeviceDeathPublishing;
+        node.DeviceBirthPublishing += OnVersionBNodeDeviceBirthPublishing;
+        node.DeviceCommandReceived += OnVersionBNodeDeviceCommandReceived;
+        node.DeviceDeathPublishing += OnVersionBNodeDeviceDeathPublishing;
 
         // Handles the node's node command received event.
-        node.NodeCommandReceivedAsync += OnVersionBNodeNodeCommandReceived;
+        node.NodeCommandReceived += OnVersionBNodeNodeCommandReceived;
 
         // Handles the node's status message received event.
-        node.StatusMessageReceivedAsync += OnVersionBNodeStatusMessageReceived;
+        node.StatusMessageReceived += OnVersionBNodeStatusMessageReceived;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -404,7 +404,7 @@ public sealed class Program
     /// <summary>
     /// Handles the connected callback for version A applications.
     /// </summary>
-    private static Task OnApplicationVersionAConnected(Core.SparkplugBase<VersionAData.KuraMetric>.SparkplugEventArgs arg)
+    private static Task OnApplicationVersionAConnected(Core.SparkplugBase<VersionAData.KuraMetric>.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -413,7 +413,7 @@ public sealed class Program
     /// <summary>
     /// Handles the disconnected callback for version A applications.
     /// </summary>
-    private static Task OnApplicationVersionADisconnected(VersionA.SparkplugApplication.SparkplugEventArgs arg)
+    private static Task OnApplicationVersionADisconnected(VersionA.SparkplugApplication.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -422,7 +422,7 @@ public sealed class Program
     /// <summary>
     /// Handles the device birth received callback for version A applications.
     /// </summary>
-    private static Task OnApplicationVersionADeviceBirthReceived(Core.SparkplugBase<VersionAData.KuraMetric>.DeviceBirthEventArgs arg)
+    private static Task OnApplicationVersionADeviceBirthReceived(Core.SparkplugBase<VersionAData.KuraMetric>.DeviceBirthEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -440,7 +440,7 @@ public sealed class Program
     /// <summary>
     /// Handles the device death received callback for version A applications.
     /// </summary>
-    private static Task OnApplicationVersionADeviceDeathReceived(Core.SparkplugBase<VersionAData.KuraMetric>.DeviceEventArgs arg)
+    private static Task OnApplicationVersionADeviceDeathReceived(Core.SparkplugBase<VersionAData.KuraMetric>.DeviceEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -449,7 +449,7 @@ public sealed class Program
     /// <summary>
     /// Handles the node birth received callback for version A applications.
     /// </summary>
-    private static Task OnApplicationVersionANodeBirthReceived(Core.SparkplugBase<VersionAData.KuraMetric>.NodeBirthEventArgs arg)
+    private static Task OnApplicationVersionANodeBirthReceived(Core.SparkplugBase<VersionAData.KuraMetric>.NodeBirthEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -467,7 +467,7 @@ public sealed class Program
     /// <summary>
     /// Handles the node death received callback for version A applications.
     /// </summary>
-    private static Task OnApplicationVersionANodeDeathReceived(Core.SparkplugBase<VersionAData.KuraMetric>.NodeEventArgs arg)
+    private static Task OnApplicationVersionANodeDeathReceived(Core.SparkplugBase<VersionAData.KuraMetric>.NodeEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -476,7 +476,7 @@ public sealed class Program
     /// <summary>
     /// Handles the connected callback for version A nodes.
     /// </summary>
-    private static Task OnVersionANodeConnected(Core.SparkplugBase<VersionAData.KuraMetric>.SparkplugEventArgs arg)
+    private static Task OnVersionANodeConnected(Core.SparkplugBase<VersionAData.KuraMetric>.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -485,7 +485,7 @@ public sealed class Program
     /// <summary>
     /// Handles the disconnected callback for version A nodes.
     /// </summary>
-    private static Task OnVersionANodeDisconnected(VersionA.SparkplugNode.SparkplugEventArgs arg)
+    private static Task OnVersionANodeDisconnected(VersionA.SparkplugNode.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -546,7 +546,7 @@ public sealed class Program
     /// <summary>
     /// Handles the connected callback for version B applications.
     /// </summary>
-    private static Task OnApplicationVersionBConnected(Core.SparkplugBase<VersionBData.Metric>.SparkplugEventArgs arg)
+    private static Task OnApplicationVersionBConnected(Core.SparkplugBase<VersionBData.Metric>.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -555,7 +555,7 @@ public sealed class Program
     /// <summary>
     /// Handles the disconnected callback for version B applications.
     /// </summary>
-    private static Task OnApplicationVersionBDisconnected(VersionB.SparkplugApplication.SparkplugEventArgs arg)
+    private static Task OnApplicationVersionBDisconnected(VersionB.SparkplugApplication.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -564,7 +564,7 @@ public sealed class Program
     /// <summary>
     /// Handles the device birth received callback for version B applications.
     /// </summary>
-    private static Task OnApplicationVersionBDeviceBirthReceived(Core.SparkplugBase<VersionBData.Metric>.DeviceBirthEventArgs arg)
+    private static Task OnApplicationVersionBDeviceBirthReceived(Core.SparkplugBase<VersionBData.Metric>.DeviceBirthEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -582,7 +582,7 @@ public sealed class Program
     /// <summary>
     /// Handles the device death received callback for version B applications.
     /// </summary>
-    private static Task OnApplicationVersionBDeviceDeathReceived(Core.SparkplugBase<VersionBData.Metric>.DeviceEventArgs arg)
+    private static Task OnApplicationVersionBDeviceDeathReceived(Core.SparkplugBase<VersionBData.Metric>.DeviceEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -591,7 +591,7 @@ public sealed class Program
     /// <summary>
     /// Handles the node birth received callback for version B applications.
     /// </summary>
-    private static Task OnApplicationVersionBNodeBirthReceived(Core.SparkplugBase<VersionBData.Metric>.NodeBirthEventArgs arg)
+    private static Task OnApplicationVersionBNodeBirthReceived(Core.SparkplugBase<VersionBData.Metric>.NodeBirthEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -609,7 +609,7 @@ public sealed class Program
     /// <summary>
     /// Handles the node death received callback for version B applications.
     /// </summary>
-    private static Task OnApplicationVersionBNodeDeathReceived(Core.SparkplugBase<VersionBData.Metric>.NodeEventArgs arg)
+    private static Task OnApplicationVersionBNodeDeathReceived(Core.SparkplugBase<VersionBData.Metric>.NodeEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -618,7 +618,7 @@ public sealed class Program
     /// <summary>
     /// Handles the connected callback for version B nodes.
     /// </summary>
-    private static Task OnVersionBNodeConnected(Core.SparkplugBase<VersionBData.Metric>.SparkplugEventArgs arg)
+    private static Task OnVersionBNodeConnected(Core.SparkplugBase<VersionBData.Metric>.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -627,7 +627,7 @@ public sealed class Program
     /// <summary>
     /// Handles the disconnected callback for version B nodes.
     /// </summary>
-    private static Task OnVersionBNodeDisconnected(VersionB.SparkplugNode.SparkplugEventArgs arg)
+    private static Task OnVersionBNodeDisconnected(VersionB.SparkplugNode.SparkplugEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;

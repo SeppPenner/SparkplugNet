@@ -221,11 +221,11 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// </summary>
     /// <param name="args">The arguments.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected virtual async Task OnClientConnectedAsync(MqttClientConnectedEventArgs args)
+    protected virtual async Task OnClientConnected(MqttClientConnectedEventArgs args)
     {
         try
         {
-            await this.FireConnectedAsync();
+            await this.FireConnected();
         }
         catch (Exception ex)
         {
@@ -239,7 +239,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="args">The arguments.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected virtual async Task OnClientDisconnectedAsync(MqttClientDisconnectedEventArgs args)
+    protected virtual async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
         try
         {
@@ -252,7 +252,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             this.UpdateMetricState(SparkplugMetricStatus.Offline);
 
             // Invoke disconnected callback.
-            await this.FireDisconnectedAsync();
+            await this.FireDisconnected();
 
             // Wait until the reconnect interval is reached.
             await Task.Delay(this.Options.ReconnectInterval);
@@ -278,8 +278,8 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     private void AddEventHandler()
     {
-        this.client.DisconnectedAsync += this.OnClientDisconnectedAsync;
-        this.client.ConnectedAsync += this.OnClientConnectedAsync;
+        this.client.DisconnectedAsync += this.OnClientDisconnected;
+        this.client.ConnectedAsync += this.OnClientConnected;
     }
 
     /// <summary>
@@ -429,7 +429,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             this.ClientOptions = builder.Build();
             await this.client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
-
         }
         catch (Exception ex)
         {

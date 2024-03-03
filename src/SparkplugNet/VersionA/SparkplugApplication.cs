@@ -170,19 +170,16 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
-                await this.FireNodeBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
+                await this.FireNodeBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
-                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
+                await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
-                foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
-                {
-                    await this.FireNodeDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, metric);
-                }
-
+                var nodeDataMetrics = this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online);
+                await this.FireNodeDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics);
                 break;
             case SparkplugMessageType.DeviceData:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
@@ -190,15 +187,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
-                {
-                    await this.FireDeviceDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, metric);
-                }
-
+                var deviceDataMetrics = this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online);
+                await this.FireDeviceDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics);
                 break;
             case SparkplugMessageType.NodeDeath:
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
-                await this.FireNodeDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
+                await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
                 break;
             case SparkplugMessageType.DeviceDeath:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
@@ -207,7 +201,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
                 }
 
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
-                await this.FireDeviceDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+                await this.FireDeviceDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
                 break;
         }
     }

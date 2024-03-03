@@ -143,11 +143,11 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     /// <param name="args">The event args.</param>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    protected virtual async Task OnClientConnectedAsync(MqttClientConnectedEventArgs args)
+    protected virtual async Task OnClientConnected(MqttClientConnectedEventArgs args)
     {
         try
         {
-            await this.FireConnectedAsync();
+            await this.FireConnected();
         }
         catch (Exception ex)
         {
@@ -162,7 +162,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     private void AddEventHandler()
     {
         this.client.DisconnectedAsync += this.OnClientDisconnected;
-        this.client.ConnectedAsync += this.OnClientConnectedAsync;
+        this.client.ConnectedAsync += this.OnClientConnected;
     }
 
     /// <summary>
@@ -182,7 +182,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             }
 
             // Invoke disconnected callback.
-            await this.FireDisconnectedAsync();
+            await this.FireDisconnected();
 
             // Wait until the reconnect interval is reached.
             await Task.Delay(this.Options.ReconnectInterval);
@@ -229,7 +229,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
         {
             // Handle the STATE message before anything else as they're UTF-8 encoded.
-            await this.FireStatusMessageReceivedAsync(Encoding.UTF8.GetString(args.ApplicationMessage.Payload));
+            await this.FireStatusMessageReceived(Encoding.UTF8.GetString(args.ApplicationMessage.Payload));
         }
         else
         {
@@ -341,7 +341,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         this.ClientOptions = builder.Build();
-
         await this.client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
     }
 

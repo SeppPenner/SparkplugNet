@@ -130,7 +130,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
         if (payloadVersionB is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
-            await this.HandleMessagesForVersionBAsync(topic, convertedPayload);
+            await this.HandleMessagesForVersionB(topic, convertedPayload);
         }
     }
 
@@ -142,7 +142,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
     /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
     /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-    private async Task HandleMessagesForVersionBAsync(SparkplugMessageTopic topic, Payload payload)
+    private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
     {
         // If we have any not valid metric, throw an exception.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
@@ -153,7 +153,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
-                await this.FireNodeBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
+                await this.FireNodeBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
@@ -162,15 +162,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                     throw new InvalidOperationException($"The device identifier is invalid!");
                 }
 
-                await this.FireDeviceBirthReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
+                await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
                     this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
-                foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
-                {
-                    await this.FireNodeDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, metric);
-                }
-
+                var nodeDataMetrics = this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online);
+                await this.FireNodeDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics);
                 break;
             case SparkplugMessageType.DeviceData:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
@@ -178,15 +175,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                foreach (var metric in this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online))
-                {
-                    await this.FireDeviceDataReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, metric);
-                }
-
+                var deviceDataMetrics = this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online);
+                await this.FireDeviceDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics);
                 break;
             case SparkplugMessageType.NodeDeath:
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
-                await this.FireNodeDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
+                await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
                 break;
             case SparkplugMessageType.DeviceDeath:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
@@ -195,7 +189,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 }
 
                 this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
-                await this.FireDeviceDeathReceivedAsync(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+                await this.FireDeviceDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
                 break;
         }
     }

@@ -105,26 +105,13 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
                 case SparkplugMessageType.DeviceCommand:
                     if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                     {
-                        foreach (var metric in convertedPayloadVersionB.Metrics)
-                        {
-                            if (metric is Metric convertedMetric)
-                            {
-                                await this.FireDeviceCommandReceivedAsync(topic.DeviceIdentifier, convertedMetric);
-                            }
-                        }
+                        await this.FireDeviceCommandReceived(topic.DeviceIdentifier, convertedPayloadVersionB.Metrics);
                     }
 
                     break;
 
                 case SparkplugMessageType.NodeCommand:
-                    foreach (var metric in convertedPayloadVersionB.Metrics)
-                    {
-                        if (metric is Metric convertedMetric)
-                        {
-                            await this.FireNodeCommandReceivedAsync(convertedMetric);
-                        }
-                    }
-
+                    await this.FireNodeCommandReceived(convertedPayloadVersionB.Metrics);
                     break;
             }
         }

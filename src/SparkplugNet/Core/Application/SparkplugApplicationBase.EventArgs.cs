@@ -27,17 +27,17 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
         /// <param name="sender">The sender.</param>
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-        /// <param name="metric">The metric.</param>
-        public NodeDataEventArgs(SparkplugApplicationBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, T metric)
+        /// <param name="metrics">The metrics.</param>
+        public NodeDataEventArgs(SparkplugApplicationBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, IEnumerable<T> metrics)
             : base(sender, groupIdentifier, edgeNodeIdentifier)
         {
-            this.Metric = metric;
+            this.Metrics = metrics;
         }
 
         /// <summary>
-        /// Gets the metric.
+        /// Gets the metrics.
         /// </summary>
-        public T Metric { get; }
+        public IEnumerable<T> Metrics { get; }
     }
 
     /// <inheritdoc cref="NodeDataEventArgs"/>
@@ -55,10 +55,10 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
         /// <param name="groupIdentifier">The group identifier.</param>
         /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
         /// <param name="deviceIdentifier">The device identifier.</param>
-        /// <param name="metric">The metric.</param>
+        /// <param name="metrics">The metrics.</param>
         /// <seealso cref="NodeDataEventArgs"/>
-        public DeviceDataEventArgs(SparkplugApplicationBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, T metric)
-            : base(sender, groupIdentifier, edgeNodeIdentifier, metric)
+        public DeviceDataEventArgs(SparkplugApplicationBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
+            : base(sender, groupIdentifier, edgeNodeIdentifier, metrics)
         {
             this.DeviceIdentifier = deviceIdentifier;
         }
