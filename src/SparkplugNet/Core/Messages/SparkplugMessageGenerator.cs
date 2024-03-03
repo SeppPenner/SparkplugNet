@@ -44,7 +44,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the SCADA host identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugStateMessage(
+    internal MqttApplicationMessage GetSparkplugStateMessage(
         SparkplugNamespace nameSpace,
         string scadaHostIdentifier,
         bool online)
@@ -76,7 +76,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugNodeBirthMessage<T>(
+    internal MqttApplicationMessage GetSparkplugNodeBirthMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -132,7 +132,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DBIRTH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugDeviceBirthMessage<T>(
+    internal MqttApplicationMessage GetSparkplugDeviceBirthMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -191,7 +191,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugNodeDeathMessage(
+    internal MqttApplicationMessage GetSparkplugNodeDeathMessage(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -241,7 +241,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DDEATH <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugDeviceDeathMessage(
+    internal MqttApplicationMessage GetSparkplugDeviceDeathMessage(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -300,7 +300,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NDATA <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugNodeDataMessage<T>(
+    internal MqttApplicationMessage GetSparkplugNodeDataMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -358,7 +358,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DDATA <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugDeviceDataMessage<T>(
+    internal MqttApplicationMessage GetSparkplugDeviceDataMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -421,7 +421,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugNodeCommandMessage<T>(
+    internal MqttApplicationMessage GetSparkplugNodeCommandMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -480,7 +480,7 @@ internal sealed class SparkplugMessageGenerator
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    public MqttApplicationMessage GetSparkplugDeviceCommandMessage<T>(
+    internal MqttApplicationMessage GetSparkplugDeviceCommandMessage<T>(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -541,10 +541,10 @@ internal sealed class SparkplugMessageGenerator
         long sessionSequenceNumber)
     {
         // Add a BDSEQ metric.
-        return metrics.Concat(new VersionAData.KuraMetric[]
-        {
+        return metrics.Concat(
+        [
             new VersionAData.KuraMetric(Constants.SessionNumberMetricName, VersionADataTypeEnum.Int64, sessionSequenceNumber)
-        });
+        ]);
     }
 
     /// <summary>Adds the session number to the version B metrics.</summary>

@@ -17,8 +17,8 @@ internal static class StringExtensions
     /// <summary>
     /// The strict identifiers.
     /// </summary>
-    private static readonly string[] strictIdentifers = new[] { ".", ",", "\\", "@", "#", "$", "%", "^", "&", "*", "(", "", "", ")", "[", "]",
-        "{", "}", "|", "!", "`", "~", ":", ";", "'", "\"", "<", ">", "?", "/", "+" };
+    private static readonly string[] strictIdentifers = [ ".", ",", "\\", "@", "#", "$", "%", "^", "&", "*", "(", "", "", ")", "[", "]",
+        "{", "}", "|", "!", "`", "~", ":", ";", "'", "\"", "<", ">", "?", "/", "+" ];
 
     /// <summary>
     /// Checks whether the given identifier is valid or not.

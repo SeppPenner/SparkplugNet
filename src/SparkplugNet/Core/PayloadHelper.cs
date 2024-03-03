@@ -21,7 +21,7 @@ internal static class PayloadHelper
     /// <typeparam name="T">The type.</typeparam>
     /// <param name="record">The record.</param>
     /// <returns>The <see cref="T:byte[]?"/> value as serialized data.</returns>
-    public static byte[]? Serialize<T>(T? record) where T : class
+    internal static byte[]? Serialize<T>(T? record) where T : class
     {
         if (record is null)
         {
@@ -39,7 +39,7 @@ internal static class PayloadHelper
     /// <typeparam name="T">The type.</typeparam>
     /// <param name="data">The data.</param>
     /// <returns>The <see cref="T:T?"/> value as deserialized object.</returns>
-    public static T? Deserialize<T>(byte[]? data) where T : class
+    internal static T? Deserialize<T>(byte[]? data) where T : class
     {
         if (data is null)
         {
@@ -57,7 +57,7 @@ internal static class PayloadHelper
     /// <typeparam name="T">The type.</typeparam>
     /// <param name="span">The data.</param>
     /// <param name="value">The value.</param>
-    public delegate void WriteBytes<T>(Span<byte> span, T value);
+    internal delegate void WriteBytes<T>(Span<byte> span, T value);
 
     /// <summary>
     /// Gets the bytes from an array.
@@ -66,7 +66,7 @@ internal static class PayloadHelper
     /// <param name="items">The items.</param>
     /// <param name="writeBytes">A function to write the bytes.</param>
     /// <returns>The byte array.</returns>
-    public static byte[] GetBytesFromArray<T>(T[] items, WriteBytes<T> writeBytes)
+    internal static byte[] GetBytesFromArray<T>(T[] items, WriteBytes<T> writeBytes)
     {
         var itemSize = Marshal.SizeOf(typeof(T));
         var bytes = new byte[itemSize * items.Length];
@@ -86,7 +86,7 @@ internal static class PayloadHelper
     /// <typeparam name="T">The type.</typeparam>
     /// <param name="span">The data.</param>
     /// <returns>The written data.</returns>
-    public delegate T ReadBytes<T>(ReadOnlySpan<byte> span);
+    internal delegate T ReadBytes<T>(ReadOnlySpan<byte> span);
 
     /// <summary>
     /// Gets an array of T from bytes.
@@ -96,7 +96,7 @@ internal static class PayloadHelper
     /// <param name="readBytes">A function to read the bytes.</param>
     /// <returns>An array of type <c>T</c>.</returns>
     /// <exception cref="ArgumentException">Thrown if the size of the array is invalid.</exception>
-    public static T[] GetArrayOfTFromBytes<T>(ReadOnlySpan<byte> bytes, ReadBytes<T> readBytes)
+    internal static T[] GetArrayOfTFromBytes<T>(ReadOnlySpan<byte> bytes, ReadBytes<T> readBytes)
     {
         var itemSize = Marshal.SizeOf(typeof(T));
 

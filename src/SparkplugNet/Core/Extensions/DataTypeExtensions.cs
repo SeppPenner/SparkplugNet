@@ -20,7 +20,7 @@ internal static class DataTypeExtensions
     /// <typeparam name="T">The type parameter.</typeparam>
     /// <param name="objValue">The object value.</param>
     /// <returns>The converted value.</returns>
-    public static T? ConvertTo<T>(this object? objValue)
+    internal static T? ConvertTo<T>(this object? objValue)
     {
         if (objValue is null)
         {
@@ -38,7 +38,7 @@ internal static class DataTypeExtensions
     /// <typeparam name="T">The type parameter.</typeparam>
     /// <param name="objValue">The object value.</param>
     /// <returns>The converted or default value.</returns>
-    public static T ConvertOrDefaultTo<T>(this object? objValue)
+    internal static T ConvertOrDefaultTo<T>(this object? objValue)
     {
         T? value = objValue.ConvertTo<T>();
 

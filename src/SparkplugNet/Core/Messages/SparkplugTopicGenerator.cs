@@ -18,8 +18,8 @@ internal static class SparkplugTopicGenerator
     /// Gets the wildcard namespace subscription topic.
     /// </summary>
     /// <param name="nameSpace">The namespace.</param>
-    /// <returns>The wildcard namespace subscription topic <see cref="string"/></returns>
-    public static string GetWildcardNamespaceSubscribeTopic(SparkplugNamespace nameSpace)
+    /// <returns>The wildcard namespace subscription topic <see cref="string"/>.</returns>
+    internal static string GetWildcardNamespaceSubscribeTopic(SparkplugNamespace nameSpace)
     {
         return $"{nameSpace.GetDescription()}/#";
     }
@@ -31,7 +31,7 @@ internal static class SparkplugTopicGenerator
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <returns>The node command subscription topic <see cref="string"/>.</returns>
-    public static string GetNodeCommandSubscribeTopic(SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
+    internal static string GetNodeCommandSubscribeTopic(SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
     {
         return $"{nameSpace.GetDescription()}/{groupIdentifier}/{SparkplugMessageType.NodeCommand.GetDescription()}/{edgeNodeIdentifier}";
     }
@@ -43,7 +43,7 @@ internal static class SparkplugTopicGenerator
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <returns>The wildcard device command subscription topic <see cref="string"/>.</returns>
-    public static string GetWildcardDeviceCommandSubscribeTopic(SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
+    internal static string GetWildcardDeviceCommandSubscribeTopic(SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier)
     {
         return $"{nameSpace.GetDescription()}/{groupIdentifier}/{SparkplugMessageType.DeviceCommand.GetDescription()}/{edgeNodeIdentifier}/#";
     }
@@ -56,7 +56,7 @@ internal static class SparkplugTopicGenerator
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <returns>The wildcard device command subscription topic <see cref="string"/>.</returns>
-    public static string GetDeviceCommandSubscribeTopic(SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+    internal static string GetDeviceCommandSubscribeTopic(SparkplugNamespace nameSpace, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         return $"{nameSpace.GetDescription()}/{groupIdentifier}/{SparkplugMessageType.DeviceCommand.GetDescription()}/{edgeNodeIdentifier}/{deviceIdentifier}";
     }
@@ -65,8 +65,8 @@ internal static class SparkplugTopicGenerator
     /// Gets state subscription topic.
     /// </summary>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
-    /// <returns>The state subscription topic <see cref="string"/></returns>
-    public static string GetStateSubscribeTopic(string scadaHostIdentifier)
+    /// <returns>The state subscription topic <see cref="string"/>.</returns>
+    internal static string GetStateSubscribeTopic(string scadaHostIdentifier)
     {
         return $"{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}";
     }
@@ -80,7 +80,7 @@ internal static class SparkplugTopicGenerator
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier. (Optional)</param>
     /// <returns>The topic as <see cref="string"/>.</returns>
-    public static string GetTopic(
+    internal static string GetTopic(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         SparkplugMessageType messageType,
@@ -98,7 +98,7 @@ internal static class SparkplugTopicGenerator
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
     /// <returns>The STATE message topic as <see cref="string"/>.</returns>
-    public static string GetSparkplugStateMessageTopic(string scadaHostIdentifier, SparkplugSpecificationVersion specificationVersion)
+    internal static string GetSparkplugStateMessageTopic(string scadaHostIdentifier, SparkplugSpecificationVersion specificationVersion)
     {
         return specificationVersion switch
         {

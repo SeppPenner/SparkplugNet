@@ -26,7 +26,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// <summary>
         /// Gets the metrics as <see cref="List{T}"/>.
         /// </summary>
-        public List<T> Metrics => this.Values.ToList();
+        public List<T> Metrics => [.. this.Values];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KnownMetricStorage"/> class.

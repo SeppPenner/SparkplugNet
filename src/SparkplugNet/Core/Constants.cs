@@ -12,15 +12,15 @@ namespace SparkplugNet.Core;
 /// <summary>
 /// A class that contains constant values.
 /// </summary>
-public static class Constants
+internal static class Constants
 {
     /// <summary>
     /// The session number metric name.
     /// </summary>
-    public const string SessionNumberMetricName = "bdSeq";
+    internal const string SessionNumberMetricName = "bdSeq";
 
     /// <summary>
     /// The epoch.
     /// </summary>
-    public static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+    internal static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 }
