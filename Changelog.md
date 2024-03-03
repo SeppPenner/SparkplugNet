@@ -1,6 +1,7 @@
 Change history
 --------------
 
+* **Version 1.3.4.0 (2024-03-03)**: Removed Serilog from library, fixes https://github.com/SeppPenner/SparkplugNet/issues/74, Renamed events to not use "Async" as postfix andymore, reworked events to handle mutiple metrics at once (Fixes https://github.com/SeppPenner/SparkplugNet/issues/73).
 * **Version 1.3.3.0 (2024-03-03)**: Fixed conversion issues. Fixes https://github.com/SeppPenner/SparkplugNet/issues/64, https://github.com/SeppPenner/SparkplugNet/issues/70, https://github.com/SeppPenner/SparkplugNet/issues/71, https://github.com/SeppPenner/SparkplugNet/issues/72. Special thanks go to https://github.com/shouidar, who really helped me with the conversion of all the array types.
 * **Version 1.3.2.0 (2024-02-10)**: Fixed conversion for data types (Hopefully): https://github.com/SeppPenner/SparkplugNet/issues/63, https://github.com/SeppPenner/SparkplugNet/issues/64, https://github.com/SeppPenner/SparkplugNet/issues/66. Updated some NuGet packages.
 * **Version 1.3.1.0 (2024-01-05)**: Removed validation for incoming metrics on application (Still needs review).
