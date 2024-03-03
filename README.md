@@ -68,7 +68,7 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * You can enable the global setting `SparkplugGlobals.UseStrictIdentifierChecking` which prevents users from using the following chars in identifiers:
 
 ```log
-.,\@#$%^&amp;*()[]{}|!`~:;'"<>?
+.,\@#$%^&*()[]{}|!`~:;'"<>?
 ```
 
 ## Further resources
