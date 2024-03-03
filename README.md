@@ -63,12 +63,8 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * Version 1.2.0 and below: Sparkplug, version 2.2, spAv1.0 and spBv1.0.
 
 ## Special notes
-* Version 1.3.4 renames all events from `SomethingAsync` to `Something`.
+* Version 1.3.4 renames all events from `SomethingAsync` to `Something`. (BREAKING)
 * Version 1.1.0 introduces the async event pattern and deprecates the "old, synchronous" events, Version 1.2.0+ will remove the old events completely. (BREAKING)
-* Although it's not required to publish a **BDSEQ** metric with all messages according to the specification,
-this library includes it in any `spBv1.0` message except the state messages in versions up to 1.0.0 because I think it's useful.
-From version 1.1.0 on, this behaviour can be controlled by setting `AddSessionNumberToCommandMessages` in the application options and `AddSessionNumberToDataMessages` in the node options.
-* The library uses [Serilog](https://serilog.net/) for logging purposes because it's very extendable (`Log.Logger` or similar stuff in the examples refers to the Serilog library).
 
 ## Further resources
 * https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf
