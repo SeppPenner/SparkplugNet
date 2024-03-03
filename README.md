@@ -65,6 +65,11 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 ## Special notes
 * Version 1.3.4 renames all events from `SomethingAsync` to `Something`. (BREAKING)
 * Version 1.1.0 introduces the async event pattern and deprecates the "old, synchronous" events, Version 1.2.0+ will remove the old events completely. (BREAKING)
+* You can enabled the global setting `SparkplugGlobals.UseStrictIdentifierChecking` which prevents users from using the following chars in identifiers:
+
+```log
+.,\@#$%^&amp;*()[]{}|!`~:;'"<>?
+```
 
 ## Further resources
 * https://www.eclipse.org/tahu/spec/Sparkplug%20Topic%20Namespace%20and%20State%20ManagementV2.2-with%20appendix%20B%20format%20-%20Eclipse.pdf
