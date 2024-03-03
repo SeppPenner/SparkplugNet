@@ -1,3 +1,12 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SparkplugSpecificationVersion.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   The Sparkplug specification version.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace SparkplugNet.Core.Enumerations;
 
 /// <summary>

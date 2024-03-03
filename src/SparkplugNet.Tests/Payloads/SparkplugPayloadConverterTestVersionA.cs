@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugMessageGeneratorTest.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugPayloadConverterTestVersionA.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
 // <summary>

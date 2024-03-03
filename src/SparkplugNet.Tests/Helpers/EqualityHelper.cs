@@ -1,7 +1,16 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="EqualityHelper.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A helper class for the tests.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace SparkplugNet.Tests.Helpers;
 
 /// <summary>
-/// Some helper classes for the tests.
+/// A helper class for the tests.
 /// </summary>
 internal static class EqualityHelper
 {

@@ -1,9 +1,18 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ValueBase.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A base value class for shared properties amongst the data classes.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace SparkplugNet.Core.Data;
 
 /// <summary>
-/// Base Value class for shared properties amongst Data classes
+/// A base value class for shared properties amongst the data classes.
 /// </summary>
-/// <typeparam name="DataTypeEnum"></typeparam>
+/// <typeparam name="DataTypeEnum">The data type.</typeparam>
 public abstract class ValueBase<DataTypeEnum> : IValue<DataTypeEnum> where DataTypeEnum : Enum
 {
     /// <summary>

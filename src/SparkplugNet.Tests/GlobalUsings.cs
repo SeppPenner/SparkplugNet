@@ -5,8 +5,6 @@ global using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 global using MQTTnet;
 
-global using Serilog;
-
 global using SparkplugNet.Core;
 global using SparkplugNet.Core.Enumerations;
 global using SparkplugNet.Core.Messages;

@@ -1,7 +1,16 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ValueBaseVersionA.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A base class containing values using Sparkplug Version A.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace SparkplugNet.VersionA.Data;
 
 /// <summary>
-/// Base class containing values using Sparkplug Version A.
+/// A base class containing values using Sparkplug Version A.
 /// </summary>
 [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
 public abstract class ValueBaseVersionA : ValueBase<VersionADataTypeEnum>

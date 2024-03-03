@@ -1,11 +1,11 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SparkplugApplicationOptions.cs" company="Hämmer Electronics">
+// <copyright file="SparkplugBaseOptions.cs" company="Hämmer Electronics">
 // The project is licensed under the MIT license.
 // </copyright>
-// --------------------------------------------------------------------------------------------------------------------
 // <summary>
 //   A base class that contains the Sparkplug options.
 // </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace SparkplugNet.Core;
 
