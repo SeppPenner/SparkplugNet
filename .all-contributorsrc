@@ -97,6 +97,16 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "shouidar",
+      "name": "shouidar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10144958?v=4",
+      "profile": "https://github.com/shouidar",
+      "contributions": [
+        "test",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
