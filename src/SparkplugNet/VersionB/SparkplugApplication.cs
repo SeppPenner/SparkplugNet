@@ -14,7 +14,7 @@ namespace SparkplugNet.VersionB;
 ///   A class that handles a Sparkplug application.
 /// </summary>
 /// <seealso cref="SparkplugApplicationBase{T}"/>
-public class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric>
+public sealed class SparkplugApplication : SparkplugApplicationBase<VersionBData.Metric>
 {
     /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
     /// <summary>

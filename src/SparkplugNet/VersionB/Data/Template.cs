@@ -12,7 +12,7 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B template class.
 /// </summary>
-public class Template
+public sealed class Template
 {
     /// <summary>
     /// Gets or sets the version.

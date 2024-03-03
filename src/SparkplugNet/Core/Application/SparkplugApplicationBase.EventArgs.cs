@@ -45,7 +45,7 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// A class for the device data event args.
     /// </summary>
     /// <seealso cref="NodeDataEventArgs"/>
-    public class DeviceDataEventArgs : NodeDataEventArgs
+    public sealed class DeviceDataEventArgs : NodeDataEventArgs
     {
         /// <inheritdoc cref="NodeDataEventArgs"/>
         /// <summary>

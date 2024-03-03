@@ -14,7 +14,7 @@ namespace SparkplugNet.Core.Topics;
 /// The Sparkplug class for the message topic.
 /// </summary>
 /// <seealso cref="SparkplugTopic"/>
-public class SparkplugMessageTopic : SparkplugTopic
+public sealed class SparkplugMessageTopic : SparkplugTopic
 {
     /// <summary>
     /// The message types.

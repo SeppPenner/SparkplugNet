@@ -13,7 +13,7 @@ namespace SparkplugNet.VersionA.Data;
 /// The externally used Sparkplug A payload class.
 /// </summary>
 [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-public class Payload
+public sealed class Payload
 {
     /// <summary>
     /// Gets or sets the timestamp.

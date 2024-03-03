@@ -13,7 +13,7 @@ namespace SparkplugNet.Tests.Messages;
 /// A class to test the <see cref="SparkplugMessageGenerator"/> class with specification version 2.2.
 /// </summary>
 [TestClass]
-public class SparkplugMessageGeneratorTestVersion22
+public sealed class SparkplugMessageGeneratorTestVersion22
 {
     /// <summary>
     /// The metrics for namespace A.

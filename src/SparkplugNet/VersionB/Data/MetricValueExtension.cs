@@ -12,6 +12,6 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B metric value extension class.
 /// </summary>
-public class MetricValueExtension
+public sealed class MetricValueExtension
 {
 }

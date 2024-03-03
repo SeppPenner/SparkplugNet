@@ -14,7 +14,7 @@ namespace SparkplugNet.VersionB;
 ///   A class that handles a Sparkplug node.
 /// </summary>
 /// <seealso cref="SparkplugNodeBase{T}"/>
-public class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
+public sealed class SparkplugNode : SparkplugNodeBase<VersionBData.Metric>
 {
     /// <inheritdoc cref="SparkplugNodeBase{T}"/>
     /// <summary>

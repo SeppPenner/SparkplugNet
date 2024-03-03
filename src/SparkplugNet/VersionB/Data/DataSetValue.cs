@@ -12,7 +12,7 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B data set value class.
 /// </summary>
-public class DataSetValue : ValueBaseVersionB
+public sealed class DataSetValue : ValueBaseVersionB
 {
     /// <summary>
     /// Initializes the DataSetValue

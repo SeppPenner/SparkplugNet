@@ -15,7 +15,7 @@ namespace SparkplugNet.Core.Application;
 /// </summary>
 /// <seealso cref="SparkplugBaseOptions"/>
 [Serializable]
-public class SparkplugApplicationOptions : SparkplugBaseOptions
+public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
 {
     /// <summary>
     /// The default value whether the application is a primary application or not.

@@ -12,7 +12,7 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B payload class.
 /// </summary>
-public class Payload
+public sealed class Payload
 {
     /// <summary>
     /// Gets or sets the timestamp.

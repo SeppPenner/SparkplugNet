@@ -103,7 +103,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// A class for the device birth event args.
     /// </summary>
     /// <seealso cref="DeviceEventArgs" />
-    public class DeviceBirthEventArgs : DeviceEventArgs
+    public sealed class DeviceBirthEventArgs : DeviceEventArgs
     {
         /// <inheritdoc cref="DeviceEventArgs" />
         /// <summary>
@@ -132,7 +132,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// A class for the node birth event args.
     /// </summary>
     /// <seealso cref="NodeEventArgs" />
-    public class NodeBirthEventArgs : NodeEventArgs
+    public sealed class NodeBirthEventArgs : NodeEventArgs
     {
         /// <inheritdoc cref="NodeEventArgs" />
         /// <summary>

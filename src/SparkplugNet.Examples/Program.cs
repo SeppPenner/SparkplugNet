@@ -12,7 +12,7 @@ namespace SparkplugNet.Examples;
 /// <summary>
 /// The main program.
 /// </summary>
-public class Program
+public sealed class Program
 {
     /// <summary>
     /// The cancellation token source.

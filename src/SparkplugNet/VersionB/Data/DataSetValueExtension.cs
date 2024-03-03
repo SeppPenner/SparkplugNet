@@ -12,6 +12,6 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B data set extension class.
 /// </summary>
-public class DataSetValueExtension
+public sealed class DataSetValueExtension
 {
 }

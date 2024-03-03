@@ -12,7 +12,7 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B row class.
 /// </summary>
-public class Row
+public sealed class Row
 {
     /// <summary>
     /// Gets or sets the elements.

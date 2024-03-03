@@ -15,7 +15,7 @@ namespace SparkplugNet.Core.Node;
 /// </summary>
 /// <seealso cref="SparkplugBaseOptions"/>
 [Serializable]
-public class SparkplugNodeOptions : SparkplugBaseOptions
+public sealed class SparkplugNodeOptions : SparkplugBaseOptions
 {
     /// <summary>
     /// The default groug identifier.

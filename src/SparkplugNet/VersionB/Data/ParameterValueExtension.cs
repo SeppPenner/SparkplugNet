@@ -12,6 +12,6 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B parameter value extension class.
 /// </summary>
-public class ParameterValueExtension
+public sealed class ParameterValueExtension
 {
 }

@@ -14,7 +14,7 @@ namespace SparkplugNet.VersionA.Data;
 /// </summary>
 [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
 [DebuggerDisplay("{Name}|{Value}")]
-public class KuraMetric : ValueBaseVersionA, IMetric
+public sealed class KuraMetric : ValueBaseVersionA, IMetric
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="KuraMetric"/> class.

@@ -13,7 +13,7 @@ namespace SparkplugNet.Tests.Payloads;
 /// A class to test the <see cref="VersionA.PayloadConverter"/> class.
 /// </summary>
 [TestClass]
-public class SparkplugPayloadConverterTestVersionA
+public sealed class SparkplugPayloadConverterTestVersionA
 {
     /// <summary>
     /// Tests the Sparkplug payload converter for converting a version A payload from Proto.

@@ -45,7 +45,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// A class for the device command event args.
     /// </summary>
     /// <seealso cref="NodeCommandEventArgs"/>
-    public class DeviceCommandEventArgs : NodeCommandEventArgs
+    public sealed class DeviceCommandEventArgs : NodeCommandEventArgs
     {
         /// <inheritdoc cref="NodeCommandEventArgs"/>
         /// <summary>
@@ -72,7 +72,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// A class for the status message event args.
     /// </summary>
-    public class StatusMessageEventArgs : SparkplugEventArgs
+    public sealed class StatusMessageEventArgs : SparkplugEventArgs
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StatusMessageEventArgs"/> class.

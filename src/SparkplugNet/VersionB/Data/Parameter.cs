@@ -12,7 +12,7 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B parameter class.
 /// </summary>
-public class Parameter : ValueBaseVersionB, IMetric
+public sealed class Parameter : ValueBaseVersionB, IMetric
 {
     /// <summary>
     /// Gets or sets the name.

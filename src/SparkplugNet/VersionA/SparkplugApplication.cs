@@ -15,7 +15,7 @@ namespace SparkplugNet.VersionA;
 /// </summary>
 /// <seealso cref="SparkplugApplicationBase{T}"/>
 [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
-public class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMetric>
+public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData.KuraMetric>
 {
     /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
     /// <summary>

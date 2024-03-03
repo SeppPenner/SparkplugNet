@@ -12,7 +12,7 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B meta data class.
 /// </summary>
-public class MetaData
+public sealed class MetaData
 {
     /// <summary>
     /// Gets or sets a value indicating whether the meta data is a multi part data set or not.

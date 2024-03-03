@@ -12,7 +12,7 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B property set list class.
 /// </summary>
-public class PropertySetList
+public sealed class PropertySetList
 {
     /// <summary>
     /// Gets or sets the property sets.

@@ -12,6 +12,6 @@ namespace SparkplugNet.VersionB.Data;
 /// <summary>
 /// The externally used Sparkplug B property value extension class.
 /// </summary>
-public class PropertyValueExtension
+public sealed class PropertyValueExtension
 {
 }
