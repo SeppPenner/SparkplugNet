@@ -141,7 +141,7 @@ public sealed class Program
              null,
              true,
              CancellationTokenSource.Token);
-        var application = new VersionA.SparkplugApplication(VersionAMetricsApplication, SparkplugSpecificationVersion.Version22, Log.Logger);
+        var application = new VersionA.SparkplugApplication(VersionAMetricsApplication, SparkplugSpecificationVersion.Version22);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -209,7 +209,7 @@ public sealed class Program
             "group1",
             "node1",
             CancellationTokenSource.Token);
-        var node = new VersionA.SparkplugNode(VersionAMetricsNode, SparkplugSpecificationVersion.Version22, Log.Logger);
+        var node = new VersionA.SparkplugNode(VersionAMetricsNode, SparkplugSpecificationVersion.Version22);
 
         // Start a node.
         Log.Information("Starting node...");
@@ -281,7 +281,7 @@ public sealed class Program
             null,
             true,
             CancellationTokenSource.Token);
-        var application = new VersionB.SparkplugApplication(VersionBMetricsApplication, SparkplugSpecificationVersion.Version22, Log.Logger);
+        var application = new VersionB.SparkplugApplication(VersionBMetricsApplication, SparkplugSpecificationVersion.Version22);
 
         // Start an application.
         Log.Information("Starting application...");
@@ -349,7 +349,7 @@ public sealed class Program
             "group1",
             "node1",
             CancellationTokenSource.Token);
-        var node = new VersionB.SparkplugNode(VersionBMetricsNode, SparkplugSpecificationVersion.Version22, Log.Logger);
+        var node = new VersionB.SparkplugNode(VersionBMetricsNode, SparkplugSpecificationVersion.Version22);
 
         // Start a node.
         Log.Information("Starting node...");

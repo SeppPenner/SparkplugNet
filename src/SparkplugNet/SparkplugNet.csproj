@@ -41,7 +41,6 @@
         </PackageReference>
         <PackageReference Include="MQTTnet" Version="4.3.3.952" />
         <PackageReference Include="protobuf-net" Version="3.2.30" />
-        <PackageReference Include="Serilog" Version="3.1.1" />
     </ItemGroup>
 
     <ItemGroup>

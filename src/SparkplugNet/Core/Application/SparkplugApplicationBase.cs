@@ -22,13 +22,11 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// </summary>
     /// <param name="knownMetrics">The known metric names.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
-    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
     public SparkplugApplicationBase(
         IEnumerable<T> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion,
-        ILogger? logger = null)
-        : base(knownMetrics, specificationVersion, logger)
+        SparkplugSpecificationVersion specificationVersion)
+        : base(knownMetrics, specificationVersion)
     {
     }
 
@@ -38,13 +36,11 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// </summary>
     /// <param name="knownMetricsStorage">The known metric storage.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
-    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
     public SparkplugApplicationBase(
         KnownMetricStorage knownMetricsStorage,
-        SparkplugSpecificationVersion specificationVersion,
-        ILogger? logger = null)
-        : base(knownMetricsStorage, specificationVersion, logger)
+        SparkplugSpecificationVersion specificationVersion)
+        : base(knownMetricsStorage, specificationVersion)
     {
     }
 
@@ -233,7 +229,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         }
         catch (Exception ex)
         {
-            this.Logger?.Error(ex, "OnClientConnectedAsync");
             await Task.FromException(ex);
         }
     }
@@ -259,8 +254,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             // Invoke disconnected callback.
             await this.FireDisconnectedAsync();
 
-            this.Logger?.Warning("Connection lost, retrying to connect in {@ReconnectInterval}.", this.Options.ReconnectInterval);
-
             // Wait until the reconnect interval is reached.
             await Task.Delay(this.Options.ReconnectInterval);
 
@@ -275,7 +268,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         }
         catch (Exception ex)
         {
-            this.Logger?.Error(ex, "OnClientDisconnectedAsync");
             await Task.FromException(ex);
         }
     }
@@ -323,13 +315,11 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             }
             else
             {
-                this.Logger?.Information("Received message on unkown topic {Topic}: {Payload}.", topic, args.ApplicationMessage.Payload);
                 return Task.CompletedTask;
             }
         }
         catch (Exception ex)
         {
-            this.Logger?.Error(ex, "OnApplicationMessageReceived");
             return Task.FromException(ex);
         }
     }
@@ -443,7 +433,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         }
         catch (Exception ex)
         {
-            this.Logger?.Error(ex, "ConnectInternal");
             await Task.FromException(ex);
         }
     }

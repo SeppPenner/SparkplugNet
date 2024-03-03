@@ -38,10 +38,9 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
-    /// <param name="logger">The logger.</param>
     /// <seealso cref="ISparkplugConnection"/>
-    public SparkplugBase(IEnumerable<T> knownMetrics, SparkplugSpecificationVersion specificationVersion, ILogger? logger = null)
-        : this(new KnownMetricStorage(knownMetrics), specificationVersion, logger)
+    public SparkplugBase(IEnumerable<T> knownMetrics, SparkplugSpecificationVersion specificationVersion)
+        : this(new KnownMetricStorage(knownMetrics), specificationVersion)
     {
     }
 
@@ -51,9 +50,8 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// </summary>
     /// <param name="knownMetricsStorage">The known metrics storage.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
-    /// <param name="logger">The logger.</param>
     /// <seealso cref="ISparkplugConnection"/>
-    public SparkplugBase(KnownMetricStorage knownMetricsStorage, SparkplugSpecificationVersion specificationVersion, ILogger? logger = null)
+    public SparkplugBase(KnownMetricStorage knownMetricsStorage, SparkplugSpecificationVersion specificationVersion)
     {
         this.knownMetrics = knownMetricsStorage;
 
@@ -67,9 +65,8 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         }
 
         this.client = new MqttFactory().CreateMqttClient();
-        this.Logger = logger;
 
-        this.messageGenerator = new SparkplugMessageGenerator(logger, specificationVersion);
+        this.messageGenerator = new SparkplugMessageGenerator(specificationVersion);
     }
 
     /// <summary>
@@ -91,11 +88,6 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// Gets the Sparkplug namespace.
     /// </summary>
     protected SparkplugNamespace NameSpace { get; }
-
-    /// <summary>
-    /// Gets the logger.
-    /// </summary>
-    protected ILogger? Logger { get; }
 
     /// <summary>
     /// Gets a value indicating whether this instance is connected.

@@ -31,8 +31,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     /// <summary>
     /// The message generator.
     /// </summary>
-    private readonly SparkplugMessageGenerator messageGenerator = new(new LoggerConfiguration().WriteTo.Console().CreateLogger(),
-        SparkplugSpecificationVersion.Version30);
+    private readonly SparkplugMessageGenerator messageGenerator = new(SparkplugSpecificationVersion.Version30);
 
     /// <summary>
     /// Tests the Sparkplug message generator with a message with a version B namespace and a online state.

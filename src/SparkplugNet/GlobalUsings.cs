@@ -18,8 +18,6 @@ global using System.Text.Json.Serialization;
 
 global using ProtoBuf;
 
-global using Serilog;
-
 global using SparkplugNet.Core;
 global using SparkplugNet.Core.Application;
 global using SparkplugNet.Core.Data;

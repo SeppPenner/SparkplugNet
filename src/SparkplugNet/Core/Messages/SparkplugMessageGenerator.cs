@@ -15,11 +15,6 @@ namespace SparkplugNet.Core.Messages;
 internal sealed class SparkplugMessageGenerator
 {
     /// <summary>
-    /// The logger.
-    /// </summary>
-    private readonly ILogger? logger;
-
-    /// <summary>
     /// The Sparkplug specification version.
     /// </summary>
     private readonly SparkplugSpecificationVersion specificationVersion;
@@ -27,11 +22,9 @@ internal sealed class SparkplugMessageGenerator
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugMessageGenerator"/> class.
     /// </summary>
-    /// <param name="logger">The logger.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
-    public SparkplugMessageGenerator(ILogger? logger, SparkplugSpecificationVersion specificationVersion)
+    public SparkplugMessageGenerator(SparkplugSpecificationVersion specificationVersion)
     {
-        this.logger = logger;
         this.specificationVersion = specificationVersion;
     }
 
@@ -639,9 +632,6 @@ internal sealed class SparkplugMessageGenerator
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
 
-        // Debug output.
-        this.logger?.Debug("NBIRTH: VersionADataPayload: {@Payload}", payload);
-
         var convertedPayload = VersionA.PayloadConverter.ConvertVersionAPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
 
@@ -681,9 +671,6 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
-
-        // Debug output.
-        this.logger?.Debug("NBIRTH: VersionBDataPayload: {@Payload}", payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -725,9 +712,6 @@ internal sealed class SparkplugMessageGenerator
             Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
-
-        // Debug output.
-        this.logger?.Debug("DBIRTH: VersionADataPayload: {@Payload}", payload);
 
         var convertedPayload = VersionA.PayloadConverter.ConvertVersionAPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -772,9 +756,6 @@ internal sealed class SparkplugMessageGenerator
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
 
-        // Debug output.
-        this.logger?.Debug("DBIRTH: VersionBDataPayload: {@Payload}", payload);
-
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
 
@@ -811,9 +792,6 @@ internal sealed class SparkplugMessageGenerator
             Metrics = metrics.ToList()
         };
 
-        // Debug output.
-        this.logger?.Debug("NDEATH: VersionADataPayload: {@Payload}", payload);
-
         var convertedPayload = VersionA.PayloadConverter.ConvertVersionAPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
 
@@ -848,9 +826,6 @@ internal sealed class SparkplugMessageGenerator
         {
             Metrics = metrics.ToList()
         };
-
-        // Debug output.
-        this.logger?.Debug("NDEATH: VersionBDataPayload: {@Payload}", payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -892,9 +867,6 @@ internal sealed class SparkplugMessageGenerator
             Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
-
-        // Debug output.
-        this.logger?.Debug("DDEATH: VersionADataPayload: {@Payload}", payload);
 
         var convertedPayload = VersionA.PayloadConverter.ConvertVersionAPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -939,9 +911,6 @@ internal sealed class SparkplugMessageGenerator
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
 
-        // Debug output.
-        this.logger?.Debug("DDEATH: VersionBDataPayload: {@Payload}", payload);
-
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
 
@@ -980,9 +949,6 @@ internal sealed class SparkplugMessageGenerator
             Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
-
-        // Debug output.
-        this.logger?.Debug("NDATA: VersionADataPayload: {@Payload}", payload);
 
         var convertedPayload = VersionA.PayloadConverter.ConvertVersionAPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -1025,9 +991,6 @@ internal sealed class SparkplugMessageGenerator
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
 
-        // Debug output.
-        this.logger?.Debug("NDATA: VersionBDataPayload: {@Payload}", payload);
-
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
 
@@ -1068,9 +1031,6 @@ internal sealed class SparkplugMessageGenerator
             Metrics = metrics.ToList(),
             Timestamp = dateTime.ToUnixTimeMilliseconds()
         };
-
-        // Debug output.
-        this.logger?.Debug("DDATA: VersionADataPayload: {@Payload}", payload);
 
         var convertedPayload = VersionA.PayloadConverter.ConvertVersionAPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -1114,9 +1074,6 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
-
-        // Debug output.
-        this.logger?.Debug("DDATA: VersionBDataPayload: {@Payload}", payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);

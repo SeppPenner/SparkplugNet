@@ -23,14 +23,12 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
-    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugNode(
         IEnumerable<VersionAData.KuraMetric> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion,
-        ILogger? logger = null)
-        : base(knownMetrics, specificationVersion, logger)
+        SparkplugSpecificationVersion specificationVersion)
+        : base(knownMetrics, specificationVersion)
     {
     }
 
@@ -40,14 +38,12 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="knownMetricsStorage">The metric names.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
-    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugNode(
         KnownMetricStorage knownMetricsStorage,
-        SparkplugSpecificationVersion specificationVersion,
-        ILogger? logger = null)
-        : base(knownMetricsStorage, specificationVersion, logger)
+        SparkplugSpecificationVersion specificationVersion)
+        : base(knownMetricsStorage, specificationVersion)
     {
     }
 
@@ -80,9 +76,6 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
-
-        // Debug output.
-        this.Logger?.Debug("NDATA Message: {@DataMessage}", dataMessage);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
