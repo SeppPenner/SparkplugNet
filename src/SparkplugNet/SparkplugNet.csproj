@@ -16,7 +16,7 @@
         <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
         <PackageIcon>Icon.png</PackageIcon>
         <RepositoryType>Github</RepositoryType>
-        <PackageReleaseNotes>Version 1.3.2.0 (2024-02-10): Fixed conversion for data types (Hopefully): https://github.com/SeppPenner/SparkplugNet/issues/63, https://github.com/SeppPenner/SparkplugNet/issues/64, https://github.com/SeppPenner/SparkplugNet/issues/66. Updated some NuGet packages.</PackageReleaseNotes>
+        <PackageReleaseNotes>Version 1.3.3.0 (2024-03-03): Fixed conversion issues. Fixes https://github.com/SeppPenner/SparkplugNet/issues/64, https://github.com/SeppPenner/SparkplugNet/issues/70, https://github.com/SeppPenner/SparkplugNet/issues/71, https://github.com/SeppPenner/SparkplugNet/issues/72. Special thanks go to https://github.com/shouidar, who really helped me with the conversion of all the array types.</PackageReleaseNotes>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>

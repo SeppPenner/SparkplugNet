@@ -1,6 +1,7 @@
 Change history
 --------------
 
+* **Version 1.3.3.0 (2024-03-03)**: Fixed conversion issues. Fixes https://github.com/SeppPenner/SparkplugNet/issues/64, https://github.com/SeppPenner/SparkplugNet/issues/70, https://github.com/SeppPenner/SparkplugNet/issues/71, https://github.com/SeppPenner/SparkplugNet/issues/72. Special thanks go to https://github.com/shouidar, who really helped me with the conversion of all the array types.
 * **Version 1.3.2.0 (2024-02-10)**: Fixed conversion for data types (Hopefully): https://github.com/SeppPenner/SparkplugNet/issues/63, https://github.com/SeppPenner/SparkplugNet/issues/64, https://github.com/SeppPenner/SparkplugNet/issues/66. Updated some NuGet packages.
 * **Version 1.3.1.0 (2024-01-05)**: Removed validation for incoming metrics on application (Still needs review).
 * **Version 1.3.0.0 (2023-12-18)**: Removed support for NetCore3.1, added support for Net8.0, updated NuGet packages, tried to get towards 3.0 compatibility, updated supported data types and adjusted data type handling (Use carefully, not yet fully tested).
