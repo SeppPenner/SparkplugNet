@@ -377,7 +377,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int16Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 2, 0, 3, 0, 4, 0]
             },
             new()
             {
@@ -388,7 +388,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int32Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0]
             },
             new()
             {
@@ -399,7 +399,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int64Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
             },
             new()
             {
@@ -421,7 +421,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt16Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 2, 0, 3, 0, 4, 0]
             },
             new()
             {
@@ -432,7 +432,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt32Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0]
             },
             new()
             {
@@ -443,7 +443,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.UInt64Array,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
             },
             new()
             {
@@ -454,7 +454,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.FloatArray,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x40, 0x40, 0x00, 0x00, 0x80, 0x40]
             },
             new()
             {
@@ -465,7 +465,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DoubleArray,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x40]
             },
             new()
             {
@@ -476,7 +476,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.BooleanArray,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [0x04, 0x00, 0x00, 0x00, 0xa0]
             },
             new()
             {
@@ -487,7 +487,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.StringArray,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [0x31, 0x00, 0x32, 0x00, 0x33, 0x00, 0x34, 0x00]
             },
             new()
             {
@@ -498,7 +498,7 @@ public class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTimeArray,
-                BytesValue = [1, 2, 3, 4]
+                BytesValue = [0x00, 0x0b, 0xf9, 0x5d, 0x6f, 0x01, 0x00, 0x00, 0x00, 0xbf, 0x81, 0x12, 0x7e, 0x01, 0x00, 0x00, 0x00, 0xeb, 0x32, 0x6a, 0x85, 0x01, 0x00, 0x00, 0x00, 0x17, 0xe4, 0xc1, 0x8c, 0x01, 0x00, 0x00]
             }
         };
         var convertedMetrics = new List<VersionBData.Metric>
@@ -738,19 +738,19 @@ public class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test27", VersionBData.DataType.UInt16Array, new ushort[] { 1, 0, 2, 0, 3, 0, 4, 0 }, timestamp)
+            new("Test27", VersionBData.DataType.UInt16Array, new ushort[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 27,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test28", VersionBData.DataType.UInt32Array, new uint[] { 1, 0, 0, 2, 0, 0, 3, 0, 0, 4, 0, 0 }, timestamp)
+            new("Test28", VersionBData.DataType.UInt32Array, new uint[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 28,
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test29", VersionBData.DataType.UInt64Array, new ulong[] { 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0 }, timestamp)
+            new("Test29", VersionBData.DataType.UInt64Array, new ulong[] { 1, 2, 3, 4 }, timestamp)
             {
                 Alias = 29,
                 IsHistorical = true,
@@ -1615,6 +1615,7 @@ public class SparkplugPayloadConverterTestVersionB
     /// <param name="newMetric">The new metric.</param>
     private static void MetricEquals(VersionBData.Metric expectedMetric, VersionBData.Metric newMetric)
     {
+        // Todo: Works until 13.
         Assert.AreEqual(expectedMetric.Alias, newMetric.Alias);
         Assert.AreEqual(expectedMetric.Value, newMetric.Value);
         Assert.AreEqual(expectedMetric.DataType, newMetric.DataType);
@@ -1791,6 +1792,12 @@ public class SparkplugPayloadConverterTestVersionB
         Assert.AreEqual(expectedMetric.Timestamp, newMetric.Timestamp);
     }
 
+    /// <summary>
+    /// Tests two given byte arrays for equality.
+    /// </summary>
+    /// <param name="expectedArray">The expected byte array.</param>
+    /// <param name="newArray">The new byte array.</param>
+    /// <exception cref="InvalidCastException">Thrown if the array type is not supported.</exception>
     private static void ByteArrayEquals(byte[] expectedArray, byte[] newArray)
     {
         if (newArray.GetType() == typeof(sbyte[]))

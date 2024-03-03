@@ -198,7 +198,12 @@ public class Metric : ValueBaseVersionB, IMetric
                     return this;
                 }
 
-                if (value is DateTime[] dateTimes)
+                if (value is DateTimeOffset[] dateTimeOffsets)
+                {
+                    this.ObjectValue = dateTimeOffsets.Select(d => (ulong)d.ToUnixTimeMilliseconds()).ToArray();
+                    break;
+                }
+                else if (value is DateTime[] dateTimes)
                 {
                     this.ObjectValue = dateTimes.Select(d => (ulong)new DateTimeOffset(d).ToUnixTimeMilliseconds()).ToArray();
                     break;
@@ -206,6 +211,11 @@ public class Metric : ValueBaseVersionB, IMetric
                 else if (value is ulong[] ulongValues)
                 {
                     this.ObjectValue = ulongValues;
+                    break;
+                }
+                else if (value is long[] longValues)
+                {
+                    this.ObjectValue = longValues.Select(l => (ulong)l).ToArray();
                     break;
                 }
                 else
