@@ -63,6 +63,7 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * Version 1.2.0 and below: Sparkplug, version 2.2, spAv1.0 and spBv1.0.
 
 ## Special notes
+* Version 1.3.4 renames all events from `SomethingAsync` to `Something`.
 * Version 1.1.0 introduces the async event pattern and deprecates the "old, synchronous" events, Version 1.2.0+ will remove the old events completely. (BREAKING)
 * Although it's not required to publish a **BDSEQ** metric with all messages according to the specification,
 this library includes it in any `spBv1.0` message except the state messages in versions up to 1.0.0 because I think it's useful.
