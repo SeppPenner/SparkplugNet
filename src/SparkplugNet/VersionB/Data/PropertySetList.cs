@@ -17,5 +17,5 @@ public sealed class PropertySetList
     /// <summary>
     /// Gets or sets the property sets.
     /// </summary>
-    public List<PropertySet> PropertySets { get; set; } = new();
+    public List<PropertySet> PropertySets { get; set; } = [];
 }

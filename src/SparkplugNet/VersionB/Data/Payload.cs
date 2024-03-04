@@ -22,7 +22,7 @@ public sealed class Payload
     /// <summary>
     /// Gets or sets the metrics.
     /// </summary>
-    public List<Metric> Metrics { get; set; } = new();
+    public List<Metric> Metrics { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the SEQ number.
@@ -38,5 +38,5 @@ public sealed class Payload
     /// <summary>
     /// Get sor sets the body.
     /// </summary>
-    public byte[] Body { get; set; } = Array.Empty<byte>();
+    public byte[] Body { get; set; } = [];
 }

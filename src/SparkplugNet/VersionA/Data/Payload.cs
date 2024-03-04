@@ -28,10 +28,10 @@ public sealed class Payload
     /// <summary>
     /// Gets or sets the metrics.
     /// </summary>
-    public List<KuraMetric> Metrics { get; set; } = new();
+    public List<KuraMetric> Metrics { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the body.
     /// </summary>
-    public byte[] Body { get; set; } = Array.Empty<byte>();
+    public byte[] Body { get; set; } = [];
 }

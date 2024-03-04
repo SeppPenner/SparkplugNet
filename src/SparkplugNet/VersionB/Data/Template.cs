@@ -23,12 +23,12 @@ public sealed class Template
     /// <summary>
     /// Gets or sets the metrics.
     /// </summary>
-    public List<Metric> Metrics { get; set; } = new();
+    public List<Metric> Metrics { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the parameters.
     /// </summary>
-    public List<Parameter> Parameters { get; set; } = new();
+    public List<Parameter> Parameters { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the template reference.

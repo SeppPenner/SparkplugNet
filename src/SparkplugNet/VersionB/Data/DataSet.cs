@@ -29,7 +29,7 @@ public sealed class DataSet
     public DataSet(IDictionary<string, VersionBDataTypeEnum> entries)
     {
         this.NumberOfColumns = (ulong)entries.Count;
-        this.Columns = entries.Keys.ToList();
+        this.Columns = [.. entries.Keys];
         this.Types = entries.Values.Select(type => (uint)type).ToArray();
     }
 
@@ -41,15 +41,15 @@ public sealed class DataSet
     /// <summary>
     /// Gets or sets the columns.
     /// </summary>
-    public List<string> Columns { get; set; } = new();
+    public List<string> Columns { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the types.
     /// </summary>
-    public uint[] Types { get; set; } = Array.Empty<uint>();
+    public uint[] Types { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the rows.
     /// </summary>
-    public List<Row> Rows { get; set; } = new();
+    public List<Row> Rows { get; set; } = [];
 }

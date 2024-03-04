@@ -18,10 +18,10 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     /// <summary>
     /// The metrics for namespace B.
     /// </summary>
-    private readonly List<VersionBData.Metric> metricsB = new()
-    {
+    private readonly List<VersionBData.Metric> metricsB =
+    [
         new VersionBData.Metric("Test", VersionBData.DataType.Int32, 20)
-    };
+    ];
 
     /// <summary>
     /// The SEQ metric for namespace B.

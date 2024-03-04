@@ -17,10 +17,10 @@ public sealed class PropertySet
     /// <summary>
     /// Gets or sets the keys.
     /// </summary>
-    public List<string> Keys { get; set; } = new();
+    public List<string> Keys { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the values.
     /// </summary>
-    public List<PropertyValue> Values { get; set; } = new();
+    public List<PropertyValue> Values { get; set; } = [];
 }

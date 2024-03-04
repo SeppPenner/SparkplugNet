@@ -17,5 +17,5 @@ public sealed class Row
     /// <summary>
     /// Gets or sets the elements.
     /// </summary>
-    public List<DataSetValue> Elements { get; set; } = new();
+    public List<DataSetValue> Elements { get; set; } = [];
 }

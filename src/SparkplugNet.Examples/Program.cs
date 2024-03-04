@@ -22,56 +22,56 @@ public sealed class Program
     /// <summary>
     /// The version A metrics for an application.
     /// </summary>
-    private static readonly List<VersionAData.KuraMetric> VersionAMetricsApplication = new()
-    {
+    private static readonly List<VersionAData.KuraMetric> VersionAMetricsApplication =
+    [
         new ("temperatureApplication", VersionAData.DataType.Double, 1.20),
         new ("climateactiveApplication", VersionAData.DataType.Boolean, true)
-    };
+    ];
 
     /// <summary>
     /// The version A metrics for a node.
     /// </summary>
-    private static readonly List<VersionAData.KuraMetric> VersionAMetricsNode = new()
-    {
+    private static readonly List<VersionAData.KuraMetric> VersionAMetricsNode =
+    [
         new ("temperatureNode", VersionAData.DataType.Double, 1.20),
         new ("climateactiveNode", VersionAData.DataType.Boolean, true)
-    };
+    ];
 
     /// <summary>
     /// The version A metrics for a device.
     /// </summary>
-    private static readonly List<VersionAData.KuraMetric> VersionAMetricsDevice = new()
-    {
+    private static readonly List<VersionAData.KuraMetric> VersionAMetricsDevice =
+    [
         new ("temperatureDevice", VersionAData.DataType.Double, 1.20),
         new ("climateactiveDevice", VersionAData.DataType.Boolean, true)
-    };
+    ];
 
     /// <summary>
     /// The version A metrics for an application.
     /// </summary>
-    private static readonly List<VersionBData.Metric> VersionBMetricsApplication = new()
-    {
+    private static readonly List<VersionBData.Metric> VersionBMetricsApplication =
+    [
         new VersionBData.Metric("temperatureApplication", VersionBData.DataType.Float, 1.20f),
         new VersionBData.Metric("climateactiveApplication", VersionBData.DataType.Boolean, true)
-    };
+    ];
 
     /// <summary>
     /// The version A metrics for a node.
     /// </summary>
-    private static readonly List<VersionBData.Metric> VersionBMetricsNode = new()
-    {
+    private static readonly List<VersionBData.Metric> VersionBMetricsNode =
+    [
         new VersionBData.Metric("temperatureNode", VersionBData.DataType.Float, 1.243f),
         new VersionBData.Metric("climateactiveNode", VersionBData.DataType.Boolean, true)
-    };
+    ];
 
     /// <summary>
     /// The version A metrics for a device.
     /// </summary>
-    private static readonly List<VersionBData.Metric> VersionBMetricsDevice = new()
-    {
+    private static readonly List<VersionBData.Metric> VersionBMetricsDevice =
+    [
         new VersionBData.Metric("temperatureDevice", VersionBData.DataType.Float, 1.243f),
         new VersionBData.Metric("climateactiveDevice", VersionBData.DataType.Boolean, true)
-    };
+    ];
 
     /// <summary>
     /// The main method.

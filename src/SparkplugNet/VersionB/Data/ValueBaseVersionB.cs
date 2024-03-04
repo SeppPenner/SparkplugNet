@@ -94,6 +94,11 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                     this.ObjectValue = ulongValue;
                     break;
                 }
+                else if (value is long longValue)
+                {
+                    this.ObjectValue = (ulong)longValue;
+                    break;
+                }
                 else
                 {
                     throw new InvalidOperationException($"Value {value} is not a valid date time value");
