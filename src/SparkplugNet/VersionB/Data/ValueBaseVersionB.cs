@@ -31,7 +31,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
         VersionBDataTypeEnum.Double => this.ObjectValue.ConvertOrDefaultTo<double>(),
         VersionBDataTypeEnum.Boolean => this.ObjectValue.ConvertOrDefaultTo<bool>(),
         VersionBDataTypeEnum.String => this.ObjectValue.ConvertOrDefaultTo<string>(),
-        VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds(this.ObjectValue.ConvertOrDefaultTo<long>()).DateTime,
+        VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds(this.ObjectValue.ConvertOrDefaultTo<long>()).UtcDateTime,
         VersionBDataTypeEnum.Text => this.ObjectValue.ConvertOrDefaultTo<string>(),
         VersionBDataTypeEnum.Uuid => Guid.Parse(this.ObjectValue.ConvertOrDefaultTo<string>()),
         _ => null
@@ -82,6 +82,11 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                 if (value is DateTime dateTime)
                 {
                     this.ObjectValue = (ulong)new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+                    break;
+                }
+                else if (value is DateTimeOffset dateTimeOffset)
+                {
+                    this.ObjectValue = (ulong)dateTimeOffset.ToUnixTimeMilliseconds();
                     break;
                 }
                 else if (value is ulong ulongValue)
