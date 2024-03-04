@@ -22,10 +22,10 @@ public sealed class SparkplugPayloadConverterTestVersionB
     public void TestConvertVersionBPayloadFromProto()
     {
         var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime = new DateTime(2020, 1, 1, 0, 0, 0);
-        var dateTime2 = new DateTime(2022, 1, 1, 0, 0, 0);
-        var dateTime3 = new DateTime(2023, 1, 1, 0, 0, 0);
-        var dateTime4 = new DateTime(2024, 1, 1, 0, 0, 0);
+        var dateTime = new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime3 = new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionBProtoBufPayload.Metric>
         {
@@ -498,7 +498,10 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTimeArray,
-                BytesValue = [0x00, 0x0b, 0xf9, 0x5d, 0x6f, 0x01, 0x00, 0x00, 0x00, 0xbf, 0x81, 0x12, 0x7e, 0x01, 0x00, 0x00, 0x00, 0xeb, 0x32, 0x6a, 0x85, 0x01, 0x00, 0x00, 0x00, 0x17, 0xe4, 0xc1, 0x8c, 0x01, 0x00, 0x00]
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00, 
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00, 
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
             }
         };
         var convertedMetrics = new List<VersionBData.Metric>
@@ -780,7 +783,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test34", VersionBData.DataType.DateTimeArray, new DateTime[] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
+            new("Test34", VersionBData.DataType.DateTimeArray, new DateTimeOffset[] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
             {
                 Alias = 34,
                 IsHistorical = true,
@@ -818,10 +821,10 @@ public sealed class SparkplugPayloadConverterTestVersionB
     public void TestConvertVersionBPayloadToProto()
     {
         var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var dateTime = new DateTime(2020, 1, 1, 0, 0, 0);
-        var dateTime2 = new DateTime(2022, 1, 1, 0, 0, 0);
-        var dateTime3 = new DateTime(2023, 1, 1, 0, 0, 0);
-        var dateTime4 = new DateTime(2024, 1, 1, 0, 0, 0);
+        var dateTime = new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime3 = new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionBData.Metric>
         {
@@ -1103,7 +1106,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test34", VersionBData.DataType.DateTimeArray, new DateTime [] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
+            new("Test34", VersionBData.DataType.DateTimeArray, new DateTimeOffset [] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
             {
                 Alias = 34,
                 IsHistorical = true,
@@ -1581,7 +1584,10 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DateTimeArray,
-                BytesValue = [0x00, 0x0b, 0xf9, 0x5d, 0x6f, 0x01, 0x00, 0x00, 0x00, 0xbf, 0x81, 0x12, 0x7e, 0x01, 0x00, 0x00, 0x00, 0xeb, 0x32, 0x6a, 0x85, 0x01, 0x00, 0x00, 0x00, 0x17, 0xe4, 0xc1, 0x8c, 0x01, 0x00, 0x00]
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00, 
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00, 
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
             }
         };
         var oldPayload = new VersionBData.Payload
