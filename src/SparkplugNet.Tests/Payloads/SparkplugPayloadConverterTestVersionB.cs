@@ -26,6 +26,22 @@ public sealed class SparkplugPayloadConverterTestVersionB
         var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var dateTime3 = new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateArray1 = new DateTimeOffset[] { dateTime, dateTime2, dateTime3, dateTime4 };
+        var dateArray2 = new DateTime[] { dateTime.UtcDateTime, dateTime2.UtcDateTime, dateTime3.UtcDateTime, dateTime4.UtcDateTime };
+        var dateArray3 = new ulong[]
+        {
+            (ulong)dateTime.ToUnixTimeMilliseconds(),
+            (ulong)dateTime2.ToUnixTimeMilliseconds(),
+            (ulong)dateTime3.ToUnixTimeMilliseconds(),
+            (ulong)dateTime4.ToUnixTimeMilliseconds()
+        };
+        var dateArray4 = new long[]
+        {
+            dateTime.ToUnixTimeMilliseconds(),
+            dateTime2.ToUnixTimeMilliseconds(),
+            dateTime3.ToUnixTimeMilliseconds(),
+            dateTime4.ToUnixTimeMilliseconds()
+        };
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionBProtoBufPayload.Metric>
         {
@@ -465,7 +481,10 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DoubleArray,
-                BytesValue = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x40]
+                BytesValue = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x40,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x40]
             },
             new()
             {
@@ -501,6 +520,48 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
                               0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00, 
                               0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00, 
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
+            },
+            new()
+            {
+                Name = "Test35",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 35,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBData.DataType.DateTimeArray,
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
+            },
+            new()
+            {
+                Name = "Test36",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 36,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBData.DataType.DateTimeArray,
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
+            },
+            new()
+            {
+                Name = "Test37",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 37,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBData.DataType.DateTimeArray,
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
                               0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
             }
         };
@@ -783,9 +844,27 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test34", VersionBData.DataType.DateTimeArray, new DateTimeOffset[] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
+            new("Test34", VersionBData.DataType.DateTimeArray, dateArray1, timestamp)
             {
                 Alias = 34,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test35", VersionBData.DataType.DateTimeArray, dateArray2, timestamp)
+            {
+                Alias = 35,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test36", VersionBData.DataType.DateTimeArray, dateArray3, timestamp)
+            {
+                Alias = 36,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test37", VersionBData.DataType.DateTimeArray, dateArray4, timestamp)
+            {
+                Alias = 37,
                 IsHistorical = true,
                 IsTransient = true
             }
@@ -826,6 +905,23 @@ public sealed class SparkplugPayloadConverterTestVersionB
         var dateTime3 = new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var bodyData = new byte[] { 1, 2, 3, 4 };
+        var dateArray1 = new DateTimeOffset[] { dateTime, dateTime2, dateTime3, dateTime4 };
+        var dateArray2 = new DateTime[] { dateTime.UtcDateTime, dateTime2.UtcDateTime, dateTime3.UtcDateTime, dateTime4.UtcDateTime };
+        var dateArray3 = new ulong[]
+        {
+            (ulong)dateTime.ToUnixTimeMilliseconds(),
+            (ulong)dateTime2.ToUnixTimeMilliseconds(),
+            (ulong)dateTime3.ToUnixTimeMilliseconds(),
+            (ulong)dateTime4.ToUnixTimeMilliseconds()
+        };
+        var dateArray4 = new long[]
+        {
+            dateTime.ToUnixTimeMilliseconds(),
+            dateTime2.ToUnixTimeMilliseconds(),
+            dateTime3.ToUnixTimeMilliseconds(),
+            dateTime4.ToUnixTimeMilliseconds()
+        };
+
         var metrics = new List<VersionBData.Metric>
         {
             new("Test1", VersionBData.DataType.Int8, (sbyte)1, timestamp)
@@ -1106,9 +1202,27 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test34", VersionBData.DataType.DateTimeArray, new DateTimeOffset [] { dateTime, dateTime2, dateTime3, dateTime4 }, timestamp)
+            new("Test34", VersionBData.DataType.DateTimeArray, dateArray1, timestamp)
             {
                 Alias = 34,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test35", VersionBData.DataType.DateTimeArray, dateArray2, timestamp)
+            {
+                Alias = 35,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test36", VersionBData.DataType.DateTimeArray, dateArray3, timestamp)
+            {
+                Alias = 36,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test37", VersionBData.DataType.DateTimeArray, dateArray4, timestamp)
+            {
+                Alias = 37,
                 IsHistorical = true,
                 IsTransient = true
             }
@@ -1551,7 +1665,10 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DoubleArray,
-                BytesValue = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x40]
+                BytesValue = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x40,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x40]
             },
             new()
             {
@@ -1587,6 +1704,48 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
                               0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00, 
                               0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00, 
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
+            },
+            new()
+            {
+                Name = "Test35",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 35,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.DateTimeArray,
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
+            },
+            new()
+            {
+                Name = "Test36",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 36,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.DateTimeArray,
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
+                              0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
+            },
+            new()
+            {
+                Name = "Test37",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 37,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.DateTimeArray,
+                BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
                               0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
             }
         };
