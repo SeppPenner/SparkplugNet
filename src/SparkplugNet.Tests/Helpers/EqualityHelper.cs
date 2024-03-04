@@ -39,8 +39,7 @@ internal static class EqualityHelper
         {
             var expectedValue = DateTimeOffset.FromUnixTimeMilliseconds((long)expectedMetric.LongValue).DateTime;
             var newValue = DateTimeOffset.FromUnixTimeMilliseconds((long)newMetric.LongValue).DateTime;
-            // Todo: Datetime might be in the wrong time zone...
-            //Assert.AreEqual(expectedValue, newValue);
+            Assert.AreEqual(expectedValue, newValue);
         }
         else
         {
@@ -67,8 +66,7 @@ internal static class EqualityHelper
         switch (newMetric.DataType)
         {
             case VersionBData.DataType.DateTime:
-                // Todo: Datetime might be in the wrong time zone...
-                //Assert.AreEqual(expectedMetric.Value, newMetric.Value);
+                Assert.AreEqual(expectedMetric.Value, newMetric.Value);
                 break;
             case VersionBData.DataType.DataSet:
                 var expectedDataSet = expectedMetric.Value as VersionBData.DataSet;
