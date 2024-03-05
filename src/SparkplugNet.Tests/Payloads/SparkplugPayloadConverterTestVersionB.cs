@@ -27,7 +27,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
         var dateTime3 = new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var dateArray1 = new DateTimeOffset[] { dateTime, dateTime2, dateTime3, dateTime4 };
-        var dateArray2 = new DateTime[] { dateTime.DateTime, dateTime2.DateTime, dateTime3.DateTime, dateTime4.DateTime };
+        var dateArray2 = new DateTime[] { dateTime.UtcDateTime, dateTime2.UtcDateTime, dateTime3.UtcDateTime, dateTime4.UtcDateTime };
         var dateArray3 = new ulong[]
         {
             (ulong)dateTime.ToUnixTimeMilliseconds(),
@@ -186,7 +186,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTime,
-                LongValue = 1546297200000
+                LongValue = 1546300800000 
             },
             new()
             {
@@ -197,7 +197,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTime,
-                LongValue = 1546297200000
+                LongValue = 1546300800000
             },
             new()
             {
@@ -208,7 +208,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTime,
-                LongValue = 1546297200000
+                LongValue = 1546300800000
             },
             new()
             {
@@ -661,7 +661,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test13", VersionBData.DataType.DateTime, timestamp.DateTime, timestamp)
+            new("Test13", VersionBData.DataType.DateTime, timestamp.UtcDateTime, timestamp)
             {
                 Alias = 13,
                 IsHistorical = true,
@@ -940,7 +940,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
         var dateTime4 = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var dateArray1 = new DateTimeOffset[] { dateTime, dateTime2, dateTime3, dateTime4 };
-        var dateArray2 = new DateTime[] { dateTime.DateTime, dateTime2.DateTime, dateTime3.DateTime, dateTime4.DateTime };
+        var dateArray2 = new DateTime[] { dateTime.UtcDateTime, dateTime2.UtcDateTime, dateTime3.UtcDateTime, dateTime4.UtcDateTime };
         var dateArray3 = new ulong[]
         {
             (ulong)dateTime.ToUnixTimeMilliseconds(),
@@ -1030,7 +1030,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test13", VersionBData.DataType.DateTime, timestamp.DateTime, timestamp)
+            new("Test13", VersionBData.DataType.DateTime, timestamp.UtcDateTime, timestamp)
             {
                 Alias = 13,
                 IsHistorical = true,

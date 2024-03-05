@@ -31,7 +31,8 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
         VersionBDataTypeEnum.Double => this.ObjectValue.ConvertOrDefaultTo<double>(),
         VersionBDataTypeEnum.Boolean => this.ObjectValue.ConvertOrDefaultTo<bool>(),
         VersionBDataTypeEnum.String => this.ObjectValue.ConvertOrDefaultTo<string>(),
-        VersionBDataTypeEnum.DateTime => DateTimeOffset.FromUnixTimeMilliseconds(this.ObjectValue.ConvertOrDefaultTo<long>()).UtcDateTime,
+        //Better return DateTimeOffset object instead of DateTime?
+        VersionBDataTypeEnum.DateTime =>VersionBData.MetricTimeValue.GetDateTimeOffset(this.ObjectValue.ConvertOrDefaultTo<ulong>()), //.UtcDateTime,
         VersionBDataTypeEnum.Text => this.ObjectValue.ConvertOrDefaultTo<string>(),
         VersionBDataTypeEnum.Uuid => Guid.Parse(this.ObjectValue.ConvertOrDefaultTo<string>()),
         _ => null
@@ -78,31 +79,8 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                 {
                     return this;
                 }
-
-                if (value is DateTime dateTime)
-                {
-                    this.ObjectValue = (ulong)new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
-                    break;
-                }
-                else if (value is DateTimeOffset dateTimeOffset)
-                {
-                    this.ObjectValue = (ulong)dateTimeOffset.ToUnixTimeMilliseconds();
-                    break;
-                }
-                else if (value is ulong ulongValue)
-                {
-                    this.ObjectValue = ulongValue;
-                    break;
-                }
-                else if (value is long longValue)
-                {
-                    this.ObjectValue = (ulong)longValue;
-                    break;
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Value {value} is not a valid date time value");
-                }
+                this.ObjectValue = MetricTimeValue.GetMilliSeconds(value).ConvertTo<ulong>();
+                break;
             case VersionBDataTypeEnum.Float:
                 this.ObjectValue = value.ConvertTo<float>();
                 break;
@@ -142,7 +120,6 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
             default:
                 throw new NotImplementedException($"Type {dataType} is not supported yet");
         }
-
         return this;
     }
 }
