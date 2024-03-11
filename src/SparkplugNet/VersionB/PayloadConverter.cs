@@ -722,7 +722,7 @@ internal static class PayloadConverter
     /// <param name="dataType">The data type.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue ConvertVersionBDataSetValue(DataSetValue dataSetValue, uint dataType)
-        => (VersionBDataTypeEnum)dataType switch
+        => (VersionBDataTypeEnum)dataSetValue.DataType switch
         {
             VersionBDataTypeEnum.Int8
              or VersionBDataTypeEnum.Int16
