@@ -306,9 +306,10 @@ internal static class PayloadConverter
                 protoMetric.BytesValue = Encoding.UTF8.GetBytes(joinedStrings);
                 break;
             case VersionBDataTypeEnum.DateTimeArray:
-                var dateTimes = metric.Value as DateTime[] ?? [];
-                var ulongArray = dateTimes.Select(x => (ulong)new DateTimeOffset(x).ToUnixTimeMilliseconds()).ToArray();
-                protoMetric.BytesValue = PayloadHelper.GetBytesFromArray(ulongArray, BinaryPrimitives.WriteUInt64LittleEndian);
+                var dateTimes = metric.Value as DateTimeOffset[] ?? [];
+                var ulongArray = dateTimes.Select(x => MetricTimeValue.GetMilliSeconds(x)).ToArray();
+                protoMetric.BytesValue =
+                    PayloadHelper.GetBytesFromArray(ulongArray, BinaryPrimitives.WriteUInt64LittleEndian);
                 break;
             // Todo: What to do here?
             case VersionBDataTypeEnum.PropertySetList:

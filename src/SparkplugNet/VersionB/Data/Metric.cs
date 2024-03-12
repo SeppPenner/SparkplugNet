@@ -200,22 +200,22 @@ public class Metric : ValueBaseVersionB, IMetric
 
                 if (value is DateTimeOffset[] dateTimeOffsets)
                 {
-                    this.ObjectValue = dateTimeOffsets.Select(d => (ulong)d.ToUnixTimeMilliseconds()).ToArray();
+                    this.ObjectValue = dateTimeOffsets.Select(d => (ulong)MetricTimeValue.GetMilliSeconds(d)).ToArray();
                     break;
                 }
                 else if (value is DateTime[] dateTimes)
                 {
-                    this.ObjectValue = dateTimes.Select(d => (ulong)new DateTimeOffset(d).ToUnixTimeMilliseconds()).ToArray();
+                    this.ObjectValue = dateTimes.Select(d => (ulong)MetricTimeValue.GetMilliSeconds(d)).ToArray();
                     break;
                 }
                 else if (value is ulong[] ulongValues)
                 {
-                    this.ObjectValue = ulongValues;
+                    this.ObjectValue = ulongValues.Select(ul=>MetricTimeValue.GetMilliSeconds(ul)).ToArray();
                     break;
                 }
                 else if (value is long[] longValues)
                 {
-                    this.ObjectValue = longValues.Select(l => (ulong)l).ToArray();
+                    this.ObjectValue = longValues.Select(l=>MetricTimeValue.GetMilliSeconds(l)).ToArray();
                     break;
                 }
                 else
@@ -285,7 +285,7 @@ public class Metric : ValueBaseVersionB, IMetric
                 return this.ObjectValue.ConvertOrDefaultTo<ulong[]>();
             case VersionBDataTypeEnum.DateTimeArray:
                 return this.ObjectValue.ConvertOrDefaultTo<ulong[]>()
-                    .Select(v => DateTimeOffset.FromUnixTimeMilliseconds((long)v).UtcDateTime)
+                    .Select(MetricTimeValue.GetDateTimeOffset)
                     .ToArray();
             case VersionBDataTypeEnum.FloatArray:
                 return this.ObjectValue.ConvertOrDefaultTo<float[]>();
