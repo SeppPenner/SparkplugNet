@@ -225,8 +225,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
 
         if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
-            // No idea why we need a bang (!) operator here?!
-            this.DeviceStates[topic.DeviceIdentifier!] = metricState;
+            if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+            {
+                throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
+            }
+
+            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
         }
         else
         {

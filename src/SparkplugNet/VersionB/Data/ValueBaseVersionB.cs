@@ -120,6 +120,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
             default:
                 throw new NotImplementedException($"Type {dataType} is not supported yet");
         }
+
         return this;
     }
 }

@@ -210,7 +210,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
 
         if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
-            this.DeviceStates[topic.DeviceIdentifier] = metricState;
+            if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+            {
+                throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
+            }
+
+            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
         }
         else
         {
