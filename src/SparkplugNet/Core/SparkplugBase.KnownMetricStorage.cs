@@ -62,9 +62,9 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         {
             return metrics.Where(m =>
                 // Remove the session number metric if a user might have added it.
-                !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
+                !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) 
                 // Remove all not known metrics.
-                this.ContainsKey(m.Name)
+                //this.ContainsKey(m.Name)
             );
         }
 
