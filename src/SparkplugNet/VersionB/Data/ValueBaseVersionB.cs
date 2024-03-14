@@ -31,8 +31,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
         VersionBDataTypeEnum.Double => this.ObjectValue.ConvertOrDefaultTo<double>(),
         VersionBDataTypeEnum.Boolean => this.ObjectValue.ConvertOrDefaultTo<bool>(),
         VersionBDataTypeEnum.String => this.ObjectValue.ConvertOrDefaultTo<string>(),
-        //Better return DateTimeOffset object instead of DateTime?
-        VersionBDataTypeEnum.DateTime =>VersionBData.MetricTimeValue.GetDateTimeOffset(this.ObjectValue.ConvertOrDefaultTo<ulong>()), //.UtcDateTime,
+        VersionBDataTypeEnum.DateTime => MetricTimeValue.GetDateTimeOffset(this.ObjectValue.ConvertOrDefaultTo<ulong>()),
         VersionBDataTypeEnum.Text => this.ObjectValue.ConvertOrDefaultTo<string>(),
         VersionBDataTypeEnum.Uuid => Guid.Parse(this.ObjectValue.ConvertOrDefaultTo<string>()),
         _ => null
@@ -79,6 +78,7 @@ public abstract class ValueBaseVersionB : ValueBase<VersionBDataTypeEnum>
                 {
                     return this;
                 }
+
                 this.ObjectValue = MetricTimeValue.GetMilliSeconds(value).ConvertTo<ulong>();
                 break;
             case VersionBDataTypeEnum.Float:

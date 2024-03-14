@@ -308,8 +308,7 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.DateTimeArray:
                 var dateTimes = metric.Value as DateTimeOffset[] ?? [];
                 var ulongArray = dateTimes.Select(x => MetricTimeValue.GetMilliSeconds(x)).ToArray();
-                protoMetric.BytesValue =
-                    PayloadHelper.GetBytesFromArray(ulongArray, BinaryPrimitives.WriteUInt64LittleEndian);
+                protoMetric.BytesValue = PayloadHelper.GetBytesFromArray(ulongArray, BinaryPrimitives.WriteUInt64LittleEndian);
                 break;
             // Todo: What to do here?
             case VersionBDataTypeEnum.PropertySetList:

@@ -1,17 +1,25 @@
-﻿namespace SparkplugNet.VersionB.Data;
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MetricTimeValue.cs" company="Hämmer Electronics">
+// The project is licensed under the MIT license.
+// </copyright>
+// <summary>
+//   A class to store metric time values and perform operations on them.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System.Runtime.CompilerServices;
+namespace SparkplugNet.VersionB.Data;
 
 /// <summary>
-/// Class to store metric time values. and perform operations on them.
+/// A class to store metric time values and perform operations on them.
 /// </summary>
 public static class MetricTimeValue
 {
     /// <summary>
-    /// Return the UTC time in milliseconds Since Unix Epoch
+    /// Gets the UTC time in milliseconds since the unix epoch.
     /// </summary>
-    /// <param name="value">UTC Time</param>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <param name="value">The UTC time.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the value is in UTC or out of range.</exception>
+    /// <returns>The milliseconds.</returns>
     public static ulong GetMilliSeconds(object value)
     {
         switch (value)
@@ -19,34 +27,35 @@ public static class MetricTimeValue
             case DateTime dateTime:
                 return (dateTime.Kind != DateTimeKind.Utc)
                     ? throw new InvalidOperationException("DateTime value must be in UTC")
-                    : (ulong)new DateTimeOffset(dateTime).ToUnixTimeMilliseconds(); 
+                    : (ulong)new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
 
             case DateTimeOffset dateTimeOffset:
-                return (dateTimeOffset.Offset != TimeSpan.Zero) 
-                    ? throw new InvalidOperationException("DateTime value must be in UTC") 
+                return (dateTimeOffset.Offset != TimeSpan.Zero)
+                    ? throw new InvalidOperationException("DateTime value must be in UTC")
                     : (ulong)dateTimeOffset.ToUnixTimeMilliseconds();
-            
-            case ulong :
+
+            case ulong:
             case long:
-                long longValue = value.ConvertTo<long>();
-                if (longValue> DateTimeOffset.MaxValue.ToUnixTimeMilliseconds() 
+                var longValue = value.ConvertTo<long>();
+
+                if (longValue > DateTimeOffset.MaxValue.ToUnixTimeMilliseconds()
                     || (longValue < DateTimeOffset.MinValue.ToUnixTimeMilliseconds()))
                 {
                     throw new InvalidOperationException("Value out of range");
                 }
-                return (ulong) longValue;
+
+                return (ulong)longValue;
             default:
                 throw new InvalidOperationException($"Value {value} is not a valid time value");
         }
     }
-    
+
     /// <summary>
-    /// Returns the DateTimeOffset date time value
+    /// Gets the <see cref="DateTimeOffset"/> from the long value.
     /// </summary>
-    /// <returns>DateTimeOffset</returns>
+    /// <returns>The <see cref="DateTimeOffset"/> value.</returns>
     public static DateTimeOffset GetDateTimeOffset(ulong value)
     {
         return DateTimeOffset.FromUnixTimeMilliseconds((long)GetMilliSeconds(value));
     }
 }
-

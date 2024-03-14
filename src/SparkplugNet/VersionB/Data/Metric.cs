@@ -200,22 +200,22 @@ public class Metric : ValueBaseVersionB, IMetric
 
                 if (value is DateTimeOffset[] dateTimeOffsets)
                 {
-                    this.ObjectValue = dateTimeOffsets.Select(d => (ulong)MetricTimeValue.GetMilliSeconds(d)).ToArray();
+                    this.ObjectValue = dateTimeOffsets.Select(d => MetricTimeValue.GetMilliSeconds(d)).ToArray();
                     break;
                 }
                 else if (value is DateTime[] dateTimes)
                 {
-                    this.ObjectValue = dateTimes.Select(d => (ulong)MetricTimeValue.GetMilliSeconds(d)).ToArray();
+                    this.ObjectValue = dateTimes.Select(d => MetricTimeValue.GetMilliSeconds(d)).ToArray();
                     break;
                 }
                 else if (value is ulong[] ulongValues)
                 {
-                    this.ObjectValue = ulongValues.Select(ul=>MetricTimeValue.GetMilliSeconds(ul)).ToArray();
+                    this.ObjectValue = ulongValues.Select(ul => MetricTimeValue.GetMilliSeconds(ul)).ToArray();
                     break;
                 }
                 else if (value is long[] longValues)
                 {
-                    this.ObjectValue = longValues.Select(l=>MetricTimeValue.GetMilliSeconds(l)).ToArray();
+                    this.ObjectValue = longValues.Select(l => MetricTimeValue.GetMilliSeconds(l)).ToArray();
                     break;
                 }
                 else
