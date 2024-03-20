@@ -80,8 +80,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         this.Options = nodeOptions;
 
         // Add handlers.
-        this.AddEventHandler();
-        this.AddMessageReceivedHandler();
+        this.AddEventHandlers();
 
         // Connect, subscribe to incoming messages and send a state message.
         await this.ConnectInternal();
@@ -95,6 +94,9 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     public async Task Stop()
     {
         this.IsRunning = false;
+        await this.SendNodeDeathMessage();
+        this.RemoveEventHandlers();
+        await this.FireDisconnected();
         await this.client.DisconnectAsync();
     }
 
@@ -154,13 +156,23 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
 
     /// <summary>
-    /// Adds the disconnected handler and the reconnect functionality to the client.
+    /// Adds the event handlers to the client.
     /// </summary>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private void AddEventHandler()
+    private void AddEventHandlers()
     {
         this.client.DisconnectedAsync += this.OnClientDisconnected;
         this.client.ConnectedAsync += this.OnClientConnected;
+        this.client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
+    }
+
+    /// <summary>
+    /// Removes the event handlers from the client.
+    /// </summary>
+    private void RemoveEventHandlers()
+    {
+        this.client.DisconnectedAsync -= this.OnClientDisconnected;
+        this.client.ConnectedAsync -= this.OnClientConnected;
+        this.client.ApplicationMessageReceivedAsync -= this.OnApplicationMessageReceived;
     }
 
     /// <summary>
@@ -195,16 +207,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             await Task.FromException(ex);
         }
-    }
-
-    /// <summary>
-    /// Adds the message received handler to handle incoming messages.
-    /// </summary>
-    /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
-    private void AddMessageReceivedHandler()
-    {
-        this.client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
     }
 
     /// <summary>
@@ -402,5 +404,28 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);
         await this.client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+    }
+
+    /// <summary>
+    /// Sends the node death message when intentionally stopping the node.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    private async Task SendNodeDeathMessage()
+    {
+        if (this.Options is null)
+        {
+            throw new ArgumentNullException(nameof(this.Options));
+        }
+
+        // Get the node death message.
+        var nodeDeathMessage = this.messageGenerator.GetSparkplugNodeDeathMessage(
+            this.NameSpace,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier,
+            this.LastSessionNumber);
+
+        // Publish message.
+        this.Options.CancellationToken ??= SystemCancellationToken.None;
+        await this.client.PublishAsync(nodeDeathMessage, this.Options.CancellationToken.Value);
     }
 }

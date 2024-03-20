@@ -89,8 +89,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         this.DeviceStates.Clear();
 
         // Add handlers.
-        this.AddEventHandler();
-        this.AddMessageReceivedHandler();
+        this.AddEventHandlers();
 
         // Connect, subscribe to incoming messages and send a state message.
         await this.ConnectInternal();
@@ -104,6 +103,9 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     public async Task Stop()
     {
         this.IsRunning = false;
+        await this.SendOfflineStateMessage();
+        this.RemoveEventHandlers();
+        await this.FireDisconnected();
         await this.client.DisconnectAsync();
     }
 
@@ -266,22 +268,23 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Adds the event handler and the reconnect functionality to the client.
+    /// Adds the event handlers to the client.
     /// </summary>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private void AddEventHandler()
+    private void AddEventHandlers()
     {
         this.client.DisconnectedAsync += this.OnClientDisconnected;
         this.client.ConnectedAsync += this.OnClientConnected;
+        this.client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
     }
 
     /// <summary>
-    /// Adds the message received handler to handle incoming messages.
+    /// Removes the event handlers from the client.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
-    private void AddMessageReceivedHandler()
+    private void RemoveEventHandlers()
     {
-        this.client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
+        this.client.DisconnectedAsync -= this.OnClientDisconnected;
+        this.client.ConnectedAsync -= this.OnClientConnected;
+        this.client.ApplicationMessageReceivedAsync -= this.OnApplicationMessageReceived;
     }
 
     /// <summary>
@@ -476,5 +479,27 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         {
             this.NodeStates[key].MetricStatus = metricState;
         }
+    }
+
+    /// <summary>
+    /// Sends the offline state message when intentionally stopping the application.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    private async Task SendOfflineStateMessage()
+    {
+        if (this.Options is null)
+        {
+            throw new ArgumentNullException(nameof(this.Options));
+        }
+
+        // Get the node death message.
+        var offlineStateMessage = this.messageGenerator.GetSparkplugStateMessage(
+            this.NameSpace,
+            this.Options.ScadaHostIdentifier,
+            false);
+
+        // Publish message.
+        this.Options.CancellationToken ??= SystemCancellationToken.None;
+        await this.client.PublishAsync(offlineStateMessage, this.Options.CancellationToken.Value);
     }
 }
