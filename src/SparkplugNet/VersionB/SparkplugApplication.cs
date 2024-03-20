@@ -22,11 +22,13 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     public SparkplugApplication(
         IEnumerable<Metric> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion)
-        : base(knownMetrics, specificationVersion)
+        SparkplugSpecificationVersion specificationVersion,
+        ILogger<KnownMetricStorage>? logger = null)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -52,7 +54,6 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishNodeCommandMessage(IEnumerable<Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.Options is null)
@@ -65,7 +66,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
-            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeCommand),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
@@ -86,7 +87,6 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task PublishDeviceCommandMessage(IEnumerable<Metric> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         if (this.Options is null)
@@ -105,7 +105,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             groupIdentifier,
             edgeNodeIdentifier,
             deviceIdentifier,
-            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.DeviceCommand),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
@@ -122,7 +122,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
@@ -130,6 +130,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
         if (payloadVersionB is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+
+            if (convertedPayload is not Payload _)
+            {
+                throw new InvalidCastException("The metric cast didn't work properly.");
+            }
+
             await this.HandleMessagesForVersionB(topic, convertedPayload);
         }
     }
@@ -141,14 +147,11 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="payload">The payload.</param>
     /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
     /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
     {
-        // If we have any not valid metric, throw an exception.
+        // Filter out settion number metric.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-
-        // Todo: Check if this might be needed / should be done in another way.
-        //this.KnownMetricsStorage.ValidateIncomingMetrics(metricsWithoutSequenceMetric);
+        this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType);
 
         switch (topic.MessageType)
         {

@@ -23,12 +23,14 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugApplicationBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugApplication(
         IEnumerable<VersionAData.KuraMetric> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion)
-        : base(knownMetrics, specificationVersion)
+        SparkplugSpecificationVersion specificationVersion,
+        ILogger<KnownMetricStorage>? logger = null)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -55,7 +57,6 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     protected override async Task PublishNodeCommandMessage(
         IEnumerable<VersionAData.KuraMetric> metrics,
@@ -77,7 +78,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
-            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeCommand),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -98,7 +99,6 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     protected override async Task PublishDeviceCommandMessage(
         IEnumerable<VersionAData.KuraMetric> metrics,
@@ -122,7 +122,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
             groupIdentifier,
             edgeNodeIdentifier,
             deviceIdentifier,
-            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.DeviceCommand),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -139,7 +139,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
+    /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
@@ -148,6 +148,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
         if (payloadVersionA is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
+
+            if (convertedPayload is not VersionAData.Payload _)
+            {
+                throw new InvalidCastException("The metric cast didn't work properly.");
+            }
+
             await this.HandleMessagesForVersionA(topic, convertedPayload);
         }
     }
@@ -159,13 +165,11 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <param name="payload">The payload.</param>
     /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
     /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task HandleMessagesForVersionA(SparkplugMessageTopic topic, VersionAData.Payload payload)
     {
-        // If we have any not valid metric, throw an exception.
+        // Filter out settion number metric.
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-
-        this.KnownMetricsStorage.ValidateIncomingMetrics(metricsWithoutSequenceMetric);
+        this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType);
 
         switch (topic.MessageType)
         {

@@ -34,7 +34,6 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// Fires the disconnected event asynchronously.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected Task FireDisconnected()
     {
         return this.disconnectedEvent.InvokeAsync(new SparkplugEventArgs(this));
@@ -59,7 +58,6 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// Fires the disconnected event asynchronously.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected Task FireConnected()
     {
         return this.connectedEvent.InvokeAsync(new SparkplugEventArgs(this));

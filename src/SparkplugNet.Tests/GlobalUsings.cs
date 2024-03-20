@@ -7,6 +7,7 @@ global using MQTTnet;
 
 global using SparkplugNet.Core;
 global using SparkplugNet.Core.Enumerations;
+global using SparkplugNet.Core.Exceptions;
 global using SparkplugNet.Core.Messages;
 
 global using SparkplugNet.Tests.Helpers;
@@ -17,4 +18,6 @@ global using VersionBProtoBuf = SparkplugNet.VersionB.ProtoBuf;
 
 global using VersionAData = SparkplugNet.VersionA.Data;
 global using VersionBData = SparkplugNet.VersionB.Data;
+global using VersionAMain = SparkplugNet.VersionA;
+global using VersionBMain = SparkplugNet.VersionB;
 #pragma warning restore IDE0065 // Die using-Anweisung wurde falsch platziert.

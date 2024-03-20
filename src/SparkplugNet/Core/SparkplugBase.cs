@@ -38,9 +38,10 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    /// <param name="logger">The logger.</param>
     /// <seealso cref="ISparkplugConnection"/>
-    public SparkplugBase(IEnumerable<T> knownMetrics, SparkplugSpecificationVersion specificationVersion)
-        : this(new KnownMetricStorage(knownMetrics), specificationVersion)
+    public SparkplugBase(IEnumerable<T> knownMetrics, SparkplugSpecificationVersion specificationVersion, ILogger<KnownMetricStorage>? logger = null)
+        : this(new KnownMetricStorage(knownMetrics, logger), specificationVersion)
     {
     }
 
@@ -65,7 +66,6 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         }
 
         this.client = new MqttFactory().CreateMqttClient();
-
         this.messageGenerator = new SparkplugMessageGenerator(specificationVersion);
     }
 
@@ -102,7 +102,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// Gets the known metric names.
     /// </summary>
-    public IEnumerable<T> KnownMetrics => this.knownMetrics.Values;
+    public IEnumerable<T> KnownMetrics => this.knownMetrics.Metrics;
 
     /// <summary>
     /// Gets the known metrics storage.

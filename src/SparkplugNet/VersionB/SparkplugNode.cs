@@ -22,11 +22,13 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
     public SparkplugNode(
         IEnumerable<Metric> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion)
-        : base(knownMetrics, specificationVersion)
+        SparkplugSpecificationVersion specificationVersion,
+        ILogger<KnownMetricStorage>? logger = null)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -68,7 +70,7 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
-            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeData),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
@@ -86,7 +88,6 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
@@ -95,25 +96,44 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
         {
             var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
 
-            if (convertedPayload is not Payload convertedPayloadVersionB)
+            if (convertedPayload is not Payload _)
             {
                 throw new InvalidCastException("The metric cast didn't work properly.");
             }
 
-            switch (topic.MessageType)
-            {
-                case SparkplugMessageType.DeviceCommand:
-                    if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                    {
-                        await this.FireDeviceCommandReceived(topic.DeviceIdentifier, convertedPayloadVersionB.Metrics);
-                    }
-
-                    break;
-
-                case SparkplugMessageType.NodeCommand:
-                    await this.FireNodeCommandReceived(convertedPayloadVersionB.Metrics);
-                    break;
-            }
+            await this.HandleMessagesForVersionB(topic, convertedPayload);
         }
     }
+
+    /// <summary>
+    /// Handles the received messages for payload version B.
+    /// </summary>
+    /// <param name="topic">The topic.</param>
+    /// <param name="payload">The payload.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
+    private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
+    {
+        // Filter out session number metric.
+        var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
+        this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType);
+
+        switch (topic.MessageType)
+        {
+            case SparkplugMessageType.DeviceCommand:
+                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
+                {
+                    throw new InvalidOperationException($"Topic {topic} is invalid!");
+                }
+
+                await this.FireDeviceCommandReceived(topic.DeviceIdentifier, payload.Metrics);
+                break;
+
+            case SparkplugMessageType.NodeCommand:
+                await this.FireNodeCommandReceived(payload.Metrics);
+                break;
+        }
+    }
+
+    // Todo: Check exception description in the method description,
+    // bei casts überall exceptions werfen, wenn es nicht klappt!
 }

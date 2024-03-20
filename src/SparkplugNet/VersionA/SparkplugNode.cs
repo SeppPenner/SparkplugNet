@@ -23,12 +23,14 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugNodeBase{T}"/>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     public SparkplugNode(
         IEnumerable<VersionAData.KuraMetric> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion)
-        : base(knownMetrics, specificationVersion)
+        SparkplugSpecificationVersion specificationVersion,
+        ILogger<KnownMetricStorage>? logger = null)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -72,7 +74,7 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
-            this.KnownMetricsStorage.FilterOutgoingMetrics(metrics),
+            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeData),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -90,7 +92,6 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
@@ -100,25 +101,41 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
         {
             var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
 
-            if (convertedPayload is not VersionAData.Payload convertedPayloadVersionA)
+            if (convertedPayload is not VersionAData.Payload _)
             {
                 throw new InvalidCastException("The metric cast didn't work properly.");
             }
 
-            switch (topic.MessageType)
-            {
-                case SparkplugMessageType.DeviceCommand:
-                    if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                    {
-                        await this.FireDeviceCommandReceived(topic.DeviceIdentifier, convertedPayloadVersionA.Metrics);
-                    }
+            await this.HandleMessagesForVersionB(topic, convertedPayload);
+        }
+    }
 
-                    break;
+    /// <summary>
+    /// Handles the received messages for payload version B.
+    /// </summary>
+    /// <param name="topic">The topic.</param>
+    /// <param name="payload">The payload.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
+    private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, VersionAData.Payload payload)
+    {
+        // Filter out session number metric.
+        var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
+        this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType);
 
-                case SparkplugMessageType.NodeCommand:
-                    await this.FireNodeCommandReceived(convertedPayloadVersionA.Metrics);
-                    break;
-            }
+        switch (topic.MessageType)
+        {
+            case SparkplugMessageType.DeviceCommand:
+                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
+                {
+                    throw new InvalidOperationException($"Topic {topic} is invalid!");
+                }
+
+                await this.FireDeviceCommandReceived(topic.DeviceIdentifier, payload.Metrics);
+                break;
+
+            case SparkplugMessageType.NodeCommand:
+                await this.FireNodeCommandReceived(payload.Metrics);
+                break;
         }
     }
 }

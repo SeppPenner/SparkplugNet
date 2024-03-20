@@ -22,11 +22,13 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// </summary>
     /// <param name="knownMetrics">The known metric names.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
     public SparkplugApplicationBase(
         IEnumerable<T> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion)
-        : base(knownMetrics, specificationVersion)
+        SparkplugSpecificationVersion specificationVersion,
+        ILogger<KnownMetricStorage>? logger = null)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -65,7 +67,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="applicationOptions">The application options.</param>
     /// <exception cref="InvalidOperationException">Thrown if the start should be only called once.</exception>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Start(SparkplugApplicationOptions applicationOptions)
     {
         if (this.IsRunning)
@@ -100,7 +101,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <summary>
     /// Stops the Sparkplug application.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Stop()
     {
         this.IsRunning = false;
@@ -117,7 +117,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or an invalid metric type was specified.</exception>
     /// <exception cref="ArgumentException">Thrown if the group or edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task PublishNodeCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.Options is null)
@@ -154,7 +153,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or an invalid metric type was specified.</exception>
     /// <exception cref="ArgumentException">Thrown if the group or edge node or device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task PublishDeviceCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         if (this.Options is null)
@@ -193,7 +191,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected abstract Task PublishNodeCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier);
 
     /// <summary>
@@ -205,7 +202,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected abstract Task PublishDeviceCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier);
 
     /// <summary>
@@ -213,14 +209,12 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
     /// Handles the client connected event.
     /// </summary>
     /// <param name="args">The arguments.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual async Task OnClientConnected(MqttClientConnectedEventArgs args)
     {
         try
@@ -238,7 +232,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// </summary>
     /// <param name="args">The arguments.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
         try
@@ -295,9 +288,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// Handles the message received handler.
     /// </summary>
     /// <param name="args">The arguments.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
         try
@@ -328,7 +319,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// Connects the Sparkplug application to the MQTT broker.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task ConnectInternal()
     {
         try
@@ -440,7 +430,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// Publishes data to the MQTT broker.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task PublishInternal()
     {
         if (this.Options is null)
@@ -469,7 +458,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <summary>
     /// Subscribes the client to the application subscribe topic.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task SubscribeInternal()
     {
         var topic = SparkplugTopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);

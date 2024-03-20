@@ -16,40 +16,53 @@ namespace SparkplugNet.Core;
 /// <seealso cref="ISparkplugConnection" />
 public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, new()
 {
-    /// <inheritdoc cref="ConcurrentDictionary{TKey, TValue}"/>
     /// <summary>
     /// A class to handle the known metric storage.
     /// </summary>
-    /// <seealso cref="ConcurrentDictionary{TKey, TValue}"/>
-    public class KnownMetricStorage : ConcurrentDictionary<string, T>
+    public class KnownMetricStorage
     {
+        /// <summary>
+        /// The known metrics by name.
+        /// </summary>
+        private readonly ConcurrentDictionary<string, T> knownMetricsByName = new();
+
+        /// <summary>
+        /// The known metrics by alias.
+        /// </summary>
+        private readonly ConcurrentDictionary<ulong, T> knownMetricsByAlias = new();
+
         /// <summary>
         /// Gets the metrics as <see cref="List{T}"/>.
         /// </summary>
-        public List<T> Metrics => [.. this.Values];
+        public List<T> Metrics => [.. this.knownMetricsByName.Values, .. this.knownMetricsByAlias.Values];
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        public readonly ILogger<KnownMetricStorage>? Logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KnownMetricStorage"/> class.
         /// </summary>
         /// <param name="knownMetrics">The known metrics.</param>
-        public KnownMetricStorage(IEnumerable<T> knownMetrics) : base(StringComparer.InvariantCultureIgnoreCase)
+        /// <param name="logger">The logger.</param>
+        public KnownMetricStorage(IEnumerable<T> knownMetrics, ILogger<KnownMetricStorage>? logger = null)
         {
+            this.Logger = logger;
+
             foreach (var metric in knownMetrics)
             {
-                // Check the name of the metric.
-                if (string.IsNullOrWhiteSpace(metric.Name))
+                // Version A: KuraMetric has name only.
+                if (metric is VersionAData.KuraMetric _)
                 {
-                    throw new Exception($"A metric without a name is not allowed.");
+                    this.AddVersionAMetric(metric);
                 }
 
-                // Check the value of the metric.
-                if (metric.Value is null)
+                // Version B: Metric might have name and alias.
+                if (metric is Metric versionBMetric)
                 {
-                    throw new Exception($"A metric without a current value is not allowed.");
+                    this.AddVersionBMetric(metric, versionBMetric);
                 }
-
-                // Hint: Data type doesn't need to be checked, is not nullable.
-                this[metric.Name] = metric;
             }
         }
 
@@ -57,27 +70,213 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// Filters the outgoing metrics.
         /// </summary>
         /// <param name="metrics">The metric.</param>
+        /// <param name="sparkplugMessageType">The Sparkplug message type.</param>
         /// <returns>The filtered metrics.</returns>
-        public virtual IEnumerable<T> FilterOutgoingMetrics(IEnumerable<T> metrics)
+        public virtual IEnumerable<T> FilterMetrics(IEnumerable<T> metrics, SparkplugMessageType sparkplugMessageType)
         {
-            return metrics.Where(m =>
-                // Remove the session number metric if a user might have added it.
-                !string.Equals(m.Name, Constants.SessionNumberMetricName, StringComparison.InvariantCultureIgnoreCase) &&
-                // Remove all not known metrics.
-                this.ContainsKey(m.Name)
-            );
+            // The filtered metrics.
+            var filteredMetrics = new List<T>();
+
+            foreach (var metric in metrics)
+            {
+                // Version A: KuraMetric has name only.
+                if (metric is VersionAData.KuraMetric versionAMetric)
+                {
+                    if (this.ShoudVersionAMetricBeAdded(versionAMetric))
+                    {
+                        filteredMetrics.Add(metric);
+                        continue;
+                    }
+                }
+
+                // Version B: Metric might have name and alias.
+                if (metric is Metric versionBMetric)
+                {
+                    if (this.ShoudVersionBMetricBeAdded(sparkplugMessageType, versionBMetric))
+                    {
+                        filteredMetrics.Add(metric);
+                        continue;
+                    }
+                }
+            }
+
+            return filteredMetrics;
         }
 
         /// <summary>
-        /// Validates the incoming metrics.
+        /// Gets a value indicating whether a version B metric should be added to the result or not.
         /// </summary>
-        /// <param name="metrics">The metrics.</param>
-        /// <exception cref="Exception">Thrown if the metric name is an unknown metric.</exception>
-        public virtual void ValidateIncomingMetrics(IEnumerable<T> metrics)
+        /// <param name="sparkplugMessageType">The Sparkplug message type.</param>
+        /// <param name="metric">The converted (typed) metric.</param>
+        /// <returns>A value indicating whether a version B metric should be added to the result or not.</returns>
+        private bool ShoudVersionBMetricBeAdded(SparkplugMessageType sparkplugMessageType, Metric metric)
         {
-            foreach (var metric in metrics.Where(metric => !this.ContainsKey(metric.Name)))
+            var shouldbeAdded = true;
+
+            // Check the name of the metric.
+            if (string.IsNullOrWhiteSpace(metric.Name))
             {
-                throw new Exception($"Metric {metric.Name} is an unknown metric.");
+                // Check the alias of the metric.
+                if (metric.Alias is null)
+                {
+                    shouldbeAdded = false;
+                    this.Logger?.LogError("A metric without a name and an alias is not allowed: {Metric}.", metric);
+                    return shouldbeAdded;
+                }
+
+                // Check if the metric is known.
+                if (!this.knownMetricsByAlias.TryGetValue(metric.Alias.Value, out var foundMetric))
+                {
+                    shouldbeAdded = false;
+                    this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);
+                }
+
+                // Check if the found metric is a version A metric.
+                if (foundMetric is not Metric foundVersionBMetric)
+                {
+                    shouldbeAdded = false;
+                    this.Logger?.LogError("The metric cast didn't work properly.");
+                }
+                else if (foundVersionBMetric.DataType != metric.DataType)
+                {
+                    shouldbeAdded = false;
+                    this.Logger?.LogError("The metric's data type is invalid.");
+                }
+            }
+            else
+            {
+                // Check if the metric is known.
+                if (!this.knownMetricsByName.TryGetValue(metric.Name, out var knownMetric))
+                {
+                    shouldbeAdded = false;
+                    this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);
+                }
+
+
+
+
+
+
+                // NBIRTH and DBIRTH messages MUST include both a metric name and an alias (if aliases should be used).
+                var isBirthMessage = sparkplugMessageType == SparkplugMessageType.NodeBirth || sparkplugMessageType == SparkplugMessageType.DeviceBirth;
+
+                if (isBirthMessage && metric.Alias is null)
+                {
+                    shouldbeAdded = false;
+                    this.Logger?.LogError("The metric {Metric} is removed because it comes from a NBIRTH or DBIRTH message, but has no alias set.", metric);
+                }
+
+
+
+                // knownMetric
+
+
+                // NDATA, DDATA, NCMD, and DCMD messages MUST only include an alias and the metric name MUST be excluded.
+
+                // Todo:
+                // In special cases, check if alias is also set!
+            }
+
+            return shouldbeAdded;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether a version A metric should be added to the result or not.
+        /// </summary>
+        /// <param name="metric">The converted (typed) metric.</param>
+        /// <returns>A value indicating whether a version A metric should be added to the result or not.</returns>
+        private bool ShoudVersionAMetricBeAdded(VersionAData.KuraMetric metric)
+        {
+            var shouldbeAdded = true;
+
+            // Check metric name.
+            if (string.IsNullOrWhiteSpace(metric.Name))
+            {
+                shouldbeAdded = false;
+                this.Logger?.LogError("A metric without a name is not allowed: {Metric}.", metric);
+            }
+
+            // Check if the metric is known.
+            if (!this.knownMetricsByName.TryGetValue(metric.Name, out var foundMetric))
+            {
+                shouldbeAdded = false;
+                this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);
+            }
+
+            // Check if the found metric is a version A metric.
+            if (foundMetric is not VersionAData.KuraMetric foundVersionAMetric)
+            {
+                shouldbeAdded = false;
+                this.Logger?.LogError("The metric cast didn't work properly.");
+            }
+            else if (foundVersionAMetric.DataType != metric.DataType)
+            {
+                shouldbeAdded = false;
+                this.Logger?.LogError("The metric's data type is invalid.");
+            }
+
+            return shouldbeAdded;
+        }
+
+        /// <summary>
+        /// Adds a version A metric to the known metrics.
+        /// </summary>
+        /// <param name="metric">The metric.</param>
+        /// <exception cref="Exception">Thrown if the metric is invalid.</exception>
+        private void AddVersionAMetric(T metric)
+        {
+            // Check the name of the metric.
+            if (string.IsNullOrWhiteSpace(metric.Name))
+            {
+                throw new InvalidMetricException($"A metric without a name is not allowed.");
+            }
+
+            // Check the value of the metric.
+            if (metric.Value is null)
+            {
+                throw new InvalidMetricException($"A metric without a current value is not allowed.");
+            }
+
+            // Hint: Data type doesn't need to be checked, is not nullable.
+            this.knownMetricsByName[metric.Name] = metric;
+        }
+
+        /// <summary>
+        /// Adds a version B metric to the known metrics.
+        /// </summary>
+        /// <param name="metric">The metric.</param>
+        /// <param name="versionBMetric">The converted (typed) metric.</param>
+        /// <exception cref="Exception">Thrown if the metric is invalid.</exception>
+        private void AddVersionBMetric(T metric, Metric versionBMetric)
+        {
+            // Check the name of the metric.
+            if (string.IsNullOrWhiteSpace(versionBMetric.Name))
+            {
+                // Check the alias of the metric.
+                if (versionBMetric.Alias is null)
+                {
+                    throw new InvalidMetricException($"A metric without a name and an alias is not allowed.");
+                }
+
+                // Check the value of the metric.
+                if (versionBMetric.Value is null)
+                {
+                    throw new InvalidMetricException($"A metric without a current value is not allowed.");
+                }
+
+                // Hint: Data type doesn't need to be checked, is not nullable.
+                this.knownMetricsByAlias[versionBMetric.Alias.Value] = metric;
+            }
+            else
+            {
+                // Check the value of the metric.
+                if (metric.Value is null)
+                {
+                    throw new InvalidMetricException($"A metric without a current value is not allowed.");
+                }
+
+                // Hint: Data type doesn't need to be checked, is not nullable.
+                this.knownMetricsByName[metric.Name] = metric;
             }
         }
     }

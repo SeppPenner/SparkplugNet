@@ -76,7 +76,6 @@ public sealed class Program
     /// <summary>
     /// The main method.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public static async Task Main()
     {
         try
@@ -103,7 +102,6 @@ public sealed class Program
     /// <summary>
     /// Runs a version A simulation.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionA()
     {
         await RunVersionAApplication();
@@ -113,7 +111,6 @@ public sealed class Program
     /// <summary>
     /// Runs a version B simulation.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionB()
     {
         await RunVersionBApplication();
@@ -123,7 +120,6 @@ public sealed class Program
     /// <summary>
     /// Runs the version A application.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionAApplication()
     {
         var applicationOptions = new SparkplugApplicationOptions(
@@ -190,7 +186,6 @@ public sealed class Program
     /// <summary>
     /// Runs the version A node.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionANode()
     {
         var nodeOptions = new SparkplugNodeOptions(
@@ -263,7 +258,6 @@ public sealed class Program
     /// <summary>
     /// Runs the version B application.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionBApplication()
     {
         var applicationOptions = new SparkplugApplicationOptions(
@@ -330,7 +324,6 @@ public sealed class Program
     /// <summary>
     /// Runs the version B node.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private static async Task RunVersionBNode()
     {
         var nodeOptions = new SparkplugNodeOptions(

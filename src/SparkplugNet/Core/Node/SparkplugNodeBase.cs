@@ -22,11 +22,13 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     /// <param name="knownMetrics">The metric names.</param>
     /// <param name="specificationVersion">The Sparkplug specification version.</param>
+    /// <param name="logger">The logger.</param>
     /// <seealso cref="SparkplugBase{T}"/>
     public SparkplugNodeBase(
         IEnumerable<T> knownMetrics,
-        SparkplugSpecificationVersion specificationVersion)
-        : base(knownMetrics, specificationVersion)
+        SparkplugSpecificationVersion specificationVersion,
+        ILogger<KnownMetricStorage>? logger = null)
+        : base(knownMetrics, specificationVersion, logger)
     {
     }
 
@@ -55,7 +57,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="nodeOptions">The node options.</param>
     /// <param name="knownMetricsStorage">(optional) overwrite the known metrics-storage</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Start(SparkplugNodeOptions nodeOptions, KnownMetricStorage? knownMetricsStorage = null)
     {
         if (nodeOptions is null)
@@ -91,7 +92,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Stops the Sparkplug node.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     public async Task Stop()
     {
         this.IsRunning = false;
@@ -135,14 +135,12 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
     /// Handles the client disconnection event.
     /// </summary>
     /// <param name="args">The event args.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual async Task OnClientConnected(MqttClientConnectedEventArgs args)
     {
         try
@@ -169,9 +167,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Handles the client disconnection.
     /// </summary>
     /// <param name="args">The event args.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
         try
@@ -217,7 +213,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="args">The arguments.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <exception cref="InvalidOperationException">Thrown if a message on an unknown topic is received.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
         var topic = args.ApplicationMessage.Topic;
@@ -241,7 +236,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Connects the Sparkplug node to the MQTT broker.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task ConnectInternal()
     {
         if (this.Options is null)
@@ -348,7 +342,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Publishes data to the MQTT broker.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task PublishInternal()
     {
         if (this.Options is null)
@@ -379,7 +372,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             foreach (var device in this.KnownDevices)
             {
-                await this.PublishDeviceBirthMessage(device.Value.Metrics, device.Key);
+                await this.PublishDeviceBirthMessage(device.Value.Metrics, device.Key, this.KnownMetricsStorage.Logger);
             }
         }
     }
@@ -388,7 +381,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Subscribes the client to the node subscribe topics.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     private async Task SubscribeInternal()
     {
         if (this.Options is null)
@@ -396,10 +388,16 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             throw new ArgumentNullException(nameof(this.Options));
         }
 
-        var nodeCommandSubscribeTopic = SparkplugTopicGenerator.GetNodeCommandSubscribeTopic(this.NameSpace, this.Options.GroupIdentifier, this.Options.EdgeNodeIdentifier);
+        var nodeCommandSubscribeTopic = SparkplugTopicGenerator.GetNodeCommandSubscribeTopic(
+            this.NameSpace,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier);
         await this.client.SubscribeAsync(nodeCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
-        var deviceCommandSubscribeTopic = SparkplugTopicGenerator.GetWildcardDeviceCommandSubscribeTopic(this.NameSpace, this.Options.GroupIdentifier, this.Options.EdgeNodeIdentifier);
+        var deviceCommandSubscribeTopic = SparkplugTopicGenerator.GetWildcardDeviceCommandSubscribeTopic(
+            this.NameSpace,
+            this.Options.GroupIdentifier,
+            this.Options.EdgeNodeIdentifier);
         await this.client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
         var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);

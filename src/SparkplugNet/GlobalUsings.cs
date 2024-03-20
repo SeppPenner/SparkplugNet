@@ -5,7 +5,11 @@ global using System.ComponentModel;
 global using System.Diagnostics;
 global using System.Runtime.InteropServices;
 global using System.Text;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
 global using System.Xml.Serialization;
+
+global using Microsoft.Extensions.Logging;
 
 global using MQTTnet;
 global using MQTTnet.Client;
@@ -13,15 +17,13 @@ global using MQTTnet.Formatter;
 global using MQTTnet.Internal;
 global using MQTTnet.Protocol;
 
-global using System.Text.Json;
-global using System.Text.Json.Serialization;
-
 global using ProtoBuf;
 
 global using SparkplugNet.Core;
 global using SparkplugNet.Core.Application;
 global using SparkplugNet.Core.Data;
 global using SparkplugNet.Core.Enumerations;
+global using SparkplugNet.Core.Exceptions;
 global using SparkplugNet.Core.Extensions;
 global using SparkplugNet.Core.Interfaces;
 global using SparkplugNet.Core.Messages;

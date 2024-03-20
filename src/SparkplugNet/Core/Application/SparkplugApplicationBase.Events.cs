@@ -38,7 +38,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <param name="metrics">The metrics.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceDataReceived(string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
     {
         var deviceDataEventArgs = new DeviceDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
@@ -67,7 +66,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireNodeDataReceived(string groupIdentifier, string edgeNodeIdentifier, IEnumerable<T> metrics)
     {
         var nodeDataEventArgs = new NodeDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, metrics);
@@ -97,7 +95,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <param name="metrics">The metrics.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceBirthReceived(string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
     {
         var deviceBirthEventArgs = new DeviceBirthEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
@@ -126,7 +123,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceDeathReceived(string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         var deviceEventArgs = new DeviceEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
@@ -155,7 +151,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireNodeBirthReceived(string groupIdentifier, string edgeNodeIdentifier, IEnumerable<T> metrics)
     {
         var nodeBirthEventArgs = new NodeBirthEventArgs(this, groupIdentifier, edgeNodeIdentifier, metrics);
@@ -183,7 +178,6 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// </summary>
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireNodeDeathReceived(string groupIdentifier, string edgeNodeIdentifier)
     {
         var nodeEventArgs = new NodeEventArgs(this, groupIdentifier, edgeNodeIdentifier);

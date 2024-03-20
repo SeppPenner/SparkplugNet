@@ -36,7 +36,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <param name="metrics">The metrics.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceCommandReceived(string deviceIdentifier, IEnumerable<T> metrics)
     {
         var deviceCommandEventArgs = new DeviceCommandEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceIdentifier, metrics);
@@ -63,7 +62,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Fires the node command received event asynchronously.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireNodeCommandReceived(IEnumerable<T> metrics)
     {
         var nodeCommandEventArgs = new NodeCommandEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, metrics);
@@ -90,7 +88,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Fires the status message received event asynchronously.
     /// </summary>
     /// <param name="status">The status.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireStatusMessageReceived(string status)
     {
         var statusMessageEventArgs = new StatusMessageEventArgs(this, status);
@@ -118,7 +115,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <param name="metrics">The metrics</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceBirthPublishing(string deviceIdentifier, IEnumerable<T> metrics)
     {
         var deviceBirthEventArgs = new DeviceBirthEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceIdentifier, metrics);
@@ -145,7 +141,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Fires the device death publishing event asynchronously.
     /// </summary>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
     protected virtual Task FireDeviceDeathPublishing(string deviceIdentifier)
     {
         var deviceEventArgs = new DeviceEventArgs(this, this.Options!.GroupIdentifier, this.Options!.EdgeNodeIdentifier, deviceIdentifier);

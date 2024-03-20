@@ -26,10 +26,11 @@ public partial class SparkplugNodeBase<T>
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <param name="logger">The logger.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public async Task<MqttClientPublishResult> PublishDeviceBirthMessage(List<T> knownMetrics, string deviceIdentifier)
+    public async Task<MqttClientPublishResult> PublishDeviceBirthMessage(List<T> knownMetrics, string deviceIdentifier, ILogger<KnownMetricStorage>? logger = null)
     {
         if (this.Options is null)
         {
@@ -56,7 +57,7 @@ public partial class SparkplugNodeBase<T>
         this.IncrementLastSequenceNumber();
 
         // Add the known metrics to the known devices.
-        this.KnownDevices.TryAdd(deviceIdentifier, new KnownMetricStorage(knownMetrics));
+        this.KnownDevices.TryAdd(deviceIdentifier, new KnownMetricStorage(knownMetrics, logger));
 
         // Invoke the device birth event.
         await this.FireDeviceBirthPublishing(deviceIdentifier, knownMetrics);
@@ -172,7 +173,7 @@ public partial class SparkplugNodeBase<T>
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
             deviceIdentifier,
-            deviceMetricStorage.FilterOutgoingMetrics(metrics),
+            deviceMetricStorage.FilterMetrics(metrics, SparkplugMessageType.DeviceData),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
