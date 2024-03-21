@@ -167,22 +167,29 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
     private async Task HandleMessagesForVersionA(SparkplugMessageTopic topic, VersionAData.Payload payload)
     {
-        // Filter out settion number metric.
+        // Filter out session number metric.
+        var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name != Constants.SessionNumberMetricName);
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType);
+        var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
 
+        if (sessionNumberMetric is not null)
+        {
+            filteredMetrics.Add(sessionNumberMetric);
+        }
+
+        // Handle messages.
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
                 await this.FireNodeBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
-                    this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
+                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
                 await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
-                    this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online));
+                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
-                var nodeDataMetrics = this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online);
+                var nodeDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
                 await this.FireNodeDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics);
                 break;
             case SparkplugMessageType.DeviceData:
@@ -191,11 +198,11 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                var deviceDataMetrics = this.ProcessPayload(topic, payload, SparkplugMetricStatus.Online);
+                var deviceDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
                 await this.FireDeviceDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics);
                 break;
             case SparkplugMessageType.NodeDeath:
-                this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
+                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
                 await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
                 break;
             case SparkplugMessageType.DeviceDeath:
@@ -204,7 +211,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                this.ProcessPayload(topic, payload, SparkplugMetricStatus.Offline);
+                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
                 await this.FireDeviceDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
                 break;
         }
@@ -214,12 +221,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// Handles the device message.
     /// </summary>
     /// <param name="topic">The topic.</param>
-    /// <param name="payload">The payload.</param>
+    /// <param name="metrics">The metrics.</param>
     /// <param name="metricStatus">The metric status.</param>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<VersionAData.KuraMetric> ProcessPayload(
         SparkplugMessageTopic topic,
-        VersionAData.Payload payload,
+        List<VersionAData.KuraMetric> metrics,
         SparkplugMetricStatus metricStatus)
     {
         var metricState = new MetricState<VersionAData.KuraMetric>
@@ -241,7 +248,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
             this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
         }
 
-        foreach (var payloadMetric in payload.Metrics)
+        foreach (var payloadMetric in metrics)
         {
             if (payloadMetric is not VersionAData.KuraMetric convertedMetric)
             {

@@ -114,9 +114,16 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
     {
         // Filter out session number metric.
+        var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name != Constants.SessionNumberMetricName);
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType);
+        var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
 
+        if (sessionNumberMetric is not null)
+        {
+            filteredMetrics.Add(sessionNumberMetric);
+        }
+
+        // Handle messages.
         switch (topic.MessageType)
         {
             case SparkplugMessageType.DeviceCommand:
@@ -125,15 +132,12 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                await this.FireDeviceCommandReceived(topic.DeviceIdentifier, payload.Metrics);
+                await this.FireDeviceCommandReceived(topic.DeviceIdentifier, filteredMetrics);
                 break;
 
             case SparkplugMessageType.NodeCommand:
-                await this.FireNodeCommandReceived(payload.Metrics);
+                await this.FireNodeCommandReceived(filteredMetrics);
                 break;
         }
     }
-
-    // Todo: Check exception description in the method description,
-    // bei casts überall exceptions werfen, wenn es nicht klappt!
 }
