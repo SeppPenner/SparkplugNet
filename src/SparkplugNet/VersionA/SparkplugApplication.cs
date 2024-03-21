@@ -163,8 +163,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
-    /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the topic is invalid.</exception>
     private async Task HandleMessagesForVersionA(SparkplugMessageTopic topic, VersionAData.Payload payload)
     {
         // Filter out session number metric.
@@ -223,6 +222,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <param name="topic">The topic.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="metricStatus">The metric status.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.<exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<VersionAData.KuraMetric> ProcessPayload(
         SparkplugMessageTopic topic,

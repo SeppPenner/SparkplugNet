@@ -256,7 +256,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// Adds a version A metric to the known metrics.
         /// </summary>
         /// <param name="metric">The metric.</param>
-        /// <exception cref="Exception">Thrown if the metric is invalid.</exception>
+        /// <exception cref="InvalidMetricException">Thrown if the metric is invalid.</exception>
         private void AddVersionAMetric(T metric)
         {
             // Check the name of the metric.
@@ -280,7 +280,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// </summary>
         /// <param name="metric">The metric.</param>
         /// <param name="versionBMetric">The converted (typed) metric.</param>
-        /// <exception cref="Exception">Thrown if the metric is invalid.</exception>
+        /// <exception cref="InvalidMetricException">Thrown if the metric is invalid.</exception>
         private void AddVersionBMetric(T metric, Metric versionBMetric)
         {
             // Check the name of the metric.

@@ -51,7 +51,6 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected override async Task<MqttClientPublishResult> PublishMessage(IEnumerable<Metric> metrics)
     {
@@ -110,7 +109,7 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the topic is invalid.</exception>
     private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
     {
         // Filter out session number metric.

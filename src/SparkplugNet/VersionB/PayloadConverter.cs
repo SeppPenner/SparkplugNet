@@ -48,6 +48,7 @@ internal static class PayloadConverter
     /// Gets the version B metric from the version B ProtoBuf metric.
     /// </summary>
     /// <param name="protoMetric">The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the metric data type is unknown.<exception>
     /// <returns>The <see cref="Metric"/>.</returns>
     public static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric)
     {
@@ -190,6 +191,7 @@ internal static class PayloadConverter
     /// Gets the version B ProtoBuf metric from the version B metric.
     /// </summary>
     /// <param name="metric">The <see cref="Metric"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the metric data type is unknown.<exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(Metric metric)
     {
@@ -674,6 +676,7 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="protoDataSetValue">The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue"/>.</param>
     /// <param name="protoDataType">The data type.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the data set value data type is unknown.<exception>
     /// <returns>The <see cref="DataSetValue"/>.</returns>
     public static DataSetValue ConvertVersionBDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue protoDataSetValue, uint protoDataType)
         => (VersionBDataTypeEnum?)protoDataType switch
@@ -720,6 +723,7 @@ internal static class PayloadConverter
     /// </summary>
     /// <param name="dataSetValue">The <see cref="DataSetValue"/>.</param>
     /// <param name="dataType">The data type.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the data set value data type is unknown.<exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue ConvertVersionBDataSetValue(DataSetValue dataSetValue, uint dataType)
         => (VersionBDataTypeEnum)dataType switch
@@ -783,6 +787,7 @@ internal static class PayloadConverter
     /// Gets the version B parameter from the version B ProtoBuf parameter.
     /// </summary>
     /// <param name="protoParameter">The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the parameter data type is unknown.<exception>
     /// <returns>The <see cref="Parameter"/>.</returns>
     public static Parameter ConvertVersionBParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter protoParameter)
     => (VersionBDataTypeEnum?)protoParameter.DataType switch
@@ -828,6 +833,7 @@ internal static class PayloadConverter
     /// Gets the version B ProtoBuf parameter from the version B parameter.
     /// </summary>
     /// <param name="parameter">The <see cref="Parameter"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the parameter data type is unknown.<exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Template.Parameter"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.Template.Parameter ConvertVersionBParameter(Parameter parameter)
     {
@@ -897,6 +903,7 @@ internal static class PayloadConverter
     /// Gets the version B property value from the version B ProtoBuf property value.
     /// </summary>
     /// <param name="protoPropertyValue">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the property value data type is unknown.<exception>
     /// <returns>The <see cref="PropertyValue"/>.</returns>
     public static PropertyValue ConvertVersionBPropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue protoPropertyValue)
         => (VersionBDataTypeEnum?)protoPropertyValue.DataType switch
@@ -942,6 +949,7 @@ internal static class PayloadConverter
     /// Gets the version B ProtoBuf property value from the version B property value.
     /// </summary>
     /// <param name="propertyValue">The <see cref="PropertyValue"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the property value data type is unknown.<exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertyValue"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.PropertyValue ConvertVersionBPropertyValue(PropertyValue propertyValue)
     {
@@ -1015,6 +1023,7 @@ internal static class PayloadConverter
     /// Gets the version B ProtoBuf property set list from the version B property set list.
     /// </summary>
     /// <param name="propertySetList">The <see cref="PropertySetList"/>.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the property sets are null.<exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.PropertySetList? ConvertVersionBPropertySetList(PropertySetList? propertySetList)
     {
@@ -1038,6 +1047,7 @@ internal static class PayloadConverter
     /// Gets the version B property set list from the version B ProtoBuf property set list.
     /// </summary>
     /// <param name="protoPropertySetList">The <see cref="VersionBProtoBuf.ProtoBufPayload.PropertySetList"/>.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the property sets are null.<exception>
     /// <returns>The <see cref="PropertySetList"/>.</returns>
     public static PropertySetList? ConvertVersionBPropertySetList(VersionBProtoBuf.ProtoBufPayload.PropertySetList? protoPropertySetList)
     {

@@ -53,7 +53,6 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     protected override async Task PublishNodeCommandMessage(IEnumerable<Metric> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.Options is null)
@@ -145,8 +144,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the known metrics are null.</exception>
-    /// <exception cref="Exception">Thrown if the metric is unknown.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the topic is unknown or the device identifier is invalid.</exception>
     private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
     {
         // Filter out session number metric.
@@ -210,6 +208,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="topic">The topic.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="metricStatus">The metric status.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<Metric> ProcessPayload(SparkplugMessageTopic topic, List<Metric> metrics, SparkplugMetricStatus metricStatus)
     {

@@ -225,7 +225,6 @@ internal static class EqualityHelper
     /// </summary>
     /// <param name="expectedArray">The expected byte array.</param>
     /// <param name="newArray">The new byte array.</param>
-    /// <exception cref="InvalidCastException">Thrown if the array type is not supported.</exception>
     private static void ByteArrayEquals(object? expectedArray, object? newArray)
     {
         var expectedArrayAsByteArray = expectedArray as byte[];

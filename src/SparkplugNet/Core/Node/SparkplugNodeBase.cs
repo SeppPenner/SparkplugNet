@@ -57,6 +57,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="nodeOptions">The node options.</param>
     /// <param name="knownMetricsStorage">(optional) overwrite the known metrics-storage</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the start method is called more than once.<exception>
     public async Task Start(SparkplugNodeOptions nodeOptions, KnownMetricStorage? knownMetricsStorage = null)
     {
         if (nodeOptions is null)
@@ -106,7 +107,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="metrics">The metrics.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or an invalid metric type was specified.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     public async Task<MqttClientPublishResult> PublishMetrics(IEnumerable<T> metrics)
     {
@@ -127,8 +127,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Publishes metrics for a node.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     protected abstract Task<MqttClientPublishResult> PublishMessage(IEnumerable<T> metrics);
 
@@ -213,7 +211,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Handles the message received handler.
     /// </summary>
     /// <param name="args">The arguments.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <exception cref="InvalidOperationException">Thrown if a message on an unknown topic is received.</exception>
     private async Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {

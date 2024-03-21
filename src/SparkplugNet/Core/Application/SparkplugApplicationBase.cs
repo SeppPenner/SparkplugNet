@@ -118,7 +118,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or an invalid metric type was specified.</exception>
     /// <exception cref="ArgumentException">Thrown if the group or edge node identifier is invalid.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     public async Task PublishNodeCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier)
     {
         if (this.Options is null)
@@ -154,7 +153,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or an invalid metric type was specified.</exception>
     /// <exception cref="ArgumentException">Thrown if the group or edge node or device identifier is invalid.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     public async Task PublishDeviceCommand(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
     {
         if (this.Options is null)
@@ -191,8 +189,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="metrics">The metrics.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     protected abstract Task PublishNodeCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier);
 
     /// <summary>
@@ -202,8 +198,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <exception cref="Exception">Thrown if an invalid metric type was specified.</exception>
     protected abstract Task PublishDeviceCommandMessage(IEnumerable<T> metrics, string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier);
 
     /// <summary>
@@ -291,7 +285,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// Handles the message received handler.
     /// </summary>
     /// <param name="args">The arguments.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
     {
         try

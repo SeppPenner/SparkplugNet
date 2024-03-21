@@ -74,7 +74,6 @@ public partial class SparkplugNodeBase<T>
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or the device is unknown or an invalid metric type was specified.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
     public Task<MqttClientPublishResult> PublishDeviceData(IEnumerable<T> metrics, string deviceIdentifier)
     {
