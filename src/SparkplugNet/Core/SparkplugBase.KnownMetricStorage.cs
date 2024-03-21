@@ -82,7 +82,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                 // Version A: KuraMetric has name only.
                 if (metric is VersionAData.KuraMetric versionAMetric)
                 {
-                    if (this.ShoudVersionAMetricBeAdded(versionAMetric))
+                    if (this.ShouldVersionAMetricBeAdded(versionAMetric))
                     {
                         filteredMetrics.Add(metric);
                         continue;
@@ -92,7 +92,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                 // Version B: Metric might have name and alias.
                 if (metric is Metric versionBMetric)
                 {
-                    if (this.ShoudVersionBMetricBeAdded(sparkplugMessageType, versionBMetric))
+                    if (this.ShouldVersionBMetricBeAdded(sparkplugMessageType, versionBMetric))
                     {
                         filteredMetrics.Add(metric);
                         continue;
@@ -109,29 +109,32 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// <param name="sparkplugMessageType">The Sparkplug message type.</param>
         /// <param name="metric">The converted (typed) metric.</param>
         /// <returns>A value indicating whether a version B metric should be added to the result or not.</returns>
-        private bool ShoudVersionBMetricBeAdded(SparkplugMessageType sparkplugMessageType, Metric metric)
+        private bool ShouldVersionBMetricBeAdded(SparkplugMessageType sparkplugMessageType, Metric metric)
         {
+            // NBIRTH and DBIRTH messages MUST include both a metric name and an alias (if aliases should be used).
+            var isBirthMessage = sparkplugMessageType == SparkplugMessageType.NodeBirth || sparkplugMessageType == SparkplugMessageType.DeviceBirth;
+
             var shouldbeAdded = true;
 
-            // Check the name of the metric.
-            if (string.IsNullOrWhiteSpace(metric.Name))
+            if (string.IsNullOrWhiteSpace(metric.Name) && metric.Alias is null)
             {
-                // Check the alias of the metric.
-                if (metric.Alias is null)
-                {
-                    shouldbeAdded = false;
-                    this.Logger?.LogError("A metric without a name and an alias is not allowed: {Metric}.", metric);
-                    return shouldbeAdded;
-                }
+                // Name and alias are not set.
+                shouldbeAdded = false;
+                this.Logger?.LogError("A metric without a name and an alias is not allowed: {Metric}.", metric);
+                return shouldbeAdded;
+            }
+            else if (!string.IsNullOrWhiteSpace(metric.Name) && metric.Alias is null)
+            {
+                // Name only is set.
 
                 // Check if the metric is known.
-                if (!this.knownMetricsByAlias.TryGetValue(metric.Alias.Value, out var foundMetric))
+                if (!this.knownMetricsByName.TryGetValue(metric.Name, out var foundMetric))
                 {
                     shouldbeAdded = false;
                     this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);
                 }
 
-                // Check if the found metric is a version A metric.
+                // Check if the found metric is a version B metric.
                 if (foundMetric is not Metric foundVersionBMetric)
                 {
                     shouldbeAdded = false;
@@ -143,38 +146,69 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                     this.Logger?.LogError("The metric's data type is invalid.");
                 }
             }
-            else
+            else if (string.IsNullOrWhiteSpace(metric.Name) && metric.Alias is not null)
             {
-                // Check if the metric is known.
-                if (!this.knownMetricsByName.TryGetValue(metric.Name, out var knownMetric))
-                {
-                    shouldbeAdded = false;
-                    this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);
-                }
-
-
-
-
-
+                // Alias only is set.
 
                 // NBIRTH and DBIRTH messages MUST include both a metric name and an alias (if aliases should be used).
-                var isBirthMessage = sparkplugMessageType == SparkplugMessageType.NodeBirth || sparkplugMessageType == SparkplugMessageType.DeviceBirth;
-
-                if (isBirthMessage && metric.Alias is null)
+                if (isBirthMessage)
                 {
                     shouldbeAdded = false;
-                    this.Logger?.LogError("The metric {Metric} is removed because it comes from a NBIRTH or DBIRTH message, but has no alias set.", metric);
+                    this.Logger?.LogError("The metric {Metric} is removed because it comes from a NBIRTH or DBIRTH message, but has only an alias set.", metric);
                 }
+                else
+                {
+                    // Check if the metric is known.
+                    if (!this.knownMetricsByAlias.TryGetValue(metric.Alias.Value, out var foundMetric))
+                    {
+                        shouldbeAdded = false;
+                        this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);
+                    }
 
-
-
-                // knownMetric
-
+                    // Check if the found metric is a version B metric.
+                    if (foundMetric is not Metric foundVersionBMetric)
+                    {
+                        shouldbeAdded = false;
+                        this.Logger?.LogError("The metric cast didn't work properly.");
+                    }
+                    else if (foundVersionBMetric.DataType != metric.DataType)
+                    {
+                        shouldbeAdded = false;
+                        this.Logger?.LogError("The metric's data type is invalid.");
+                    }
+                }
+            }
+            else
+            {
+                // Alias and name are set.
 
                 // NDATA, DDATA, NCMD, and DCMD messages MUST only include an alias and the metric name MUST be excluded.
+                if (!isBirthMessage)
+                {
+                    shouldbeAdded = false;
+                    this.Logger?.LogError("The metric {Metric} is removed because it comes from a NDATA, DDATA, NCMD or DCMD message, but has a name and an alias set.", metric);
+                }
+                else
+                {
+                    // Check if the metric is known.
+                    if (!this.knownMetricsByName.TryGetValue(metric.Name, out var foundMetric))
+                    {
+                        shouldbeAdded = false;
+                        this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);
+                    }
 
-                // Todo:
-                // In special cases, check if alias is also set!
+                    // Check if the found metric is a version B metric.
+                    if (foundMetric is not Metric foundVersionBMetric)
+                    {
+                        shouldbeAdded = false;
+                        this.Logger?.LogError("The metric cast didn't work properly.");
+                    }
+                    else if (foundVersionBMetric.DataType != metric.DataType)
+                    {
+                        shouldbeAdded = false;
+                        this.Logger?.LogError("The metric's data type is invalid.");
+                    }
+                }
             }
 
             return shouldbeAdded;
@@ -185,7 +219,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// </summary>
         /// <param name="metric">The converted (typed) metric.</param>
         /// <returns>A value indicating whether a version A metric should be added to the result or not.</returns>
-        private bool ShoudVersionAMetricBeAdded(VersionAData.KuraMetric metric)
+        private bool ShouldVersionAMetricBeAdded(VersionAData.KuraMetric metric)
         {
             var shouldbeAdded = true;
 
