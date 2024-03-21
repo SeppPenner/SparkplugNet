@@ -99,11 +99,7 @@ public sealed class SparkplugMessageTopic : SparkplugTopic
     {
         if (TryParse(topic, out var parsedTopic, true))
         {
-#if NETSTANDARD2_1_OR_GREATER
             return parsedTopic;
-#else
-            return parsedTopic!;
-#endif
         }
         else
         {
@@ -117,11 +113,7 @@ public sealed class SparkplugMessageTopic : SparkplugTopic
     /// <param name="topic">The topic.</param>
     /// <param name="parsedTopic">The parsed topic.</param>
     /// <returns>A value indicating whether the topic can be parsed or not.</returns>
-#if NETSTANDARD2_1_OR_GREATER
     public static bool TryParse(string topic, [NotNullWhen(true)] out SparkplugMessageTopic? parsedTopic)
-#else
-    public static bool TryParse(string topic, out SparkplugMessageTopic? parsedTopic)
-#endif
     {
         return TryParse(topic, out parsedTopic, false);
     }
@@ -134,7 +126,7 @@ public sealed class SparkplugMessageTopic : SparkplugTopic
     /// <param name="throwError">A value indicating whether errors should be thrown.</param>
     /// <returns>A value indicating whether the topic can be parsed or not.</returns>
     /// <exception cref="FormatException">Thrown if the namespace, message type or topic couldn't be parsed.</exception>
-    private static bool TryParse(string topic, out SparkplugMessageTopic? parsedTopic, bool throwError)
+    private static bool TryParse(string topic, [NotNullWhen(true)] out SparkplugMessageTopic? parsedTopic, bool throwError)
     {
         var splitTopics = topic.Split('/');
 

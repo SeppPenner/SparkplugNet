@@ -222,7 +222,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <param name="topic">The topic.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="metricStatus">The metric status.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.<exception>
+    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<VersionAData.KuraMetric> ProcessPayload(
         SparkplugMessageTopic topic,

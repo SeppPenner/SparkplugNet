@@ -57,7 +57,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="nodeOptions">The node options.</param>
     /// <param name="knownMetricsStorage">(optional) overwrite the known metrics-storage</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    /// <exception cref="InvalidOperationException">Thrown if the start method is called more than once.<exception>
+    /// <exception cref="InvalidOperationException">Thrown if the start method is called more than once.</exception>
     public async Task Start(SparkplugNodeOptions nodeOptions, KnownMetricStorage? knownMetricsStorage = null)
     {
         if (nodeOptions is null)

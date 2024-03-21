@@ -115,7 +115,7 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the topic is invalid.<exception>
+    /// <exception cref="InvalidOperationException">Thrown if the topic is invalid.</exception>
     private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, VersionAData.Payload payload)
     {
         // Filter out session number metric.
