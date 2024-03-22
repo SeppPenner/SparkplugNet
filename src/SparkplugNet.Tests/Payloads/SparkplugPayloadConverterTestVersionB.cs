@@ -1868,7 +1868,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true
-            },
+            }
         };
 
         var oldPayload = new VersionBData.Payload
