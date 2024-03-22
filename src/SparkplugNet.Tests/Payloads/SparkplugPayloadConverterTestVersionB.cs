@@ -911,7 +911,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
             Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
             Metrics = metrics
         };
-        var payload = VersionB.PayloadConverter.ConvertVersionBPayload(oldPayload);
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(oldPayload);
         Assert.IsNotNull(payload);
         CollectionAssert.AreEqual(bodyData, payload.Body);
         Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
@@ -1825,7 +1825,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
             Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
             Metrics = metrics
         };
-        var payload = VersionB.PayloadConverter.ConvertVersionBPayload(oldPayload);
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(oldPayload);
         Assert.IsNotNull(payload);
         CollectionAssert.AreEqual(bodyData, payload.Body);
         Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
@@ -1839,5 +1839,62 @@ public sealed class SparkplugPayloadConverterTestVersionB
         {
             EqualityHelper.MetricEquals(convertedMetrics[count++], metric);
         }
+    }
+
+    /// <summary>
+    /// Tests the conversion of a VersionB payload to a ProtoBuf payload and vice versa with a property set metric.
+    /// </summary>
+    [TestMethod]
+    public void TestPropertySetConversion()
+    {
+        var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var bodyData = new byte[] { 1, 2, 3, 4 };
+        var metrics = new List<VersionBData.Metric>
+        {
+            new("Test22", VersionBData.DataType.PropertySet, new VersionBData.PropertySet
+                {
+                    Keys = ["Test1", "Test2"],
+                    Values =
+                    [
+                        new(VersionBData.DataType.Int8, (sbyte)1)
+                        {
+                        },
+                        new(VersionBData.DataType.Int64, (long)2)
+                        {
+                        }
+                    ]
+                }, timestamp)
+            {
+                Alias = 22,
+                IsHistorical = true,
+                IsTransient = true
+            },
+        };
+
+        var oldPayload = new VersionBData.Payload
+        {
+            Body = bodyData,
+            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+            Seq = 1,
+            Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
+            Metrics = metrics
+        };
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(oldPayload);
+        Assert.IsNotNull(payload);
+        CollectionAssert.AreEqual(bodyData, payload.Body);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.AreEqual((ulong)1, payload.Seq);
+        Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
+        Assert.AreEqual(1, payload.Metrics.Count);
+
+        var againConvertedPayload = VersionBMain.PayloadConverter.ConvertVersionBPayload(payload);
+        Assert.IsNotNull(againConvertedPayload);
+        CollectionAssert.AreEqual(bodyData, againConvertedPayload.Body);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), againConvertedPayload.Timestamp);
+        Assert.AreEqual((ulong)1, againConvertedPayload.Seq);
+        Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", againConvertedPayload.Uuid);
+        Assert.AreEqual(1, againConvertedPayload.Metrics.Count);
+
+        EqualityHelper.MetricEquals(metrics[0], againConvertedPayload.Metrics[0]);
     }
 }
