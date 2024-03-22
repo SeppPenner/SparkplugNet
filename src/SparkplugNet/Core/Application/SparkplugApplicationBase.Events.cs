@@ -162,12 +162,12 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <summary>
     /// The node death received event.
     /// </summary>
-    protected AsyncEvent<NodeEventArgs> NodeDeathReceivedEvent = new();
+    protected AsyncEvent<NodeDeathEventArgs> NodeDeathReceivedEvent = new();
 
     /// <summary>
     /// Occurs when the node death was received.
     /// </summary>
-    public event Func<NodeEventArgs, Task> NodeDeathReceived
+    public event Func<NodeDeathEventArgs, Task> NodeDeathReceived
     {
         add => this.NodeDeathReceivedEvent.AddHandler(value);
         remove => this.NodeDeathReceivedEvent.RemoveHandler(value);
@@ -178,9 +178,10 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// </summary>
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
-    protected virtual Task FireNodeDeathReceived(string groupIdentifier, string edgeNodeIdentifier)
+    /// <param name="sessionNumberMetric">The session number metric.</param>
+    protected virtual Task FireNodeDeathReceived(string groupIdentifier, string edgeNodeIdentifier, T? sessionNumberMetric)
     {
-        var nodeEventArgs = new NodeEventArgs(this, groupIdentifier, edgeNodeIdentifier);
+        var nodeEventArgs = new NodeDeathEventArgs(this, groupIdentifier, edgeNodeIdentifier, sessionNumberMetric);
         return this.NodeDeathReceivedEvent.InvokeAsync(nodeEventArgs);
     }
     #endregion

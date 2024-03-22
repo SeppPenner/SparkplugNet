@@ -188,7 +188,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 break;
             case SparkplugMessageType.NodeDeath:
                 this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
-                await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier);
+                await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, sessionNumberMetric);
                 break;
             case SparkplugMessageType.DeviceDeath:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))

@@ -154,4 +154,32 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// </summary>
         public IEnumerable<T> Metrics { get; }
     }
+
+    /// <inheritdoc cref="NodeEventArgs" />
+    /// <summary>
+    /// A class for the node death event args.
+    /// </summary>
+    /// <seealso cref="NodeEventArgs" />
+    public sealed class NodeDeathEventArgs : NodeEventArgs
+    {
+        /// <inheritdoc cref="NodeEventArgs" />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeDeathEventArgs"/> class.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="groupIdentifier">The group identifier.</param>
+        /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+        /// <param name="sessionNumberMetric">The session number metric.</param>
+        /// <seealso cref="NodeEventArgs" />
+        public NodeDeathEventArgs(SparkplugBase<T> sender, string groupIdentifier, string edgeNodeIdentifier, T? sessionNumberMetric)
+            : base(sender, groupIdentifier, edgeNodeIdentifier)
+        {
+            this.SessionNumberMetric = sessionNumberMetric;
+        }
+
+        /// <summary>
+        /// Gets the session number metric.
+        /// </summary>
+        public T? SessionNumberMetric { get; }
+    }
 }

@@ -460,7 +460,7 @@ public sealed class Program
     /// <summary>
     /// Handles the node death received callback for version A applications.
     /// </summary>
-    private static Task OnApplicationVersionANodeDeathReceived(Core.SparkplugBase<VersionAData.KuraMetric>.NodeEventArgs args)
+    private static Task OnApplicationVersionANodeDeathReceived(Core.SparkplugBase<VersionAData.KuraMetric>.NodeDeathEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
@@ -602,7 +602,7 @@ public sealed class Program
     /// <summary>
     /// Handles the node death received callback for version B applications.
     /// </summary>
-    private static Task OnApplicationVersionBNodeDeathReceived(Core.SparkplugBase<VersionBData.Metric>.NodeEventArgs args)
+    private static Task OnApplicationVersionBNodeDeathReceived(Core.SparkplugBase<VersionBData.Metric>.NodeDeathEventArgs args)
     {
         // Do something.
         return Task.CompletedTask;
