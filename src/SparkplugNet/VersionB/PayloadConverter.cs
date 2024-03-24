@@ -204,7 +204,8 @@ internal static class PayloadConverter
             IsTransient = metric.IsTransient,
             MetaData = ConvertVersionBMetaData(metric.MetaData),
             Name = metric.Name,
-            Timestamp = metric.Timestamp
+            Timestamp = metric.Timestamp,
+            PropertySetValue =  !(metric.Properties is null) ? ConvertVersionBPropertySet(metric.Properties.ConvertOrDefaultTo<PropertySet>()) : null
         };
 
         switch (metric.DataType)
@@ -266,9 +267,9 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Template:
                 protoMetric.TemplateValue = ConvertVersionBTemplate(metric.Value.ConvertOrDefaultTo<Template>());
                 break;
-            case VersionBDataTypeEnum.PropertySet:
-                protoMetric.PropertySetValue = ConvertVersionBPropertySet(metric.Value.ConvertOrDefaultTo<PropertySet>());
-                break;
+            //case VersionBDataTypeEnum.PropertySet:
+            //    protoMetric.PropertySetValue = ConvertVersionBPropertySet(metric.Value.ConvertOrDefaultTo<PropertySet>());
+            //    break;
             case VersionBDataTypeEnum.Int8Array:
                 protoMetric.BytesValue = (byte[]?)metric.Value ?? [];
                 break;

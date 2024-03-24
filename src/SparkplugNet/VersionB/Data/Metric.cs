@@ -93,6 +93,11 @@ public class Metric : ValueBaseVersionB, IMetric
     public MetaData? MetaData { get; set; }
 
     /// <summary>
+    /// Gets or sets the Properties field.
+    /// </summary>
+    public PropertySet? Properties { get; set; }
+    
+    /// <summary>
     /// Gets the value.
     /// </summary>
     public override object? Value => base.Value ?? this.GetValue();

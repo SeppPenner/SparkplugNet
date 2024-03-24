@@ -362,7 +362,8 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = false,
-                DataType = (uint?)VersionBData.DataType.PropertySet,
+                DataType = (uint?)VersionBData.DataType.String,
+                StringValue = "Test22",
                 PropertySetValue = new VersionBProtoBufPayload.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
@@ -776,7 +777,9 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test22", VersionBData.DataType.PropertySet, new VersionBData.PropertySet
+            new("Test22", VersionBData.DataType.String, "Test22",timestamp)
+            { 
+                Properties = new VersionBData.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
                     Values =
@@ -788,8 +791,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                         {
                         }
                     ]
-                }, timestamp)
-            {
+                },
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true
@@ -1146,7 +1148,9 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true
             },
-            new("Test22", VersionBData.DataType.PropertySet, new VersionBData.PropertySet
+            new("Test22", VersionBData.DataType.String,"Test22",timestamp)
+            { 
+                Properties = new VersionBData.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
                     Values =
@@ -1158,8 +1162,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                         {
                         }
                     ]
-                }, timestamp)
-            {
+                },
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true
@@ -1592,7 +1595,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = false,
-                DataType = (uint?)VersionBProtoBuf.DataType.PropertySet,
+                DataType = (uint?)VersionBProtoBuf.DataType.String,
                 PropertySetValue = new VersionBProtoBufPayload.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
@@ -1611,7 +1614,8 @@ public sealed class SparkplugPayloadConverterTestVersionB
                             LongValue = 2
                         }
                     ]
-                }
+                },
+                StringValue = "Test22"
             },
             // Todo: How to handle this?!
             //new()
@@ -1851,7 +1855,9 @@ public sealed class SparkplugPayloadConverterTestVersionB
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionBData.Metric>
         {
-            new("Test22", VersionBData.DataType.PropertySet, new VersionBData.PropertySet
+            new("Test22", VersionBData.DataType.String,"Test22", timestamp)
+            {
+                Properties =  new VersionBData.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
                     Values =
@@ -1863,8 +1869,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                         {
                         }
                     ]
-                }, timestamp)
-            {
+                },
                 Alias = 22,
                 IsHistorical = true,
                 IsTransient = true

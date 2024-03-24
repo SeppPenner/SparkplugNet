@@ -53,6 +53,21 @@ public sealed class Program
     [
         new VersionBData.Metric("temperatureApplication", VersionBData.DataType.Float, 1.20f),
         new VersionBData.Metric("climateactiveApplication", VersionBData.DataType.Boolean, true)
+        {
+            Properties = new VersionBData.PropertySet
+            {
+                Keys = ["ON", "OFF"],
+                Values =
+                [
+                    new(VersionBData.DataType.Int8, 1)
+                    {
+                    },
+                    new(VersionBData.DataType.Int8, 0)
+                    {
+                    }
+                ]
+            }
+        }
     ];
 
     /// <summary>
@@ -60,8 +75,26 @@ public sealed class Program
     /// </summary>
     private static readonly List<VersionBData.Metric> VersionBMetricsNode =
     [
-        new VersionBData.Metric("temperatureNode", VersionBData.DataType.Float, 1.243f),
-        new VersionBData.Metric("climateactiveNode", VersionBData.DataType.Boolean, true)
+        new VersionBData.Metric("temperatureNode", VersionBData.DataType.Float, 1.243f)
+        {
+            Alias = 1000
+        },
+        new VersionBData.Metric("climateactiveNode", VersionBData.DataType.Boolean,true)
+        {
+            Properties = new VersionBData.PropertySet
+            {
+                Keys = ["ON", "OFF"],
+                Values =
+                [
+                    new(VersionBData.DataType.Int8, 1)
+                    {
+                    },
+                    new(VersionBData.DataType.Int8, 0)
+                    {
+                    }
+                ]
+            }
+        }
     ];
 
     /// <summary>
@@ -350,6 +383,8 @@ public sealed class Program
         Log.Information("Node started...");
 
         // Publish node metrics.
+
+        VersionBMetricsNode[0].Name = "";
         await node.PublishMetrics(VersionBMetricsNode);
 
         // Get the known node metrics from a node.
