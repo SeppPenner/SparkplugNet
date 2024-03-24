@@ -383,8 +383,6 @@ public sealed class Program
         Log.Information("Node started...");
 
         // Publish node metrics.
-
-        VersionBMetricsNode[0].Name = "";
         await node.PublishMetrics(VersionBMetricsNode);
 
         // Get the known node metrics from a node.

@@ -191,6 +191,7 @@ internal static class PayloadConverter
     /// Gets the version B ProtoBuf metric from the version B metric.
     /// </summary>
     /// <param name="metric">The <see cref="Metric"/>.</param>
+    /// <exception cref="ArgumentException">Thrown if the property set data type is set for a metric.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the metric data type is unknown.</exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(Metric metric)
@@ -205,7 +206,7 @@ internal static class PayloadConverter
             MetaData = ConvertVersionBMetaData(metric.MetaData),
             Name = metric.Name,
             Timestamp = metric.Timestamp,
-            PropertySetValue =  !(metric.Properties is null) ? ConvertVersionBPropertySet(metric.Properties.ConvertOrDefaultTo<PropertySet>()) : null
+            PropertySetValue = metric.Properties is not null ? ConvertVersionBPropertySet(metric.Properties.ConvertOrDefaultTo<PropertySet>()) : null
         };
 
         switch (metric.DataType)
@@ -267,9 +268,8 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Template:
                 protoMetric.TemplateValue = ConvertVersionBTemplate(metric.Value.ConvertOrDefaultTo<Template>());
                 break;
-            //case VersionBDataTypeEnum.PropertySet:
-            //    protoMetric.PropertySetValue = ConvertVersionBPropertySet(metric.Value.ConvertOrDefaultTo<PropertySet>());
-            //    break;
+            case VersionBDataTypeEnum.PropertySet:
+                throw new ArgumentException("The property set data type is not valid for a metric");
             case VersionBDataTypeEnum.Int8Array:
                 protoMetric.BytesValue = (byte[]?)metric.Value ?? [];
                 break;
