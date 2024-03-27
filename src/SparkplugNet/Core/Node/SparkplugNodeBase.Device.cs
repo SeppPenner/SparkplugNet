@@ -30,7 +30,10 @@ public partial class SparkplugNodeBase<T>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public async Task<MqttClientPublishResult> PublishDeviceBirthMessage(List<T> knownMetrics, string deviceIdentifier, ILogger<KnownMetricStorage>? logger = null)
+    public async Task<MqttClientPublishResult> PublishDeviceBirthMessage(
+        List<T> knownMetrics,
+        string deviceIdentifier,
+        ILogger<KnownMetricStorage>? logger = null)
     {
         if (this.Options is null)
         {
@@ -166,8 +169,8 @@ public partial class SparkplugNodeBase<T>
             throw new ArgumentNullException(deviceIdentifier, $"The known metrics for the device {deviceIdentifier} aren't set properly.");
         }
 
-        // Get the data message.
-        var dataMessage = this.messageGenerator.GetSparkplugDeviceDataMessage(
+        // Get the device data message.
+        var deviceDataMessage = this.messageGenerator.GetSparkplugDeviceDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -181,6 +184,6 @@ public partial class SparkplugNodeBase<T>
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        return await this.client.PublishAsync(dataMessage);
+        return await this.client.PublishAsync(deviceDataMessage);
     }
 }
