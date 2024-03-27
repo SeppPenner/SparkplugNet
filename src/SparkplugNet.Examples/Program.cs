@@ -172,11 +172,6 @@ public sealed class Program
              CancellationTokenSource.Token);
         var application = new VersionA.SparkplugApplication(VersionAMetricsApplication, SparkplugSpecificationVersion.Version22);
 
-        // Start an application.
-        Log.Information("Starting application...");
-        await application.Start(applicationOptions);
-        Log.Information("Application started...");
-
         // Handles the application's connected and disconnected events.
         application.Connected += OnApplicationVersionAConnected;
         application.Disconnected += OnApplicationVersionADisconnected;
@@ -190,6 +185,11 @@ public sealed class Program
         application.NodeBirthReceived += OnApplicationVersionANodeBirthReceived;
         application.NodeDataReceived += OnApplicationVersionANodeDataReceived;
         application.NodeDeathReceived += OnApplicationVersionANodeDeathReceived;
+
+        // Start an application.
+        Log.Information("Starting application...");
+        await application.Start(applicationOptions);
+        Log.Information("Application started...");
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -239,20 +239,6 @@ public sealed class Program
             CancellationTokenSource.Token);
         var node = new VersionA.SparkplugNode(VersionAMetricsNode, SparkplugSpecificationVersion.Version22);
 
-        // Start a node.
-        Log.Information("Starting node...");
-        await node.Start(nodeOptions);
-        Log.Information("Node started...");
-
-        // Publish node metrics.
-        await node.PublishMetrics(VersionAMetricsNode);
-
-        // Get the known node metrics from a node.
-        var currentlyKnownMetrics = node.KnownMetrics;
-
-        // Check whether a node is connected.
-        var isApplicationConnected = node.IsConnected;
-
         // Handles the node's connected and disconnected events.
         node.Connected += OnVersionANodeConnected;
         node.Disconnected += OnVersionANodeDisconnected;
@@ -267,6 +253,20 @@ public sealed class Program
 
         // Handles the node's status message received event.
         node.StatusMessageReceived += OnVersionANodeStatusMessageReceived;
+
+        // Start a node.
+        Log.Information("Starting node...");
+        await node.Start(nodeOptions);
+        Log.Information("Node started...");
+
+        // Publish node metrics.
+        await node.PublishMetrics(VersionAMetricsNode);
+
+        // Get the known node metrics from a node.
+        var currentlyKnownMetrics = node.KnownMetrics;
+
+        // Check whether a node is connected.
+        var isApplicationConnected = node.IsConnected;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
@@ -310,11 +310,6 @@ public sealed class Program
             CancellationTokenSource.Token);
         var application = new VersionB.SparkplugApplication(VersionBMetricsApplication, SparkplugSpecificationVersion.Version22);
 
-        // Start an application.
-        Log.Information("Starting application...");
-        await application.Start(applicationOptions);
-        Log.Information("Application started...");
-
         // Handles the application's connected and disconnected events.
         application.Connected += OnApplicationVersionBConnected;
         application.Disconnected += OnApplicationVersionBDisconnected;
@@ -328,6 +323,11 @@ public sealed class Program
         application.NodeBirthReceived += OnApplicationVersionBNodeBirthReceived;
         application.NodeDataReceived += OnApplicationVersionBNodeDataReceived;
         application.NodeDeathReceived += OnApplicationVersionBNodeDeathReceived;
+
+        // Start an application.
+        Log.Information("Starting application...");
+        await application.Start(applicationOptions);
+        Log.Information("Application started...");
 
         // Publish node commands.
         Log.Information("Publishing a node command ...");
@@ -377,20 +377,6 @@ public sealed class Program
             CancellationTokenSource.Token);
         var node = new VersionB.SparkplugNode(VersionBMetricsNode, SparkplugSpecificationVersion.Version22);
 
-        // Start a node.
-        Log.Information("Starting node...");
-        await node.Start(nodeOptions);
-        Log.Information("Node started...");
-
-        // Publish node metrics.
-        await node.PublishMetrics(VersionBMetricsNode);
-
-        // Get the known node metrics from a node.
-        var currentlyKnownMetrics = node.KnownMetrics;
-
-        // Check whether a node is connected.
-        var isApplicationConnected = node.IsConnected;
-
         // Handles the node's connected and disconnected events.
         node.Connected += OnVersionBNodeConnected;
         node.Disconnected += OnVersionBNodeDisconnected;
@@ -405,6 +391,20 @@ public sealed class Program
 
         // Handles the node's status message received event.
         node.StatusMessageReceived += OnVersionBNodeStatusMessageReceived;
+
+        // Start a node.
+        Log.Information("Starting node...");
+        await node.Start(nodeOptions);
+        Log.Information("Node started...");
+
+        // Publish node metrics.
+        await node.PublishMetrics(VersionBMetricsNode);
+
+        // Get the known node metrics from a node.
+        var currentlyKnownMetrics = node.KnownMetrics;
+
+        // Check whether a node is connected.
+        var isApplicationConnected = node.IsConnected;
 
         // Get the known devices.
         var knownDevices = node.KnownDevices;
