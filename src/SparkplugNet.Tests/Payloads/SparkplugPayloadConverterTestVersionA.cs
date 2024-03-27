@@ -10,7 +10,7 @@
 namespace SparkplugNet.Tests.Payloads;
 
 /// <summary>
-/// A class to test the <see cref="VersionA.PayloadConverter"/> class.
+/// A class to test the <see cref="VersionAMain.PayloadConverter"/> class.
 /// </summary>
 [TestClass]
 public sealed class SparkplugPayloadConverterTestVersionA
@@ -97,7 +97,7 @@ public sealed class SparkplugPayloadConverterTestVersionA
             Metrics = metrics,
             Body = bodyData
         };
-        var payload = VersionA.PayloadConverter.ConvertVersionAPayload(oldPayload);
+        var payload = VersionAMain.PayloadConverter.ConvertVersionAPayload(oldPayload);
         Assert.IsNotNull(payload);
         Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payload.Timestamp);
         Assert.IsNotNull(payload.Position);
@@ -206,7 +206,7 @@ public sealed class SparkplugPayloadConverterTestVersionA
             Metrics = metrics,
             Body = bodyData
         };
-        var payload = VersionA.PayloadConverter.ConvertVersionAPayload(oldPayload);
+        var payload = VersionAMain.PayloadConverter.ConvertVersionAPayload(oldPayload);
         Assert.IsNotNull(payload);
         Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payload.Timestamp);
         Assert.IsNotNull(payload.Position);

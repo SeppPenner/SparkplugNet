@@ -549,9 +549,9 @@ internal sealed class SparkplugMessageGenerator
         long sessionSequenceNumber)
     {
         // Add a BDSEQ metric.
-        return metrics.Concat(new VersionBData.Metric[]
+        return metrics.Concat(new Metric[]
         {
-            new VersionBData.Metric(Constants.SessionNumberMetricName, VersionBDataTypeEnum.Int64, sessionSequenceNumber)
+            new Metric(Constants.SessionNumberMetricName, VersionBDataTypeEnum.Int64, sessionSequenceNumber)
         });
     }
 
