@@ -279,6 +279,9 @@ public sealed class Program
         // Publish a device death message.
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
 
+        // Do a node rebirth to publish new metrics.
+        await node.Rebirth(VersionAMetricsNode);
+
         // Stopping a node.
         await node.Stop();
         Log.Information("Node stopped...");
@@ -412,6 +415,9 @@ public sealed class Program
 
         // Publish a device death message.
         await node.PublishDeviceDeathMessage(DeviceIdentifier);
+
+        // Do a node rebirth to publish new metrics.
+        await node.Rebirth(VersionBMetricsNode);
 
         // Stopping a node.
         await node.Stop();

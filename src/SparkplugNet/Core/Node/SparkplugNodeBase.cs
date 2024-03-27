@@ -55,7 +55,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Starts the Sparkplug node.
     /// </summary>
     /// <param name="nodeOptions">The node options.</param>
-    /// <param name="knownMetricsStorage">(optional) overwrite the known metrics-storage</param>
+    /// <param name="knownMetricsStorage">The known metrics storage.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="InvalidOperationException">Thrown if the start method is called more than once.</exception>
     public async Task Start(SparkplugNodeOptions nodeOptions, KnownMetricStorage? knownMetricsStorage = null)
@@ -86,7 +86,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         // Connect, subscribe to incoming messages and send a state message.
         await this.ConnectInternal();
         await this.SubscribeInternal();
-        await this.PublishInternal();
+        await this.PublishNodeAndDeviceBirthsInternal();
     }
 
     /// <summary>
@@ -121,6 +121,22 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         return await this.PublishMessage(metrics);
+    }
+
+    /// <summary>
+    /// Does a node rebirth.
+    /// </summary>
+    /// <param name="metrics">The new metrics.</param>
+    public async Task Rebirth(IEnumerable<T> metrics)
+    {
+        // Send node death first.
+        await this.SendNodeDeathMessage();
+
+        // Reset the known metrics.
+        this.knownMetrics = new KnownMetricStorage(metrics);
+
+        // Send node birth and device births.
+        await this.PublishNodeAndDeviceBirthsInternal();
     }
 
     /// <summary>
@@ -198,7 +214,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
                 // Connect, subscribe to incoming messages and send a state message.
                 await this.ConnectInternal();
                 await this.SubscribeInternal();
-                await this.PublishInternal();
+                await this.PublishNodeAndDeviceBirthsInternal();
             }
         }
         catch (Exception ex)
@@ -329,15 +345,15 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Publishes data to the MQTT broker.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private async Task PublishInternal()
+    private async Task PublishNodeAndDeviceBirthsInternal()
     {
         if (this.Options is null)
         {
             throw new ArgumentNullException(nameof(this.Options));
         }
 
-        // Get the online message.
-        var onlineMessage = this.messageGenerator.GetSparkplugNodeBirthMessage(
+        // Get the node birth message.
+        var nodeBirthMessage = this.messageGenerator.GetSparkplugNodeBirthMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
@@ -346,15 +362,16 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
 
-        // Publish data.
+        // Set the cancellation token.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
+        await this.client.PublishAsync(nodeBirthMessage, this.Options.CancellationToken.Value);
 
+        // Publish device births for all known devices.
         if (this.Options.PublishKnownDeviceMetricsOnReconnect)
         {
             foreach (var device in this.KnownDevices)
@@ -409,8 +426,10 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             this.Options.EdgeNodeIdentifier,
             this.LastSessionNumber);
 
-        // Publish message.
+        // Set the cancellation token.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
+
+        // Publish message.
         await this.client.PublishAsync(nodeDeathMessage, this.Options.CancellationToken.Value);
     }
 }
