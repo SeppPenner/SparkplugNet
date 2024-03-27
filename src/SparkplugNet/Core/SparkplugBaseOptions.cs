@@ -40,11 +40,6 @@ public abstract class SparkplugBaseOptions
     public const string DefaultPassword = "";
 
     /// <summary>
-    /// The default value whether TLS is used or not.
-    /// </summary>
-    public const bool DefaultUseTls = false;
-
-    /// <summary>
     /// The default SCADA host identifier.
     /// </summary>
     public const string DefaultScadaHostIdentifier = "SparkplugNet";
@@ -60,11 +55,6 @@ public abstract class SparkplugBaseOptions
     public const SparkplugMqttProtocolVersion DefaultMqttProtocolVersion = SparkplugMqttProtocolVersion.V311;
 
     /// <summary>
-    /// Returns a <see cref="MqttClientOptionsBuilderTlsParameters"/> instance or null.
-    /// </summary>
-    public delegate MqttClientOptionsBuilderTlsParameters? GetTlsParametersDelegate();
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugBaseOptions"/> class.
     /// </summary>
     /// <param name="reconnectInterval">The reconnect interval.</param>
@@ -73,38 +63,32 @@ public abstract class SparkplugBaseOptions
     /// <param name="clientId">The client identifier.</param>
     /// <param name="userName">The name of the user.</param>
     /// <param name="password">The password.</param>
-    /// <param name="useTls">A value indicating whether TLS should be used or not.</param>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="mqttProtocolVersion">The MQTT protocol version.</param>
-    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
-    /// <param name="webSocketParameters">The web socket parameters.</param>
-    /// <param name="proxyOptions">The proxy options.</param>
+    /// <param name="mqttTlsOptions">The MQTT TLS options.</param>
+    /// <param name="mqttWebSocketOptions">The MQTT WebSocket options.</param>
     public SparkplugBaseOptions(
         string? brokerAddress = null,
         int? port = null,
         string? clientId = null,
         string? userName = null,
         string? password = null,
-        bool? useTls = null,
         string? scadaHostIdentifier = null,
         TimeSpan? reconnectInterval = null,
         SparkplugMqttProtocolVersion? mqttProtocolVersion = null,
-        GetTlsParametersDelegate? getTlsParameters = null,
-        MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
-        MqttClientWebSocketProxyOptions? proxyOptions = null)
+        MqttClientTlsOptions? mqttTlsOptions = null,
+        MqttClientWebSocketOptions? mqttWebSocketOptions = null)
     {
         this.BrokerAddress = string.IsNullOrWhiteSpace(brokerAddress) ? DefaultBroker : brokerAddress;
         this.Port = port ?? DefaultPort;
         this.ClientId = string.IsNullOrWhiteSpace(clientId) ? DefaultClientId : clientId;
         this.UserName = string.IsNullOrWhiteSpace(userName) ? DefaultUserName : userName;
         this.Password = string.IsNullOrWhiteSpace(password) ? DefaultPassword : password;
-        this.UseTls = useTls ?? DefaultUseTls;
         this.ScadaHostIdentifier = string.IsNullOrWhiteSpace(scadaHostIdentifier) ? DefaultScadaHostIdentifier : scadaHostIdentifier;
         this.ReconnectInterval = reconnectInterval ?? DefaultReconnectInterval;
         this.MqttProtocolVersion = mqttProtocolVersion ?? DefaultMqttProtocolVersion;
-        this.GetTlsParameters = getTlsParameters;
-        this.WebSocketParameters = webSocketParameters;
-        this.ProxyOptions = proxyOptions;
+        this.MqttTlsOptions = mqttTlsOptions;
+        this.MqttWebSocketOptions = mqttWebSocketOptions;
     }
 
     /// <summary>
@@ -138,12 +122,6 @@ public abstract class SparkplugBaseOptions
     public string Password { get; set; } = DefaultPassword;
 
     /// <summary>
-    /// Gets or sets a value indicating whether TLS should be used or not.
-    /// </summary>
-    [DefaultValue(DefaultUseTls)]
-    public bool UseTls { get; set; } = DefaultUseTls;
-
-    /// <summary>
     /// Gets or sets the SCADA host identifier.
     /// </summary>
     [DefaultValue(DefaultScadaHostIdentifier)]
@@ -161,24 +139,16 @@ public abstract class SparkplugBaseOptions
     public SparkplugMqttProtocolVersion MqttProtocolVersion { get; set; } = DefaultMqttProtocolVersion;
 
     /// <summary>
-    /// Gets or sets the delegate to provide TLS parameters.
-    /// </summary>
-    [XmlIgnore]
-    [JsonIgnore]
-    [DefaultValue(null)]
-    public GetTlsParametersDelegate? GetTlsParameters { get; set; }
-
-    /// <summary>
-    /// Gets or sets the WebSocket parameters.
+    /// Gets or sets the MQTT WebSocket options.
     /// </summary>
     [TypeConverter(typeof(ExpandableObjectConverter))]
     [DefaultValue(null)]
-    public MqttClientOptionsBuilderWebSocketParameters? WebSocketParameters { get; set; }
+    public MqttClientWebSocketOptions? MqttWebSocketOptions { get; set; }
 
     /// <summary>
-    /// Gets or sets the proxy options.
+    /// Gets or sets the MQTT TLS options.
     /// </summary>
     [TypeConverter(typeof(ExpandableObjectConverter))]
     [DefaultValue(null)]
-    public MqttClientWebSocketProxyOptions? ProxyOptions { get; set; }
+    public MqttClientTlsOptions? MqttTlsOptions { get; set; }
 }

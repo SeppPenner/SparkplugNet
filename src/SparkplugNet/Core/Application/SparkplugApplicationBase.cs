@@ -293,7 +293,8 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (SparkplugMessageTopic.TryParse(topic, out var topicParsed))
             {
-                return this.OnMessageReceived(topicParsed!, args.ApplicationMessage.Payload);
+                var data = args.ApplicationMessage.PayloadSegment.Array ?? [];
+                return this.OnMessageReceived(topicParsed!, data);
             }
             else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
             {
@@ -334,7 +335,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 false);
 
             // Build up the MQTT client and connect.
-            this.Options.CancellationToken ??= CancellationToken.None;
+            this.Options.CancellationToken ??= SystemCancellationToken.None;
 
             var builder = new MqttClientOptionsBuilder()
                 .WithClientId(this.Options.ClientId)
@@ -352,44 +353,31 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                     break;
             }
 
-            if (this.Options.UseTls)
+            if (this.Options.MqttTlsOptions is not null)
             {
-                if (this.Options.GetTlsParameters is not null)
-                {
-                    MqttClientOptionsBuilderTlsParameters? tlsParameters = this.Options.GetTlsParameters();
-
-                    if (tlsParameters is not null)
-                    {
-                        builder.WithTls(tlsParameters);
-                    }
-                    else
-                    {
-                        builder.WithTls();
-                    }
-                }
-                else
-                {
-                    builder.WithTls();
-                }
+                builder.WithTlsOptions(this.Options.MqttTlsOptions);
+            }
+            else
+            {
+                builder.WithTlsOptions(o => o.UseTls());
             }
 
-            if (this.Options.WebSocketParameters is null)
+            if (this.Options.MqttWebSocketOptions is null)
             {
                 builder.WithTcpServer(this.Options.BrokerAddress, this.Options.Port);
             }
             else
             {
-                builder.WithWebSocketServer(this.Options.BrokerAddress, this.Options.WebSocketParameters);
-            }
-
-            if (this.Options.ProxyOptions is not null)
-            {
-                builder.WithProxy(
-                    this.Options.ProxyOptions.Address,
-                    this.Options.ProxyOptions.Username,
-                    this.Options.ProxyOptions.Password,
-                    this.Options.ProxyOptions.Domain,
-                    this.Options.ProxyOptions.BypassOnLocal);
+                builder.WithWebSocketServer(options => 
+                    options.WithCookieContainer(this.Options.MqttWebSocketOptions.CookieContainer)
+                    .WithCookieContainer(this.Options.MqttWebSocketOptions.Credentials)
+                    .WithProxyOptions(this.Options.MqttWebSocketOptions.ProxyOptions)
+                    .WithRequestHeaders(this.Options.MqttWebSocketOptions.RequestHeaders)
+                    .WithSubProtocols(this.Options.MqttWebSocketOptions.SubProtocols)
+                    .WithUri(this.Options.BrokerAddress)
+                    .WithKeepAliveInterval(this.Options.MqttWebSocketOptions.KeepAliveInterval)
+                    .WithUseDefaultCredentials(this.Options.MqttWebSocketOptions.UseDefaultCredentials)
+                );
             }
 
             if (this.Options.IsPrimaryApplication)

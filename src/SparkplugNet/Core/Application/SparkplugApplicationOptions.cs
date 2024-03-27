@@ -31,14 +31,12 @@ public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
     /// <param name="clientId">The client identifier.</param>
     /// <param name="userName">The name of the user.</param>
     /// <param name="password">The password.</param>
-    /// <param name="useTls">A value indicating whether TLS is used or not.</param>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
     /// <param name="mqttProtocolVersion">The MQTT protocol version.</param>
     /// <param name="isPrimaryApplication">A value indicating whether the application is a primary application or not.</param>
-    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
-    /// <param name="webSocketParameters">The web socket parameters.</param>
-    /// <param name="proxyOptions">The proxy options.</param>
+    /// <param name="mqttTlsOptions">The MQTT TLS options.</param>
+    /// <param name="mqttWebSocketOptions">The MQTT WebSocket options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugApplicationOptions(
@@ -47,13 +45,11 @@ public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
         string? clientId = null,
         string? userName = null,
         string? password = null,
-        bool? useTls = null,
         string? scadaHostIdentifier = null,
         TimeSpan? reconnectInterval = null,
         SparkplugMqttProtocolVersion? mqttProtocolVersion = null,
-        GetTlsParametersDelegate? getTlsParameters = null,
-        MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
-        MqttClientWebSocketProxyOptions? proxyOptions = null,
+        MqttClientTlsOptions? mqttTlsOptions = null,
+        MqttClientWebSocketOptions? mqttWebSocketOptions = null,
         bool? isPrimaryApplication = null,
         SystemCancellationToken? cancellationToken = null)
         : base(
@@ -62,13 +58,11 @@ public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
             clientId,
             userName,
             password,
-            useTls,
             scadaHostIdentifier,
             reconnectInterval,
             mqttProtocolVersion,
-            getTlsParameters,
-            webSocketParameters,
-            proxyOptions)
+            mqttTlsOptions,
+            mqttWebSocketOptions)
     {
         this.IsPrimaryApplication = isPrimaryApplication ?? DefaultIsPrimaryApplication;
         this.CancellationToken = cancellationToken ?? SystemCancellationToken.None;

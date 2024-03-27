@@ -218,16 +218,17 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         if (SparkplugMessageTopic.TryParse(topic, out var messageTopic))
         {
-            await this.OnMessageReceived(messageTopic!, args.ApplicationMessage.Payload);
+            var data = args.ApplicationMessage.PayloadSegment.Array ?? [];
+            await this.OnMessageReceived(messageTopic!, data);
         }
         else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
         {
             // Handle the STATE message before anything else as they're UTF-8 encoded.
-            await this.FireStatusMessageReceived(Encoding.UTF8.GetString(args.ApplicationMessage.Payload));
+            await this.FireStatusMessageReceived(Encoding.UTF8.GetString(args.ApplicationMessage.PayloadSegment));
         }
         else
         {
-            throw new InvalidOperationException($"Received message on unkown topic {topic}: {args.ApplicationMessage.Payload:X2}.");
+            throw new InvalidOperationException($"Received message on unkown topic {topic}: {args.ApplicationMessage.PayloadSegment:X2}.");
         }
     }
 
@@ -274,44 +275,31 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
                 break;
         }
 
-        if (this.Options.UseTls)
+        if (this.Options.MqttTlsOptions is not null)
         {
-            if (this.Options.GetTlsParameters is not null)
-            {
-                MqttClientOptionsBuilderTlsParameters? tlsParameter = this.Options.GetTlsParameters();
-
-                if (tlsParameter is not null)
-                {
-                    builder.WithTls(tlsParameter);
-                }
-                else
-                {
-                    builder.WithTls();
-                }
-            }
-            else
-            {
-                builder.WithTls();
-            }
+            builder.WithTlsOptions(this.Options.MqttTlsOptions);
+        }
+        else
+        {
+            builder.WithTlsOptions(o => o.UseTls());
         }
 
-        if (this.Options.WebSocketParameters is null)
+        if (this.Options.MqttWebSocketOptions is null)
         {
             builder.WithTcpServer(this.Options.BrokerAddress, this.Options.Port);
         }
         else
         {
-            builder.WithWebSocketServer(this.Options.BrokerAddress, this.Options.WebSocketParameters);
-        }
-
-        if (this.Options.ProxyOptions is not null)
-        {
-            builder.WithProxy(
-                this.Options.ProxyOptions.Address,
-                this.Options.ProxyOptions.Username,
-                this.Options.ProxyOptions.Password,
-                this.Options.ProxyOptions.Domain,
-                this.Options.ProxyOptions.BypassOnLocal);
+            builder.WithWebSocketServer(o =>
+                o.WithCookieContainer(this.Options.MqttWebSocketOptions.CookieContainer)
+                .WithCookieContainer(this.Options.MqttWebSocketOptions.Credentials)
+                .WithProxyOptions(this.Options.MqttWebSocketOptions.ProxyOptions)
+                .WithRequestHeaders(this.Options.MqttWebSocketOptions.RequestHeaders)
+                .WithSubProtocols(this.Options.MqttWebSocketOptions.SubProtocols)
+                .WithUri(this.Options.BrokerAddress)
+                .WithKeepAliveInterval(this.Options.MqttWebSocketOptions.KeepAliveInterval)
+                .WithUseDefaultCredentials(this.Options.MqttWebSocketOptions.UseDefaultCredentials)
+            );
         }
 
         // Add the will message data.
@@ -349,7 +337,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         // Get the online message.
-        var onlineMessage = this.messageGenerator.GetSparkplugNodeBirthMessage<T>(
+        var onlineMessage = this.messageGenerator.GetSparkplugNodeBirthMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,

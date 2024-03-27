@@ -42,15 +42,13 @@ public sealed class SparkplugNodeOptions : SparkplugBaseOptions
     /// <param name="clientId">The client identifier.</param>
     /// <param name="userName">The name of the user.</param>
     /// <param name="password">The password.</param>
-    /// <param name="useTls">A value indicating whether TLS is used or not.</param>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="groupIdentifier">The group identifier.</param>
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="reconnectInterval">The reconnect interval.</param>
     /// <param name="mqttProtocolVersion">The MQTT protocol version.</param>
-    /// <param name="getTlsParameters">The delegate to provide TLS parameters.</param>
-    /// <param name="webSocketParameters">The web socket parameters.</param>
-    /// <param name="proxyOptions">The proxy options.</param>
+    /// <param name="mqttTlsOptions">The MQTT TLS options.</param>
+    /// <param name="mqttWebSocketOptions">The MQTT WebSocket options.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <seealso cref="SparkplugBaseOptions"/>
     public SparkplugNodeOptions(
@@ -59,13 +57,11 @@ public sealed class SparkplugNodeOptions : SparkplugBaseOptions
         string? clientId = null,
         string? userName = null,
         string? password = null,
-        bool? useTls = null,
         string? scadaHostIdentifier = null,
         TimeSpan? reconnectInterval = null,
         SparkplugMqttProtocolVersion? mqttProtocolVersion = null,
-        GetTlsParametersDelegate? getTlsParameters = null,
-        MqttClientOptionsBuilderWebSocketParameters? webSocketParameters = null,
-        MqttClientWebSocketProxyOptions? proxyOptions = null,
+        MqttClientTlsOptions? mqttTlsOptions = null,
+        MqttClientWebSocketOptions? mqttWebSocketOptions = null,
         string? groupIdentifier = null,
         string? edgeNodeIdentifier = null,
         SystemCancellationToken? cancellationToken = null)
@@ -75,13 +71,11 @@ public sealed class SparkplugNodeOptions : SparkplugBaseOptions
             clientId,
             userName,
             password,
-            useTls,
             scadaHostIdentifier,
             reconnectInterval,
             mqttProtocolVersion,
-            getTlsParameters,
-            webSocketParameters,
-            proxyOptions)
+            mqttTlsOptions,
+            mqttWebSocketOptions)
     {
         this.GroupIdentifier = string.IsNullOrWhiteSpace(groupIdentifier) ? DefaultGroupIdentifier : groupIdentifier;
         this.EdgeNodeIdentifier = string.IsNullOrWhiteSpace(edgeNodeIdentifier) ? DefaultEdgeNodeIdentifier : edgeNodeIdentifier;
