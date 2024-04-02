@@ -295,10 +295,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             builder.WithTlsOptions(this.Options.MqttTlsOptions);
         }
-        else
-        {
-            builder.WithTlsOptions(o => o.UseTls());
-        }
 
         if (this.Options.MqttWebSocketOptions is null)
         {
