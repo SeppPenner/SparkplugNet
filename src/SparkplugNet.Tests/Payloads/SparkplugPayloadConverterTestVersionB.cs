@@ -1924,7 +1924,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int16,
                 IntValue = unchecked((uint)value)
-    }
+            }
         };
         var convertedMetrics = new List<VersionBData.Metric>
         {
