@@ -1902,4 +1902,117 @@ public sealed class SparkplugPayloadConverterTestVersionB
 
         EqualityHelper.MetricEquals(metrics[0], againConvertedPayload.Metrics[0]);
     }
+
+    /// <summary>
+    /// Tests the Sparkplug payload converter for converting a version B payload from Proto (with negative values).
+    /// </summary>
+    [TestMethod]
+    public void TestConvertVersionBPayloadFromProtoWithNegativeValues()
+    {
+        var value = -2;
+        var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var bodyData = new byte[] { 1, 2, 3, 4 };
+        var metrics = new List<VersionBProtoBufPayload.Metric>
+        {
+            new()
+            {
+                Name = "Test1",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 2,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBData.DataType.Int16,
+                IntValue = unchecked((uint)value)
+    }
+        };
+        var convertedMetrics = new List<VersionBData.Metric>
+        {
+            new("Test1", VersionBData.DataType.Int16, (short)-2, timestamp)
+            {
+                Alias = 2,
+                IsHistorical = true,
+                IsTransient = true
+            }
+        };
+        var oldPayload = new VersionBProtoBufPayload
+        {
+            Body = bodyData,
+            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+            Seq = 1,
+            Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
+            Metrics = metrics
+        };
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(oldPayload);
+        Assert.IsNotNull(payload);
+        CollectionAssert.AreEqual(bodyData, payload.Body);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.AreEqual((ulong)1, payload.Seq);
+        Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+
+        var count = 0;
+
+        foreach (var metric in payload.Metrics)
+        {
+            EqualityHelper.MetricEquals(convertedMetrics[count++], metric);
+        }
+    }
+
+    /// <summary>
+    /// Tests the Sparkplug payload converter for converting a version B payload to Proto (With negative values).
+    /// </summary>
+    [TestMethod]
+    public void TestConvertVersionBPayloadToProtoWithNegativeValues()
+    {
+        var value = -1;
+        var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var bodyData = new byte[] { 1, 2, 3, 4 };
+
+        var metrics = new List<VersionBData.Metric>
+        {
+            new("Test1", VersionBData.DataType.Int8, (sbyte)-1, timestamp)
+            {
+                Alias = 1,
+                IsHistorical = true,
+                IsTransient = true
+            }
+        };
+        var convertedMetrics = new List<VersionBProtoBufPayload.Metric>
+        {
+            new()
+            {
+                Name = "Test1",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 1,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.Int8,
+                IntValue = unchecked((uint)value)
+            }
+        };
+        var oldPayload = new VersionBData.Payload
+        {
+            Body = bodyData,
+            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+            Seq = 1,
+            Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
+            Metrics = metrics
+        };
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(oldPayload);
+        Assert.IsNotNull(payload);
+        CollectionAssert.AreEqual(bodyData, payload.Body);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.AreEqual((ulong)1, payload.Seq);
+        Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+
+        var count = 0;
+
+        foreach (var metric in payload.Metrics)
+        {
+            EqualityHelper.MetricEquals(convertedMetrics[count++], metric);
+        }
+    }
 }

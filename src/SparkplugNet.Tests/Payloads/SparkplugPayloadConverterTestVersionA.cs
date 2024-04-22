@@ -234,6 +234,140 @@ public sealed class SparkplugPayloadConverterTestVersionA
     }
 
     /// <summary>
+    /// Tests the Sparkplug payload converter for converting a version A payload from Proto (With negative values).
+    /// </summary>
+    [TestMethod]
+    public void TestConvertVersionAPayloadFromProtoWithNegativeValues()
+    {
+        var dateTime = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var bodyData = new byte[] { 1, 2, 3, 4 };
+        var metrics = new List<VersionAProtoBufPayload.KuraMetric>
+        {
+            new()
+            {
+                Name = "Test1",
+                DataType = VersionAProtoBufPayload.KuraMetric.ValueType.Double,
+                DoubleValue = -1.0
+            }
+        };
+            var convertedMetrics = new List<VersionAData.KuraMetric>
+        {
+            new("Test1", VersionAData.DataType.Double, -1.0)
+        };
+        var oldPayload = new VersionAProtoBufPayload
+        {
+            Timestamp = dateTime.ToUnixTimeMilliseconds(),
+            Position = new VersionAProtoBufPayload.KuraPosition
+            {
+                Heading = 1.0,
+                Latitude = 2.0,
+                Longitude = 3.0,
+                Precision = 4.0,
+                Speed = 5.0,
+                Timestamp = dateTime2.ToUnixTimeMilliseconds(),
+                Altitude = 7.0,
+                Status = 8,
+                Satellites = 9
+            },
+            Metrics = metrics,
+            Body = bodyData
+        };
+        var payload = VersionAMain.PayloadConverter.ConvertVersionAPayload(oldPayload);
+        Assert.IsNotNull(payload);
+        Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.IsNotNull(payload.Position);
+        Assert.AreEqual(1.0, payload.Position.Heading);
+        Assert.AreEqual(2.0, payload.Position.Latitude);
+        Assert.AreEqual(3.0, payload.Position.Longitude);
+        Assert.AreEqual(4.0, payload.Position.Precision);
+        Assert.AreEqual(5.0, payload.Position.Speed);
+        Assert.AreEqual(dateTime2.ToUnixTimeMilliseconds(), payload.Position.Timestamp);
+        Assert.AreEqual(7.0, payload.Position.Altitude);
+        Assert.AreEqual(8, payload.Position.Status);
+        Assert.AreEqual(9, payload.Position.Satellites);
+        Assert.IsNotNull(payload.Metrics);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+
+        var count = 0;
+
+        foreach (var metric in payload.Metrics)
+        {
+            MetricEquals(convertedMetrics[count++], metric);
+        }
+
+        Assert.IsNotNull(payload.Body);
+        CollectionAssert.AreEqual(bodyData, payload.Body);
+    }
+
+    /// <summary>
+    /// Tests the Sparkplug payload converter for converting a version A payload to Proto (With negative values).
+    /// </summary>
+    [TestMethod]
+    public void TestConvertVersionAPayloadToProtoWithNegativeValues()
+    {
+        var dateTime = new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dateTime2 = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var bodyData = new byte[] { 1, 2, 3, 4 };
+        var metrics = new List<VersionAData.KuraMetric>
+        {
+            new("Test1", VersionAData.DataType.Float, -2.0f)
+        };
+            var convertedMetrics = new List<VersionAProtoBufPayload.KuraMetric>
+        {
+            new()
+            {
+                Name = "Test1",
+                DataType = VersionAProtoBufPayload.KuraMetric.ValueType.Float,
+                FloatValue = -2.0f
+            }
+        };
+        var oldPayload = new VersionAData.Payload
+        {
+            Timestamp = dateTime.ToUnixTimeMilliseconds(),
+            Position = new VersionAData.KuraPosition
+            {
+                Heading = 1.0,
+                Latitude = 2.0,
+                Longitude = 3.0,
+                Precision = 4.0,
+                Speed = 5.0,
+                Timestamp = dateTime2.ToUnixTimeMilliseconds(),
+                Altitude = 7.0,
+                Status = 8,
+                Satellites = 9
+            },
+            Metrics = metrics,
+            Body = bodyData
+        };
+        var payload = VersionAMain.PayloadConverter.ConvertVersionAPayload(oldPayload);
+        Assert.IsNotNull(payload);
+        Assert.AreEqual(dateTime.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.IsNotNull(payload.Position);
+        Assert.AreEqual(1.0, payload.Position.Heading);
+        Assert.AreEqual(2.0, payload.Position.Latitude);
+        Assert.AreEqual(3.0, payload.Position.Longitude);
+        Assert.AreEqual(4.0, payload.Position.Precision);
+        Assert.AreEqual(5.0, payload.Position.Speed);
+        Assert.AreEqual(dateTime2.ToUnixTimeMilliseconds(), payload.Position.Timestamp);
+        Assert.AreEqual(7.0, payload.Position.Altitude);
+        Assert.AreEqual(8, payload.Position.Status);
+        Assert.AreEqual(9, payload.Position.Satellites);
+        Assert.IsNotNull(payload.Metrics);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+
+        var count = 0;
+
+        foreach (var metric in payload.Metrics)
+        {
+            MetricEquals(convertedMetrics[count++], metric);
+        }
+
+        Assert.IsNotNull(payload.Body);
+        CollectionAssert.AreEqual(bodyData, payload.Body);
+    }
+
+    /// <summary>
     /// Tests the two given metrics for equality.
     /// </summary>
     /// <param name="expected">The expected metric.</param>
