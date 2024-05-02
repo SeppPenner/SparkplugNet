@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.6.9">
       <PrivateAssets>all</PrivateAssets>
@@ -22,13 +20,10 @@
     </PackageReference>
     <PackageReference Include="protobuf-net" Version="3.0.101" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\SparkplugNet\SparkplugNet.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="VersionATests\" />
   </ItemGroup>
-
 </Project>
