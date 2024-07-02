@@ -221,7 +221,7 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int64:
             case VersionBDataTypeEnum.UInt32:
             case VersionBDataTypeEnum.UInt64:
-                protoMetric.LongValue = metric.Value is not null ? metric.Value.ConvertOrDefaultTo<ulong>() : default;
+                protoMetric.LongValue = metric.Value.ConvertOrDefaultTo<ulong>();
                 break;
             case VersionBDataTypeEnum.DateTime:
                 if (metric.Value is null)

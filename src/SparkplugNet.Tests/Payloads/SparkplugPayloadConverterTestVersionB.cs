@@ -1909,7 +1909,10 @@ public sealed class SparkplugPayloadConverterTestVersionB
     [TestMethod]
     public void TestConvertVersionBPayloadFromProtoWithNegativeValues()
     {
-        var value = -2;
+        var value1 = -1;
+        var value2 = -2;
+        var value3 = -3;
+        var value4 = -4;
         var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var bodyData = new byte[] { 1, 2, 3, 4 };
         var metrics = new List<VersionBProtoBufPayload.Metric>
@@ -1922,15 +1925,66 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsHistorical = true,
                 IsTransient = true,
                 IsNull = false,
+                DataType = (uint?)VersionBData.DataType.Int8,
+                IntValue = unchecked((uint)value1)
+            },
+            new()
+            {
+                Name = "Test2",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 3,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
                 DataType = (uint?)VersionBData.DataType.Int16,
-                IntValue = unchecked((uint)value)
+                IntValue = unchecked((uint)value2)
+            },
+            new()
+            {
+                Name = "Test3",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 4,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBData.DataType.Int32,
+                IntValue = unchecked((uint)value3)
+            },
+            new()
+            {
+                Name = "Test4",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 5,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBData.DataType.Int64,
+                LongValue = unchecked((ulong)value4)
             }
         };
         var convertedMetrics = new List<VersionBData.Metric>
         {
-            new("Test1", VersionBData.DataType.Int16, (short)-2, timestamp)
+            new("Test1", VersionBData.DataType.Int8, (sbyte)value1, timestamp)
             {
                 Alias = 2,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test2", VersionBData.DataType.Int16, (short)value2, timestamp)
+            {
+                Alias = 3,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test3", VersionBData.DataType.Int32, (int)value3, timestamp)
+            {
+                Alias = 4,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test4", VersionBData.DataType.Int64, (long)value4, timestamp)
+            {
+                Alias = 5,
                 IsHistorical = true,
                 IsTransient = true
             }
@@ -1965,15 +2019,36 @@ public sealed class SparkplugPayloadConverterTestVersionB
     [TestMethod]
     public void TestConvertVersionBPayloadToProtoWithNegativeValues()
     {
-        var value = -1;
+        var value1 = -1;
+        var value2 = -2;
+        var value3 = -3;
+        var value4 = -4;
         var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
         var bodyData = new byte[] { 1, 2, 3, 4 };
 
         var metrics = new List<VersionBData.Metric>
         {
-            new("Test1", VersionBData.DataType.Int8, (sbyte)-1, timestamp)
+            new("Test1", VersionBData.DataType.Int8, (sbyte)value1, timestamp)
             {
                 Alias = 1,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test2", VersionBData.DataType.Int16, (short)value2, timestamp)
+            {
+                Alias = 2,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test3", VersionBData.DataType.Int32, (int)value3, timestamp)
+            {
+                Alias = 3,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test4", VersionBData.DataType.Int64, (long)value4, timestamp)
+            {
+                Alias = 4,
                 IsHistorical = true,
                 IsTransient = true
             }
@@ -1989,7 +2064,40 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.Int8,
-                IntValue = unchecked((uint)value)
+                IntValue = unchecked((uint)value1)
+            },
+            new()
+            {
+                Name = "Test2",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 2,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.Int16,
+                IntValue = unchecked((uint)value2)
+            },
+            new()
+            {
+                Name = "Test3",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 3,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.Int32,
+                IntValue = unchecked((uint)value3)
+            },
+            new()
+            {
+                Name = "Test4",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 4,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = false,
+                DataType = (uint?)VersionBProtoBuf.DataType.Int64,
+                LongValue = unchecked((ulong)value4)
             }
         };
         var oldPayload = new VersionBData.Payload
