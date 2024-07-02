@@ -1,6 +1,7 @@
 Change history
 --------------
 
+* **Version 1.3.10.0 (2024-07-02)**: Fixed negative values conversion issues, fixes https://github.com/SeppPenner/SparkplugNet/issues/96.
 * **Version 1.3.9.0 (2024-07-02)**: Updated NuGet packages, fixes https://github.com/SeppPenner/SparkplugNet/issues/99.
 * **Version 1.3.8.0 (2024-04-15)**: Removed invalid setting of TLS options, fixes https://github.com/SeppPenner/SparkplugNet/issues/94.
 * **Version 1.3.7.0 (2024-03-27)**: Fixed logic to get sesssion number metric, fixes https://github.com/SeppPenner/SparkplugNet/issues/91; Changed order of the test code to have event handlers defined BEFORE anything else happens; Reworked MQTT options, fixes https://github.com/SeppPenner/SparkplugNet/issues/83; Added option to do a node rebirth from code, fixes https://github.com/SeppPenner/SparkplugNet/issues/44.

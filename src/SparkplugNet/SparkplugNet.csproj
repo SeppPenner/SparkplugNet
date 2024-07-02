@@ -16,7 +16,7 @@
         <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
         <PackageIcon>Icon.png</PackageIcon>
         <RepositoryType>Github</RepositoryType>
-        <PackageReleaseNotes>Version 1.3.9.0 (2024-07-02): Updated NuGet packages, fixes https://github.com/SeppPenner/SparkplugNet/issues/99.</PackageReleaseNotes>
+        <PackageReleaseNotes>Version 1.3.10.0 (2024-07-02): Fixed negative values conversion issues, fixes https://github.com/SeppPenner/SparkplugNet/issues/96.</PackageReleaseNotes>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
