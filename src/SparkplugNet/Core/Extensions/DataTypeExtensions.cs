@@ -28,15 +28,44 @@ internal static class DataTypeExtensions
         }
 
         // Check whether we need to convert from signed to unsigned.
-        var needToConvertFromSignedToUnsigned =
-            (objValue is sbyte sbyteVal && sbyteVal < 0) ||
-            (objValue is short shortVal && shortVal < 0) ||
-            (objValue is int intVal && intVal < 0) ||
-            (objValue is long longVal && longVal < 0);
-
-        if (needToConvertFromSignedToUnsigned)
+        if (objValue is sbyte sbyteVal && sbyteVal < 0)
         {
-            return unchecked((T)objValue);
+            return typeof(T) switch
+            {
+                Type t when t == typeof(uint) => (T)Convert.ChangeType(unchecked((uint)sbyteVal), typeof(T)),
+                Type t when t == typeof(ulong) => (T)Convert.ChangeType(unchecked((ulong)sbyteVal), typeof(T)),
+                _ => unchecked((T)objValue),
+            };
+        }
+
+        if (objValue is short shortVal && shortVal < 0)
+        {
+            return typeof(T) switch
+            {
+                Type t when t == typeof(uint) => (T)Convert.ChangeType(unchecked((uint)shortVal), typeof(T)),
+                Type t when t == typeof(ulong) => (T)Convert.ChangeType(unchecked((ulong)shortVal), typeof(T)),
+                _ => unchecked((T)objValue),
+            };
+        }
+
+        if (objValue is int intVal && intVal < 0)
+        {
+            return typeof(T) switch
+            {
+                Type t when t == typeof(uint) => (T)Convert.ChangeType(unchecked((uint)intVal), typeof(T)),
+                Type t when t == typeof(ulong) => (T)Convert.ChangeType(unchecked((ulong)intVal), typeof(T)),
+                _ => unchecked((T)objValue),
+            };
+        }
+
+        if (objValue is long longVal && longVal < 0)
+        {
+            return typeof(T) switch
+            {
+                Type t when t == typeof(uint) => (T)Convert.ChangeType(unchecked((uint)longVal), typeof(T)),
+                Type t when t == typeof(ulong) => (T)Convert.ChangeType(unchecked((ulong)longVal), typeof(T)),
+                _ => unchecked((T)objValue),
+            };
         }
 
         // Check whether we need to convert from unsigned to signed.
