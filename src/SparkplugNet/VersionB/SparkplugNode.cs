@@ -114,7 +114,7 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     {
         // Filter out session number metric.
         var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
-        var metrics = payload.Metrics.ToList();
+        var metrics = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName).ToList();
         // var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
 
         if (sessionNumberMetric is not null)
