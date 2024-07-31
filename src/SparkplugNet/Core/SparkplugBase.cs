@@ -18,6 +18,11 @@ namespace SparkplugNet.Core;
 public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, new()
 {
     /// <summary>
+    /// The sparkplug specification version.
+    /// </summary>
+    internal readonly SparkplugSpecificationVersion specificationVersion;
+
+    /// <summary>
     /// The message generator.
     /// </summary>
     internal readonly SparkplugMessageGenerator messageGenerator;
@@ -54,6 +59,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <seealso cref="ISparkplugConnection"/>
     public SparkplugBase(KnownMetricStorage knownMetricsStorage, SparkplugSpecificationVersion specificationVersion)
     {
+        this.specificationVersion = specificationVersion;
         this.knownMetrics = knownMetricsStorage;
 
         if (typeof(T).IsAssignableFrom(typeof(VersionAData.KuraMetric)))
