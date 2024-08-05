@@ -222,30 +222,51 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <param name="topic">The topic.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="metricStatus">The metric status.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if any identifier is invalid.</exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<VersionAData.KuraMetric> ProcessPayload(
         SparkplugMessageTopic topic,
         List<VersionAData.KuraMetric> metrics,
         SparkplugMetricStatus metricStatus)
     {
-        var metricState = new MetricState<VersionAData.KuraMetric>
+        // Check group id.
+        if (string.IsNullOrWhiteSpace(topic.GroupIdentifier))
+        {
+            throw new InvalidOperationException($"The group identifier is invalid {topic.GroupIdentifier}.");
+        }
+
+        if (!this.GroupStates.ContainsKey(topic.GroupIdentifier))
+        {
+            this.GroupStates[topic.GroupIdentifier] = new GroupState<VersionAData.KuraMetric>();
+        }
+
+        NodeState<VersionAData.KuraMetric> metricState = new()
         {
             MetricStatus = metricStatus
         };
 
+        // Check node id.
+        if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+        {
+            throw new InvalidOperationException($"The edge node identifier is invalid {topic.EdgeNodeIdentifier}.");
+        }
+
         if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
-            if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+            if (!this.GroupStates[topic.GroupIdentifier].NodeStates.ContainsKey(topic.EdgeNodeIdentifier))
             {
-                throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
+                this.GroupStates[topic.GroupIdentifier]
+                    .NodeStates[topic.EdgeNodeIdentifier] = metricState;
             }
 
-            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
+            this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier]
+                .DeviceStates[topic.DeviceIdentifier] = metricState;
         }
         else
         {
-            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
+            this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier] = metricState;
         }
 
         foreach (var payloadMetric in metrics)

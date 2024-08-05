@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.VersionB;
 
+using System.Diagnostics.Metrics;
+
 /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
 /// <summary>
 ///   A class that handles a Sparkplug application.
@@ -169,7 +171,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 {
                     throw new InvalidOperationException($"The device identifier is invalid!");
                 }
-                    
+
                 await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
                     this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Online));
                 break;
@@ -189,7 +191,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             case SparkplugMessageType.NodeDeath:
                 this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Offline);
                 await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, sessionNumberMetric);
-                break;  
+                break;
             case SparkplugMessageType.DeviceDeath:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
                 {
@@ -208,27 +210,63 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="topic">The topic.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="metricStatus">The metric status.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if any identifier is invalid.</exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<Metric> ProcessPayload(SparkplugMessageTopic topic, List<Metric> metrics, SparkplugMetricStatus metricStatus)
     {
-        var metricState = new MetricState<Metric>
+        // Check group id.
+        if (string.IsNullOrWhiteSpace(topic.GroupIdentifier))
+        {
+            throw new InvalidOperationException($"The group identifier is invalid {topic.GroupIdentifier}.");
+        }
+
+        if (!this.GroupStates.ContainsKey(topic.GroupIdentifier))
+        {
+            this.GroupStates[topic.GroupIdentifier] = new GroupState<Metric>();
+        }
+
+        NodeState<Metric> metricState = new()
         {
             MetricStatus = metricStatus
         };
 
+        // Check node id.
+        if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+        {
+            throw new InvalidOperationException($"The edge node identifier is invalid {topic.EdgeNodeIdentifier}.");
+        }
+
         if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
-            if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+            // If the group doesn't contain the node, create a new node.
+            if (!this.GroupStates[topic.GroupIdentifier].NodeStates.ContainsKey(topic.EdgeNodeIdentifier))
             {
-                throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
+                this.GroupStates[topic.GroupIdentifier]
+                    .NodeStates[topic.EdgeNodeIdentifier] = metricState;
             }
 
-            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
+            if (this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier]
+                .DeviceStates.TryGetValue(topic.DeviceIdentifier, out var metric))
+            {
+                metricState.Metrics = metric.Metrics;
+            }
+
+            this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier]
+                .DeviceStates[topic.DeviceIdentifier] = metricState;
         }
         else
         {
-            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
+            if (this.GroupStates[topic.GroupIdentifier]
+                .NodeStates.TryGetValue(topic.EdgeNodeIdentifier, out var metric))
+            {
+                metricState.Metrics = metric.Metrics;
+                metricState.DeviceStates = metric.DeviceStates;
+            }
+
+            this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier] = metricState;
         }
 
         foreach (var payloadMetric in metrics)
