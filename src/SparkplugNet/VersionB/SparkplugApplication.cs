@@ -128,17 +128,39 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
 
-        if (payloadVersionB is not null)
+        if (payloadVersionB == null) { return; }
+
+        ConcurrentDictionary<string, Metric>? metrics = null;
+
+        if (!(topic.MessageType == SparkplugMessageType.NodeBirth || topic.MessageType == SparkplugMessageType.DeviceBirth))
         {
-            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+            // Get known metrics
+            if (!this.GroupStates.TryGetValue(topic.GroupIdentifier, out var groupState)) { return; }
 
-            if (convertedPayload is not Payload _)
+            if (!groupState.NodeStates.TryGetValue(topic.EdgeNodeIdentifier, out var nodeState)) { return; }
+
+            if (topic.DeviceIdentifier is null)
             {
-                throw new InvalidCastException("The metric cast didn't work properly.");
+                metrics = nodeState.Metrics;
             }
-
-            await this.HandleMessagesForVersionB(topic, convertedPayload);
+            else if (nodeState.DeviceStates.TryGetValue(topic.DeviceIdentifier, out var metricState))
+            {
+                metrics = metricState.Metrics;
+            }
+            else
+            {
+                return;
+            }
         }
+
+        var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB, metrics);
+
+        if (convertedPayload is not Payload _)
+        {
+            throw new InvalidCastException("The metric cast didn't work properly.");
+        }
+
+        await this.HandleMessagesForVersionB(topic, convertedPayload);
     }
 
     /// <summary>

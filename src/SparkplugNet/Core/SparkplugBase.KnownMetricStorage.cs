@@ -313,5 +313,11 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                 this.knownMetricsByName[metric.Name] = metric;
             }
         }
+
+        /// <summary>
+        /// Return the known metrics by name.
+        /// </summary>
+        /// <returns></returns>
+        public ConcurrentDictionary<string, T> GetKnownMetricsByName() { return this.knownMetricsByName; }
     }
 }
