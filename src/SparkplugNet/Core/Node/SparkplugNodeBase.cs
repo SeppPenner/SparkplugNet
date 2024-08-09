@@ -403,7 +403,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         await this.client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
         // Subscribe to the state topic.
-        var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);
+        //var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);
+        var stateSubscribeTopic = SparkplugTopicGenerator.GetSparkplugStateMessageTopic(this.Options.ScadaHostIdentifier, this.specificationVersion);
         await this.client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
     }
 

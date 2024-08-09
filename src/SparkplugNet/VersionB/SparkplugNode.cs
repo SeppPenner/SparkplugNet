@@ -91,17 +91,36 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
 
-        if (payloadVersionB is not null)
+        if (payloadVersionB == null) { return; }
+
+        ConcurrentDictionary<string, Metric>? metrics = null;
+
+        if (!(topic.MessageType == SparkplugMessageType.NodeBirth || topic.MessageType == SparkplugMessageType.DeviceBirth))
         {
-            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
-
-            if (convertedPayload is not Payload _)
+            // Get known metrics
+            if (topic.DeviceIdentifier is null)
             {
-                throw new InvalidCastException("The metric cast didn't work properly.");
+                metrics = this.knownMetrics.GetKnownMetricsByName();
             }
-
-            await this.HandleMessagesForVersionB(topic, convertedPayload);
+            else if (this.KnownDevices.TryGetValue(topic.DeviceIdentifier, out var knownMetricStorage))
+            {
+                metrics = knownMetricStorage.GetKnownMetricsByName();
+            }
+            else
+            {
+                return;
+            }
         }
+
+        var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB, metrics);
+
+        if (convertedPayload is not Payload _)
+        {
+            throw new InvalidCastException("The metric cast didn't work properly.");
+        }
+
+        await this.HandleMessagesForVersionB(topic, convertedPayload);
+
     }
 
     /// <summary>
@@ -114,12 +133,12 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
     {
         // Filter out session number metric.
         var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
-        var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
+        var metrics = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName).ToList();
+        // var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
 
         if (sessionNumberMetric is not null)
         {
-            filteredMetrics.Add(sessionNumberMetric);
+            metrics.Add(sessionNumberMetric);
         }
 
         // Handle messages.
@@ -131,11 +150,11 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                await this.FireDeviceCommandReceived(topic.DeviceIdentifier, filteredMetrics);
+                await this.FireDeviceCommandReceived(topic.DeviceIdentifier, metrics);
                 break;
 
             case SparkplugMessageType.NodeCommand:
-                await this.FireNodeCommandReceived(filteredMetrics);
+                await this.FireNodeCommandReceived(metrics);
                 break;
         }
     }
