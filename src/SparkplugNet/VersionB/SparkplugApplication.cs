@@ -224,11 +224,31 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
             }
 
-            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
+            this.DeviceStates.AddOrUpdate(
+                $"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}",
+                metricState,
+                (_, previousMetricState) => {
+                    metricState = previousMetricState;
+                    metricState.MetricStatus = metricStatus;
+                    return metricState;
+                });
         }
         else
         {
-            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
+            metricState = new MetricState<Metric>
+            {
+                MetricStatus = metricStatus
+            };
+            this.NodeStates.AddOrUpdate(
+                topic.EdgeNodeIdentifier,
+                metricState,
+                (_, previousMetricState) =>
+                {
+                    metricState = previousMetricState;
+                    metricState.MetricStatus = metricStatus;
+                    return metricState;
+                }
+            );
         }
 
         var result = new List<Metric>();
