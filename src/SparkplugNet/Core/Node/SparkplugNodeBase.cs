@@ -364,6 +364,12 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
 
+        // When a primary host application is provided, wait before sending NBIRTH and DBIRTH.
+        if (!string.IsNullOrEmpty(this.Options.ScadaHostIdentifier))
+        {
+            return;
+        }
+
         // Publish the message.
         await this.client.PublishAsync(nodeBirthMessage, this.Options.CancellationToken.Value);
 
