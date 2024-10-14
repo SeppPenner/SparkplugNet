@@ -79,6 +79,22 @@ internal static class PayloadConverter
             Timestamp = protoMetric.Timestamp
         };
 
+        // Get properties
+        if (protoMetric.PropertySetValue is not null)
+        {
+            PropertySet propertySet = new();
+            propertySet.Keys = protoMetric.PropertySetValue.Keys;
+
+            propertySet.Values = [];
+
+            foreach (var item in protoMetric.PropertySetValue.Values)
+            {
+                propertySet.Values.Add(ConvertVersionBPropertyValue(item));
+            }
+
+            metric.Properties = propertySet;
+        }
+
         // [tck-id-payloads-metric-datatype-not-req]
         // The datatype SHOULD NOT be included with metric definitions in NDATA, NCMD, DDATA, and DCMD messages.
         VersionBDataTypeEnum dataType;
