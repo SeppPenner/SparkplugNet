@@ -28,7 +28,7 @@
         <NoWarn>NU1803,CS0618,CS0809,NU1901,NU1902</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <NuGetAuditMode>all</NuGetAuditMode>
-        <Configurations>Debug;Release;p1600sedac</Configurations>
+        <Configurations>Debug;Release;p1600sedac;p1000edge</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
