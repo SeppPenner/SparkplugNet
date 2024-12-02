@@ -47,14 +47,9 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Gets the node states.
+    /// Get the group states.
     /// </summary>
-    public ConcurrentDictionary<string, MetricState<T>> NodeStates { get; } = new();
-
-    /// <summary>
-    /// Gets the device states.
-    /// </summary>
-    public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new();
+    public ConcurrentDictionary<string, GroupState<T>> GroupStates { get; } = new();
 
     /// <summary>
     /// Gets the options.
@@ -85,8 +80,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         }
 
         // Clear states.
-        this.NodeStates.Clear();
-        this.DeviceStates.Clear();
+        this.GroupStates.Clear();
 
         // Add handlers.
         this.AddEventHandlers();
@@ -364,7 +358,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             }
             else
             {
-                builder.WithWebSocketServer(options => 
+                builder.WithWebSocketServer(options =>
                     options.WithCookieContainer(this.Options.MqttWebSocketOptions.CookieContainer)
                     .WithCookieContainer(this.Options.MqttWebSocketOptions.Credentials)
                     .WithProxyOptions(this.Options.MqttWebSocketOptions.ProxyOptions)
@@ -450,11 +444,12 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="metricState">The metric state.</param>
     private void UpdateMetricState(SparkplugMetricStatus metricState)
     {
-        var keys = new List<string>(this.NodeStates.Keys.ToList());
-
-        foreach (string key in keys)
+        foreach (var group in this.GroupStates)
         {
-            this.NodeStates[key].MetricStatus = metricState;
+            foreach (var node in group.Value.NodeStates)
+            {
+                node.Value.MetricStatus = metricState;
+            }
         }
     }
 

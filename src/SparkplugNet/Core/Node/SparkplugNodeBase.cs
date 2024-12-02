@@ -86,7 +86,11 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         // Connect, subscribe to incoming messages and send a state message.
         await this.ConnectInternal();
         await this.SubscribeInternal();
-        await this.PublishNodeAndDeviceBirthsInternal();
+
+        if (string.IsNullOrEmpty(this.Options.ScadaHostIdentifier))
+        {
+            await this.PublishNodeAndDeviceBirthsInternal(); 
+        }
     }
 
     /// <summary>
@@ -124,6 +128,19 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
 
     /// <summary>
+    /// Does a node birth.
+    /// </summary>
+    /// <param name="metrics">The new metrics.</param>
+    public async Task Birth(IEnumerable<T> metrics)
+    {
+        // Reset the known metrics.
+        this.knownMetrics = new KnownMetricStorage(metrics);
+
+        // Send node birth and device births.
+        await this.PublishNodeAndDeviceBirthsInternal();
+    }
+
+    /// <summary>
     /// Does a node rebirth.
     /// </summary>
     /// <param name="metrics">The new metrics.</param>
@@ -132,11 +149,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         // Send node death first.
         await this.SendNodeDeathMessage();
 
-        // Reset the known metrics.
-        this.knownMetrics = new KnownMetricStorage(metrics);
-
-        // Send node birth and device births.
-        await this.PublishNodeAndDeviceBirthsInternal();
+        await this.Birth(metrics);
     }
 
     /// <summary>
@@ -403,7 +416,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         await this.client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
 
         // Subscribe to the state topic.
-        var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);
+        //var stateSubscribeTopic = SparkplugTopicGenerator.GetStateSubscribeTopic(this.Options.ScadaHostIdentifier);
+        var stateSubscribeTopic = SparkplugTopicGenerator.GetSparkplugStateMessageTopic(this.Options.ScadaHostIdentifier, this.specificationVersion);
         await this.client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
     }
 

@@ -9,6 +9,8 @@
 
 namespace SparkplugNet.VersionB;
 
+using System.Diagnostics.Metrics;
+
 /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
 /// <summary>
 ///   A class that handles a Sparkplug application.
@@ -126,17 +128,39 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     {
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
 
-        if (payloadVersionB is not null)
+        if (payloadVersionB == null) { return; }
+
+        ConcurrentDictionary<string, Metric>? metrics = null;
+
+        if (!(topic.MessageType == SparkplugMessageType.NodeBirth || topic.MessageType == SparkplugMessageType.DeviceBirth))
         {
-            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+            // Get known metrics
+            if (!this.GroupStates.TryGetValue(topic.GroupIdentifier, out var groupState)) { return; }
 
-            if (convertedPayload is not Payload _)
+            if (!groupState.NodeStates.TryGetValue(topic.EdgeNodeIdentifier, out var nodeState)) { return; }
+
+            if (topic.DeviceIdentifier is null)
             {
-                throw new InvalidCastException("The metric cast didn't work properly.");
+                metrics = nodeState.Metrics;
             }
-
-            await this.HandleMessagesForVersionB(topic, convertedPayload);
+            else if (nodeState.DeviceStates.TryGetValue(topic.DeviceIdentifier, out var metricState))
+            {
+                metrics = metricState.Metrics;
+            }
+            else
+            {
+                return;
+            }
         }
+
+        var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB, metrics);
+
+        if (convertedPayload is not Payload _)
+        {
+            throw new InvalidCastException("The metric cast didn't work properly.");
+        }
+
+        await this.HandleMessagesForVersionB(topic, convertedPayload);
     }
 
     /// <summary>
@@ -149,12 +173,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     {
         // Filter out session number metric.
         var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
-        var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
+        var metrics = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName).ToList();
+        // var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
 
         if (sessionNumberMetric is not null)
         {
-            filteredMetrics.Add(sessionNumberMetric);
+            metrics.Add(sessionNumberMetric);
         }
 
         // Handle messages.
@@ -162,7 +186,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
         {
             case SparkplugMessageType.NodeBirth:
                 await this.FireNodeBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
+                    this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.DeviceBirth:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
@@ -171,10 +195,10 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 }
 
                 await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
+                    this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Online));
                 break;
             case SparkplugMessageType.NodeData:
-                var nodeDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
+                var nodeDataMetrics = this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Online);
                 await this.FireNodeDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics);
                 break;
             case SparkplugMessageType.DeviceData:
@@ -183,11 +207,11 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                var deviceDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
+                var deviceDataMetrics = this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Online);
                 await this.FireDeviceDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics);
                 break;
             case SparkplugMessageType.NodeDeath:
-                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
+                this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Offline);
                 await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, sessionNumberMetric);
                 break;
             case SparkplugMessageType.DeviceDeath:
@@ -196,7 +220,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                     throw new InvalidOperationException($"Topic {topic} is invalid!");
                 }
 
-                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
+                this.ProcessPayload(topic, metrics, SparkplugMetricStatus.Offline);
                 await this.FireDeviceDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
                 break;
         }
@@ -208,27 +232,63 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="topic">The topic.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="metricStatus">The metric status.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if any identifier is invalid.</exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
     private IEnumerable<Metric> ProcessPayload(SparkplugMessageTopic topic, List<Metric> metrics, SparkplugMetricStatus metricStatus)
     {
-        var metricState = new MetricState<Metric>
+        // Check group id.
+        if (string.IsNullOrWhiteSpace(topic.GroupIdentifier))
+        {
+            throw new InvalidOperationException($"The group identifier is invalid {topic.GroupIdentifier}.");
+        }
+
+        if (!this.GroupStates.ContainsKey(topic.GroupIdentifier))
+        {
+            this.GroupStates[topic.GroupIdentifier] = new GroupState<Metric>();
+        }
+
+        NodeState<Metric> metricState = new()
         {
             MetricStatus = metricStatus
         };
 
+        // Check node id.
+        if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+        {
+            throw new InvalidOperationException($"The edge node identifier is invalid {topic.EdgeNodeIdentifier}.");
+        }
+
         if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
         {
-            if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
+            // If the group doesn't contain the node, create a new node.
+            if (!this.GroupStates[topic.GroupIdentifier].NodeStates.ContainsKey(topic.EdgeNodeIdentifier))
             {
-                throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
+                this.GroupStates[topic.GroupIdentifier]
+                    .NodeStates[topic.EdgeNodeIdentifier] = metricState;
             }
 
-            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
+            if (this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier]
+                .DeviceStates.TryGetValue(topic.DeviceIdentifier, out var metric))
+            {
+                metricState.Metrics = metric.Metrics;
+            }
+
+            this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier]
+                .DeviceStates[topic.DeviceIdentifier] = metricState;
         }
         else
         {
-            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
+            if (this.GroupStates[topic.GroupIdentifier]
+                .NodeStates.TryGetValue(topic.EdgeNodeIdentifier, out var metric))
+            {
+                metricState.Metrics = metric.Metrics;
+                metricState.DeviceStates = metric.DeviceStates;
+            }
+
+            this.GroupStates[topic.GroupIdentifier]
+                .NodeStates[topic.EdgeNodeIdentifier] = metricState;
         }
 
         foreach (var payloadMetric in metrics)

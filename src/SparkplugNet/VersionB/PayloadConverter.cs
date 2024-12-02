@@ -18,39 +18,56 @@ internal static class PayloadConverter
     /// Gets the version B payload converted from the ProtoBuf payload.
     /// </summary>
     /// <param name="protoPayload">The <see cref="VersionBProtoBuf.ProtoBufPayload"/>.</param>
+    /// <param name="metrics"></param>
     /// <returns>The <see cref="Payload"/>.</returns>
-    public static Payload ConvertVersionBPayload(VersionBProtoBuf.ProtoBufPayload protoPayload)
+    public static Payload ConvertVersionBPayload(VersionBProtoBuf.ProtoBufPayload protoPayload, ConcurrentDictionary<string, Metric>? metrics)
         => new()
         {
             Body = protoPayload.Body,
-            Metrics = protoPayload.Metrics.Select(ConvertVersionBMetric).ToList(),
+            Metrics = protoPayload.Metrics.Select(m => ConvertVersionBMetric(m, metrics)).ToList(),
             Seq = protoPayload.Seq,
             Timestamp = protoPayload.Timestamp,
             Uuid = protoPayload.Uuid ?? string.Empty
         };
 
+
+    public static VersionBProtoBuf.ProtoBufPayload ConvertVersionBPayload(Payload payload)
+        => ConvertVersionBPayload(payload, null);
+
     /// <summary>
     /// Gets the ProtoBuf payload converted from the version B payload.
     /// </summary>
     /// <param name="payload">The <see cref="Payload"/>.</param>
+    /// <param name="sparkplugMessageType">The <see cref="SparkplugMessageType"/>.</param>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload"/>.</returns>
-    public static VersionBProtoBuf.ProtoBufPayload ConvertVersionBPayload(Payload payload)
+    public static VersionBProtoBuf.ProtoBufPayload ConvertVersionBPayload(Payload payload, SparkplugMessageType? sparkplugMessageType)
         => new()
         {
             Body = payload.Body,
-            Metrics = payload.Metrics.Select(ConvertVersionBMetric).ToList(),
+            Metrics = payload.Metrics.Select(m => ConvertVersionBMetric(m, sparkplugMessageType)).ToList(),
             Seq = payload.Seq,
             Timestamp = payload.Timestamp,
             Uuid = payload.Uuid
         };
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="protoMetric"></param>
+    /// <returns></returns>
+    public static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric)
+    {
+        return ConvertVersionBMetric(protoMetric, null);
+    }
+
+    /// <summary>
     /// Gets the version B metric from the version B ProtoBuf metric.
     /// </summary>
     /// <param name="protoMetric">The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</param>
+    /// <param name="metrics">The <see cref="Metric"/>.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the metric data type is unknown.</exception>
     /// <returns>The <see cref="Metric"/>.</returns>
-    public static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric)
+    public static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric, ConcurrentDictionary<string, Metric>? metrics)
     {
         var metric = new Metric()
         {
@@ -62,7 +79,34 @@ internal static class PayloadConverter
             Timestamp = protoMetric.Timestamp
         };
 
-        var dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
+        // Get properties
+        if (protoMetric.PropertySetValue is not null)
+        {
+            PropertySet propertySet = new();
+            propertySet.Keys = protoMetric.PropertySetValue.Keys;
+
+            propertySet.Values = [];
+
+            foreach (var item in protoMetric.PropertySetValue.Values)
+            {
+                propertySet.Values.Add(ConvertVersionBPropertyValue(item));
+            }
+
+            metric.Properties = propertySet;
+        }
+
+        // [tck-id-payloads-metric-datatype-not-req]
+        // The datatype SHOULD NOT be included with metric definitions in NDATA, NCMD, DDATA, and DCMD messages.
+        VersionBDataTypeEnum dataType;
+
+        if (metrics is null)
+        {
+            dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
+        }
+        else
+        {
+            dataType = metrics.Where(o => o.Key == metric.Name).Select(o => o.Value.DataType).FirstOrDefault();
+        }
 
         switch (dataType)
         {
@@ -139,7 +183,7 @@ internal static class PayloadConverter
                 metric.SetValue(VersionBDataTypeEnum.Int32Array, int32Array);
                 break;
             case VersionBDataTypeEnum.Int64Array:
-                var int64Array = PayloadHelper.GetArrayOfTFromBytes(protoMetric.BytesValue, BinaryPrimitives.ReadInt64LittleEndian); 
+                var int64Array = PayloadHelper.GetArrayOfTFromBytes(protoMetric.BytesValue, BinaryPrimitives.ReadInt64LittleEndian);
                 metric.SetValue(VersionBDataTypeEnum.Int64Array, int64Array);
                 break;
             case VersionBDataTypeEnum.UInt8Array:
@@ -177,7 +221,7 @@ internal static class PayloadConverter
                 var dateTimeArray = PayloadHelper.GetArrayOfTFromBytes(protoMetric.BytesValue, BinaryPrimitives.ReadUInt64LittleEndian);
                 metric.SetValue(VersionBDataTypeEnum.DateTimeArray, dateTimeArray.Select(x => DateTimeOffset.FromUnixTimeMilliseconds((long)x)).ToArray());
                 break;
-                // Todo: What to do here?
+            // Todo: What to do here?
             case VersionBDataTypeEnum.PropertySetList:
             case VersionBDataTypeEnum.Unknown:
             default:
@@ -191,15 +235,35 @@ internal static class PayloadConverter
     /// Gets the version B ProtoBuf metric from the version B metric.
     /// </summary>
     /// <param name="metric">The <see cref="Metric"/>.</param>
+    /// <returns></returns>
+    public static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(Metric metric)
+    {
+        return ConvertVersionBMetric(metric, null);
+    }
+
+    /// <summary>
+    /// Gets the version B ProtoBuf metric from the version B metric.
+    /// </summary>
+    /// <param name="metric">The <see cref="Metric"/>.</param>
+    /// <param name="sparkplugMessageType">The <see cref="SparkplugMessageType"/>.</param>
     /// <exception cref="ArgumentException">Thrown if the property set data type is set for a metric.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the metric data type is unknown.</exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.Metric"/>.</returns>
-    public static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(Metric metric)
+    public static VersionBProtoBuf.ProtoBufPayload.Metric ConvertVersionBMetric(Metric metric, SparkplugMessageType? sparkplugMessageType)
     {
+        // [tck-id-payloads-metric-datatype-not-req]
+        // The datatype SHOULD NOT be included with metric definitions in NDATA, NCMD, DDATA, and DCMD messages.
+        uint? dataType = null;
+
+        if (sparkplugMessageType == null || sparkplugMessageType == SparkplugMessageType.NodeBirth || sparkplugMessageType == SparkplugMessageType.DeviceBirth)
+        {
+            dataType = (uint?)ConvertVersionBDataType(metric.DataType);
+        }
+
         var protoMetric = new VersionBProtoBuf.ProtoBufPayload.Metric()
         {
             Alias = metric.Alias,
-            DataType = (uint?)ConvertVersionBDataType(metric.DataType),
+            DataType = dataType,
             IsHistorical = metric.IsHistorical,
             IsNull = metric.IsNull,
             IsTransient = metric.IsTransient,

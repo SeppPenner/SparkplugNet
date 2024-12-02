@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net8.0</TargetFrameworks>
         <AssemblyName>SparkplugNet</AssemblyName>
         <RootNamespace>SparkplugNet</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -28,13 +28,10 @@
         <NoWarn>NU1803,CS0618,CS0809,NU1901,NU1902</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <NuGetAuditMode>all</NuGetAuditMode>
+        <Configurations>Debug;Release;p1600sedac;p1000edge;p1600sedacedge;p1800epsi</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
             <PrivateAssets>all</PrivateAssets>

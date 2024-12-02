@@ -10,18 +10,13 @@
 namespace SparkplugNet.Core;
 
 /// <summary>
-/// The metric state class.
+/// The group state class.
 /// </summary>
 /// <typeparam name="T">The type parameter.</typeparam>
-public class MetricState<T> where T : IMetric, new()
+public sealed class GroupState<T> where T : IMetric, new()
 {
     /// <summary>
-    /// Gets or sets the metric status.
+    /// Get the device states.
     /// </summary>
-    public SparkplugMetricStatus MetricStatus { get; set; } = SparkplugMetricStatus.Unknown;
-
-    /// <summary>
-    /// Gets or sets the metrics.
-    /// </summary>
-    public ConcurrentDictionary<string, T> Metrics { get; set; } = new();
+    public ConcurrentDictionary<string, NodeState<T>> NodeStates { get; } = new();
 }
