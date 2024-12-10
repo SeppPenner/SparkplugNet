@@ -216,10 +216,10 @@ internal static class PayloadConverter
             case VersionBDataTypeEnum.Int32:
             case VersionBDataTypeEnum.UInt8:
             case VersionBDataTypeEnum.UInt16:
+            case VersionBDataTypeEnum.UInt32:
                 protoMetric.IntValue = metric.Value.ConvertOrDefaultTo<uint>();
                 break;
             case VersionBDataTypeEnum.Int64:
-            case VersionBDataTypeEnum.UInt32:
             case VersionBDataTypeEnum.UInt64:
                 protoMetric.LongValue = metric.Value.ConvertOrDefaultTo<ulong>();
                 break;
