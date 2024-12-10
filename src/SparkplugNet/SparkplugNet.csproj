@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <AssemblyName>SparkplugNet</AssemblyName>
         <RootNamespace>SparkplugNet</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -31,17 +31,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
+        <PackageReference Include="GitVersion.MsBuild" Version="6.0.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="MQTTnet" Version="4.3.6.1152" />
-        <PackageReference Include="protobuf-net" Version="3.2.30" />
+        <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
+        <PackageReference Include="protobuf-net" Version="3.2.45" />
     </ItemGroup>
 
     <ItemGroup>
