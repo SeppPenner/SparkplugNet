@@ -21,8 +21,8 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Available for
-* Net 6.0
 * Net 8.0
+* Net 9.0
 
 ## Net Core and Net Framework latest and LTS versions
 * https://dotnet.microsoft.com/download/dotnet
