@@ -11,7 +11,7 @@ SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in
 [![Nuget](https://img.shields.io/badge/SparkplugNet-Nuget-brightgreen.svg)](https://www.nuget.org/packages/SparkplugNet/)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/SparkplugNet.svg)](https://www.nuget.org/packages/SparkplugNet/)
 [![Known Vulnerabilities](https://snyk.io/test/github/SeppPenner/SparkplugNet/badge.svg)](https://snyk.io/test/github/SeppPenner/SparkplugNet)
-[![Gitter](https://badges.gitter.im/SparkplugNet/community.svg)](https://gitter.im/SparkplugNet/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://img.shields.io/matrix/SparkplugNet_community%3Agitter.im?server_fqdn=matrix.org)](https://matrix.to/#/#SparkplugNet_community:gitter.im)
 [![Blogger](https://img.shields.io/badge/Follow_me_on-blogger-orange)](https://franzhuber23.blogspot.de/)
 [![Patreon](https://img.shields.io/badge/Patreon-F96854?logo=patreon&logoColor=white)](https://patreon.com/SeppPennerOpenSourceDevelopment)
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?logo=paypal&logoColor=white)](https://paypal.me/th070795)
