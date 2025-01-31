@@ -210,7 +210,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <param name="metricStatus">The metric status.</param>
     /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    private IEnumerable<Metric> ProcessPayload(SparkplugMessageTopic topic, List<Metric> metrics, SparkplugMetricStatus metricStatus)
+    private List<Metric> ProcessPayload(SparkplugMessageTopic topic, List<Metric> metrics, SparkplugMetricStatus metricStatus)
     {
         var metricState = new MetricState<Metric>
         {
@@ -224,13 +224,34 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
             }
 
-            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
+            this.DeviceStates.AddOrUpdate(
+                $"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}",
+                metricState,
+                (_, previousMetricState) => {
+                    metricState = previousMetricState;
+                    metricState.MetricStatus = metricStatus;
+                    return metricState;
+                });
         }
         else
         {
-            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
+            metricState = new MetricState<Metric>
+            {
+                MetricStatus = metricStatus
+            };
+            this.NodeStates.AddOrUpdate(
+                topic.EdgeNodeIdentifier,
+                metricState,
+                (_, previousMetricState) =>
+                {
+                    metricState = previousMetricState;
+                    metricState.MetricStatus = metricStatus;
+                    return metricState;
+                }
+            );
         }
 
+        var result = new List<Metric>();
         foreach (var payloadMetric in metrics)
         {
             if (payloadMetric is not Metric convertedMetric)
@@ -243,7 +264,9 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 metricState.Metrics[payloadMetric.Name] = convertedMetric;
             }
 
-            yield return convertedMetric;
+            result.Add(convertedMetric);
         }
+
+        return result;
     }
 }
