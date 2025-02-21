@@ -665,6 +665,13 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in metrics)
+            {
+                metric.Timestamp ??= (ulong)dateTime.ToUnixTimeMilliseconds();
+            }
+        }
         var payload = new Payload
         {
             Metrics = metrics.ToList(),
@@ -749,6 +756,13 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in metrics)
+            {
+                metric.Timestamp ??= (ulong)dateTime.ToUnixTimeMilliseconds();
+            }
+        }
         var payload = new Payload
         {
             Metrics = metrics.ToList(),
@@ -984,6 +998,13 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in metrics)
+            {
+                metric.Timestamp ??= (ulong)dateTime.ToUnixTimeMilliseconds();
+            }
+        }
         var payload = new Payload
         {
             Metrics = metrics.ToList(),
@@ -1068,6 +1089,13 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in metrics)
+            {
+                metric.Timestamp ??= (ulong)dateTime.ToUnixTimeMilliseconds();
+            }
+        }
         var payload = new Payload
         {
             Metrics = metrics.ToList(),
@@ -1101,6 +1129,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
+    
     private static MqttApplicationMessage GetSparkplugNodeCommandA(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
@@ -1139,7 +1168,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugNodeCommandB(
+    private MqttApplicationMessage GetSparkplugNodeCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1147,6 +1176,13 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in metrics)
+            {
+                metric.Timestamp ??= (ulong)dateTime.ToUnixTimeMilliseconds();
+            }
+        }
         var payload = new Payload
         {
             Metrics = metrics.ToList(),
@@ -1220,7 +1256,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugDeviceCommandB(
+    private MqttApplicationMessage GetSparkplugDeviceCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1229,6 +1265,13 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in metrics)
+            {
+                metric.Timestamp ??= (ulong)dateTime.ToUnixTimeMilliseconds();
+            }
+        }
         var payload = new Payload
         {
             Metrics = metrics.ToList(),
