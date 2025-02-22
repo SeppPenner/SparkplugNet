@@ -96,12 +96,13 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     public void TestNodeBirthMessageNamespaceB()
     {
         var dateTime = DateTimeOffset.UtcNow;
+        var timestamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var message = this.messageGenerator.GetSparkplugNodeBirthMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
 
         Assert.AreEqual("spBv1.0/group1/NBIRTH/edge1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
-        Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
+        Assert.AreEqual(timestamp, payloadVersionB.Timestamp);
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
@@ -111,6 +112,13 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
         Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+
+        foreach (var metric in payloadVersionB.Metrics)
+        {
+            // [tck-id-payloads-name-birth-data-requirement]
+            // The timestamp MUST be included with every metric in all NBIRTH, DBIRTH, NDATA, and DDATA messages.*#
+            Assert.AreEqual(metric.Timestamp, timestamp);
+        }
     }
 
     /// <summary>

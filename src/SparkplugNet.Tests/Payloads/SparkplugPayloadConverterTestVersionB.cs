@@ -1353,7 +1353,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.UInt32,
-                LongValue = 7
+                IntValue = 7
             },
             new()
             {
