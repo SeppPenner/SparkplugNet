@@ -64,11 +64,12 @@ internal static class SparkplugTopicGenerator
     /// <summary>
     /// Gets state subscription topic.
     /// </summary>
+    /// <param name="nameSpace">The namespace.</param>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <returns>The state subscription topic <see cref="string"/>.</returns>
-    internal static string GetStateSubscribeTopic(string scadaHostIdentifier)
+    internal static string GetStateSubscribeTopic(SparkplugNamespace nameSpace, string scadaHostIdentifier)
     {
-        return $"{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}";
+        return $"{nameSpace.GetDescription()}/{SparkplugMessageType.StateMessage.GetDescription()}/{scadaHostIdentifier}";
     }
 
     /// <summary>
