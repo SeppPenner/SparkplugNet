@@ -283,7 +283,22 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// <exception cref="InvalidMetricException">Thrown if the metric is invalid.</exception>
         private void AddVersionBMetric(T metric, Metric versionBMetric)
         {
+            if (string.IsNullOrWhiteSpace(metric.Name) && versionBMetric.Alias is null)
+            {
+                throw new InvalidMetricException($"A metric without a name and an alias is not allowed.");
+            }
+            
             // Check the name of the metric.
+            if (!string.IsNullOrWhiteSpace(metric.Name) && versionBMetric.Alias is null)
+            {
+                this.knownMetricsByName[metric.Name] = metric;
+            }
+            else if (!string.IsNullOrWhiteSpace(metric.Name) && versionBMetric.Alias is not null)
+            {
+                this.knownMetricsByAlias[versionBMetric.Alias.Value] = metric;
+            }
+            
+            /*
             if (string.IsNullOrWhiteSpace(versionBMetric.Name))
             {
                 // Check the alias of the metric.
@@ -312,6 +327,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                 // Hint: Data type doesn't need to be checked, is not nullable.
                 this.knownMetricsByName[metric.Name] = metric;
             }
+            */
         }
     }
 }
