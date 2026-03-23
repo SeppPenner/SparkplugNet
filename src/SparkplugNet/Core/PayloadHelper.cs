@@ -50,6 +50,22 @@ internal static class PayloadHelper
         return Serializer.Deserialize<T>(stream);
     }
 
+    /// <summary>
+    /// Deserializes the data to a proto payload.
+    /// </summary>
+    /// <typeparam name="T">The type.</typeparam>
+    /// <param name="data">The data.</param>
+    /// <returns>The <see cref="T:T?"/> value as deserialized object.</returns>
+    internal static T? Deserialize<T>(ReadOnlySequence<byte> data) where T : class
+    {
+        if (data.IsEmpty)
+        {
+            return null;
+        }
+
+        return Serializer.Deserialize<T>(data);
+    }
+
     // Todo: Adjust to callback via action / Func?
     /// <summary>
     /// The write bytes delegate.

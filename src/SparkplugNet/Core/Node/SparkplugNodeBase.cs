@@ -234,17 +234,17 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         if (SparkplugMessageTopic.TryParse(topic, out var messageTopic))
         {
-            var data = args.ApplicationMessage.PayloadSegment.Array ?? [];
+            var data = args.ApplicationMessage.Payload.ToArray();
             await this.OnMessageReceived(messageTopic!, data);
         }
         else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
         {
             // Handle the STATE message before anything else as they're UTF-8 encoded.
-            await this.FireStatusMessageReceived(Encoding.UTF8.GetString(args.ApplicationMessage.PayloadSegment));
+            await this.FireStatusMessageReceived(args.ApplicationMessage.ConvertPayloadToString());
         }
         else
         {
-            throw new InvalidOperationException($"Received message on unkown topic {topic}: {args.ApplicationMessage.PayloadSegment:X2}.");
+            throw new InvalidOperationException($"Received message on unkown topic {topic}: {args.ApplicationMessage.Payload.ToArray():X2}.");
         }
     }
 
@@ -318,7 +318,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         builder.WithWillContentType(willMessage.ContentType);
         builder.WithWillCorrelationData(willMessage.CorrelationData);
         builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
-        builder.WithWillPayload(willMessage.PayloadSegment);
+        builder.WithWillPayload(willMessage.Payload.ToArray());
         builder.WithWillPayloadFormatIndicator(willMessage.PayloadFormatIndicator);
         builder.WithWillQualityOfServiceLevel(willMessage.QualityOfServiceLevel);
         builder.WithWillResponseTopic(willMessage.ResponseTopic);

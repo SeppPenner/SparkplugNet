@@ -40,7 +40,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     public void TestStateMessageNamespaceBOnline()
     {
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
-        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
+        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -56,7 +56,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     public void TestStateMessageNamespaceBOffline()
     {
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", false);
-        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
+        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);

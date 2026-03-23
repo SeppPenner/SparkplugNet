@@ -1,4 +1,5 @@
 #pragma warning disable IDE0065 // Die using-Anweisung wurde falsch platziert.
+global using System.Buffers;
 global using System.Buffers.Binary;
 global using System.Collections.Concurrent;
 global using System.ComponentModel;
@@ -13,7 +14,6 @@ global using System.Xml.Serialization;
 global using Microsoft.Extensions.Logging;
 
 global using MQTTnet;
-global using MQTTnet.Client;
 global using MQTTnet.Formatter;
 global using MQTTnet.Internal;
 global using MQTTnet.Protocol;
@@ -34,7 +34,6 @@ global using SparkplugNet.VersionB.Data;
 
 global using VersionAData = SparkplugNet.VersionA.Data;
 global using VersionAProtoBuf = SparkplugNet.VersionA.ProtoBuf;
-global using VersionBData = SparkplugNet.VersionB.Data;
 global using VersionBProtoBuf = SparkplugNet.VersionB.ProtoBuf;
 
 global using VersionADataTypeEnum = SparkplugNet.VersionA.Data.DataType;
