@@ -15,6 +15,7 @@
         <PackageProjectUrl>https://www.nuget.org/packages/SparkplugNet/</PackageProjectUrl>
         <RepositoryUrl>https://github.com/SeppPenner/SparkplugNet</RepositoryUrl>
         <PackageIcon>Icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryType>Github</RepositoryType>
         <PackageReleaseNotes>Version 1.4.1.0 (2026-08-18): Moved to MQTTnet 5.2 (BREAKING), removed support for Net9.0, added support for Net10.0, updated NuGet packages, fixed the conversion of UInt32 metrics, fixed the identifier check for strict identifier checking, fixed reading incoming payloads, fixed the eclipse_tahu submodule.</PackageReleaseNotes>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
