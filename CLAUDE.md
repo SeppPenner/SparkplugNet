@@ -11,10 +11,10 @@ version B (`spBv1.0`), and for version B both specification versions 2.2 and 3.0
 
 One solution `src/SparkplugNet.sln` with exactly three projects:
 
-- `src/SparkplugNet/SparkplugNet.csproj`, the library, multi targeting `net8.0;net9.0`.
-- `src/SparkplugNet.Tests/SparkplugNet.Tests.csproj`, MSTest, `net8.0`, 66 test methods in seven
-  test classes.
-- `src/SparkplugNet.Examples/SparkplugNet.Examples.csproj`, `Exe`, `net8.0`, a console demo that
+- `src/SparkplugNet/SparkplugNet.csproj`, the library, multi targeting `net9.0;net10.0`.
+- `src/SparkplugNet.Tests/SparkplugNet.Tests.csproj`, MSTest, `net10.0`, 71 test methods in eight
+  test classes. `dotnet test` reports 72 results, one method carries two `DataRow` attributes.
+- `src/SparkplugNet.Examples/SparkplugNet.Examples.csproj`, `Exe`, `net10.0`, a console demo that
   runs an application and a node for both payload versions against `localhost:1883`.
 
 Layout inside `src/SparkplugNet`:
@@ -58,7 +58,8 @@ dotnet build src/SparkplugNet.sln -c Release
 dotnet test src/SparkplugNet.sln -c Release
 ```
 
-- The library multi targets `net8.0;net9.0`, test and example project are single target `net8.0`.
+- The library multi targets `net9.0;net10.0`, test and example project are single target
+  `net10.0`.
   A release build therefore reports four projects, the library counts twice.
 - `src/Directory.Build.props` contains nothing but `GenerateDocumentationFile`. Every other build
   property lives in the three `.csproj` files and is duplicated there.
