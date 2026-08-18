@@ -1,0 +1,3 @@
+[submodule "eclipse_tahu"]
+	path = eclipse_tahu
+	url = https://github.com/eclipse/tahu.git

@@ -11,7 +11,7 @@ version B (`spBv1.0`), and for version B both specification versions 2.2 and 3.0
 
 One solution `src/SparkplugNet.sln` with exactly three projects:
 
-- `src/SparkplugNet/SparkplugNet.csproj`, the library, multi targeting `net9.0;net10.0`.
+- `src/SparkplugNet/SparkplugNet.csproj`, the library, multi targeting `net8.0;net10.0`.
 - `src/SparkplugNet.Tests/SparkplugNet.Tests.csproj`, MSTest, `net10.0`, 71 test methods in eight
   test classes. `dotnet test` reports 72 results, one method carries two `DataRow` attributes.
 - `src/SparkplugNet.Examples/SparkplugNet.Examples.csproj`, `Exe`, `net10.0`, a console demo that
@@ -58,8 +58,11 @@ dotnet build src/SparkplugNet.sln -c Release
 dotnet test src/SparkplugNet.sln -c Release
 ```
 
-- The library multi targets `net9.0;net10.0`, test and example project are single target
-  `net10.0`.
+- The library multi targets `net8.0;net10.0`, test and example project are single target
+  `net10.0`. Both library targets are LTS, net8.0 goes out of support in November 2026 and is
+  meant to be dropped then. The test project cannot target net8.0 on every machine, the x64
+  runtime 8.0 is not necessarily installed, so the net8.0 build of the library is compiled but not
+  covered by a test run.
   A release build therefore reports four projects, the library counts twice.
 - `src/Directory.Build.props` contains nothing but `GenerateDocumentationFile`. Every other build
   property lives in the three `.csproj` files and is duplicated there.
@@ -70,8 +73,8 @@ dotnet test src/SparkplugNet.sln -c Release
   `CS0809` are there because the library keeps obsolete members alive, `NU1901` and `NU1902` hide
   low and moderate vulnerability audit findings. Fix warnings instead of extending that list.
   `NuGetAuditMode=all` is on, so a vulnerable transitive package fails the build too.
-- Versions come from GitVersion.MsBuild out of the git tags, for example `1.4.1-5` for the fifth
-  commit after tag `1.4.0`. There is no `GitVersion.yml`, the defaults apply. Never edit a version
+- Versions come from GitVersion.MsBuild out of the git tags, for example `1.4.2-5` for the fifth
+  commit after tag `1.4.1`. There is no `GitVersion.yml`, the defaults apply. Never edit a version
   property or an assembly version by hand.
 - Restore needs nuget.org. If a private feed is configured globally on the machine and answers 404
   for public packages, restore fails with `NU1301`. Then build with an explicit source:
@@ -150,10 +153,12 @@ Do not silently "clean up" these, they are existing behaviour:
 - **The session number starts at -1.** `LastSessionNumber` is incremented before the connect, so
   the first bdSeq that reaches the broker is 0, which is what the specification demands.
   `LastSequenceNumber` starts at 0 and is incremented after publishing.
-- **`eclipse_tahu` is a gitlink without a `.gitmodules` entry.** `git ls-files -s` shows mode
-  `160000` for it, but there is no submodule configuration, so a fresh clone gets an empty
-  directory and `git submodule update` does nothing. It points at the Eclipse Tahu repository and
-  is used as a reference for the specification only.
+- **`eclipse_tahu` is a submodule, not a folder.** It points at
+  https://github.com/eclipse/tahu, pinned to `5736e40` (tag `v1.0.7`), and it is the reference
+  implementation the `.proto` files under `doc/` come from. Clone with
+  `git clone --recursive`, or run `git submodule update --init` afterwards, otherwise the directory
+  stays empty. Up to version 1.4.0 the gitlink was committed without a `.gitmodules` entry, so it
+  could not be checked out at all.
 - **AppVeyor badge without CI in the repository.** `README.md` links an AppVeyor build that is
   configured outside of this repository. There is no `.github` folder and no pipeline file here.
 - **`src/SparkplugNet.sln.DotSettings`** is tracked and holds nothing but a ReSharper user
@@ -169,13 +174,13 @@ Do not silently "clean up" these, they are existing behaviour:
 
 1. Make the change.
 2. Add an entry at the top of `Changelog.md` in the existing format:
-   `* **Version 1.4.1.0 (2026-08-18)**: Short description.`
+   `* **Version 1.4.2.0 (2026-08-18)**: Short description.`
 3. Update `<PackageReleaseNotes>` in `src/SparkplugNet/SparkplugNet.csproj` to the same text. It is
    the one version string that is maintained by hand, everything else comes from GitVersion.
 4. If the change is user visible, update `README.md` (the "Available for" list, the "Special notes"
    section for breaking changes) and `HowToUse.md`.
 5. Commit that.
-6. Tag the commit with the plain version number, no `v` prefix (`1.4.0`, `1.3.10`, `1.3.9`, ...).
+6. Tag the commit with the plain version number, no `v` prefix (`1.4.1`, `1.4.0`, `1.3.10`, ...).
    The existing tags are lightweight tags, create new ones the same way.
 7. Push the commits and the tag.
 8. Publish the package with `BuildAndPushPackage.bat`. It deletes every `bin` and `obj` below
@@ -183,10 +188,10 @@ Do not silently "clean up" these, they are existing behaviour:
    feed. It needs `NUGET_API_KEY` and `GITHUB_API_KEY` in the environment and it must run after the
    tag, otherwise GitVersion burns a prerelease version into the package.
 
-The version in the `Changelog.md` has four parts (`1.4.0.0`), the tag has three (`1.4.0`). The
+The version in the `Changelog.md` has four parts (`1.4.1.0`), the tag has three (`1.4.1`). The
 oldest tags (`1.0`, `0.7`) have two, do not copy that.
 GitVersion turns the tag into the assembly version, so an untagged commit produces something like
-`1.4.1-5+Branch.master.Sha...`.
+`1.4.2-5+Branch.master.Sha...`.
 
 ## Git
 

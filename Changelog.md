@@ -1,7 +1,8 @@
 Change history
 --------------
 
-* **Version 1.4.0.0 (2026-08-18)**: Moved to MQTTnet 5.2 (BREAKING, the MQTTnet types in the options come from the `MQTTnet` namespace now), removed support for Net8.0, added support for Net10.0, updated NuGet packages, fixed the conversion of UInt32 metrics back from the ProtoBuf payload (The value was written to `int_value` but read from `long_value`), fixed the identifier check for `SparkplugGlobals.UseStrictIdentifierChecking`, which rejected every identifier, fixed reading incoming payloads, which used the whole underlying buffer instead of the payload segment.
+* **Version 1.4.1.0 (2026-08-18)**: Added support for Net8.0 back and removed support for Net9.0, which is out of support since 2026-05-12, so the library targets the two LTS versions Net8.0 and Net10.0 now, fixed the `eclipse_tahu` submodule, which was committed as a gitlink without a `.gitmodules` entry and could therefore never be checked out.
+* **Version 1.4.0.0 (2026-08-18)**: Never published on NuGet, superseded by 1.4.1.0. Moved to MQTTnet 5.2 (BREAKING, the MQTTnet types in the options come from the `MQTTnet` namespace now), removed support for Net8.0, added support for Net10.0, updated NuGet packages, fixed the conversion of UInt32 metrics back from the ProtoBuf payload (The value was written to `int_value` but read from `long_value`), fixed the identifier check for `SparkplugGlobals.UseStrictIdentifierChecking`, which rejected every identifier, fixed reading incoming payloads, which used the whole underlying buffer instead of the payload segment.
 * **Version 1.3.10.0 (2024-07-02)**: Fixed negative values conversion issues, fixes https://github.com/SeppPenner/SparkplugNet/issues/96.
 * **Version 1.3.9.0 (2024-07-02)**: Updated NuGet packages, fixes https://github.com/SeppPenner/SparkplugNet/issues/99.
 * **Version 1.3.8.0 (2024-04-15)**: Removed invalid setting of TLS options, fixes https://github.com/SeppPenner/SparkplugNet/issues/94.
