@@ -62,6 +62,7 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 * Version 1.2.0 and below: Sparkplug, version 2.2, spAv1.0 and spBv1.0.
 
 ## Special notes
+* Version 1.4.0 moves to MQTTnet 5. The `MQTTnet.Client` namespace no longer exists, so the `MqttClientTlsOptions` and `MqttClientWebSocketOptions` handed into the Sparkplug options now come from the `MQTTnet` namespace. (BREAKING)
 * Version 1.3.4 renames all events from `SomethingAsync` to `Something`. (BREAKING)
 * Version 1.1.0 introduces the async event pattern and deprecates the "old, synchronous" events, Version 1.2.0+ will remove the old events completely. (BREAKING)
 * You can enable the global setting `SparkplugGlobals.UseStrictIdentifierChecking` which prevents users from using the following chars in identifiers:

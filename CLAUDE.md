@@ -70,8 +70,8 @@ dotnet test src/SparkplugNet.sln -c Release
   `CS0809` are there because the library keeps obsolete members alive, `NU1901` and `NU1902` hide
   low and moderate vulnerability audit findings. Fix warnings instead of extending that list.
   `NuGetAuditMode=all` is on, so a vulnerable transitive package fails the build too.
-- Versions come from GitVersion.MsBuild out of the git tags, for example `1.3.11-5` for the fifth
-  commit after tag `1.3.10`. There is no `GitVersion.yml`, the defaults apply. Never edit a version
+- Versions come from GitVersion.MsBuild out of the git tags, for example `1.4.1-5` for the fifth
+  commit after tag `1.4.0`. There is no `GitVersion.yml`, the defaults apply. Never edit a version
   property or an assembly version by hand.
 - Restore needs nuget.org. If a private feed is configured globally on the machine and answers 404
   for public packages, restore fails with `NU1301`. Then build with an explicit source:
@@ -83,7 +83,10 @@ dotnet test src/SparkplugNet.sln -c Release
   without running it.
 - Beyond the tests, behaviour against a real broker is only verified by running
   `SparkplugNet.Examples` against an MQTT broker on `localhost:1883`. There is no test that opens a
-  connection.
+  connection. A throwaway console project that references this library plus the `MQTTnet.Server`
+  package can host a broker in process and drive an application and a node against it, which is how
+  the move to MQTTnet 5 was checked end to end. `MQTTnet.Server` is deliberately not referenced by
+  any project in this repository.
 
 ## Code conventions
 
@@ -113,6 +116,16 @@ Follow the surrounding code, it is consistent throughout every file:
 
 Do not silently "clean up" these, they are existing behaviour:
 
+- **`WithCookieContainer(ICredentials)` really sets the credentials.** Both `ConnectInternal`
+  methods call `WithCookieContainer` twice on the web socket builder, once with the cookie
+  container and once with the credentials. That reads like a copy and paste error but it is not,
+  MQTTnet has an overload of that name taking `ICredentials` which assigns `Credentials`. Verified
+  against MQTTnet 5.2, do not "fix" it into a `WithCredentials` call that does not exist.
+- **UInt32 does not sit in the same protobuf field everywhere.** A metric of type UInt32 is written
+  to and read from `int_value`, which is what the specification asks for. `DataSetValue`,
+  `Parameter` and `PropertyValue` still use `long_value` for UInt32 on both sides. That round trips
+  within SparkplugNet but deviates from the specification, so another Sparkplug implementation
+  reads 0 there. Known and deliberately left alone so far.
 - **Version A is the Kura format, not "Sparkplug A".** `VersionA/Data/KuraMetric.cs` carries a flat
   set of typed value properties, version B uses `Metric` with a `DataType` and a single boxed
   value. The two are not convertible into each other, which is why every message generator method
@@ -156,23 +169,24 @@ Do not silently "clean up" these, they are existing behaviour:
 
 1. Make the change.
 2. Add an entry at the top of `Changelog.md` in the existing format:
-   `* **Version 1.3.11.0 (2026-08-18)**: Short description.`
+   `* **Version 1.4.1.0 (2026-08-18)**: Short description.`
 3. Update `<PackageReleaseNotes>` in `src/SparkplugNet/SparkplugNet.csproj` to the same text. It is
    the one version string that is maintained by hand, everything else comes from GitVersion.
 4. If the change is user visible, update `README.md` (the "Available for" list, the "Special notes"
    section for breaking changes) and `HowToUse.md`.
 5. Commit that.
-6. Tag the commit with the plain version number, no `v` prefix (`1.3.10`, `1.3.9`, ...). The
-   existing tags are lightweight tags, create new ones the same way.
+6. Tag the commit with the plain version number, no `v` prefix (`1.4.0`, `1.3.10`, `1.3.9`, ...).
+   The existing tags are lightweight tags, create new ones the same way.
 7. Push the commits and the tag.
 8. Publish the package with `BuildAndPushPackage.bat`. It deletes every `bin` and `obj` below
    `src`, builds Release and pushes `*.nupkg` and `*.snupkg` to nuget.org and to the GitHub package
    feed. It needs `NUGET_API_KEY` and `GITHUB_API_KEY` in the environment and it must run after the
    tag, otherwise GitVersion burns a prerelease version into the package.
 
-The version in the `Changelog.md` has four parts (`1.3.11.0`), the tag has three (`1.3.11`).
+The version in the `Changelog.md` has four parts (`1.4.0.0`), the tag has three (`1.4.0`). The
+oldest tags (`1.0`, `0.7`) have two, do not copy that.
 GitVersion turns the tag into the assembly version, so an untagged commit produces something like
-`1.3.11-5+Branch.master.Sha...`.
+`1.4.1-5+Branch.master.Sha...`.
 
 ## Git
 
