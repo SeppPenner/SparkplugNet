@@ -293,7 +293,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (SparkplugMessageTopic.TryParse(topic, out var topicParsed))
             {
-                var data = args.ApplicationMessage.PayloadSegment.Array ?? [];
+                var data = args.ApplicationMessage.Payload.ToArray();
                 return this.OnMessageReceived(topicParsed!, data);
             }
             else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
@@ -381,7 +381,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 builder.WithWillContentType(willMessage.ContentType);
                 builder.WithWillCorrelationData(willMessage.CorrelationData);
                 builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
-                builder.WithWillPayload(willMessage.PayloadSegment);
+                builder.WithWillPayload(willMessage.Payload.ToArray());
                 builder.WithWillPayloadFormatIndicator(willMessage.PayloadFormatIndicator);
                 builder.WithWillQualityOfServiceLevel(willMessage.QualityOfServiceLevel);
                 builder.WithWillResponseTopic(willMessage.ResponseTopic);

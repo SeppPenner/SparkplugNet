@@ -41,7 +41,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var timestampBefore = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
-        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
+        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -57,7 +57,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var timestampBefore = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", false);
-        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
+        var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -73,7 +73,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkplugDeviceBirthMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/DBIRTH/edge1/device1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -97,7 +97,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkplugNodeBirthMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/NBIRTH/edge1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -121,7 +121,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkplugDeviceDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", 0, 1, dateTime);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/DDEATH/edge1/device1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -140,7 +140,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     public void TestNodeDeathMessageNamespaceB()
     {
         var message = this.messageGenerator.GetSparkplugNodeDeathMessage(SparkplugNamespace.VersionB, "group1", "edge1", 1);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/NDEATH/edge1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -159,7 +159,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkplugDeviceDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/DDATA/edge1/device1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -183,7 +183,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkplugNodeDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/NDATA/edge1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -207,7 +207,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkplugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/DCMD/edge1/device1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
@@ -231,7 +231,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     {
         var dateTime = DateTimeOffset.UtcNow;
         var message = this.messageGenerator.GetSparkplugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload);
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/NCMD/edge1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
