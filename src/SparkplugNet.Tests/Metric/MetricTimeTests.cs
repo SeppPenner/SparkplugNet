@@ -26,13 +26,12 @@ public sealed class MetricTimeTests
     /// <param name="second">The second.</param>
     /// <param name="kind">The kind.</param>
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException), "DateTime value must be in UTC")]
     [DataRow(2021, 1, 1, 0, 0, 0, DateTimeKind.Local)]
     [DataRow(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)]
     public void TestWithNonUtcDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
     {
         var dt = new DateTime(year, month, day, hour, minute, second, kind);
-        _ = VersionBData.MetricTimeValue.GetMilliSeconds(dt);
+        Assert.ThrowsExactly<InvalidOperationException>(() => VersionBData.MetricTimeValue.GetMilliSeconds(dt), "DateTime value must be in UTC");
     }
 
     /// <summary>
@@ -83,21 +82,19 @@ public sealed class MetricTimeTests
     /// <param name="offsetSeconds">The offset in seconds.</param>
     [TestMethod]
     [DataRow(2021, 1, 1, 0, 0, 0, 1)]
-    [ExpectedException(typeof(InvalidOperationException), "DateTime value must be in UTC")]
     public void TestWitNonUtcDateTimeOffset(int year, int month, int day, int hour, int minute, int second, double offsetSeconds)
     {
         var dt = new DateTimeOffset(year, month, day, hour, minute, second, TimeSpan.FromMinutes(offsetSeconds));
-        _ = VersionBData.MetricTimeValue.GetMilliSeconds(dt);
+        Assert.ThrowsExactly<InvalidOperationException>(() => VersionBData.MetricTimeValue.GetMilliSeconds(dt), "DateTime value must be in UTC");
     }
 
     /// <summary>
     /// Tests the <see cref="VersionBData.MetricTimeValue"/> class with an out of range value.
     /// </summary>
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException), "Value out of range")]
     public void TestWitOutOfRangeValue()
     {
         var dt = DateTimeOffset.MaxValue.ToUnixTimeMilliseconds() + 1;
-        _ = VersionBData.MetricTimeValue.GetMilliSeconds(dt);
+        Assert.ThrowsExactly<InvalidOperationException>(() => VersionBData.MetricTimeValue.GetMilliSeconds(dt), "Value out of range");
     }
 }

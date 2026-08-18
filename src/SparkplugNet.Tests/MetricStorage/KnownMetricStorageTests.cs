@@ -35,7 +35,6 @@ public sealed class KnownMetricStorageTests
     /// Tests the version A metric storage with an invalid metric (No valid name).
     /// </summary>
     [TestMethod]
-    [ExpectedException(typeof(InvalidMetricException))]
     public void TestAddVersionAInvalidMetricNoName()
     {
         IEnumerable<VersionAData.KuraMetric> metrics =
@@ -43,7 +42,7 @@ public sealed class KnownMetricStorageTests
             new(string.Empty, VersionAData.DataType.Double, 123.45)
         ];
 
-        _ = new VersionAMain.SparkplugNode(metrics, SparkplugSpecificationVersion.Version30);
+        Assert.ThrowsExactly<InvalidMetricException>(() => new VersionAMain.SparkplugNode(metrics, SparkplugSpecificationVersion.Version30));
     }
 
     /// <summary>
@@ -108,7 +107,6 @@ public sealed class KnownMetricStorageTests
     /// Tests the version B metric storage with an invalid metric.
     /// </summary>
     [TestMethod]
-    [ExpectedException(typeof(InvalidMetricException))]
     public void TestAddVersionBInvalidMetric()
     {
         IEnumerable<VersionBData.Metric> metrics =
@@ -116,6 +114,6 @@ public sealed class KnownMetricStorageTests
             new(string.Empty, VersionBData.DataType.Double, 123.45)
         ];
 
-        _ = new VersionBMain.SparkplugNode(metrics, SparkplugSpecificationVersion.Version30);
+        Assert.ThrowsExactly<InvalidMetricException>(() => new VersionBMain.SparkplugNode(metrics, SparkplugSpecificationVersion.Version30));
     }
 }

@@ -39,14 +39,14 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     [TestMethod]
     public void TestStateMessageNamespaceBOnline()
     {
+        var timestampBefore = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
         var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual(true, payloadVersionB.Online);
-        // Todo: Check timestamp here?
-        Assert.IsNotNull(payloadVersionB.Timestamp);
+        Assert.IsTrue(payloadVersionB.Timestamp >= timestampBefore);
     }
 
     /// <summary>
@@ -55,14 +55,14 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     [TestMethod]
     public void TestStateMessageNamespaceBOffline()
     {
+        var timestampBefore = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", false);
         var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload);
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual(false, payloadVersionB.Online);
-        // Todo: Check timestamp here?
-        Assert.IsNotNull(payloadVersionB.Timestamp);
+        Assert.IsTrue(payloadVersionB.Timestamp >= timestampBefore);
     }
 
     /// <summary>
