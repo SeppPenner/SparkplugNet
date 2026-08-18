@@ -17,7 +17,7 @@ internal static class StringExtensions
     /// <summary>
     /// The strict identifiers.
     /// </summary>
-    private static readonly string[] strictIdentifers = [ ".", ",", "\\", "@", "#", "$", "%", "^", "&", "*", "(", "", "", ")", "[", "]",
+    private static readonly string[] strictIdentifers = [ ".", ",", "\\", "@", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]",
         "{", "}", "|", "!", "`", "~", ":", ";", "'", "\"", "<", ">", "?", "/", "+" ];
 
     /// <summary>
@@ -29,7 +29,7 @@ internal static class StringExtensions
     {
         if (SparkplugGlobals.UseStrictIdentifierChecking)
         {
-            return string.IsNullOrWhiteSpace(value) && strictIdentifers.Any(value.Contains);
+            return !string.IsNullOrWhiteSpace(value) && !strictIdentifers.Any(value.Contains);
         }
 
         return !string.IsNullOrWhiteSpace(value) && !value.Contains('/') && !value.Contains('#') && !value.Contains('+');

@@ -85,7 +85,7 @@ internal static class PayloadConverter
                 metric.SetValue(VersionBDataTypeEnum.Int64, protoMetric.LongValue);
                 break;
             case VersionBDataTypeEnum.UInt32:
-                metric.SetValue(VersionBDataTypeEnum.UInt32, protoMetric.LongValue);
+                metric.SetValue(VersionBDataTypeEnum.UInt32, protoMetric.IntValue);
                 break;
             case VersionBDataTypeEnum.UInt64:
                 metric.SetValue(VersionBDataTypeEnum.UInt64, protoMetric.LongValue);

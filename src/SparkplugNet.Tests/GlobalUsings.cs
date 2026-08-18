@@ -8,6 +8,7 @@ global using MQTTnet;
 global using SparkplugNet.Core;
 global using SparkplugNet.Core.Enumerations;
 global using SparkplugNet.Core.Exceptions;
+global using SparkplugNet.Core.Extensions;
 global using SparkplugNet.Core.Messages;
 
 global using SparkplugNet.Tests.Helpers;
