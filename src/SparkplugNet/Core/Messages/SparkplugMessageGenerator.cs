@@ -671,6 +671,7 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
+        EnsureSparkplugBMetricTimestamps(ref payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -755,6 +756,7 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
+        EnsureSparkplugBMetricTimestamps(ref payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -990,6 +992,7 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
+        EnsureSparkplugBMetricTimestamps(ref payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -1074,6 +1077,7 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
+        EnsureSparkplugBMetricTimestamps(ref payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -1139,7 +1143,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugNodeCommandB(
+    private MqttApplicationMessage GetSparkplugNodeCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1153,7 +1157,8 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
-
+        EnsureSparkplugBMetricTimestamps(ref payload);
+        
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
 
@@ -1220,7 +1225,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugDeviceCommandB(
+    private MqttApplicationMessage GetSparkplugDeviceCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1235,6 +1240,7 @@ internal sealed class SparkplugMessageGenerator
             Seq = (ulong)sequenceNumber,
             Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
         };
+        EnsureSparkplugBMetricTimestamps(ref payload);
 
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         var serialized = PayloadHelper.Serialize(convertedPayload);
@@ -1250,5 +1256,22 @@ internal sealed class SparkplugMessageGenerator
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
             .WithRetainFlag(false)
             .Build();
+    }
+    
+    /// <summary>
+    /// Ensures that all metrics will contain a Timestamp if Sparkplug protol version is Version 3.0
+    /// Message timestamp will be added to all metrics that does not already contain timestamps 
+    /// [tck-id-payloads-name-birth-data-requirement]
+    /// </summary>
+    /// <param name="payload">The payload to update</param>
+    private void EnsureSparkplugBMetricTimestamps(ref Payload payload)
+    {
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in payload.Metrics)
+            {
+                metric.Timestamp ??= payload.Timestamp;
+            }
+        }
     }
 }
