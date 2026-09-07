@@ -186,7 +186,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true,
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTime,
-                LongValue = 1546300800000 
+                LongValue = 1546300800000
             },
             new()
             {
@@ -541,8 +541,8 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsNull = false,
                 DataType = (uint?)VersionBData.DataType.DateTimeArray,
                 BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
-                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00, 
-                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00, 
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
                               0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
             },
             new()
@@ -778,7 +778,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true
             },
             new("Test22", VersionBData.DataType.String, "Test22",timestamp)
-            { 
+            {
                 Properties = new VersionBData.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
@@ -901,6 +901,60 @@ public sealed class SparkplugPayloadConverterTestVersionB
             new("Test39", VersionBData.DataType.DateTimeArray, dateArray4, timestamp)
             {
                 Alias = 39,
+                IsHistorical = true,
+                IsTransient = true
+            }
+        };
+        var oldPayload = new VersionBProtoBufPayload
+        {
+            Body = bodyData,
+            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+            Seq = 1,
+            Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
+            Metrics = metrics
+        };
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(oldPayload);
+        Assert.IsNotNull(payload);
+        CollectionAssert.AreEqual(bodyData, payload.Body);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.AreEqual((ulong)1, payload.Seq);
+        Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+
+        var count = 0;
+
+        foreach (var metric in payload.Metrics)
+        {
+            EqualityHelper.MetricEquals(convertedMetrics[count++], metric);
+        }
+    }
+
+    /// <summary>
+    /// Tests the Sparkplug payload converter for converting a version B payload from Proto with a null metric value.
+    /// </summary>
+    [TestMethod]
+    public void TestConvertVersionBPayloadFromProtoIsNull()
+    {
+        var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var bodyData = new byte[] { 1, 2, 3, 4 };
+        var metrics = new List<VersionBProtoBufPayload.Metric>
+        {
+            new()
+            {
+                Name = "Test1",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 1,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = true,
+                DataType = (uint?)VersionBData.DataType.Int8,
+            }
+        };
+        var convertedMetrics = new List<VersionBData.Metric>
+        {
+            new("Test1", VersionBData.DataType.Int8, null, timestamp)
+            {
+                Alias = 1,
                 IsHistorical = true,
                 IsTransient = true
             }
@@ -1149,7 +1203,7 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsTransient = true
             },
             new("Test22", VersionBData.DataType.String,"Test22",timestamp)
-            { 
+            {
                 Properties = new VersionBData.PropertySet
                 {
                     Keys = ["Test1", "Test2"],
@@ -1774,8 +1828,8 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 IsNull = false,
                 DataType = (uint?)VersionBProtoBuf.DataType.DateTimeArray,
                 BytesValue = [0x00, 0xE8, 0x66, 0x5E, 0x6F, 0x01, 0x00, 0x00,
-                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00, 
-                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00, 
+                              0x00, 0x9C, 0xEF, 0x12, 0x7E, 0x01, 0x00, 0x00,
+                              0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
                               0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
             },
             new()
@@ -1820,6 +1874,76 @@ public sealed class SparkplugPayloadConverterTestVersionB
                               0x00, 0xC8, 0xA0, 0x6A, 0x85, 0x01, 0x00, 0x00,
                               0x00, 0xF4, 0x51, 0xC2, 0x8C, 0x01, 0x00, 0x00]
             }
+        };
+        var oldPayload = new VersionBData.Payload
+        {
+            Body = bodyData,
+            Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+            Seq = 1,
+            Uuid = "477a41e5-f0ba-4b98-9522-95d44861d993",
+            Metrics = metrics
+        };
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(oldPayload);
+        Assert.IsNotNull(payload);
+        CollectionAssert.AreEqual(bodyData, payload.Body);
+        Assert.AreEqual((ulong)timestamp.ToUnixTimeMilliseconds(), payload.Timestamp);
+        Assert.AreEqual((ulong)1, payload.Seq);
+        Assert.AreEqual("477a41e5-f0ba-4b98-9522-95d44861d993", payload.Uuid);
+        Assert.AreEqual(convertedMetrics.Count, payload.Metrics.Count);
+
+        var count = 0;
+
+        foreach (var metric in payload.Metrics)
+        {
+            EqualityHelper.MetricEquals(convertedMetrics[count++], metric);
+        }
+    }
+
+    /// <summary>
+    /// Tests the Sparkplug payload converter for converting a version B payload to Proto with null metric values.
+    /// </summary>
+    [TestMethod]
+    public void TestConvertVersionBPayloadToProtoIsNull()
+    {
+        var timestamp = new DateTimeOffset(2019, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var bodyData = new byte[] { 1, 2, 3, 4 };
+        var metrics = new List<VersionBData.Metric>
+        {
+            new("Test10", VersionBData.DataType.Double, null, timestamp)
+            {
+                Alias = 10,
+                IsHistorical = true,
+                IsTransient = true
+            },
+            new("Test12", VersionBData.DataType.String, null, timestamp)
+            {
+                Alias = 12,
+                IsHistorical = true,
+                IsTransient = true
+            },
+        };
+        var convertedMetrics = new List<VersionBProtoBufPayload.Metric>
+        {
+            new()
+            {
+                Name = "Test10",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 10,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = true,
+                DataType = (uint?)VersionBProtoBuf.DataType.Double,
+            },
+            new()
+            {
+                Name = "Test12",
+                Timestamp = (ulong)timestamp.ToUnixTimeMilliseconds(),
+                Alias = 12,
+                IsHistorical = true,
+                IsTransient = true,
+                IsNull = true,
+                DataType = (uint?)VersionBProtoBuf.DataType.String,
+            },
         };
         var oldPayload = new VersionBData.Payload
         {

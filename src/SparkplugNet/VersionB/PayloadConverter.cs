@@ -64,6 +64,12 @@ internal static class PayloadConverter
 
         var dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
 
+        if (protoMetric.IsNull != null && protoMetric.IsNull.Value)
+        {
+            metric.SetValue(dataType, null);
+            return metric;
+        }
+
         switch (dataType)
         {
             case VersionBDataTypeEnum.Int8:
@@ -139,7 +145,7 @@ internal static class PayloadConverter
                 metric.SetValue(VersionBDataTypeEnum.Int32Array, int32Array);
                 break;
             case VersionBDataTypeEnum.Int64Array:
-                var int64Array = PayloadHelper.GetArrayOfTFromBytes(protoMetric.BytesValue, BinaryPrimitives.ReadInt64LittleEndian); 
+                var int64Array = PayloadHelper.GetArrayOfTFromBytes(protoMetric.BytesValue, BinaryPrimitives.ReadInt64LittleEndian);
                 metric.SetValue(VersionBDataTypeEnum.Int64Array, int64Array);
                 break;
             case VersionBDataTypeEnum.UInt8Array:
@@ -177,7 +183,7 @@ internal static class PayloadConverter
                 var dateTimeArray = PayloadHelper.GetArrayOfTFromBytes(protoMetric.BytesValue, BinaryPrimitives.ReadUInt64LittleEndian);
                 metric.SetValue(VersionBDataTypeEnum.DateTimeArray, dateTimeArray.Select(x => DateTimeOffset.FromUnixTimeMilliseconds((long)x)).ToArray());
                 break;
-                // Todo: What to do here?
+            // Todo: What to do here?
             case VersionBDataTypeEnum.PropertySetList:
             case VersionBDataTypeEnum.Unknown:
             default:
@@ -625,7 +631,7 @@ internal static class PayloadConverter
         if (numberOfBytes + 4 < metricValue.Length)
         {
             throw new ArgumentOutOfRangeException("The array length is invalid.");
-        };
+        }
 
         bytes = new Span<byte>(metricValue, 4, numberOfBytes);
 
@@ -642,7 +648,7 @@ internal static class PayloadConverter
             {
                 result[i] = false;
             }
-        };
+        }
 
         return result;
     }
@@ -667,7 +673,7 @@ internal static class PayloadConverter
             {
                 result[4 + byteNumber] |= (byte)(1 << bitNumber);
             }
-        };
+        }
 
         return result;
     }
