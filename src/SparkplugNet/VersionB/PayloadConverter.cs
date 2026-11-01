@@ -85,7 +85,7 @@ internal static class PayloadConverter
                 metric.SetValue(VersionBDataTypeEnum.Int64, protoMetric.LongValue);
                 break;
             case VersionBDataTypeEnum.UInt32:
-                metric.SetValue(VersionBDataTypeEnum.UInt32, protoMetric.IntValue);
+                metric.SetValue(VersionBDataTypeEnum.UInt32, protoMetric.ShouldSerializeLongValue() ? protoMetric.LongValue : protoMetric.IntValue);
                 break;
             case VersionBDataTypeEnum.UInt64:
                 metric.SetValue(VersionBDataTypeEnum.UInt64, protoMetric.LongValue);
@@ -688,7 +688,7 @@ internal static class PayloadConverter
             VersionBDataTypeEnum.UInt8 => new DataSetValue(VersionBDataTypeEnum.UInt8, protoDataSetValue.IntValue),
             VersionBDataTypeEnum.UInt16 => new DataSetValue(VersionBDataTypeEnum.UInt16, protoDataSetValue.IntValue),
             VersionBDataTypeEnum.Int64 => new DataSetValue(VersionBDataTypeEnum.Int64, protoDataSetValue.LongValue),
-            VersionBDataTypeEnum.UInt32 => new DataSetValue(VersionBDataTypeEnum.UInt32, protoDataSetValue.LongValue),
+            VersionBDataTypeEnum.UInt32 => new DataSetValue(VersionBDataTypeEnum.UInt32, protoDataSetValue.ShouldSerializeIntValue() ? protoDataSetValue.IntValue : protoDataSetValue.LongValue),
             VersionBDataTypeEnum.UInt64 => new DataSetValue(VersionBDataTypeEnum.UInt64, protoDataSetValue.LongValue),
             VersionBDataTypeEnum.DateTime => new DataSetValue(VersionBDataTypeEnum.DateTime, protoDataSetValue.LongValue),
             VersionBDataTypeEnum.Float => new DataSetValue(VersionBDataTypeEnum.Float, protoDataSetValue.FloatValue),
@@ -799,7 +799,7 @@ internal static class PayloadConverter
         VersionBDataTypeEnum.UInt8 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt8, protoParameter.IntValue),
         VersionBDataTypeEnum.UInt16 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt16, protoParameter.IntValue),
         VersionBDataTypeEnum.Int64 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int64, protoParameter.LongValue),
-        VersionBDataTypeEnum.UInt32 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt32, protoParameter.LongValue),
+        VersionBDataTypeEnum.UInt32 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt32, protoParameter.ShouldSerializeIntValue() ? protoParameter.IntValue : protoParameter.LongValue),
         VersionBDataTypeEnum.UInt64 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt64, protoParameter.LongValue),
         VersionBDataTypeEnum.DateTime => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.DateTime, protoParameter.LongValue),
         VersionBDataTypeEnum.Float => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Float, protoParameter.FloatValue),
@@ -915,7 +915,7 @@ internal static class PayloadConverter
             VersionBDataTypeEnum.UInt8 => new PropertyValue(VersionBDataTypeEnum.UInt8, protoPropertyValue.IntValue),
             VersionBDataTypeEnum.UInt16 => new PropertyValue(VersionBDataTypeEnum.UInt16, protoPropertyValue.IntValue),
             VersionBDataTypeEnum.Int64 => new PropertyValue(VersionBDataTypeEnum.Int64, protoPropertyValue.LongValue),
-            VersionBDataTypeEnum.UInt32 => new PropertyValue(VersionBDataTypeEnum.UInt32, protoPropertyValue.LongValue),
+            VersionBDataTypeEnum.UInt32 => new PropertyValue(VersionBDataTypeEnum.UInt32, protoPropertyValue.ShouldSerializeIntValue() ? protoPropertyValue.IntValue : protoPropertyValue.LongValue),
             VersionBDataTypeEnum.UInt64 => new PropertyValue(VersionBDataTypeEnum.UInt64, protoPropertyValue.LongValue),
             VersionBDataTypeEnum.DateTime => new PropertyValue(VersionBDataTypeEnum.DateTime, protoPropertyValue.LongValue),
             VersionBDataTypeEnum.Float => new PropertyValue(VersionBDataTypeEnum.Float, protoPropertyValue.FloatValue),
