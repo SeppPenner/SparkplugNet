@@ -224,11 +224,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <param name="metricStatus">The metric status.</param>
     /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
     /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    private IEnumerable<VersionAData.KuraMetric> ProcessPayload(
+    private List<VersionAData.KuraMetric> ProcessPayload(
         SparkplugMessageTopic topic,
         List<VersionAData.KuraMetric> metrics,
         SparkplugMetricStatus metricStatus)
     {
+        var processedMetrics = new List<VersionAData.KuraMetric>();
         var metricState = new MetricState<VersionAData.KuraMetric>
         {
             MetricStatus = metricStatus
@@ -260,7 +261,9 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
                 metricState.Metrics[payloadMetric.Name] = convertedMetric;
             }
 
-            yield return convertedMetric;
+            processedMetrics.Add(convertedMetric);
         }
+
+        return processedMetrics;
     }
 }
