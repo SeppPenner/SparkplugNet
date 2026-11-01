@@ -1,5 +1,6 @@
 #pragma warning disable IDE0065 // Die using-Anweisung wurde falsch platziert.
 global using System.Buffers;
+global using System.Reflection;
 global using System.Text.Json;
 
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,6 +12,7 @@ global using SparkplugNet.Core.Enumerations;
 global using SparkplugNet.Core.Exceptions;
 global using SparkplugNet.Core.Extensions;
 global using SparkplugNet.Core.Messages;
+global using SparkplugNet.Core.Topics;
 
 global using SparkplugNet.Tests.Helpers;
 

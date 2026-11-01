@@ -121,7 +121,13 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
         // Filter out session number metric.
         var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
         var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
+        // The metrics of a device command are known to the device, not to the node.
+        var knownMetrics = topic.MessageType == SparkplugMessageType.DeviceCommand
+            && topic.DeviceIdentifier is not null
+            && this.KnownDevices.TryGetValue(topic.DeviceIdentifier, out var deviceMetrics)
+                ? deviceMetrics
+                : this.KnownMetricsStorage;
+        var filteredMetrics = knownMetrics.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
 
         if (sessionNumberMetric is not null)
         {
