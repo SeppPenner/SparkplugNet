@@ -576,7 +576,7 @@ internal static class PayloadConverter
             Metrics = template.Metrics.Select(ConvertVersionBMetric).ToList(),
             IsDefinition = template.IsDefinition,
             Parameters = template.Parameters.Select(ConvertVersionBParameter).ToList(),
-            TemplateRef = template.TemplateRef,
+            TemplateRef = string.IsNullOrEmpty(template.TemplateRef) ? null : template.TemplateRef,
             Version = template.Version
         };
 
