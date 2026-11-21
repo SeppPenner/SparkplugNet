@@ -54,20 +54,33 @@ public partial class SparkplugNodeBase<T>
     /// <param name="metrics">The decoded command metrics.</param>
     /// <param name="metricStorage">The recipient's metric definitions.</param>
     /// <returns>The event dispatch task.</returns>
-    private protected Task HandleCommand(SparkplugMessageTopic topic, IEnumerable<T> metrics, KnownMetricStorage metricStorage)
+    private protected async Task HandleCommand(SparkplugMessageTopic topic, IReadOnlyList<T> metrics, KnownMetricStorage metricStorage)
     {
+        var rebirthRequested = topic.MessageType == SparkplugMessageType.NodeCommand
+            && metrics.Any(metric => Constants.IsRebirthControl(metric) && metric.Value is true);
+        if (rebirthRequested)
+        {
+            await this.RebirthInternal();
+        }
+
         var sessionNumberMetric = metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
-        var metricsWithoutSessionNumber = metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        var filteredMetrics = metricStorage.FilterMetrics(metricsWithoutSessionNumber, topic.MessageType).ToList();
+        var commandMetrics = metrics.Where(m => m.Name != Constants.SessionNumberMetricName
+            && (!rebirthRequested || !Constants.IsRebirthControl(m)));
+        var filteredMetrics = metricStorage.FilterMetrics(commandMetrics, topic.MessageType).ToList();
+
+        if (rebirthRequested && filteredMetrics.Count == 0)
+        {
+            return;
+        }
 
         if (sessionNumberMetric is not null)
         {
             filteredMetrics.Add(sessionNumberMetric);
         }
 
-        return topic.MessageType == SparkplugMessageType.DeviceCommand
+        await (topic.MessageType == SparkplugMessageType.DeviceCommand
             ? this.FireDeviceCommandReceived(topic.DeviceIdentifier!, filteredMetrics)
-            : this.FireNodeCommandReceived(filteredMetrics);
+            : this.FireNodeCommandReceived(filteredMetrics));
     }
 
     /// <summary>
@@ -83,7 +96,7 @@ public partial class SparkplugNodeBase<T>
         List<T> knownMetrics,
         string deviceIdentifier,
         ILogger<KnownMetricStorage>? logger = null) =>
-        this.PublishDeviceBirthMessage(knownMetrics, deviceIdentifier, logger, updateKnownDevice: true);
+        this.PublishInOrder(() => this.PublishDeviceBirthMessage(knownMetrics, deviceIdentifier, logger, updateKnownDevice: true));
 
     /// <summary>
     /// Publishes a device birth and optionally replaces the device's metric definitions.
@@ -104,12 +117,17 @@ public partial class SparkplugNodeBase<T>
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.client.IsConnected)
+        if (!this.IsRunning || !this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
 
         this.EnsurePrimaryHostReady();
+        if (updateKnownDevice)
+        {
+            this.EnsureBirthSequenceComplete();
+        }
+
         // Get the device birth message.
         var deviceBirthMessage = this.messageGenerator.GetSparkplugDeviceBirthMessage(
             this.NameSpace,
@@ -169,14 +187,23 @@ public partial class SparkplugNodeBase<T>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or the device is unknown or an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public Task<MqttClientPublishResult> PublishDeviceData(IEnumerable<T> metrics, string deviceIdentifier)
+    public Task<MqttClientPublishResult> PublishDeviceData(IEnumerable<T> metrics, string deviceIdentifier) =>
+        this.PublishInOrder(() => this.PublishDeviceDataInternal(metrics, deviceIdentifier));
+
+    /// <summary>
+    /// Publishes device data within the publication lock.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <returns>The publish result.</returns>
+    private Task<MqttClientPublishResult> PublishDeviceDataInternal(IEnumerable<T> metrics, string deviceIdentifier)
     {
         if (this.Options is null)
         {
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.client.IsConnected)
+        if (!this.IsRunning || !this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -187,6 +214,7 @@ public partial class SparkplugNodeBase<T>
         }
 
         this.EnsurePrimaryHostReady();
+        this.EnsureBirthSequenceComplete();
         return this.PublishMessageForDevice(metrics, deviceIdentifier);
     }
 
@@ -197,14 +225,22 @@ public partial class SparkplugNodeBase<T>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or the device is unknown.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public async Task<MqttClientPublishResult> PublishDeviceDeathMessage(string deviceIdentifier)
+    public Task<MqttClientPublishResult> PublishDeviceDeathMessage(string deviceIdentifier) =>
+        this.PublishInOrder(() => this.PublishDeviceDeathMessageInternal(deviceIdentifier));
+
+    /// <summary>
+    /// Publishes a device death within the publication lock.
+    /// </summary>
+    /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <returns>The publish result.</returns>
+    private async Task<MqttClientPublishResult> PublishDeviceDeathMessageInternal(string deviceIdentifier)
     {
         if (this.Options is null)
         {
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.client.IsConnected)
+        if (!this.IsRunning || !this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -214,6 +250,7 @@ public partial class SparkplugNodeBase<T>
             throw new Exception("The device is unknown, please publish a device birth message first.");
         }
 
+        this.EnsureBirthSequenceComplete();
         // Get the device death message.
         var deviceDeathMessage = this.messageGenerator.GetSparkplugDeviceDeathMessage(
             this.NameSpace,
@@ -261,13 +298,14 @@ public partial class SparkplugNodeBase<T>
             throw new ArgumentNullException(deviceIdentifier, $"The known metrics for the device {deviceIdentifier} aren't set properly.");
         }
 
+        var currentMetrics = deviceMetricStorage.FilterMetrics(metrics, SparkplugMessageType.DeviceData).ToList();
         // Get the device data message.
         var deviceDataMessage = this.messageGenerator.GetSparkplugDeviceDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
             deviceIdentifier,
-            deviceMetricStorage.FilterMetrics(metrics, SparkplugMessageType.DeviceData),
+            currentMetrics,
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
@@ -276,6 +314,12 @@ public partial class SparkplugNodeBase<T>
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        return await this.client.PublishAsync(deviceDataMessage);
+        var result = await this.client.PublishAsync(deviceDataMessage);
+        if (result.IsSuccess)
+        {
+            deviceMetricStorage.UpdateCurrentValues(currentMetrics);
+        }
+
+        return result;
     }
 }

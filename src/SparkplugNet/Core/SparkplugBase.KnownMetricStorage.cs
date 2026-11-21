@@ -86,6 +86,46 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// <param name="alias">The metric alias, if present.</param>
         /// <returns>The known data type, if the metric was found.</returns>
         internal VersionBDataTypeEnum? GetVersionBMetricDataType(string? name, ulong? alias)
+            => (this.FindMetric(name, alias) as Metric)?.DataType;
+
+        /// <summary>
+        /// Updates current values without replacing the original birth metric definitions.
+        /// </summary>
+        /// <param name="metrics">The current values.</param>
+        internal void UpdateCurrentValues(IEnumerable<T> metrics)
+        {
+            foreach (var metric in metrics)
+            {
+                if (metric is Metric current)
+                {
+                    if (current.IsHistorical == true || current.IsTransient == true)
+                    {
+                        continue;
+                    }
+
+                    if (this.FindMetric(current.Name, current.Alias) is Metric known && known.DataType == current.DataType
+                        && known.Value is not Template { IsDefinition: true })
+                    {
+                        known.SetValue(current.DataType, current.Value);
+                        known.Timestamp = current.Timestamp;
+                    }
+                }
+                else if (metric is VersionAData.KuraMetric currentKura
+                    && this.FindMetric(currentKura.Name, null) is VersionAData.KuraMetric knownKura
+                    && knownKura.DataType == currentKura.DataType)
+                {
+                    knownKura.SetValue(currentKura.DataType, currentKura.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds a metric by name or, if no name is present, by alias.
+        /// </summary>
+        /// <param name="name">The metric name, if present.</param>
+        /// <param name="alias">The metric alias, if present.</param>
+        /// <returns>The registered metric, if found.</returns>
+        private T? FindMetric(string? name, ulong? alias)
         {
             T? metric = default;
             if (!string.IsNullOrWhiteSpace(name))
@@ -97,7 +137,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                 this.TryGetMetricByAlias(metricAlias, out metric);
             }
 
-            return (metric as Metric)?.DataType;
+            return metric;
         }
 
         /// <summary>
@@ -122,6 +162,12 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
 
             foreach (var metric in metrics)
             {
+                if (sparkplugMessageType == SparkplugMessageType.NodeCommand && Constants.IsRebirthControl(metric))
+                {
+                    filteredMetrics.Add(metric);
+                    continue;
+                }
+
                 // Version A: KuraMetric has name only.
                 if (metric is VersionAData.KuraMetric versionAMetric)
                 {

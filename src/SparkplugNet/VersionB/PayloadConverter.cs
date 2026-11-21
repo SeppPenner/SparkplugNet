@@ -37,9 +37,12 @@ internal static class PayloadConverter
                 continue;
             }
 
-            var dataType = protoMetric.Name == Constants.SessionNumberMetricName
-                ? VersionBDataTypeEnum.Int64
-                : metricStorage.GetVersionBMetricDataType(protoMetric.Name, protoMetric.Alias);
+            var dataType = protoMetric.Name switch
+            {
+                Constants.SessionNumberMetricName => VersionBDataTypeEnum.Int64,
+                Constants.RebirthMetricName when messageType == SparkplugMessageType.NodeCommand => VersionBDataTypeEnum.Boolean,
+                _ => metricStorage.GetVersionBMetricDataType(protoMetric.Name, protoMetric.Alias)
+            };
             if (dataType is null)
             {
                 metricStorage.Logger?.LogWarning("Ignoring Sparkplug metric {Name} (alias {Alias}) with no known data type.", protoMetric.Name, protoMetric.Alias);

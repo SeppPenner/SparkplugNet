@@ -52,6 +52,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Occurs when the node command was received.
     /// </summary>
+    /// <remarks>The node handles rebirth requests internally and delivers any other command metrics to this event.</remarks>
     public event Func<NodeCommandEventArgs, Task> NodeCommandReceived
     {
         add => this.NodeCommandReceivedEvent.AddHandler(value);
@@ -102,8 +103,9 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     protected AsyncEvent<DeviceBirthEventArgs> DeviceBirthPublishingEvent = new();
 
     /// <summary>
-    /// Occurs when the device birth command was published.
+    /// Occurs before a device birth is published.
     /// </summary>
+    /// <remarks>Awaiting another publication on this node from the callback throws an exception.</remarks>
     public event Func<DeviceBirthEventArgs, Task> DeviceBirthPublishing
     {
         add => this.DeviceBirthPublishingEvent.AddHandler(value);
@@ -129,8 +131,9 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     protected AsyncEvent<DeviceEventArgs> DeviceDeathPublishingEvent = new();
 
     /// <summary>
-    /// Occurs when the device death command was published.
+    /// Occurs before a device death is published.
     /// </summary>
+    /// <remarks>Awaiting another publication on this node from the callback throws an exception.</remarks>
     public event Func<DeviceEventArgs, Task> DeviceDeathPublishing
     {
         add => this.DeviceDeathPublishingEvent.AddHandler(value);

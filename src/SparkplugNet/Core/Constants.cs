@@ -20,6 +20,19 @@ internal static class Constants
     internal const string SessionNumberMetricName = "bdSeq";
 
     /// <summary>
+    /// The required node control metric for requesting a rebirth.
+    /// </summary>
+    internal const string RebirthMetricName = "Node Control/Rebirth";
+
+    /// <summary>
+    /// Determines whether a metric is the named rebirth control with a boolean value.
+    /// </summary>
+    /// <param name="metric">The command metric.</param>
+    /// <returns>Whether the metric is the rebirth control.</returns>
+    internal static bool IsRebirthControl(IMetric metric) =>
+        metric.Name == RebirthMetricName && metric.Value is bool && metric is not Metric { Alias: not null };
+
+    /// <summary>
     /// The epoch.
     /// </summary>
     internal static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);

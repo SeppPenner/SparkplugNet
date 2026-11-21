@@ -69,12 +69,13 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
             throw new Exception("Invalid metric type specified for version A metric.");
         }
 
+        var currentMetrics = this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeData).ToList();
         // Get the data message.
         var dataMessage = this.messageGenerator.GetSparkplugNodeDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
-            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeData),
+            currentMetrics,
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -83,7 +84,13 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        return await this.client.PublishAsync(dataMessage);
+        var result = await this.client.PublishAsync(dataMessage);
+        if (result.IsSuccess)
+        {
+            this.KnownMetricsStorage.UpdateCurrentValues(currentMetrics);
+        }
+
+        return result;
     }
 
     /// <summary>

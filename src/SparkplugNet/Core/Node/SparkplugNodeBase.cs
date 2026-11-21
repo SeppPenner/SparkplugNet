@@ -21,6 +21,21 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// </summary>
     private PrimaryHostState? primaryHost;
 
+    /// <summary>
+    /// Keeps data and individual device publications outside a complete birth sequence.
+    /// </summary>
+    private readonly SemaphoreSlim publicationLock = new(1);
+
+    /// <summary>
+    /// Identifies callbacks running inside a publication, so they cannot wait on themselves.
+    /// </summary>
+    private readonly AsyncLocal<TaskCompletionSource?> activePublication = new();
+
+    /// <summary>
+    /// Prevents data from being published until the current birth sequence is complete.
+    /// </summary>
+    private volatile bool birthSequencePending = true;
+
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeBase{T}"/> class.
@@ -145,38 +160,83 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected or an invalid metric type was specified.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public async Task<MqttClientPublishResult> PublishMetrics(IEnumerable<T> metrics)
+    public Task<MqttClientPublishResult> PublishMetrics(IEnumerable<T> metrics) =>
+        this.PublishInOrder(() => this.PublishMetricsInternal(metrics));
+
+    /// <summary>
+    /// Publishes a node data message within the publication lock.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <returns>The publish result.</returns>
+    private Task<MqttClientPublishResult> PublishMetricsInternal(IEnumerable<T> metrics)
     {
         if (this.Options is null)
         {
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.client.IsConnected)
+        if (!this.IsRunning || !this.client.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
 
         this.EnsurePrimaryHostReady();
-        return await this.PublishMessage(metrics);
+        this.EnsureBirthSequenceComplete();
+        return this.PublishMessage(metrics);
     }
 
     /// <summary>
-    /// Does a node rebirth.
+    /// Republishes the node and device births within the current MQTT session.
     /// </summary>
-    /// <param name="metrics">The new metrics.</param>
-    public async Task Rebirth(IEnumerable<T> metrics)
+    /// <param name="metrics">Updated values for metrics already registered on the node.</param>
+    public Task Rebirth(IEnumerable<T> metrics) => this.RebirthInternal(metrics);
+
+    /// <summary>
+    /// Sends a complete birth sequence using the current metric values and session number.
+    /// </summary>
+    /// <param name="metrics">Optional current values for the node metrics.</param>
+    /// <returns>The publication task.</returns>
+    private Task RebirthInternal(IEnumerable<T>? metrics = null) => this.PublishInOrder(() =>
     {
+        if (!this.IsRunning || !this.IsConnected)
+        {
+            throw new InvalidOperationException("The node must be connected to publish a rebirth.");
+        }
+
         this.EnsurePrimaryHostReady();
+        if (metrics is not null)
+        {
+            this.KnownMetricsStorage.UpdateCurrentValues(metrics);
+        }
 
-        // Send node death first.
-        await this.SendNodeDeathMessage();
+        return this.PublishNodeAndDeviceBirthsInternal(includeKnownDevices: true);
+    });
 
-        // Reset the known metrics.
-        this.knownMetrics = new KnownMetricStorage(metrics);
+    /// <summary>
+    /// Serializes node publications and complete birth sequences.
+    /// </summary>
+    /// <param name="publish">The publication to perform.</param>
+    /// <returns>The publish result.</returns>
+    private async Task<MqttClientPublishResult> PublishInOrder(Func<Task<MqttClientPublishResult>> publish)
+    {
+        if (this.activePublication.Value is { Task.IsCompleted: false })
+        {
+            throw new InvalidOperationException("Awaiting a node publication from a publishing callback is not supported.");
+        }
 
-        // Send node birth and device births.
-        await this.PublishNodeAndDeviceBirthsInternal();
+        await this.publicationLock.WaitAsync(this.Options?.CancellationToken ?? SystemCancellationToken.None);
+        var publication = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        this.activePublication.Value = publication;
+        try
+        {
+            return await publish();
+        }
+        finally
+        {
+            publication.SetResult();
+            this.activePublication.Value = null;
+            this.publicationLock.Release();
+        }
     }
 
     /// <summary>
@@ -319,7 +379,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        await this.PublishNodeAndDeviceBirthsInternal();
+        await this.PublishInOrder(() => this.PublishNodeAndDeviceBirthsInternal(this.Options!.PublishKnownDeviceMetricsOnReconnect));
     }
 
     /// <summary>
@@ -394,6 +454,18 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
 
     /// <summary>
+    /// Checks that the node has finished publishing a started birth sequence.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if a birth sequence still needs to be published.</exception>
+    private void EnsureBirthSequenceComplete()
+    {
+        if (this.birthSequencePending)
+        {
+            throw new InvalidOperationException("The node must complete its birth sequence before publishing data or changing devices.");
+        }
+    }
+
+    /// <summary>
     /// Connects the Sparkplug node to the MQTT broker.
     /// </summary>
     /// <param name="cancellationToken">Cancels connection establishment.</param>
@@ -404,6 +476,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             throw new ArgumentNullException(nameof(this.Options));
         }
+
+        this.birthSequencePending = true;
 
         // Increment the session number.
         this.IncrementLastSessionNumber();
@@ -484,10 +558,12 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
 
     /// <summary>
-    /// Publishes data to the MQTT broker.
+    /// Publishes a complete birth sequence to the MQTT broker while holding the publication lock.
     /// </summary>
+    /// <param name="includeKnownDevices">Whether to republish the known device births.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private async Task PublishNodeAndDeviceBirthsInternal()
+    /// <returns>The node birth publish result.</returns>
+    private async Task<MqttClientPublishResult> PublishNodeAndDeviceBirthsInternal(bool includeKnownDevices)
     {
         if (this.Options is null)
         {
@@ -500,12 +576,20 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             throw new InvalidOperationException("The primary host is offline.");
         }
 
+        // Advertise the required control independently of application metrics.
+        var rebirthControl = this.NameSpace == SparkplugNamespace.VersionA
+            ? (IMetric)new VersionAData.KuraMetric(Constants.RebirthMetricName, VersionADataTypeEnum.Boolean, false)
+            : new Metric(Constants.RebirthMetricName, VersionBDataTypeEnum.Boolean, false);
+        var birthMetrics = this.KnownMetrics.Where(metric => metric.Name != Constants.RebirthMetricName).Append((T)rebirthControl);
+
+        this.birthSequencePending = true;
+        this.ResetLastSequenceNumber();
         // Get the node birth message.
         var nodeBirthMessage = this.messageGenerator.GetSparkplugNodeBirthMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
-            this.KnownMetrics,
+            birthMetrics,
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
@@ -517,17 +601,29 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.client.PublishAsync(nodeBirthMessage, this.Options.CancellationToken.Value);
+        var result = await this.client.PublishAsync(nodeBirthMessage, this.Options.CancellationToken.Value);
+        if (!result.IsSuccess)
+        {
+            throw new InvalidOperationException($"Could not publish NBIRTH ({result.ReasonCode}).");
+        }
+
         primaryHost?.MarkBirthPublished();
 
         // Publish device births for all known devices.
-        if (this.Options.PublishKnownDeviceMetricsOnReconnect)
+        if (includeKnownDevices)
         {
             foreach (var device in this.KnownDevices)
             {
-                await this.PublishDeviceBirthMessage(device.Value.Metrics, device.Key, logger: null, updateKnownDevice: false);
+                var deviceResult = await this.PublishDeviceBirthMessage(device.Value.Metrics, device.Key, logger: null, updateKnownDevice: false);
+                if (!deviceResult.IsSuccess)
+                {
+                    throw new InvalidOperationException($"Could not publish DBIRTH for {device.Key} ({deviceResult.ReasonCode}).");
+                }
             }
         }
+
+        this.birthSequencePending = false;
+        return result;
     }
 
     /// <summary>
@@ -565,7 +661,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// Sends the node death message when intentionally stopping the node.
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private async Task SendNodeDeathMessage()
+    private Task SendNodeDeathMessage() => this.PublishInOrder(() =>
     {
         if (this.Options is null)
         {
@@ -583,6 +679,6 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         this.Options.CancellationToken ??= SystemCancellationToken.None;
 
         // Publish message.
-        await this.client.PublishAsync(nodeDeathMessage, this.Options.CancellationToken.Value);
-    }
+        return this.client.PublishAsync(nodeDeathMessage, this.Options.CancellationToken.Value);
+    });
 }

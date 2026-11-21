@@ -64,12 +64,13 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
             throw new ArgumentNullException(nameof(this.KnownMetrics), "The KnownMetrics aren't set properly.");
         }
 
+        var currentMetrics = this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeData).ToList();
         // Get the data message.
         var dataMessage = this.messageGenerator.GetSparkplugNodeDataMessage(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier,
-            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeData),
+            currentMetrics,
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.UtcNow);
@@ -78,7 +79,13 @@ public sealed class SparkplugNode : SparkplugNodeBase<Metric>
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        return await this.client.PublishAsync(dataMessage);
+        var result = await this.client.PublishAsync(dataMessage);
+        if (result.IsSuccess)
+        {
+            this.KnownMetricsStorage.UpdateCurrentValues(currentMetrics);
+        }
+
+        return result;
     }
 
     /// <summary>
