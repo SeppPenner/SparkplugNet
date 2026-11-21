@@ -1,0 +1,54 @@
+name: sparkplugnet-tck
+
+services:
+  tck-archive:
+    build:
+      context: .
+      target: tck
+    volumes:
+      - ../../local_testing/sparkplug-tck:/output
+
+  broker:
+    build:
+      context: .
+      target: broker
+    depends_on:
+      tck-archive:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:1883:1883"
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ../../local_testing/sparkplug-tck/data:/opt/hivemq/data
+      - ../../local_testing/sparkplug-tck/log:/opt/hivemq/log
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          bash -c 'exec 3<>/dev/tcp/127.0.0.1/1883' &&
+          grep -q 'Sparkplug.*TCK.*started successfully' /opt/hivemq/log/hivemq.log
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  web-console:
+    build:
+      context: .
+      target: web-console
+    depends_on:
+      broker:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/')
+          .then(response => process.exit(response.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      interval: 2s
+      timeout: 3s
+      retries: 20

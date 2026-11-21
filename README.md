@@ -51,7 +51,7 @@ For basic usage, see the [How to use file](./HowToUse.md) or the [example projec
 
 ## Recommended brokers
 * [MQTTnet.Server](https://github.com/chkr1011/MQTTnet.Server) for simple MQTT testing.
-* [HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Eclipse™ Sparkplug™ Technology Compatibility Kit](https://github.com/eclipse-sparkplug/sparkplug/blob/develop/tck/UserGuide.adoc) for Sparkplug testing, following also issue https://github.com/SeppPenner/SparkplugNet/issues/39 for more details.
+* [HiveMQ CE](https://github.com/hivemq/hivemq-community-edition) with the [Docker Compose setup for the Eclipse Sparkplug 3.0 TCK](./testing/sparkplug-tck/README.md).
 
 ## Recommended clients
 * [MQTT.fx](http://www.mqttfx.jensd.de/) has a Sparkplug data decoder. The binaries for version 1.7.1 can also be taken from https://github.com/SeppPenner/mqttfx171-backup (The software is now under development by a company and requires a license for version 1.7.1+).
