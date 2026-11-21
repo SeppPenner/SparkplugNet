@@ -675,15 +675,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new Payload
-        {
-            Metrics = metrics.ToList(),
-            Seq = (ulong)sequenceNumber,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
-        };
-
-        var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
-        var serialized = PayloadHelper.Serialize(convertedPayload);
+        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -759,15 +751,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new Payload
-        {
-            Metrics = metrics.ToList(),
-            Seq = (ulong)sequenceNumber,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
-        };
-
-        var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
-        var serialized = PayloadHelper.Serialize(convertedPayload);
+        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -994,15 +978,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new Payload
-        {
-            Metrics = metrics.ToList(),
-            Seq = (ulong)sequenceNumber,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
-        };
-
-        var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
-        var serialized = PayloadHelper.Serialize(convertedPayload);
+        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -1078,15 +1054,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new Payload
-        {
-            Metrics = metrics.ToList(),
-            Seq = (ulong)sequenceNumber,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
-        };
-
-        var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
-        var serialized = PayloadHelper.Serialize(convertedPayload);
+        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -1100,6 +1068,34 @@ internal sealed class SparkplugMessageGenerator
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
             .WithRetainFlag(false)
             .Build();
+    }
+
+    /// <summary>
+    /// Serializes a Sparkplug B birth or data payload and supplies missing metric timestamps for specification version 3.0.
+    /// </summary>
+    /// <param name="metrics">The metrics.</param>
+    /// <param name="sequenceNumber">The sequence number.</param>
+    /// <param name="dateTime">The message timestamp.</param>
+    /// <returns>The serialized payload.</returns>
+    private byte[]? SerializeSparkplugBirthOrDataPayloadB(IEnumerable<Metric> metrics, int sequenceNumber, DateTimeOffset dateTime)
+    {
+        var payload = new Payload
+        {
+            Metrics = metrics.ToList(),
+            Seq = (ulong)sequenceNumber,
+            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
+        };
+
+        var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
+        if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
+        {
+            foreach (var metric in convertedPayload.Metrics)
+            {
+                metric.Timestamp ??= convertedPayload.Timestamp;
+            }
+        }
+
+        return PayloadHelper.Serialize(convertedPayload);
     }
 
     /// <summary>

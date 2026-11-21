@@ -305,6 +305,7 @@ public sealed class SparkplugMessageGeneratorTestVersion22
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(2UL, payloadVersionB.Seq);
         Assert.AreEqual(1, payloadVersionB.Metrics.Count);
+        Assert.IsNull(payloadVersionB.Metrics.ElementAt(0).Timestamp);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);

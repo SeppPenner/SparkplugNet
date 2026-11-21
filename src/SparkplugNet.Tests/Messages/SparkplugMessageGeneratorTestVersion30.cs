@@ -79,6 +79,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp == payloadVersionB.Timestamp));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
@@ -103,6 +104,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp == payloadVersionB.Timestamp));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
@@ -181,7 +183,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     [TestMethod]
     public void TestDeviceDataMessageNamespaceB()
     {
-        var dateTime = DateTimeOffset.UtcNow;
+        var dateTime = DateTimeOffset.FromUnixTimeMilliseconds(2_000);
         var message = this.messageGenerator.GetSparkplugDeviceDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 2, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
@@ -195,6 +197,30 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
         Assert.IsNull(payloadVersionB.Metrics.ElementAt(0).Alias);
+        Assert.AreEqual(payloadVersionB.Timestamp, payloadVersionB.Metrics.ElementAt(0).Timestamp);
+        Assert.IsNull(this.metricsB.First().Timestamp);
+    }
+
+    /// <summary>
+    /// Tests that device data preserves explicitly supplied metric timestamps.
+    /// </summary>
+    [TestMethod]
+    public void TestDeviceDataPreservesMetricTimestamps()
+    {
+        var dateTime = DateTimeOffset.FromUnixTimeMilliseconds(2_000);
+        VersionBData.Metric[] metrics =
+        [
+            new("Recorded", VersionBData.DataType.Int32, 20) { Timestamp = 1_000 },
+            new("Epoch", VersionBData.DataType.Int32, 21) { Timestamp = 0 }
+        ];
+
+        var message = this.messageGenerator.GetSparkplugDeviceDataMessage(
+            SparkplugNamespace.VersionB, "group1", "edge1", "device1", metrics, 2, 1, dateTime);
+        var payload = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
+
+        Assert.IsNotNull(payload);
+        Assert.AreEqual(1_000UL, payload.Metrics[0].Timestamp);
+        Assert.AreEqual(0UL, payload.Metrics[1].Timestamp);
     }
 
     /// <summary>
@@ -211,6 +237,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp == payloadVersionB.Timestamp));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
@@ -238,6 +265,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp is null));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
@@ -268,6 +296,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp is null));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
