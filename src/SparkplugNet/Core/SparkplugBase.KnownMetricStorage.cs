@@ -292,8 +292,8 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                     throw new InvalidMetricException($"A metric without a name and an alias is not allowed.");
                 }
 
-                // Check the value of the metric.
-                if (versionBMetric.Value is null)
+                // An explicitly null metric still has a current value state.
+                if (!versionBMetric.IsNull && versionBMetric.Value is null)
                 {
                     throw new InvalidMetricException($"A metric without a current value is not allowed.");
                 }
@@ -303,8 +303,8 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
             }
             else
             {
-                // Check the value of the metric.
-                if (metric.Value is null)
+                // An explicitly null metric still has a current value state.
+                if (!versionBMetric.IsNull && metric.Value is null)
                 {
                     throw new InvalidMetricException($"A metric without a current value is not allowed.");
                 }

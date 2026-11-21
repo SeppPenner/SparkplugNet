@@ -62,6 +62,21 @@ public sealed class KnownMetricStorageTests
     }
 
     /// <summary>
+    /// Tests registering a version B metric with an explicitly null initial value.
+    /// </summary>
+    [TestMethod]
+    public void TestAddVersionBNullMetric()
+    {
+        var metric = new VersionBData.Metric("Nullable", VersionBData.DataType.BooleanArray, null);
+
+        var node = new VersionBMain.SparkplugNode([metric], SparkplugSpecificationVersion.Version30);
+
+        Assert.AreSame(metric, node.KnownMetrics.Single());
+        Assert.IsTrue(metric.IsNull);
+        Assert.IsNull(metric.Value);
+    }
+
+    /// <summary>
     /// Tests the version B metric storage with a valid metric (Alias only).
     /// </summary>
     [TestMethod]

@@ -16,6 +16,73 @@ namespace SparkplugNet.Tests.Payloads;
 public sealed class SparkplugPayloadConverterTestVersionB
 {
     /// <summary>
+    /// Tests that the null flag distinguishes a null string from an empty string on the wire.
+    /// </summary>
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    [DataRow(null)]
+    public void TestDecodeStringMetricNullFlag(bool? isNull)
+    {
+        var protoMetric = new VersionBProtoBufPayload.Metric
+        {
+            DataType = (uint)VersionBData.DataType.String,
+            IsNull = isNull,
+            StringValue = string.Empty
+        };
+
+        var metric = VersionBMain.PayloadConverter.ConvertVersionBMetric(protoMetric);
+
+        Assert.AreEqual(isNull == true, metric.IsNull);
+        Assert.AreEqual(isNull == true ? null : string.Empty, metric.Value);
+    }
+
+    /// <summary>
+    /// Tests that null metrics retain their type and metadata and omit the protobuf value field.
+    /// </summary>
+    [TestMethod]
+    [DataRow(VersionBData.DataType.String, "initial")]
+    [DataRow(VersionBData.DataType.Int8, (sbyte)42)]
+    [DataRow(VersionBData.DataType.Uuid, "a50e898e-eb41-444d-991d-af17975199b4")]
+    [DataRow(VersionBData.DataType.BooleanArray, new[] { true })]
+    public void TestRoundTripNullMetric(VersionBData.DataType dataType, object initialValue)
+    {
+        var metric = new VersionBData.Metric("Nullable", dataType, initialValue)
+        {
+            Alias = 7,
+            Timestamp = 42,
+            IsHistorical = true,
+            IsTransient = true
+        };
+        metric.SetValue(dataType, null);
+
+        var payload = new VersionBData.Payload { Metrics = [metric] };
+        var serialized = PayloadHelper.Serialize(VersionBMain.PayloadConverter.ConvertVersionBPayload(payload));
+        var protoPayload = PayloadHelper.Deserialize<VersionBProtoBufPayload>(serialized);
+        Assert.IsNotNull(protoPayload);
+        var protoMetric = protoPayload.Metrics.Single();
+
+        Assert.IsTrue(protoMetric.IsNull);
+        Assert.IsFalse(protoMetric.ShouldSerializeStringValue());
+        Assert.IsFalse(protoMetric.ShouldSerializeIntValue());
+        Assert.IsFalse(protoMetric.ShouldSerializeBytesValue());
+
+        var decoded = VersionBMain.PayloadConverter.ConvertVersionBPayload(protoPayload).Metrics.Single();
+        Assert.IsTrue(decoded.IsNull);
+        Assert.IsNull(decoded.Value);
+        Assert.AreEqual(dataType, decoded.DataType);
+        Assert.AreEqual(metric.Name, decoded.Name);
+        Assert.AreEqual(metric.Alias, decoded.Alias);
+        Assert.AreEqual(metric.Timestamp, decoded.Timestamp);
+        Assert.AreEqual(metric.IsHistorical, decoded.IsHistorical);
+        Assert.AreEqual(metric.IsTransient, decoded.IsTransient);
+
+        metric.SetValue(dataType, initialValue);
+        Assert.IsFalse(metric.IsNull);
+        Assert.IsNotNull(metric.Value);
+    }
+
+    /// <summary>
     /// Tests decoding native-width and sign-extended Sparkplug B integers.
     /// </summary>
     [TestMethod]

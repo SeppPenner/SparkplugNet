@@ -64,6 +64,12 @@ internal static class PayloadConverter
 
         var dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
 
+        if (protoMetric.IsNull == true && dataType is not (VersionBDataTypeEnum.Unknown or VersionBDataTypeEnum.PropertySetList))
+        {
+            metric.SetValue(dataType, null);
+            return metric;
+        }
+
         switch (dataType)
         {
             case VersionBDataTypeEnum.Int8:
@@ -208,6 +214,12 @@ internal static class PayloadConverter
             Timestamp = metric.Timestamp,
             PropertySetValue = metric.Properties is not null ? ConvertVersionBPropertySet(metric.Properties.ConvertOrDefaultTo<PropertySet>()) : null
         };
+
+        if (metric.IsNull && protoMetric.DataType != (uint)VersionBProtoBuf.DataType.Unknown
+            && metric.DataType is not (VersionBDataTypeEnum.PropertySet or VersionBDataTypeEnum.PropertySetList))
+        {
+            return protoMetric;
+        }
 
         switch (metric.DataType)
         {

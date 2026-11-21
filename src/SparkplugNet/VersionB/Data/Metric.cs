@@ -100,7 +100,7 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <summary>
     /// Gets the value.
     /// </summary>
-    public override object? Value => base.Value ?? this.GetValue();
+    public override object? Value => this.IsNull ? null : base.Value ?? this.GetValue();
 
     /// <summary>
     /// Sets the value.
@@ -112,6 +112,12 @@ public class Metric : ValueBaseVersionB, IMetric
     {
         this.IsNull = value is null;
         this.DataType = dataType;
+
+        if (value is null)
+        {
+            this.ObjectValue = null;
+            return this;
+        }
 
         switch (dataType)
         {
@@ -198,11 +204,6 @@ public class Metric : ValueBaseVersionB, IMetric
                 this.ObjectValue = value.ConvertOrDefaultTo<ulong[]>();
                 break;
             case VersionBDataTypeEnum.DateTimeArray:
-                if (value is null)
-                {
-                    return this;
-                }
-
                 if (value is DateTimeOffset[] dateTimeOffsets)
                 {
                     this.ObjectValue = dateTimeOffsets.Select(d => MetricTimeValue.GetMilliSeconds(d)).ToArray();
@@ -256,11 +257,6 @@ public class Metric : ValueBaseVersionB, IMetric
     /// <returns>The value as <see cref="object"/>.</returns>
     private object? GetValue()
     {
-        if (this.IsNull)
-        {
-            return null;
-        }
-
         switch (this.DataType)
         {
             case VersionBDataTypeEnum.Bytes:
