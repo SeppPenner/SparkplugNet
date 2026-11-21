@@ -392,7 +392,7 @@ internal sealed class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<Metric>
                                      ?? new List<Metric>();
                     return this.GetSparkplugDeviceDataB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier,
-                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
+                        newMetrics, sequenceNumber, dateTime);
                 }
 
             default:

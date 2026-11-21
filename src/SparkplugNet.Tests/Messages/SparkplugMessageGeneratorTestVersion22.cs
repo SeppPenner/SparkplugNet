@@ -297,21 +297,19 @@ public sealed class SparkplugMessageGeneratorTestVersion22
     public void TestDeviceDataMessageNamespaceB()
     {
         var dateTime = DateTimeOffset.UtcNow;
-        var message = this.messageGenerator.GetSparkplugDeviceDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
+        var message = this.messageGenerator.GetSparkplugDeviceDataMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 2, 1, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/DDATA/edge1/device1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
-        Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+        Assert.AreEqual(2UL, payloadVersionB.Seq);
+        Assert.AreEqual(1, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
-
-        Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+        Assert.IsNull(payloadVersionB.Metrics.ElementAt(0).Alias);
     }
 
     /// <summary>
