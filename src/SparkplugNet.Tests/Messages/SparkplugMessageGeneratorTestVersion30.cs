@@ -200,48 +200,60 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     /// <summary>
     /// Tests the Sparkplug message generator with a device command message with a version B namespace.
     /// </summary>
+    /// <param name="includeSessionNumber">Whether to include the session number metric.</param>
     [TestMethod]
-    public void TestDeviceCommandMessageNamespaceB()
+    [DataRow(true)]
+    [DataRow(false)]
+    public void TestDeviceCommandMessageNamespaceB(bool includeSessionNumber)
     {
         var dateTime = DateTimeOffset.UtcNow;
-        var message = this.messageGenerator.GetSparkplugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, 1, dateTime);
+        var message = this.messageGenerator.GetSparkplugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, includeSessionNumber ? 1L : null, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/DCMD/edge1/device1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
-        Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+        Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
-        Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+        if (includeSessionNumber)
+        {
+            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
+            Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
+            Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+        }
     }
 
     /// <summary>
     /// Tests the Sparkplug message generator with a node command message with a version B namespace.
     /// </summary>
+    /// <param name="includeSessionNumber">Whether to include the session number metric.</param>
     [TestMethod]
-    public void TestNodeCommandMessageNamespaceB()
+    [DataRow(true)]
+    [DataRow(false)]
+    public void TestNodeCommandMessageNamespaceB(bool includeSessionNumber)
     {
         var dateTime = DateTimeOffset.UtcNow;
-        var message = this.messageGenerator.GetSparkplugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, 1, dateTime);
+        var message = this.messageGenerator.GetSparkplugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, includeSessionNumber ? 1L : null, dateTime);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/NCMD/edge1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
-        Assert.AreEqual(2, payloadVersionB.Metrics.Count);
+        Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
         Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
-        Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
-        Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+        if (includeSessionNumber)
+        {
+            Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
+            Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
+            Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
+        }
     }
 }

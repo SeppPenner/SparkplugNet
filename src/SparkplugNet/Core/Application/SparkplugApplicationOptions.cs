@@ -22,6 +22,11 @@ public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
     /// </summary>
     public const bool DefaultIsPrimaryApplication = false;
 
+    /// <summary>
+    /// The default value for adding the session number metric to Sparkplug B command messages.
+    /// </summary>
+    public const bool DefaultAddSessionNumberToCommandMessages = true;
+
     /// <inheritdoc cref="SparkplugBaseOptions"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationOptions"/> class.
@@ -74,6 +79,12 @@ public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
     /// </summary>
     [DefaultValue(DefaultIsPrimaryApplication)]
     public bool IsPrimaryApplication { get; set; } = DefaultIsPrimaryApplication;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether Sparkplug B NCMD and DCMD messages automatically include the bdSeq metric.
+    /// </summary>
+    [DefaultValue(DefaultAddSessionNumberToCommandMessages)]
+    public bool AddSessionNumberToCommandMessages { get; set; } = DefaultAddSessionNumberToCommandMessages;
 
     /// <summary>
     /// Gets or sets the cancellation token.

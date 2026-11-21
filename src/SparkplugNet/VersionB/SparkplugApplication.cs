@@ -67,7 +67,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             edgeNodeIdentifier,
             this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeCommand),
             this.LastSequenceNumber,
-            this.LastSessionNumber,
+            this.Options.AddSessionNumberToCommandMessages ? this.LastSessionNumber : null,
             DateTimeOffset.UtcNow);
 
         // Increment the sequence number.
@@ -106,7 +106,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             deviceIdentifier,
             this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.DeviceCommand),
             this.LastSequenceNumber,
-            this.LastSessionNumber,
+            this.Options.AddSessionNumberToCommandMessages ? this.LastSessionNumber : null,
             DateTimeOffset.UtcNow);
 
         // Increment the sequence number.

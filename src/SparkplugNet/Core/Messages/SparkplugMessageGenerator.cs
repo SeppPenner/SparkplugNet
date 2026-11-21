@@ -409,7 +409,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="sequenceNumber">The sequence number.</param>
-    /// <param name="sessionNumber">The session number.</param>
+    /// <param name="sessionNumber">The session number to include as a metric, or <c>null</c> to omit it.</param>
     /// <param name="dateTime">The date time.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
@@ -420,7 +420,7 @@ internal sealed class SparkplugMessageGenerator
         string edgeNodeIdentifier,
         IEnumerable<T> metrics,
         int sequenceNumber,
-        long sessionNumber,
+        long? sessionNumber,
         DateTimeOffset dateTime)
         where T : IMetric, new()
     {
@@ -468,7 +468,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <param name="metrics">The metrics.</param>
     /// <param name="sequenceNumber">The sequence number.</param>
-    /// <param name="sessionNumber">The session number.</param>
+    /// <param name="sessionNumber">The session number to include as a metric, or <c>null</c> to omit it.</param>
     /// <param name="dateTime">The date time.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
@@ -480,7 +480,7 @@ internal sealed class SparkplugMessageGenerator
         string deviceIdentifier,
         IEnumerable<T> metrics,
         int sequenceNumber,
-        long sessionNumber,
+        long? sessionNumber,
         DateTimeOffset dateTime)
         where T : IMetric, new()
     {
@@ -527,31 +527,41 @@ internal sealed class SparkplugMessageGenerator
 
     /// <summary>Adds the session number to the version A metrics.</summary>
     /// <param name="metrics">The metrics.</param>
-    /// <param name="sessionSequenceNumber">The session sequence number.</param>
+    /// <param name="sessionSequenceNumber">The session sequence number, if present.</param>
     /// <returns>The metrics.</returns>
     private static IEnumerable<VersionAData.KuraMetric> AddSessionNumberToMetrics(
         IEnumerable<VersionAData.KuraMetric> metrics,
-        long sessionSequenceNumber)
+        long? sessionSequenceNumber)
     {
+        if (sessionSequenceNumber is not long number)
+        {
+            return metrics;
+        }
+
         // Add a BDSEQ metric.
         return metrics.Concat(
         [
-            new VersionAData.KuraMetric(Constants.SessionNumberMetricName, VersionADataTypeEnum.Int64, sessionSequenceNumber)
+            new VersionAData.KuraMetric(Constants.SessionNumberMetricName, VersionADataTypeEnum.Int64, number)
         ]);
     }
 
     /// <summary>Adds the session number to the version B metrics.</summary>
     /// <param name="metrics">The metrics.</param>
-    /// <param name="sessionSequenceNumber">The session sequence number.</param>
+    /// <param name="sessionSequenceNumber">The session sequence number, if present.</param>
     /// <returns>The metrics.</returns>
     private static IEnumerable<Metric> AddSessionNumberToMetrics(
         IEnumerable<Metric> metrics,
-        long sessionSequenceNumber)
+        long? sessionSequenceNumber)
     {
+        if (sessionSequenceNumber is not long number)
+        {
+            return metrics;
+        }
+
         // Add a BDSEQ metric.
         return metrics.Concat(new Metric[]
         {
-            new Metric(Constants.SessionNumberMetricName, VersionBDataTypeEnum.Int64, sessionSequenceNumber)
+            new Metric(Constants.SessionNumberMetricName, VersionBDataTypeEnum.Int64, number)
         });
     }
 
