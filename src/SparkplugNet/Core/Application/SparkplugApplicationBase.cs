@@ -16,6 +16,29 @@ namespace SparkplugNet.Core.Application;
 /// <seealso cref="SparkplugBase{T}"/>
 public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
+    /// <summary>
+    /// Serializes online and offline STATE publications.
+    /// </summary>
+    private readonly SemaphoreSlim statePublicationLock = new(1);
+
+    /// <summary>
+    /// The primary host STATE messages for the current MQTT connection.
+    /// </summary>
+    private volatile PrimaryStateSession? primaryStateSession;
+
+    /// <summary>
+    /// The prepared online STATE for one connection.
+    /// </summary>
+    /// <param name="HostIdentifier">The host identifier used in the MQTT Will topic.</param>
+    /// <param name="Birth">The online STATE paired with the MQTT Will.</param>
+    private sealed record PrimaryStateSession(string HostIdentifier, MqttApplicationMessage Birth)
+    {
+        /// <summary>
+        /// Whether the host has successfully published its online STATE.
+        /// </summary>
+        internal volatile bool BirthPublished;
+    }
+
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplicationBase{T}"/> class.
@@ -74,15 +97,9 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             throw new InvalidOperationException("Start should only be called once!");
         }
 
+        ArgumentNullException.ThrowIfNull(applicationOptions);
         this.IsRunning = true;
-
-        // Storing the options.
         this.Options = applicationOptions;
-
-        if (this.Options is null)
-        {
-            throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
-        }
 
         // Clear states.
         this.NodeStates.Clear();
@@ -91,10 +108,20 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         // Add handlers.
         this.AddEventHandlers();
 
-        // Connect, subscribe to incoming messages and send a state message.
-        await this.ConnectInternal();
-        await this.SubscribeInternal();
-        await this.PublishInternal();
+        try
+        {
+            await this.ConnectInternal();
+            await this.SubscribeInternal();
+            await this.PublishInternal();
+        }
+        catch
+        {
+            this.IsRunning = false;
+            this.primaryStateSession = null;
+            this.RemoveEventHandlers();
+            await this.client.DisconnectAsync();
+            throw;
+        }
     }
 
     /// <summary>
@@ -103,10 +130,22 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     public async Task Stop()
     {
         this.IsRunning = false;
-        await this.SendOfflineStateMessage();
-        this.RemoveEventHandlers();
-        await this.FireDisconnected();
-        await this.client.DisconnectAsync();
+        try
+        {
+            await this.SendOfflineStateMessage();
+        }
+        finally
+        {
+            this.RemoveEventHandlers();
+            try
+            {
+                await this.FireDisconnected();
+            }
+            finally
+            {
+                await this.client.DisconnectAsync();
+            }
+        }
     }
 
     /// <summary>
@@ -284,6 +323,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     protected virtual async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
+        this.primaryStateSession = null;
         try
         {
             if (this.Options is null)
@@ -345,20 +385,33 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         {
             var topic = args.ApplicationMessage.Topic;
 
+            if (this.messageGenerator.SpecificationVersion == SparkplugSpecificationVersion.Version30
+                && this.NameSpace == SparkplugNamespace.VersionB
+                && this.primaryStateSession is { BirthPublished: true } session
+                && topic == session.Birth.Topic)
+            {
+                // A retained snapshot from the subscription can arrive after the new birth.
+                if (args.ApplicationMessage.Retain)
+                {
+                    return Task.CompletedTask;
+                }
+
+                var payload = Encoding.UTF8.GetString(args.ApplicationMessage.Payload.ToArray());
+                if (StateMessage.TryReadJson(payload, out var online, out _) && !online)
+                {
+                    return this.PublishOnlineState(session);
+                }
+
+                return Task.CompletedTask;
+            }
+
             if (SparkplugMessageTopic.TryParse(topic, out var topicParsed))
             {
                 var data = args.ApplicationMessage.Payload.ToArray();
                 return this.OnMessageReceived(topicParsed!, data);
             }
-            else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
-            {
-                // Skip the STATE messages as they're UTF-8 encoded.
-                return Task.CompletedTask;
-            }
-            else
-            {
-                return Task.CompletedTask;
-            }
+
+            return Task.CompletedTask;
         }
         catch (Exception ex)
         {
@@ -381,12 +434,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             // Increment the session number.
             this.IncrementLastSessionNumber();
-
-            // Get the will message.
-            var willMessage = this.messageGenerator.GetSparkplugStateMessage(
-                this.NameSpace,
-                this.Options.ScadaHostIdentifier,
-                false);
 
             // Build up the MQTT client and connect.
             this.Options.CancellationToken ??= SystemCancellationToken.None;
@@ -430,8 +477,15 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 );
             }
 
+            this.primaryStateSession = null;
             if (this.Options.IsPrimaryApplication)
             {
+                var hostIdentifier = this.Options.ScadaHostIdentifier;
+                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var willMessage = this.messageGenerator.GetSparkplugStateMessage(this.NameSpace, hostIdentifier, false, timestamp);
+                var birthMessage = this.messageGenerator.GetSparkplugStateMessage(this.NameSpace, hostIdentifier, true, timestamp);
+                this.primaryStateSession = new PrimaryStateSession(hostIdentifier, birthMessage);
+
                 builder.WithWillContentType(willMessage.ContentType);
                 builder.WithWillCorrelationData(willMessage.CorrelationData);
                 builder.WithWillDelayInterval(willMessage.MessageExpiryInterval);
@@ -461,31 +515,43 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Publishes data to the MQTT broker.
+    /// Publishes the initial online STATE for a primary host.
     /// </summary>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private async Task PublishInternal()
+    private Task PublishInternal()
     {
-        if (this.Options is null)
+        if (this.primaryStateSession is not { } session)
         {
-            throw new ArgumentNullException(nameof(this.Options));
+            return Task.CompletedTask;
         }
 
-        // Only send state messages for the primary application.
-        if (this.Options.IsPrimaryApplication)
+        this.IncrementLastSequenceNumber();
+        return this.PublishOnlineState(session);
+    }
+
+    /// <summary>
+    /// Publishes the online STATE prepared for the current MQTT connection.
+    /// </summary>
+    /// <param name="session">The primary host state for the connection.</param>
+    private async Task PublishOnlineState(PrimaryStateSession session)
+    {
+        var cancellationToken = this.Options?.CancellationToken ?? SystemCancellationToken.None;
+        await this.statePublicationLock.WaitAsync(cancellationToken);
+        try
         {
-            // Get the online message.
-            var onlineMessage = this.messageGenerator.GetSparkplugStateMessage(
-                this.NameSpace,
-                this.Options.ScadaHostIdentifier,
-                true);
+            if (this.IsRunning && this.IsConnected && ReferenceEquals(this.primaryStateSession, session))
+            {
+                var result = await this.client.PublishAsync(session.Birth, cancellationToken);
+                if (!result.IsSuccess)
+                {
+                    throw new InvalidOperationException($"Could not publish the online STATE ({result.ReasonCode}).");
+                }
 
-            // Increment the sequence number.
-            this.IncrementLastSequenceNumber();
-
-            // Publish message.
-            this.Options.CancellationToken ??= SystemCancellationToken.None;
-            await this.client.PublishAsync(onlineMessage, this.Options.CancellationToken.Value);
+                session.BirthPublished = true;
+            }
+        }
+        finally
+        {
+            this.statePublicationLock.Release();
         }
     }
 
@@ -495,7 +561,18 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     private async Task SubscribeInternal()
     {
         var topic = SparkplugTopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);
-        await this.client.SubscribeAsync(topic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
+
+        if (this.messageGenerator.SpecificationVersion == SparkplugSpecificationVersion.Version30
+            && this.NameSpace == SparkplugNamespace.VersionB
+            && this.primaryStateSession is { } session)
+        {
+            var subscription = await this.client.SubscribeAsync(session.Birth.Topic, MqttQualityOfServiceLevel.AtLeastOnce);
+            if (subscription.Items.Single().ResultCode is not (MqttClientSubscribeResultCode.GrantedQoS0 or MqttClientSubscribeResultCode.GrantedQoS1))
+            {
+                throw new InvalidOperationException($"Could not subscribe to the primary host STATE topic {session.Birth.Topic}.");
+            }
+        }
     }
 
     /// <summary>
@@ -515,22 +592,25 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <summary>
     /// Sends the offline state message when intentionally stopping the application.
     /// </summary>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     private async Task SendOfflineStateMessage()
     {
-        if (this.Options is null)
+        await this.statePublicationLock.WaitAsync();
+        try
         {
-            throw new ArgumentNullException(nameof(this.Options));
+            if (this.IsConnected && this.primaryStateSession is { } session)
+            {
+                var offlineStateMessage = this.messageGenerator.GetSparkplugStateMessage(this.NameSpace, session.HostIdentifier, false);
+                var result = await this.client.PublishAsync(offlineStateMessage);
+                if (!result.IsSuccess)
+                {
+                    throw new InvalidOperationException($"Could not publish the offline STATE ({result.ReasonCode}).");
+                }
+            }
         }
-
-        // Get the node death message.
-        var offlineStateMessage = this.messageGenerator.GetSparkplugStateMessage(
-            this.NameSpace,
-            this.Options.ScadaHostIdentifier,
-            false);
-
-        // Publish message.
-        this.Options.CancellationToken ??= SystemCancellationToken.None;
-        await this.client.PublishAsync(offlineStateMessage, this.Options.CancellationToken.Value);
+        finally
+        {
+            this.primaryStateSession = null;
+            this.statePublicationLock.Release();
+        }
     }
 }

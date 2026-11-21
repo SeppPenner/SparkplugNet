@@ -25,4 +25,37 @@ public sealed record class StateMessage
     /// </summary>
     [JsonPropertyName("timestamp")]
     public long Timestamp { get; init; } = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+    /// <summary>
+    /// Reads the required fields of a Sparkplug 3.0 STATE payload.
+    /// </summary>
+    /// <param name="payload">The JSON payload.</param>
+    /// <param name="online">Whether the host is online.</param>
+    /// <param name="timestamp">The UTC timestamp in milliseconds.</param>
+    /// <returns>Whether both fields are present with their expected types.</returns>
+    internal static bool TryReadJson(string payload, out bool online, out long timestamp)
+    {
+        online = false;
+        timestamp = 0;
+
+        try
+        {
+            using var document = JsonDocument.Parse(payload);
+            var root = document.RootElement;
+            if (root.ValueKind != JsonValueKind.Object ||
+                !root.TryGetProperty("online", out var onlineValue) || onlineValue.ValueKind is not (JsonValueKind.True or JsonValueKind.False) ||
+                !root.TryGetProperty("timestamp", out var timestampValue) || timestampValue.ValueKind != JsonValueKind.Number ||
+                !timestampValue.TryGetInt64(out timestamp))
+            {
+                return false;
+            }
+
+            online = onlineValue.GetBoolean();
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
 }

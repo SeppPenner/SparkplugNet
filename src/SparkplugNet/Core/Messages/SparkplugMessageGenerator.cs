@@ -49,13 +49,15 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="nameSpace">The namespace.</param>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="online">A value indicating whether the message sender is online or not.</param>
+    /// <param name="timestamp">The UTC timestamp in milliseconds for a Sparkplug 3.0 STATE message.</param>
     /// <exception cref="ArgumentException">Thrown if the SCADA host identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
     internal MqttApplicationMessage GetSparkplugStateMessage(
         SparkplugNamespace nameSpace,
         string scadaHostIdentifier,
-        bool online)
+        bool online,
+        long? timestamp = null)
     {
         if (!scadaHostIdentifier.IsIdentifierValid())
         {
@@ -65,7 +67,7 @@ internal sealed class SparkplugMessageGenerator
         return nameSpace switch
         {
             SparkplugNamespace.VersionA => this.GetSparkplugStateMessageA(scadaHostIdentifier, online),
-            SparkplugNamespace.VersionB => this.GetSparkplugStateMessageB(scadaHostIdentifier, online),
+            SparkplugNamespace.VersionB => this.GetSparkplugStateMessageB(scadaHostIdentifier, online, timestamp),
             _ => throw new ArgumentOutOfRangeException(nameof(nameSpace))
         };
     }
@@ -598,8 +600,9 @@ internal sealed class SparkplugMessageGenerator
     /// </summary>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
     /// <param name="online">A value indicating whether the message sender is online or not.</param>
+    /// <param name="timestamp">The UTC timestamp in milliseconds, if supplied.</param>
     /// <returns>A new STATE <see cref="MqttApplicationMessage"/>.</returns>
-    private MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online)
+    private MqttApplicationMessage GetSparkplugStateMessageB(string scadaHostIdentifier, bool online, long? timestamp)
     {
         var stateString = string.Empty;
 
@@ -609,7 +612,11 @@ internal sealed class SparkplugMessageGenerator
                 stateString = online ? "ONLINE" : "OFFLINE";
                 break;
             case SparkplugSpecificationVersion.Version30:
-                stateString = GetSparkplugStateMessage(online);
+                stateString = JsonSerializer.Serialize(new StateMessage
+                {
+                    Online = online,
+                    Timestamp = timestamp ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                });
                 break;
         }
 
@@ -619,20 +626,6 @@ internal sealed class SparkplugMessageGenerator
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .WithRetainFlag()
             .Build();
-    }
-
-    /// <summary>
-    /// Gets the STATE message payload.
-    /// </summary>
-    /// <param name="online">A value indicating whether the state is online or offline.</param>
-    /// <returns>The STATE message as JSON string.</returns>
-    private static string GetSparkplugStateMessage(bool online)
-    {
-        return JsonSerializer.Serialize(new StateMessage
-        {
-            Online = online,
-            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-        });
     }
 
     /// <summary>

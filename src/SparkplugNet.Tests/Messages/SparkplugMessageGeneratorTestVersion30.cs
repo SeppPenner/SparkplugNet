@@ -67,6 +67,27 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     }
 
     /// <summary>
+    /// Tests sending the same explicit timestamp in the Will and the online STATE.
+    /// </summary>
+    /// <param name="online">Whether the STATE is online.</param>
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void TestStateMessageNamespaceBWithConnectionTimestamp(bool online)
+    {
+        const long timestamp = 1_700_000_000_000;
+        var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", online, timestamp);
+        var state = JsonSerializer.Deserialize<StateMessage>(message.Payload.ToArray());
+
+        Assert.IsNotNull(state);
+        Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
+        Assert.AreEqual(online, state.Online);
+        Assert.AreEqual(timestamp, state.Timestamp);
+        Assert.AreEqual(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce, message.QualityOfServiceLevel);
+        Assert.IsTrue(message.Retain);
+    }
+
+    /// <summary>
     /// Tests the Sparkplug message generator with a device birth message with a version B namespace.
     /// </summary>
     [TestMethod]

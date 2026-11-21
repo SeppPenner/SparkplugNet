@@ -178,25 +178,12 @@ internal sealed class PrimaryHostState(string stateTopic, SparkplugSpecification
             return isOnline || payload == "OFFLINE";
         }
 
-        try
+        if (StateMessage.TryReadJson(payload, out isOnline, out var stateTimestamp))
         {
-            using var document = JsonDocument.Parse(payload);
-            var root = document.RootElement;
-            if (root.ValueKind != JsonValueKind.Object ||
-                !root.TryGetProperty("online", out var onlineValue) || onlineValue.ValueKind is not (JsonValueKind.True or JsonValueKind.False) ||
-                !root.TryGetProperty("timestamp", out var timestampValue) || timestampValue.ValueKind != JsonValueKind.Number ||
-                !timestampValue.TryGetInt64(out var stateTimestamp))
-            {
-                return false;
-            }
-
-            isOnline = onlineValue.GetBoolean();
             timestamp = stateTimestamp;
             return true;
         }
-        catch (JsonException)
-        {
-            return false;
-        }
+
+        return false;
     }
 }
