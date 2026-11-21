@@ -121,11 +121,9 @@ Do not silently "clean up" these, they are existing behaviour:
   container and once with the credentials. That reads like a copy and paste error but it is not,
   MQTTnet has an overload of that name taking `ICredentials` which assigns `Credentials`. Verified
   against MQTTnet 5.2, do not "fix" it into a `WithCredentials` call that does not exist.
-- **UInt32 does not sit in the same protobuf field everywhere.** A metric of type UInt32 is written
-  to and read from `int_value`, which is what the specification asks for. `DataSetValue`,
-  `Parameter` and `PropertyValue` still use `long_value` for UInt32 on both sides. That round trips
-  within SparkplugNet but deviates from the specification, so another Sparkplug implementation
-  reads 0 there. Known and deliberately left alone so far.
+- **UInt32 does not sit in the same protobuf field everywhere.** The encoder writes UInt32 metrics
+  to `int_value` and writes UInt32 `DataSetValue`, `Parameter` and `PropertyValue` entries to
+  `long_value`. The decoder accepts either field in all four cases for interoperability.
 - **Version A is the Kura format, not "Sparkplug A".** `VersionA/Data/KuraMetric.cs` carries a flat
   set of typed value properties, version B uses `Metric` with a `DataType` and a single boxed
   value. The two are not convertible into each other, which is why every message generator method
