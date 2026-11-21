@@ -59,6 +59,7 @@ internal static class PayloadConverter
             IsTransient = protoMetric.IsTransient,
             MetaData = ConvertVersionBMetaData(protoMetric.MetaData),
             Name = protoMetric.Name ?? string.Empty,
+            Properties = ConvertVersionBPropertySet(protoMetric.PropertySetValue),
             Timestamp = protoMetric.Timestamp
         };
 
