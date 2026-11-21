@@ -29,6 +29,11 @@ internal sealed class SparkplugMessageGenerator
     }
 
     /// <summary>
+    /// Gets the configured Sparkplug specification version.
+    /// </summary>
+    internal SparkplugSpecificationVersion SpecificationVersion => this.specificationVersion;
+
+    /// <summary>
     /// Gets the STATE topic for publishing and subscribing.
     /// </summary>
     /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>

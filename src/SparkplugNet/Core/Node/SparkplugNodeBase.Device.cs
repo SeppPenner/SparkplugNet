@@ -45,6 +45,7 @@ public partial class SparkplugNodeBase<T>
             throw new Exception("The MQTT client is not connected, please try again.");
         }
 
+        this.EnsurePrimaryHostReady();
         // Get the device birth message.
         var deviceBirthMessage = this.messageGenerator.GetSparkplugDeviceBirthMessage(
             this.NameSpace,
@@ -65,6 +66,7 @@ public partial class SparkplugNodeBase<T>
         // Invoke the device birth event.
         await this.FireDeviceBirthPublishing(deviceIdentifier, knownMetrics);
 
+        this.EnsurePrimaryHostReady();
         // Publish the message.
         this.Options.CancellationToken ??= SystemCancellationToken.None;
         return await this.client.PublishAsync(deviceBirthMessage, this.Options.CancellationToken.Value);
@@ -95,6 +97,7 @@ public partial class SparkplugNodeBase<T>
             throw new Exception("The device is unknown, please publish a device birth message first.");
         }
 
+        this.EnsurePrimaryHostReady();
         return this.PublishMessageForDevice(metrics, deviceIdentifier);
     }
 

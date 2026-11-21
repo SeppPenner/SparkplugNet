@@ -333,5 +333,26 @@ private void OnVersionBNodeDeviceDeathReceived(string deviceIdentifier)
 await node.Stop();
 ```
 
+## Wait for the primary host
+
+Set `WaitForPrimaryHost` on the node options and use the same `ScadaHostIdentifier` as the primary application.
+
+```csharp
+var options = new SparkplugNodeOptions(
+    brokerAddress: "localhost",
+    clientId: "edge1",
+    scadaHostIdentifier: "host1",
+    groupIdentifier: "group1",
+    edgeNodeIdentifier: "edge1",
+    cancellationToken: cancellationToken)
+{
+    WaitForPrimaryHost = true
+};
+
+await node.Start(options);
+```
+
+With this option, `Start` waits for an online `STATE` and publishes the birth messages before returning. The cancellation token or `Stop()` can end a pending wait. After the primary host goes offline, the node reconnects and waits again. Calls that publish device births or metric data require the node to have published its birth with the host online.
+
 ## Connection via WebSocket to MQTT server
 As discussed in https://github.com/SeppPenner/SparkplugNet/issues/52, I don't want to stop using 1883 as default port. Therefore, when using WebSockets, you need to specify the complete url (e.g. `mqtt.eclipseprojects.io:443/mqtt` or maybe `test.something.com:443`) as option for `BrokerAddress`. `Port` is ignored in this case.

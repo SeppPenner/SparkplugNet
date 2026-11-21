@@ -16,6 +16,11 @@ namespace SparkplugNet.Core.Node;
 /// <seealso cref="SparkplugBase{T}"/>
 public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
+    /// <summary>
+    /// Tracks the configured primary host for the lifetime of the node run.
+    /// </summary>
+    private PrimaryHostState? primaryHost;
+
     /// <inheritdoc cref="SparkplugBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugNodeBase{T}"/> class.
@@ -52,7 +57,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     public SparkplugNodeOptions? Options { get; private set; }
 
     /// <summary>
-    /// Starts the Sparkplug node.
+    /// Starts the Sparkplug node and waits for the primary host before publishing NBIRTH when configured to do so.
     /// </summary>
     /// <param name="nodeOptions">The node options.</param>
     /// <param name="knownMetricsStorage">The known metrics storage.</param>
@@ -79,14 +84,35 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         // Storing the options.
         this.Options = nodeOptions;
+        var primaryHost = nodeOptions.WaitForPrimaryHost
+            ? new PrimaryHostState(this.messageGenerator.GetSparkplugStateTopic(nodeOptions.ScadaHostIdentifier), this.messageGenerator.SpecificationVersion)
+            : null;
+        this.primaryHost = primaryHost;
 
         // Add handlers.
         this.AddEventHandlers();
 
-        // Connect, subscribe to incoming messages and send a state message.
-        await this.ConnectInternal();
-        await this.SubscribeInternal();
-        await this.PublishNodeAndDeviceBirthsInternal();
+        try
+        {
+            await this.ConnectAndPublishBirthsInternal(primaryHost);
+        }
+        catch (Exception exception)
+        {
+            if (ReferenceEquals(this.primaryHost, primaryHost) && ReferenceEquals(this.Options, nodeOptions))
+            {
+                var wasStopped = !this.IsRunning;
+                this.IsRunning = false;
+                primaryHost?.Stop();
+                this.RemoveEventHandlers();
+                await this.DisconnectAfterStoppingInternal();
+                if (wasStopped && primaryHost is not null && exception is not OperationCanceledException)
+                {
+                    throw new OperationCanceledException("The node was stopped while starting.", exception);
+                }
+            }
+
+            throw;
+        }
     }
 
     /// <summary>
@@ -95,10 +121,21 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     public async Task Stop()
     {
         this.IsRunning = false;
-        await this.SendNodeDeathMessage();
+        this.primaryHost?.Stop();
         this.RemoveEventHandlers();
-        await this.FireDisconnected();
-        await this.client.DisconnectAsync();
+        try
+        {
+            if (this.IsConnected)
+            {
+                await this.SendNodeDeathMessage();
+            }
+
+            await this.FireDisconnected();
+        }
+        finally
+        {
+            await this.DisconnectAfterStoppingInternal();
+        }
     }
 
     /// <summary>
@@ -120,6 +157,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             throw new Exception("The MQTT client is not connected, please try again.");
         }
 
+        this.EnsurePrimaryHostReady();
         return await this.PublishMessage(metrics);
     }
 
@@ -129,6 +167,8 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <param name="metrics">The new metrics.</param>
     public async Task Rebirth(IEnumerable<T> metrics)
     {
+        this.EnsurePrimaryHostReady();
+
         // Send node death first.
         await this.SendNodeDeathMessage();
 
@@ -196,26 +236,30 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
+        if (!this.IsRunning || this.IsConnected)
+        {
+            return;
+        }
+
+        var options = this.Options ?? throw new ArgumentNullException(nameof(this.Options));
+        var primaryHost = this.primaryHost;
+        primaryHost?.EndConnection();
+        var cancellationToken = options.CancellationToken ?? SystemCancellationToken.None;
         try
         {
-            if (this.Options is null)
-            {
-                throw new ArgumentNullException(nameof(this.Options));
-            }
-
             // Invoke disconnected callback.
             await this.FireDisconnected();
 
             // Wait until the reconnect interval is reached.
-            await Task.Delay(this.Options.ReconnectInterval);
+            await Task.Delay(options.ReconnectInterval, cancellationToken);
 
-            if (this.IsRunning)
+            if (this.IsRunning && !this.IsConnected && ReferenceEquals(this.primaryHost, primaryHost) && ReferenceEquals(this.Options, options))
             {
-                // Connect, subscribe to incoming messages and send a state message.
-                await this.ConnectInternal();
-                await this.SubscribeInternal();
-                await this.PublishNodeAndDeviceBirthsInternal();
+                await this.ConnectAndPublishBirthsInternal(primaryHost);
             }
+        }
+        catch (OperationCanceledException) when (!this.IsRunning || !this.IsConnected || cancellationToken.IsCancellationRequested)
+        {
         }
         catch (Exception ex)
         {
@@ -239,8 +283,15 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
         else if (topic.Contains(SparkplugMessageType.StateMessage.GetDescription()))
         {
-            // Handle the STATE message before anything else as they're UTF-8 encoded.
-            await this.FireStatusMessageReceived(Encoding.UTF8.GetString(args.ApplicationMessage.Payload.ToArray()));
+            var status = Encoding.UTF8.GetString(args.ApplicationMessage.Payload.ToArray());
+            if (this.primaryHost is { } primaryHost && primaryHost.Observe(topic, status))
+            {
+                var sessionNumber = this.LastSessionNumber;
+                // Disconnecting from the MQTT receive callback would wait on the receive loop itself.
+                _ = Task.Run(() => this.DisconnectForOfflinePrimaryHost(primaryHost, sessionNumber));
+            }
+
+            await this.FireStatusMessageReceived(status);
         }
         else
         {
@@ -249,10 +300,105 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
 
     /// <summary>
+    /// Establishes an MQTT session, then publishes NBIRTH and known DBIRTH messages when the host is ready.
+    /// </summary>
+    /// <param name="primaryHost">The optional primary host state for this node run.</param>
+    private async Task ConnectAndPublishBirthsInternal(PrimaryHostState? primaryHost)
+    {
+        var configuredToken = this.Options?.CancellationToken ?? SystemCancellationToken.None;
+        using var startupCancellation = primaryHost is null
+            ? null
+            : CancellationTokenSource.CreateLinkedTokenSource(configuredToken, primaryHost.StoppingToken);
+        var cancellationToken = startupCancellation?.Token ?? configuredToken;
+        var hostOnline = primaryHost?.BeginConnection();
+        await this.ConnectInternal(cancellationToken);
+        await this.SubscribeInternal(cancellationToken);
+        if (hostOnline is not null)
+        {
+            await hostOnline.WaitAsync(cancellationToken);
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        await this.PublishNodeAndDeviceBirthsInternal();
+    }
+
+    /// <summary>
+    /// Disconnects a stopped node and waits for MQTTnet to deliver the disconnect notification before it can be restarted.
+    /// </summary>
+    private async Task DisconnectAfterStoppingInternal()
+    {
+        var disconnected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        Task CompleteDisconnect(MqttClientDisconnectedEventArgs args)
+        {
+            disconnected.TrySetResult();
+            return Task.CompletedTask;
+        }
+
+        this.client.DisconnectedAsync += CompleteDisconnect;
+        try
+        {
+            if (this.IsConnected)
+            {
+                await this.client.DisconnectAsync();
+                await disconnected.Task;
+            }
+        }
+        finally
+        {
+            this.client.DisconnectedAsync -= CompleteDisconnect;
+        }
+    }
+
+    /// <summary>
+    /// Ends the current MQTT session when a configured primary host goes offline.
+    /// </summary>
+    /// <param name="primaryHost">The primary host state that requested disconnection.</param>
+    /// <param name="sessionNumber">The MQTT session the offline STATE was received on.</param>
+    private async Task DisconnectForOfflinePrimaryHost(PrimaryHostState primaryHost, long sessionNumber)
+    {
+        if (!this.IsRunning || !this.IsConnected || !ReferenceEquals(this.primaryHost, primaryHost) || this.LastSessionNumber != sessionNumber)
+        {
+            return;
+        }
+
+        try
+        {
+            try
+            {
+                await this.SendNodeDeathMessage();
+            }
+            finally
+            {
+                if (this.IsConnected && this.LastSessionNumber == sessionNumber)
+                {
+                    await this.client.DisconnectAsync();
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            this.KnownMetricsStorage.Logger?.LogError(exception, "Could not end the Sparkplug session after the primary host went offline.");
+        }
+    }
+
+    /// <summary>
+    /// Verifies the configured host is online and NBIRTH has been published before sending device births or data.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown while waiting for the host or NBIRTH.</exception>
+    private void EnsurePrimaryHostReady()
+    {
+        if (this.primaryHost is { CanPublish: false })
+        {
+            throw new InvalidOperationException("The node has not published NBIRTH with the primary host online.");
+        }
+    }
+
+    /// <summary>
     /// Connects the Sparkplug node to the MQTT broker.
     /// </summary>
+    /// <param name="cancellationToken">Cancels connection establishment.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private async Task ConnectInternal()
+    private async Task ConnectInternal(SystemCancellationToken cancellationToken)
     {
         if (this.Options is null)
         {
@@ -334,7 +480,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
 
         this.ClientOptions = builder.Build();
-        await this.client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
+        await this.client.ConnectAsync(this.ClientOptions, cancellationToken);
     }
 
     /// <summary>
@@ -346,6 +492,12 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         if (this.Options is null)
         {
             throw new ArgumentNullException(nameof(this.Options));
+        }
+
+        var primaryHost = this.primaryHost;
+        if (primaryHost is { IsOnline: false })
+        {
+            throw new InvalidOperationException("The primary host is offline.");
         }
 
         // Get the node birth message.
@@ -366,6 +518,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         // Publish the message.
         await this.client.PublishAsync(nodeBirthMessage, this.Options.CancellationToken.Value);
+        primaryHost?.MarkBirthPublished();
 
         // Publish device births for all known devices.
         if (this.Options.PublishKnownDeviceMetricsOnReconnect)
@@ -380,8 +533,9 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <summary>
     /// Subscribes the client to the node subscribe topics.
     /// </summary>
+    /// <param name="cancellationToken">Cancels the subscriptions.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private async Task SubscribeInternal()
+    private async Task SubscribeInternal(SystemCancellationToken cancellationToken)
     {
         if (this.Options is null)
         {
@@ -393,18 +547,18 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier);
-        await this.client.SubscribeAsync(nodeCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(nodeCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce, cancellationToken);
 
         // Subscribe to the device command topic.
         var deviceCommandSubscribeTopic = SparkplugTopicGenerator.GetWildcardDeviceCommandSubscribeTopic(
             this.NameSpace,
             this.Options.GroupIdentifier,
             this.Options.EdgeNodeIdentifier);
-        await this.client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(deviceCommandSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce, cancellationToken);
 
         // Subscribe to the state topic.
         var stateSubscribeTopic = this.messageGenerator.GetSparkplugStateTopic(this.Options.ScadaHostIdentifier);
-        await this.client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce);
+        await this.client.SubscribeAsync(stateSubscribeTopic, (MqttQualityOfServiceLevel)SparkplugQualityOfServiceLevel.AtLeastOnce, cancellationToken);
     }
 
     /// <summary>

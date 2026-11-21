@@ -102,6 +102,12 @@ public sealed class SparkplugNodeOptions : SparkplugBaseOptions
     public bool PublishKnownDeviceMetricsOnReconnect { get; set; } = DefaultPublishKnownDeviceMetricsOnReconnect;
 
     /// <summary>
+    /// Gets or sets whether to wait for the configured SCADA host to publish an online STATE before sending birth messages.
+    /// </summary>
+    [DefaultValue(false)]
+    public bool WaitForPrimaryHost { get; set; }
+
+    /// <summary>
     /// Gets or sets the cancellation token.
     /// </summary>
     [JsonIgnore]
