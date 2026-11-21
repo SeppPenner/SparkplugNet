@@ -19,6 +19,6 @@ Respect the user's requested order and any conditions on GitHub changes.
 
 Apply `no-ai-slop` by default to every GitHub comment, including closing comments. If the skill is installed, load it before posting. Apply these rules directly when it is unavailable.
 
-- Write in the issue's language. Default to one short paragraph of one to three sentences.
+- Always write GitHub comments in English. Default to one short paragraph of one to three sentences.
 - Lead with the concrete outcome. Link the published fix commit when relevant and include a specific test result or pending check if it answers the issue.
 - Use plain language and cut filler, repeated summaries, and generic closers. Add detail when the user asks for it or the reader needs it to act.
