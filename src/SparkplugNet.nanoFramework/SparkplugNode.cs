@@ -390,7 +390,7 @@ namespace SparkplugNet.NanoFramework
             for (int index = 0; index < metrics.Length; index++)
             {
                 Metric metric = metrics[index];
-                if (metric == null || string.IsNullOrEmpty(metric.Name))
+                if (metric == null || StringHelper.IsNullOrWhiteSpace(metric.Name))
                 {
                     throw new ArgumentException("A birth metric requires a name.");
                 }
@@ -442,7 +442,7 @@ namespace SparkplugNet.NanoFramework
 
         private static void ValidateIdentifier(string id)
         {
-            if (string.IsNullOrEmpty(id) || id.IndexOfAny(new[] { '/', '+', '#', '\0' }) >= 0)
+            if (StringHelper.IsNullOrWhiteSpace(id) || id.IndexOfAny(new[] { '/', '+', '#', '\0' }) >= 0)
             {
                 throw new ArgumentException("Invalid Sparkplug topic identifier.");
             }

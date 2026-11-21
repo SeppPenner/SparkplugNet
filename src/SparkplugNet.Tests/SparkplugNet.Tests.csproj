@@ -28,7 +28,7 @@
     <ItemGroup>
         <ProjectReference Include="..\SparkplugNet\SparkplugNet.csproj" />
         <ProjectReference Include="..\SparkplugNet.Extensions.Json\SparkplugNet.Extensions.Json.csproj" />
-        <Compile Include="..\SparkplugNet.nanoFramework\Metric.cs;..\SparkplugNet.nanoFramework\SparkplugBCodec.cs;..\SparkplugNet.nanoFramework\WireBuffer.cs"
+        <Compile Include="..\SparkplugNet.nanoFramework\Metric.cs;..\SparkplugNet.nanoFramework\SparkplugBCodec.cs;..\SparkplugNet.nanoFramework\StringHelper.cs;..\SparkplugNet.nanoFramework\WireBuffer.cs"
                  Link="NanoFramework\%(Filename)%(Extension)" />
     </ItemGroup>
 

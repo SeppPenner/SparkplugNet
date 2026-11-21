@@ -105,7 +105,7 @@ namespace SparkplugNet.NanoFramework
             if (!IsSupported(metric.DataType)) throw new ArgumentException("Unsupported Sparkplug metric data type.");
 
             var buffer = new WireBuffer();
-            if (!string.IsNullOrEmpty(metric.Name)) WriteBytes(buffer, 1, Encoding.UTF8.GetBytes(metric.Name));
+            if (!StringHelper.IsNullOrWhiteSpace(metric.Name)) WriteBytes(buffer, 1, Encoding.UTF8.GetBytes(metric.Name));
             if (metric.HasAlias) WriteVarint(buffer, 2, metric.Alias);
             ulong timestamp = metric.Timestamp != 0 ? metric.Timestamp : fallbackTimestamp;
             if (timestamp != 0) WriteVarint(buffer, 3, timestamp);
@@ -213,13 +213,16 @@ namespace SparkplugNet.NanoFramework
 
         internal static int FindMetric(Metric[] metrics, Metric update)
         {
-            if (metrics == null || (!update.HasAlias && string.IsNullOrEmpty(update.Name))) return -1;
+            if (metrics == null) return -1;
+
+            bool hasName = !StringHelper.IsNullOrWhiteSpace(update.Name);
+            if (!update.HasAlias && !hasName) return -1;
 
             for (int index = 0; index < metrics.Length; index++)
             {
                 Metric metric = metrics[index];
                 if (metric == null) continue;
-                if (!string.IsNullOrEmpty(update.Name) && update.Name != metric.Name) continue;
+                if (hasName && update.Name != metric.Name) continue;
                 if (update.HasAlias && (!metric.HasAlias || update.Alias != metric.Alias)) continue;
                 return index;
             }
