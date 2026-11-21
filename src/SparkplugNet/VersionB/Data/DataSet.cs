@@ -34,17 +34,17 @@ public sealed class DataSet
     }
 
     /// <summary>
-    /// Gets or sets the number of columns.
+    /// Gets or sets the number of columns. A value of zero lets the encoder use the schema width.
     /// </summary>
     public ulong NumberOfColumns { get; set; }
 
     /// <summary>
-    /// Gets or sets the columns.
+    /// Gets or sets the column names. If empty, the encoder uses names such as Column1 and Column2.
     /// </summary>
     public List<string> Columns { get; set; } = [];
 
     /// <summary>
-    /// Gets or sets the types.
+    /// Gets or sets the column types. If empty, the encoder infers them from the first row.
     /// </summary>
     public uint[] Types { get; set; } = [];
 

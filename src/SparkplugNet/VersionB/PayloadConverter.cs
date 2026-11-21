@@ -553,6 +553,7 @@ internal static class PayloadConverter
     /// Gets the version B ProtoBuf data set from the version B data set.
     /// </summary>
     /// <param name="dataSet">The <see cref="DataSet"/>.</param>
+    /// <exception cref="ArgumentException">Thrown if the rows or columns do not match the data set schema.</exception>
     /// <returns>The <see cref="VersionBProtoBuf.ProtoBufPayload.DataSet"/>.</returns>
     public static VersionBProtoBuf.ProtoBufPayload.DataSet? ConvertVersionBDataSet(DataSet? dataSet)
     {
@@ -561,39 +562,57 @@ internal static class PayloadConverter
             return null;
         }
 
-        var rows = new List<VersionBProtoBuf.ProtoBufPayload.DataSet.Row>();
-        var index = 0;
-
-        foreach (var row in dataSet.Rows)
+        var declaredTypes = dataSet.Types ?? [];
+        var inferTypes = declaredTypes.Length == 0 && dataSet.Rows.Count > 0;
+        var types = inferTypes ? dataSet.Rows[0].Elements.Select(element => (uint)element.DataType).ToArray() : declaredTypes;
+        var columnCount = types.Length;
+        if ((dataSet.NumberOfColumns != 0 && dataSet.NumberOfColumns != (ulong)columnCount) ||
+            (dataSet.Columns.Count != 0 && dataSet.Columns.Count != columnCount))
         {
-            var elements = new List<VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue>();
-            var elementIndex = 0;
+            throw new ArgumentException("The DataSet column count and headers must match the column types. Supply types explicitly when there are no rows.", nameof(dataSet));
+        }
 
-            foreach (var element in row.Elements)
+        var rows = new List<VersionBProtoBuf.ProtoBufPayload.DataSet.Row>(dataSet.Rows.Count);
+        for (var rowIndex = 0; rowIndex < dataSet.Rows.Count; rowIndex++)
+        {
+            var row = dataSet.Rows[rowIndex];
+            if (row.Elements.Count != columnCount)
             {
+                throw new ArgumentException($"DataSet row {rowIndex + 1} has {row.Elements.Count} values for {columnCount} columns.", nameof(dataSet));
+            }
+
+            var elements = new List<VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue>(columnCount);
+            for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
+            {
+                var element = row.Elements[columnIndex];
                 if (element.Value is null)
                 {
-                    continue;
+                    throw new ArgumentException($"DataSet row {rowIndex + 1}, column {columnIndex + 1} has no value.", nameof(dataSet));
                 }
 
-                elements.Add(ConvertVersionBDataSetValue(element, dataSet.Types[elementIndex]));
-                elementIndex++;
+                var columnType = types[columnIndex];
+                if (inferTypes && (uint)element.DataType != columnType)
+                {
+                    throw new ArgumentException($"DataSet row {rowIndex + 1}, column {columnIndex + 1} has type {element.DataType}. Expected {(VersionBDataTypeEnum)columnType}.", nameof(dataSet));
+                }
+
+                elements.Add(ConvertVersionBDataSetValue(element, columnType));
             }
 
             rows.Add(new VersionBProtoBuf.ProtoBufPayload.DataSet.Row
             {
                 Elements = elements
             });
-
-            index++;
         }
 
         return new VersionBProtoBuf.ProtoBufPayload.DataSet
         {
-            Columns = dataSet.Columns,
-            NumberOfColumns = dataSet.NumberOfColumns,
+            Columns = dataSet.Columns.Count > 0
+                ? dataSet.Columns
+                : Enumerable.Range(1, columnCount).Select(column => $"Column{column}").ToList(),
+            NumberOfColumns = (ulong)columnCount,
             Rows = rows,
-            Types = dataSet.Types
+            Types = types
         };
     }
 

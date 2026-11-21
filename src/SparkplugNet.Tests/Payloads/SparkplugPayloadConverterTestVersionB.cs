@@ -16,6 +16,72 @@ namespace SparkplugNet.Tests.Payloads;
 public sealed class SparkplugPayloadConverterTestVersionB
 {
     /// <summary>
+    /// Tests encoding and decoding the reported DataSet with optional column metadata.
+    /// </summary>
+    /// <param name="declareTypes">Whether to supply explicit column types.</param>
+    /// <param name="nameColumns">Whether to supply column names.</param>
+    [TestMethod]
+    [DataRow(false, false)]
+    [DataRow(false, true)]
+    [DataRow(true, false)]
+    [DataRow(true, true)]
+    public void TestRoundTripDataSetWithOptionalColumnMetadata(bool declareTypes, bool nameColumns)
+    {
+        uint[] types = [(uint)VersionBData.DataType.String, (uint)VersionBData.DataType.Int16, (uint)VersionBData.DataType.Boolean];
+        var dataSet = new VersionBData.DataSet
+        {
+            Columns = nameColumns ? ["Name", "Value", "Enabled"] : [],
+            Types = declareTypes ? types : [],
+            Rows =
+            [
+                new() { Elements = [new(VersionBData.DataType.String, "first"), new(VersionBData.DataType.Int16, (short)123), new(VersionBData.DataType.Boolean, true)] },
+                new() { Elements = [new(VersionBData.DataType.String, "second"), new(VersionBData.DataType.Int16, (short)-8), new(VersionBData.DataType.Boolean, false)] }
+            ]
+        };
+
+        var wire = VersionBMain.PayloadConverter.ConvertVersionBDataSet(dataSet);
+        Assert.IsNotNull(wire);
+        var received = PayloadHelper.Deserialize<VersionBProtoBufPayload.DataSet>(PayloadHelper.Serialize(wire));
+        Assert.IsNotNull(received);
+        Assert.AreEqual(3UL, received.NumberOfColumns);
+        CollectionAssert.AreEqual(types, received.Types);
+        string[] columns = nameColumns ? ["Name", "Value", "Enabled"] : ["Column1", "Column2", "Column3"];
+        CollectionAssert.AreEqual(columns, received.Columns);
+
+        var decoded = VersionBMain.PayloadConverter.ConvertVersionBDataSet(received);
+        Assert.IsNotNull(decoded);
+        Assert.AreEqual(2, decoded.Rows.Count);
+        CollectionAssert.AreEqual(new object[] { "first", (short)123, true }, decoded.Rows[0].Elements.Select(element => element.Value).ToArray());
+        CollectionAssert.AreEqual(new object[] { "second", (short)-8, false }, decoded.Rows[1].Elements.Select(element => element.Value).ToArray());
+        Assert.AreEqual(declareTypes ? 3 : 0, dataSet.Types.Length);
+        Assert.AreEqual(nameColumns ? 3 : 0, dataSet.Columns.Count);
+        Assert.AreEqual(0UL, dataSet.NumberOfColumns);
+    }
+
+    /// <summary>
+    /// Tests rejecting a row whose width or types differ from the inferred schema.
+    /// </summary>
+    /// <param name="wrongWidth">Whether the second row has the wrong number of cells.</param>
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void TestRejectDataSetRowThatDoesNotMatchInferredSchema(bool wrongWidth)
+    {
+        var dataSet = new VersionBData.DataSet
+        {
+            Columns = ["Value"],
+            Rows =
+            [
+                new() { Elements = [new(VersionBData.DataType.Int16, (short)123)] },
+                new() { Elements = wrongWidth ? [] : [new(VersionBData.DataType.String, "invalid")] }
+            ]
+        };
+
+        var exception = Assert.ThrowsExactly<ArgumentException>(() => VersionBMain.PayloadConverter.ConvertVersionBDataSet(dataSet));
+        StringAssert.Contains(exception.Message, "row 2");
+    }
+
+    /// <summary>
     /// Tests that data and command metrics can omit their data types when the receiver knows them.
     /// </summary>
     /// <param name="messageType">The data or command message type.</param>
