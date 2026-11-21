@@ -157,108 +157,46 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             filteredMetrics.Add(sessionNumberMetric);
         }
 
+        this.UpdateReceivedMetricState(topic, filteredMetrics);
+
         // Handle messages.
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
                 await this.FireNodeBirthReceived(new NodeBirthEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online))
+                    filteredMetrics)
                 {
                     SequenceNumber = payload.Seq
                 });
                 break;
             case SparkplugMessageType.DeviceBirth:
-                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                {
-                    throw new InvalidOperationException($"The device identifier is invalid!");
-                }
-
-                await this.FireDeviceBirthReceived(new DeviceBirthEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online))
+                await this.FireDeviceBirthReceived(new DeviceBirthEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier!,
+                    filteredMetrics)
                 {
                     SequenceNumber = payload.Seq
                 });
                 break;
             case SparkplugMessageType.NodeData:
-                var nodeDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
-                await this.FireNodeDataReceived(new NodeDataEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics)
+                await this.FireNodeDataReceived(new NodeDataEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, filteredMetrics)
                 {
                     SequenceNumber = payload.Seq
                 });
                 break;
             case SparkplugMessageType.DeviceData:
-                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                {
-                    throw new InvalidOperationException($"Topic {topic} is invalid!");
-                }
-
-                var deviceDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
-                await this.FireDeviceDataReceived(new DeviceDataEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics)
+                await this.FireDeviceDataReceived(new DeviceDataEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier!, filteredMetrics)
                 {
                     SequenceNumber = payload.Seq
                 });
                 break;
             case SparkplugMessageType.NodeDeath:
-                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
                 await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, sessionNumberMetric);
                 break;
             case SparkplugMessageType.DeviceDeath:
-                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                {
-                    throw new InvalidOperationException($"Topic {topic} is invalid!");
-                }
-
-                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
-                await this.FireDeviceDeathReceived(new DeviceEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier)
+                await this.FireDeviceDeathReceived(new DeviceEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier!)
                 {
                     SequenceNumber = payload.Seq
                 });
                 break;
-        }
-    }
-
-    /// <summary>
-    /// Handles the device message.
-    /// </summary>
-    /// <param name="topic">The topic.</param>
-    /// <param name="metrics">The metrics.</param>
-    /// <param name="metricStatus">The metric status.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
-    /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    private IEnumerable<Metric> ProcessPayload(SparkplugMessageTopic topic, List<Metric> metrics, SparkplugMetricStatus metricStatus)
-    {
-        var metricState = new MetricState<Metric>
-        {
-            MetricStatus = metricStatus
-        };
-
-        if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-        {
-            if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
-            {
-                throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
-            }
-
-            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
-        }
-        else
-        {
-            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
-        }
-
-        foreach (var payloadMetric in metrics)
-        {
-            if (payloadMetric is not Metric convertedMetric)
-            {
-                throw new InvalidCastException("The metric cast didn't work properly.");
-            }
-
-            if (payloadMetric.Name is not null)
-            {
-                metricState.Metrics[payloadMetric.Name] = convertedMetric;
-            }
-
-            yield return convertedMetric;
         }
     }
 }

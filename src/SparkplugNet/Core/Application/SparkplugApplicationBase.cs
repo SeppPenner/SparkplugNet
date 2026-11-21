@@ -208,6 +208,60 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
+    /// Applies a received birth, data, or death message to the cached metric state.
+    /// </summary>
+    /// <param name="topic">The topic.</param>
+    /// <param name="metrics">The received metrics.</param>
+    /// <exception cref="InvalidOperationException">Thrown if a device message has no valid device identifier.</exception>
+    private protected void UpdateReceivedMetricState(SparkplugMessageTopic topic, IReadOnlyList<T> metrics)
+    {
+        var isBirth = topic.MessageType is SparkplugMessageType.NodeBirth or SparkplugMessageType.DeviceBirth;
+        var isDeath = topic.MessageType is SparkplugMessageType.NodeDeath or SparkplugMessageType.DeviceDeath;
+        if (!isBirth && !isDeath && topic.MessageType is not (SparkplugMessageType.NodeData or SparkplugMessageType.DeviceData))
+        {
+            return;
+        }
+
+        var isDevice = topic.MessageType is SparkplugMessageType.DeviceBirth or SparkplugMessageType.DeviceData or SparkplugMessageType.DeviceDeath;
+        if (isDevice && string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
+        {
+            throw new InvalidOperationException($"Topic {topic} is invalid!");
+        }
+
+        var states = isDevice ? this.DeviceStates : this.NodeStates;
+        var identifier = isDevice ? $"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}" : topic.EdgeNodeIdentifier;
+        var state = isBirth ? new MetricState<T>() : states.GetOrAdd(identifier, static _ => new MetricState<T>());
+
+        if (isDeath)
+        {
+            state.MetricStatus = SparkplugMetricStatus.Offline;
+            return;
+        }
+
+        foreach (var metric in metrics)
+        {
+            var name = metric.Name;
+            if (string.IsNullOrWhiteSpace(name) && metric is Metric { Alias: ulong alias })
+            {
+                // An alias-only DATA metric updates the name declared in the corresponding BIRTH.
+                var existing = state.Metrics.FirstOrDefault(entry => entry.Value is Metric definedMetric && definedMetric.Alias == alias);
+                name = existing.Key ?? name;
+            }
+
+            if (name is not null)
+            {
+                state.Metrics[name] = metric;
+            }
+        }
+
+        state.MetricStatus = SparkplugMetricStatus.Online;
+        if (isBirth)
+        {
+            states[identifier] = state;
+        }
+    }
+
+    /// <summary>
     /// Handles the client connected event.
     /// </summary>
     /// <param name="args">The arguments.</param>

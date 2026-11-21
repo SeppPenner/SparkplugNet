@@ -176,91 +176,31 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
             filteredMetrics.Add(sessionNumberMetric);
         }
 
+        this.UpdateReceivedMetricState(topic, filteredMetrics);
+
         // Handle messages.
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
                 await this.FireNodeBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
+                    filteredMetrics);
                 break;
             case SparkplugMessageType.DeviceBirth:
                 await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
+                    filteredMetrics);
                 break;
             case SparkplugMessageType.NodeData:
-                var nodeDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
-                await this.FireNodeDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics);
+                await this.FireNodeDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, filteredMetrics);
                 break;
             case SparkplugMessageType.DeviceData:
-                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                {
-                    throw new InvalidOperationException($"Topic {topic} is invalid!");
-                }
-
-                var deviceDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
-                await this.FireDeviceDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics);
+                await this.FireDeviceDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier!, filteredMetrics);
                 break;
             case SparkplugMessageType.NodeDeath:
-                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
                 await this.FireNodeDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, sessionNumberMetric);
                 break;
             case SparkplugMessageType.DeviceDeath:
-                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                {
-                    throw new InvalidOperationException($"Topic {topic} is invalid!");
-                }
-
-                this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
-                await this.FireDeviceDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+                await this.FireDeviceDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier!);
                 break;
-        }
-    }
-
-    /// <summary>
-    /// Handles the device message.
-    /// </summary>
-    /// <param name="topic">The topic.</param>
-    /// <param name="metrics">The metrics.</param>
-    /// <param name="metricStatus">The metric status.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the edge node identifier is invalid.</exception>
-    /// <exception cref="InvalidCastException">Thrown if the metric cast is invalid.</exception>
-    private IEnumerable<VersionAData.KuraMetric> ProcessPayload(
-        SparkplugMessageTopic topic,
-        List<VersionAData.KuraMetric> metrics,
-        SparkplugMetricStatus metricStatus)
-    {
-        var metricState = new MetricState<VersionAData.KuraMetric>
-        {
-            MetricStatus = metricStatus
-        };
-
-        if (!string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-        {
-            if (string.IsNullOrWhiteSpace(topic.EdgeNodeIdentifier))
-            {
-                throw new InvalidOperationException($"The edge node identifier is invalid for device {topic.DeviceIdentifier}.");
-            }
-
-            this.DeviceStates[$"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}"] = metricState;
-        }
-        else
-        {
-            this.NodeStates[topic.EdgeNodeIdentifier] = metricState;
-        }
-
-        foreach (var payloadMetric in metrics)
-        {
-            if (payloadMetric is not VersionAData.KuraMetric convertedMetric)
-            {
-                throw new InvalidCastException("The metric cast didn't work properly.");
-            }
-
-            if (payloadMetric.Name is not null)
-            {
-                metricState.Metrics[payloadMetric.Name] = convertedMetric;
-            }
-
-            yield return convertedMetric;
         }
     }
 }
