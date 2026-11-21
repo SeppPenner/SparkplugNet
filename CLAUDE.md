@@ -11,9 +11,10 @@ version B (`spBv1.0`), and for version B both specification versions 2.2 and 3.0
 
 One solution `src/SparkplugNet.sln` with exactly three projects:
 
-- `src/SparkplugNet/SparkplugNet.csproj`, the library, multi targeting `net8.0;net10.0`.
-- `src/SparkplugNet.Tests/SparkplugNet.Tests.csproj`, MSTest, `net10.0`, 71 test methods in eight
-  test classes. `dotnet test` reports 72 results, one method carries two `DataRow` attributes.
+- `src/SparkplugNet/SparkplugNet.csproj`, the library, targeting `net10.0` and `net11.0`.
+- `src/SparkplugNet.Tests/SparkplugNet.Tests.csproj`, MSTest, targeting `net10.0` and `net11.0`.
+  `dotnet test` reports 72 results per framework because one of the 71 test methods carries two
+  `DataRow` attributes.
 - `src/SparkplugNet.Examples/SparkplugNet.Examples.csproj`, `Exe`, `net10.0`, a console demo that
   runs an application and a node for both payload versions against `localhost:1883`.
 
@@ -58,12 +59,8 @@ dotnet build src/SparkplugNet.sln -c Release
 dotnet test src/SparkplugNet.sln -c Release
 ```
 
-- The library multi targets `net8.0;net10.0`, test and example project are single target
-  `net10.0`. Both library targets are LTS, net8.0 goes out of support in November 2026 and is
-  meant to be dropped then. The test project cannot target net8.0 on every machine, the x64
-  runtime 8.0 is not necessarily installed, so the net8.0 build of the library is compiled but not
-  covered by a test run.
-  A release build therefore reports four projects, the library counts twice.
+- Building the solution requires the .NET 11 SDK. Running the full test suite requires the .NET 10
+  and .NET 11 runtimes.
 - `src/Directory.Build.props` contains nothing but `GenerateDocumentationFile`. Every other build
   property lives in the three `.csproj` files and is duplicated there.
 - `TreatWarningsAsErrors` is enabled in all three projects, so every warning breaks the build,
