@@ -254,9 +254,15 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <exception cref="InvalidOperationException">Thrown if a device message has no valid device identifier.</exception>
     private protected void UpdateReceivedMetricState(SparkplugMessageTopic topic, IReadOnlyList<T> metrics)
     {
+        if (topic.MessageType == SparkplugMessageType.NodeDeath)
+        {
+            this.MarkNodeOffline(topic, metrics);
+            return;
+        }
+
         var isBirth = topic.MessageType is SparkplugMessageType.NodeBirth or SparkplugMessageType.DeviceBirth;
-        var isDeath = topic.MessageType is SparkplugMessageType.NodeDeath or SparkplugMessageType.DeviceDeath;
-        if (!isBirth && !isDeath && topic.MessageType is not (SparkplugMessageType.NodeData or SparkplugMessageType.DeviceData))
+        var isDeviceDeath = topic.MessageType == SparkplugMessageType.DeviceDeath;
+        if (!isBirth && !isDeviceDeath && topic.MessageType is not (SparkplugMessageType.NodeData or SparkplugMessageType.DeviceData))
         {
             return;
         }
@@ -269,11 +275,21 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
         var states = isDevice ? this.DeviceStates : this.NodeStates;
         var identifier = isDevice ? $"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}" : topic.EdgeNodeIdentifier;
-        var state = isBirth ? new MetricState<T>() : states.GetOrAdd(identifier, static _ => new MetricState<T>());
+        var state = isBirth
+            ? new MetricState<T>
+            {
+                GroupIdentifier = topic.GroupIdentifier,
+                BirthSessionNumber = isDevice ? null : ReadSessionNumber(metrics)
+            }
+            : states.GetOrAdd(identifier, static (_, group) => new MetricState<T> { GroupIdentifier = group }, topic.GroupIdentifier);
 
-        if (isDeath)
+        if (isDeviceDeath)
         {
-            state.MetricStatus = SparkplugMetricStatus.Offline;
+            if (state.GroupIdentifier is null || state.GroupIdentifier == topic.GroupIdentifier)
+            {
+                state.MetricStatus = SparkplugMetricStatus.Offline;
+            }
+
             return;
         }
 
@@ -298,6 +314,58 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         {
             states[identifier] = state;
         }
+    }
+
+    /// <summary>
+    /// Marks the node and its devices offline when the death matches their group and node session.
+    /// </summary>
+    /// <param name="topic">The received node death topic.</param>
+    /// <param name="metrics">The node death metrics.</param>
+    private void MarkNodeOffline(SparkplugMessageTopic topic, IReadOnlyList<T> metrics)
+    {
+        var node = this.NodeStates.GetOrAdd(
+            topic.EdgeNodeIdentifier, static (_, group) => new MetricState<T> { GroupIdentifier = group }, topic.GroupIdentifier);
+        if (node.GroupIdentifier is null || node.GroupIdentifier == topic.GroupIdentifier)
+        {
+            if (node.BirthSessionNumber is ulong birth && ReadSessionNumber(metrics) is ulong death && birth != death)
+            {
+                return;
+            }
+
+            node.MetricStatus = SparkplugMetricStatus.Offline;
+        }
+
+        var devicePrefix = $"{topic.EdgeNodeIdentifier}/";
+        foreach (var (key, device) in this.DeviceStates)
+        {
+            if (device.GroupIdentifier == topic.GroupIdentifier && key.StartsWith(devicePrefix, StringComparison.Ordinal))
+            {
+                device.MetricStatus = SparkplugMetricStatus.Offline;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reads the session number from the birth or death certificate.
+    /// </summary>
+    /// <param name="metrics">The received metrics.</param>
+    /// <returns>The session number if present.</returns>
+    private static ulong? ReadSessionNumber(IReadOnlyList<T> metrics)
+    {
+        foreach (var metric in metrics)
+        {
+            if (metric.Name == Constants.SessionNumberMetricName)
+            {
+                return metric.Value switch
+                {
+                    ulong value => value,
+                    long value when value >= 0 => (ulong)value,
+                    _ => null
+                };
+            }
+        }
+
+        return null;
     }
 
     /// <summary>

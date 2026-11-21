@@ -123,4 +123,47 @@ public sealed class SparkplugApplicationMetricStateTests
         Assert.AreEqual(SparkplugMetricStatus.Online, reborn.MetricStatus);
         Assert.AreSame(speed, reborn.Metrics.Values.Single());
     }
+
+    /// <summary>
+    /// Tests a node death against the current birth session and devices in the same group.
+    /// </summary>
+    [TestMethod]
+    public async Task TestNodeDeathMarksOnlyItsCurrentSessionAndDevicesOffline()
+    {
+        var speed = new VersionBData.Metric("Speed", VersionBData.DataType.Int32, 10);
+        var application = new VersionBMain.SparkplugApplication([speed], SparkplugSpecificationVersion.Version30);
+        var birth = SparkplugMessageTopic.Parse("spBv1.0/group/NBIRTH/edge");
+        var death = SparkplugMessageTopic.Parse("spBv1.0/group/NDEATH/edge");
+        await application.HandleMessagesForVersionB(birth, new() { Metrics = [speed, new(Constants.SessionNumberMetricName, VersionBData.DataType.Int64, 2L)] });
+        foreach (var topic in new[]
+        {
+            "spBv1.0/group/DBIRTH/edge/first",
+            "spBv1.0/group/DBIRTH/edge/second",
+            "spBv1.0/group/DBIRTH/edge-other/third",
+            "spBv1.0/other-group/DBIRTH/edge/fourth"
+        })
+        {
+            await application.HandleMessagesForVersionB(SparkplugMessageTopic.Parse(topic), new() { Metrics = [speed] });
+        }
+
+        await application.HandleMessagesForVersionB(death, new() { Metrics = [new(Constants.SessionNumberMetricName, VersionBData.DataType.UInt64, 1UL)] });
+        Assert.AreEqual(SparkplugMetricStatus.Online, application.NodeStates["edge"].MetricStatus);
+        Assert.AreEqual(SparkplugMetricStatus.Online, application.DeviceStates["edge/first"].MetricStatus);
+
+        var events = 0;
+        application.NodeDeathReceived += _ =>
+        {
+            Assert.AreEqual(SparkplugMetricStatus.Offline, application.NodeStates["edge"].MetricStatus);
+            Assert.AreEqual(SparkplugMetricStatus.Offline, application.DeviceStates["edge/first"].MetricStatus);
+            Assert.AreEqual(SparkplugMetricStatus.Offline, application.DeviceStates["edge/second"].MetricStatus);
+            events++;
+            return Task.CompletedTask;
+        };
+
+        await application.HandleMessagesForVersionB(death, new() { Metrics = [new(Constants.SessionNumberMetricName, VersionBData.DataType.UInt64, 2UL)] });
+        Assert.AreEqual(1, events);
+        Assert.AreEqual(SparkplugMetricStatus.Online, application.DeviceStates["edge-other/third"].MetricStatus);
+        Assert.AreEqual(SparkplugMetricStatus.Online, application.DeviceStates["edge/fourth"].MetricStatus);
+        Assert.AreSame(speed, application.DeviceStates["edge/first"].Metrics["Speed"]);
+    }
 }
