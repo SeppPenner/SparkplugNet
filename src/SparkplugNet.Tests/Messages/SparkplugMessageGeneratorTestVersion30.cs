@@ -114,6 +114,30 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     }
 
     /// <summary>
+    /// Tests that NBIRTH includes template references for instances and omits them for definitions.
+    /// </summary>
+    [TestMethod]
+    [DataRow(true, "", null)]
+    [DataRow(true, "TemplateType", null)]
+    [DataRow(false, "TemplateType", "TemplateType")]
+    public void TestNodeBirthTemplateReference(bool isDefinition, string templateRef, string? expectedTemplateRef)
+    {
+        var template = new VersionBData.Template { IsDefinition = isDefinition, TemplateRef = templateRef };
+        var metricName = isDefinition ? "_types_/TemplateType" : "TemplateInstance";
+        var metric = new VersionBData.Metric(metricName, VersionBData.DataType.Template, template);
+
+        var message = this.messageGenerator.GetSparkplugNodeBirthMessage(
+            SparkplugNamespace.VersionB, "group1", "edge1", new[] { metric }, 0, 1, DateTimeOffset.UtcNow);
+        var payload = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
+
+        Assert.IsNotNull(payload);
+        var protoTemplate = payload.Metrics.Single(item => item.Name == metricName).TemplateValue;
+        Assert.IsNotNull(protoTemplate);
+        Assert.AreEqual(isDefinition, protoTemplate.IsDefinition);
+        Assert.AreEqual(expectedTemplateRef, protoTemplate.TemplateRef);
+    }
+
+    /// <summary>
     /// Tests the Sparkplug message generator with a device death message with a version B namespace.
     /// </summary>
     [TestMethod]

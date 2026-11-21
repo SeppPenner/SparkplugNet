@@ -1238,7 +1238,6 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 {
                     IsDefinition = true,
                     Version = "1.0",
-                    TemplateRef = "TestRef1",
                     Parameters =
                     [
                         new("Test1", VersionBData.DataType.Int8, (sbyte)1)
@@ -1667,7 +1666,6 @@ public sealed class SparkplugPayloadConverterTestVersionB
                 {
                     IsDefinition = true,
                     Version = "1.0",
-                    TemplateRef = "TestRef1",
                     Parameters =
                     [
                         new()
