@@ -14,6 +14,7 @@ global using SparkplugNet.Core.Extensions;
 global using SparkplugNet.Core.Messages;
 global using SparkplugNet.Core.Node;
 global using SparkplugNet.Core.Topics;
+global using SparkplugNet.Extensions.Json;
 
 global using SparkplugNet.Tests.Helpers;
 

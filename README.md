@@ -43,6 +43,8 @@ Sparkplug distinguishes between 5 different types of logical parts:
 ## Basic usage
 For basic usage, see the [How to use file](./HowToUse.md) or the [example project](https://github.com/SeppPenner/SparkplugNet/blob/master/src/SparkplugNet.Examples/Program.cs).
 
+To read and write Sparkplug B metrics as JSON, use the [JSON extension](./src/SparkplugNet.Extensions.Json/README.md).
+
 ## Requirements
 * MQTT broker that implements 100% of the MQTT 3.1.1 specification
 * MQTT broker with QoS 0 and 1 support
