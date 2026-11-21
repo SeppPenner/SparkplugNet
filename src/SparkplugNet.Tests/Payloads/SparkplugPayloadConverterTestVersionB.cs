@@ -16,6 +16,62 @@ namespace SparkplugNet.Tests.Payloads;
 public sealed class SparkplugPayloadConverterTestVersionB
 {
     /// <summary>
+    /// Tests decoding native-width and sign-extended Sparkplug B integers.
+    /// </summary>
+    [TestMethod]
+    [DataRow(VersionBData.DataType.Int8, 0x80u, -128)]
+    [DataRow(VersionBData.DataType.Int8, 0xFFFFFF80u, -128)]
+    [DataRow(VersionBData.DataType.Int8, 0xF8u, -8)]
+    [DataRow(VersionBData.DataType.Int8, 0xFFFFFFF8u, -8)]
+    [DataRow(VersionBData.DataType.Int8, 0xFFu, -1)]
+    [DataRow(VersionBData.DataType.Int8, 0xFFFFFFFFu, -1)]
+    [DataRow(VersionBData.DataType.Int8, 0u, 0)]
+    [DataRow(VersionBData.DataType.Int8, 0x7Fu, 127)]
+    [DataRow(VersionBData.DataType.Int16, 0x8000u, -32768)]
+    [DataRow(VersionBData.DataType.Int16, 0xFFFF8000u, -32768)]
+    [DataRow(VersionBData.DataType.Int16, 0xFFF8u, -8)]
+    [DataRow(VersionBData.DataType.Int16, 0xFFFFFFF8u, -8)]
+    [DataRow(VersionBData.DataType.Int16, 0xFFFFu, -1)]
+    [DataRow(VersionBData.DataType.Int16, 0xFFFFFFFFu, -1)]
+    [DataRow(VersionBData.DataType.Int16, 0u, 0)]
+    [DataRow(VersionBData.DataType.Int16, 0x7FFFu, 32767)]
+    public void TestDecodeInt8AndInt16(VersionBData.DataType dataType, uint wireValue, int expected)
+    {
+        var protoDataType = (uint)dataType;
+        object expectedValue = dataType == VersionBData.DataType.Int8 ? (object)(sbyte)expected : (short)expected;
+
+        var metric = VersionBMain.PayloadConverter.ConvertVersionBMetric(
+            new VersionBProtoBufPayload.Metric { DataType = protoDataType, IntValue = wireValue });
+        var dataSetValue = VersionBMain.PayloadConverter.ConvertVersionBDataSetValue(
+            new VersionBProtoBufPayload.DataSet.DataSetValue { IntValue = wireValue }, protoDataType);
+        var parameter = VersionBMain.PayloadConverter.ConvertVersionBParameter(
+            new VersionBProtoBufPayload.Template.Parameter { Name = "Test", DataType = protoDataType, IntValue = wireValue });
+        var property = VersionBMain.PayloadConverter.ConvertVersionBPropertyValue(
+            new VersionBProtoBufPayload.PropertyValue { DataType = protoDataType, IntValue = wireValue });
+
+        Assert.AreEqual(expectedValue, metric.Value);
+        Assert.AreEqual(expectedValue, dataSetValue.Value);
+        Assert.AreEqual(expectedValue, parameter.Value);
+        Assert.AreEqual(expectedValue, property.Value);
+        Assert.AreEqual(unchecked((uint)expected), VersionBMain.PayloadConverter.ConvertVersionBMetric(metric).IntValue);
+    }
+
+    /// <summary>
+    /// Tests rejecting integers outside both supported encodings.
+    /// </summary>
+    [TestMethod]
+    [DataRow(VersionBData.DataType.Int8, 0x100u)]
+    [DataRow(VersionBData.DataType.Int8, 0xFFFFFF7Fu)]
+    [DataRow(VersionBData.DataType.Int16, 0x10000u)]
+    [DataRow(VersionBData.DataType.Int16, 0xFFFF7FFFu)]
+    public void TestRejectOutOfRangeInt8AndInt16(VersionBData.DataType dataType, uint wireValue)
+    {
+        var metric = new VersionBProtoBufPayload.Metric { DataType = (uint)dataType, IntValue = wireValue };
+
+        Assert.ThrowsExactly<OverflowException>(() => VersionBMain.PayloadConverter.ConvertVersionBMetric(metric));
+    }
+
+    /// <summary>
     /// Tests the Sparkplug payload converter for converting a version B payload from Proto.
     /// </summary>
     [TestMethod]

@@ -67,10 +67,10 @@ internal static class PayloadConverter
         switch (dataType)
         {
             case VersionBDataTypeEnum.Int8:
-                metric.SetValue(VersionBDataTypeEnum.Int8, protoMetric.IntValue);
+                metric.SetValue(VersionBDataTypeEnum.Int8, DecodeInt8(protoMetric.IntValue));
                 break;
             case VersionBDataTypeEnum.Int16:
-                metric.SetValue(VersionBDataTypeEnum.Int16, protoMetric.IntValue);
+                metric.SetValue(VersionBDataTypeEnum.Int16, DecodeInt16(protoMetric.IntValue));
                 break;
             case VersionBDataTypeEnum.Int32:
                 metric.SetValue(VersionBDataTypeEnum.Int32, protoMetric.IntValue);
@@ -682,8 +682,8 @@ internal static class PayloadConverter
     public static DataSetValue ConvertVersionBDataSetValue(VersionBProtoBuf.ProtoBufPayload.DataSet.DataSetValue protoDataSetValue, uint protoDataType)
         => (VersionBDataTypeEnum?)protoDataType switch
         {
-            VersionBDataTypeEnum.Int8 => new DataSetValue(VersionBDataTypeEnum.Int8, protoDataSetValue.IntValue),
-            VersionBDataTypeEnum.Int16 => new DataSetValue(VersionBDataTypeEnum.Int16, protoDataSetValue.IntValue),
+            VersionBDataTypeEnum.Int8 => new DataSetValue(VersionBDataTypeEnum.Int8, DecodeInt8(protoDataSetValue.IntValue)),
+            VersionBDataTypeEnum.Int16 => new DataSetValue(VersionBDataTypeEnum.Int16, DecodeInt16(protoDataSetValue.IntValue)),
             VersionBDataTypeEnum.Int32 => new DataSetValue(VersionBDataTypeEnum.Int32, protoDataSetValue.IntValue),
             VersionBDataTypeEnum.UInt8 => new DataSetValue(VersionBDataTypeEnum.UInt8, protoDataSetValue.IntValue),
             VersionBDataTypeEnum.UInt16 => new DataSetValue(VersionBDataTypeEnum.UInt16, protoDataSetValue.IntValue),
@@ -793,8 +793,8 @@ internal static class PayloadConverter
     public static Parameter ConvertVersionBParameter(VersionBProtoBuf.ProtoBufPayload.Template.Parameter protoParameter)
     => (VersionBDataTypeEnum?)protoParameter.DataType switch
     {
-        VersionBDataTypeEnum.Int8 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int8, protoParameter.IntValue),
-        VersionBDataTypeEnum.Int16 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int16, protoParameter.IntValue),
+        VersionBDataTypeEnum.Int8 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int8, DecodeInt8(protoParameter.IntValue)),
+        VersionBDataTypeEnum.Int16 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int16, DecodeInt16(protoParameter.IntValue)),
         VersionBDataTypeEnum.Int32 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.Int32, protoParameter.IntValue),
         VersionBDataTypeEnum.UInt8 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt8, protoParameter.IntValue),
         VersionBDataTypeEnum.UInt16 => new Parameter(protoParameter.Name ?? string.Empty, VersionBDataTypeEnum.UInt16, protoParameter.IntValue),
@@ -909,8 +909,8 @@ internal static class PayloadConverter
     public static PropertyValue ConvertVersionBPropertyValue(VersionBProtoBuf.ProtoBufPayload.PropertyValue protoPropertyValue)
         => (VersionBDataTypeEnum?)protoPropertyValue.DataType switch
         {
-            VersionBDataTypeEnum.Int8 => new PropertyValue(VersionBDataTypeEnum.Int8, protoPropertyValue.IntValue),
-            VersionBDataTypeEnum.Int16 => new PropertyValue(VersionBDataTypeEnum.Int16, protoPropertyValue.IntValue),
+            VersionBDataTypeEnum.Int8 => new PropertyValue(VersionBDataTypeEnum.Int8, DecodeInt8(protoPropertyValue.IntValue)),
+            VersionBDataTypeEnum.Int16 => new PropertyValue(VersionBDataTypeEnum.Int16, DecodeInt16(protoPropertyValue.IntValue)),
             VersionBDataTypeEnum.Int32 => new PropertyValue(VersionBDataTypeEnum.Int32, protoPropertyValue.IntValue),
             VersionBDataTypeEnum.UInt8 => new PropertyValue(VersionBDataTypeEnum.UInt8, protoPropertyValue.IntValue),
             VersionBDataTypeEnum.UInt16 => new PropertyValue(VersionBDataTypeEnum.UInt16, protoPropertyValue.IntValue),
@@ -1067,4 +1067,24 @@ internal static class PayloadConverter
             PropertySets = protoPropertySetList.PropertySets.Select(ConvertVersionBPropertySet).ToNonNullList()
         };
     }
+
+    /// <summary>
+    /// Decodes an Int8 stored at its native width or sign-extended to 32 bits.
+    /// </summary>
+    /// <param name="wireValue">The unsigned protobuf value.</param>
+    /// <returns>The signed 8-bit value.</returns>
+    private static sbyte DecodeInt8(uint wireValue)
+        => wireValue <= byte.MaxValue
+            ? unchecked((sbyte)wireValue)
+            : checked((sbyte)unchecked((int)wireValue));
+
+    /// <summary>
+    /// Decodes an Int16 stored at its native width or sign-extended to 32 bits.
+    /// </summary>
+    /// <param name="wireValue">The unsigned protobuf value.</param>
+    /// <returns>The signed 16-bit value.</returns>
+    private static short DecodeInt16(uint wireValue)
+        => wireValue <= ushort.MaxValue
+            ? unchecked((short)wireValue)
+            : checked((short)unchecked((int)wireValue));
 }
