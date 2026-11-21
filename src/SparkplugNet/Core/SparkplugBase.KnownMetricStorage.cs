@@ -67,6 +67,27 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         }
 
         /// <summary>
+        /// Finds the type of a configured Sparkplug B metric by name or alias.
+        /// </summary>
+        /// <param name="name">The metric name, if present.</param>
+        /// <param name="alias">The metric alias, if present.</param>
+        /// <returns>The known data type, if the metric was found.</returns>
+        internal VersionBDataTypeEnum? GetVersionBMetricDataType(string? name, ulong? alias)
+        {
+            T? metric = default;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                this.knownMetricsByName.TryGetValue(name, out metric);
+            }
+            else if (alias is ulong metricAlias)
+            {
+                this.knownMetricsByAlias.TryGetValue(metricAlias, out metric);
+            }
+
+            return (metric as Metric)?.DataType;
+        }
+
+        /// <summary>
         /// Filters the outgoing metrics.
         /// </summary>
         /// <param name="metrics">The metric.</param>

@@ -16,6 +16,51 @@ namespace SparkplugNet.Tests.Payloads;
 public sealed class SparkplugPayloadConverterTestVersionB
 {
     /// <summary>
+    /// Tests that data and command metrics can omit their data types when the receiver knows them.
+    /// </summary>
+    /// <param name="messageType">The data or command message type.</param>
+    [TestMethod]
+    [DataRow(SparkplugMessageType.NodeData)]
+    [DataRow(SparkplugMessageType.DeviceData)]
+    [DataRow(SparkplugMessageType.NodeCommand)]
+    [DataRow(SparkplugMessageType.DeviceCommand)]
+    public void TestDecodeMetricsWithOmittedDataTypes(SparkplugMessageType messageType)
+    {
+        var knownMetrics = new SparkplugBase<VersionBData.Metric>.KnownMetricStorage(
+        [
+            new("Temperature", VersionBData.DataType.Int16, (short)0),
+            new("", VersionBData.DataType.UInt32, 0u) { Alias = 7 }
+        ]);
+        var protoPayload = new VersionBProtoBufPayload
+        {
+            Metrics =
+            [
+                new() { Name = "Temperature", IntValue = 0xFFF8 },
+                new() { Name = "Unknown", IntValue = 11 },
+                new() { Alias = 7, LongValue = uint.MaxValue },
+                new() { Name = "Temperature", IsNull = true },
+                new() { Name = "Temperature", DataType = (uint)VersionBData.DataType.String, StringValue = "typed" },
+                new() { Name = Constants.SessionNumberMetricName, LongValue = 5 }
+            ]
+        };
+
+        var payload = VersionBMain.PayloadConverter.ConvertVersionBPayload(protoPayload, messageType, knownMetrics);
+
+        Assert.AreEqual(5, payload.Metrics.Count);
+        Assert.AreEqual(VersionBData.DataType.Int16, payload.Metrics[0].DataType);
+        Assert.AreEqual((short)-8, payload.Metrics[0].Value);
+        Assert.AreEqual(7UL, payload.Metrics[1].Alias);
+        Assert.AreEqual(VersionBData.DataType.UInt32, payload.Metrics[1].DataType);
+        Assert.AreEqual(uint.MaxValue, payload.Metrics[1].Value);
+        Assert.IsTrue(payload.Metrics[2].IsNull);
+        Assert.IsNull(payload.Metrics[2].Value);
+        Assert.AreEqual(VersionBData.DataType.Int16, payload.Metrics[2].DataType);
+        Assert.AreEqual("typed", payload.Metrics[3].Value);
+        Assert.AreEqual(5L, payload.Metrics[4].Value);
+        Assert.IsNull(protoPayload.Metrics[0].DataType);
+    }
+
+    /// <summary>
     /// Tests that the null flag distinguishes a null string from an empty string on the wire.
     /// </summary>
     [TestMethod]

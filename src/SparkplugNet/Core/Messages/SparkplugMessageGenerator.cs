@@ -459,7 +459,7 @@ internal sealed class SparkplugMessageGenerator
                     var newMetrics = metrics as IEnumerable<Metric>
                                      ?? new List<Metric>();
 
-                    return GetSparkplugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
+                    return this.GetSparkplugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
                          AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
                 }
 
@@ -527,7 +527,7 @@ internal sealed class SparkplugMessageGenerator
 
                     newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
-                    return GetSparkplugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
+                    return this.GetSparkplugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
                 }
 
             default:
@@ -685,7 +685,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.NodeBirth);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -761,7 +761,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.DeviceBirth);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -988,7 +988,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.NodeData);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -1064,7 +1064,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var serialized = this.SerializeSparkplugBirthOrDataPayloadB(metrics, sequenceNumber, dateTime);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.DeviceData);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -1081,13 +1081,14 @@ internal sealed class SparkplugMessageGenerator
     }
 
     /// <summary>
-    /// Serializes a Sparkplug B birth or data payload and supplies missing metric timestamps for specification version 3.0.
+    /// Serializes Sparkplug B birth, data and command payloads with the fields required for the specification version.
     /// </summary>
     /// <param name="metrics">The metrics.</param>
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The message timestamp.</param>
+    /// <param name="messageType">The message type.</param>
     /// <returns>The serialized payload.</returns>
-    private byte[]? SerializeSparkplugBirthOrDataPayloadB(IEnumerable<Metric> metrics, int sequenceNumber, DateTimeOffset dateTime)
+    private byte[]? SerializeSparkplugPayloadB(IEnumerable<Metric> metrics, int sequenceNumber, DateTimeOffset dateTime, SparkplugMessageType messageType)
     {
         var payload = new Payload
         {
@@ -1099,9 +1100,19 @@ internal sealed class SparkplugMessageGenerator
         var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
         if (this.specificationVersion == SparkplugSpecificationVersion.Version30)
         {
+            var isBirth = messageType is SparkplugMessageType.NodeBirth or SparkplugMessageType.DeviceBirth;
+            var isCommand = messageType is SparkplugMessageType.NodeCommand or SparkplugMessageType.DeviceCommand;
             foreach (var metric in convertedPayload.Metrics)
             {
-                metric.Timestamp ??= convertedPayload.Timestamp;
+                if (!isCommand)
+                {
+                    metric.Timestamp ??= convertedPayload.Timestamp;
+                }
+
+                if (!isBirth)
+                {
+                    metric.DataType = null;
+                }
             }
         }
 
@@ -1155,7 +1166,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugNodeCommandB(
+    private MqttApplicationMessage GetSparkplugNodeCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1163,15 +1174,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new Payload
-        {
-            Metrics = metrics.ToList(),
-            Seq = (ulong)sequenceNumber,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
-        };
-
-        var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
-        var serialized = PayloadHelper.Serialize(convertedPayload);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.NodeCommand);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -1236,7 +1239,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
-    private static MqttApplicationMessage GetSparkplugDeviceCommandB(
+    private MqttApplicationMessage GetSparkplugDeviceCommandB(
         SparkplugNamespace nameSpace,
         string groupIdentifier,
         string edgeNodeIdentifier,
@@ -1245,15 +1248,7 @@ internal sealed class SparkplugMessageGenerator
         int sequenceNumber,
         DateTimeOffset dateTime)
     {
-        var payload = new Payload
-        {
-            Metrics = metrics.ToList(),
-            Seq = (ulong)sequenceNumber,
-            Timestamp = (ulong)dateTime.ToUnixTimeMilliseconds()
-        };
-
-        var convertedPayload = VersionB.PayloadConverter.ConvertVersionBPayload(payload);
-        var serialized = PayloadHelper.Serialize(convertedPayload);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.DeviceCommand);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(

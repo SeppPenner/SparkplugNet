@@ -18,16 +18,46 @@ internal static class PayloadConverter
     /// Gets the version B payload converted from the ProtoBuf payload.
     /// </summary>
     /// <param name="protoPayload">The <see cref="VersionBProtoBuf.ProtoBufPayload"/>.</param>
+    /// <param name="messageType">The message type, if known.</param>
+    /// <param name="knownMetrics">The metric registry used to resolve omitted data types.</param>
     /// <returns>The <see cref="Payload"/>.</returns>
-    public static Payload ConvertVersionBPayload(VersionBProtoBuf.ProtoBufPayload protoPayload)
-        => new()
+    public static Payload ConvertVersionBPayload(
+        VersionBProtoBuf.ProtoBufPayload protoPayload,
+        SparkplugMessageType? messageType = null,
+        SparkplugBase<Metric>.KnownMetricStorage? knownMetrics = null)
+    {
+        var metricStorage = messageType is SparkplugMessageType.NodeData or SparkplugMessageType.DeviceData
+            or SparkplugMessageType.NodeCommand or SparkplugMessageType.DeviceCommand ? knownMetrics : null;
+        var metrics = new List<Metric>(protoPayload.Metrics.Count);
+        foreach (var protoMetric in protoPayload.Metrics)
+        {
+            if (protoMetric.DataType is not null || metricStorage is null)
+            {
+                metrics.Add(ConvertVersionBMetric(protoMetric));
+                continue;
+            }
+
+            var dataType = protoMetric.Name == Constants.SessionNumberMetricName
+                ? VersionBDataTypeEnum.Int64
+                : metricStorage.GetVersionBMetricDataType(protoMetric.Name, protoMetric.Alias);
+            if (dataType is null)
+            {
+                metricStorage.Logger?.LogWarning("Ignoring Sparkplug metric {Name} (alias {Alias}) with no known data type.", protoMetric.Name, protoMetric.Alias);
+                continue;
+            }
+
+            metrics.Add(ConvertVersionBMetric(protoMetric, dataType.Value));
+        }
+
+        return new Payload
         {
             Body = protoPayload.Body,
-            Metrics = protoPayload.Metrics.Select(ConvertVersionBMetric).ToList(),
+            Metrics = metrics,
             Seq = protoPayload.Seq,
             Timestamp = protoPayload.Timestamp,
             Uuid = protoPayload.Uuid ?? string.Empty
         };
+    }
 
     /// <summary>
     /// Gets the ProtoBuf payload converted from the version B payload.
@@ -51,6 +81,16 @@ internal static class PayloadConverter
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the metric data type is unknown.</exception>
     /// <returns>The <see cref="Metric"/>.</returns>
     public static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric)
+        => ConvertVersionBMetric(protoMetric, ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType));
+
+    /// <summary>
+    /// Converts a protobuf metric using its resolved data type.
+    /// </summary>
+    /// <param name="protoMetric">The protobuf metric.</param>
+    /// <param name="dataType">The data type of the metric.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the metric data type is unknown.</exception>
+    /// <returns>The decoded metric.</returns>
+    private static Metric ConvertVersionBMetric(VersionBProtoBuf.ProtoBufPayload.Metric protoMetric, VersionBDataTypeEnum dataType)
     {
         var metric = new Metric()
         {
@@ -62,8 +102,6 @@ internal static class PayloadConverter
             Properties = ConvertVersionBPropertySet(protoMetric.PropertySetValue),
             Timestamp = protoMetric.Timestamp
         };
-
-        var dataType = ConvertVersionBDataType((VersionBProtoBuf.DataType?)protoMetric.DataType);
 
         if (protoMetric.IsNull == true && dataType is not (VersionBDataTypeEnum.Unknown or VersionBDataTypeEnum.PropertySetList))
         {

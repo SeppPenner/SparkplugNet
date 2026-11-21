@@ -128,7 +128,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
 
         if (payloadVersionB is not null)
         {
-            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB);
+            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB, topic.MessageType, this.KnownMetricsStorage);
 
             if (convertedPayload is not Payload _)
             {

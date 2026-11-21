@@ -193,10 +193,10 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(2UL, payloadVersionB.Seq);
         Assert.AreEqual(1, payloadVersionB.Metrics.Count);
+        Assert.IsNull(payloadVersionB.Metrics[0].DataType);
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
         Assert.IsNull(payloadVersionB.Metrics.ElementAt(0).Alias);
         Assert.AreEqual(payloadVersionB.Timestamp, payloadVersionB.Metrics.ElementAt(0).Timestamp);
         Assert.IsNull(this.metricsB.First().Timestamp);
@@ -239,14 +239,13 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(2, payloadVersionB.Metrics.Count);
         Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp == payloadVersionB.Timestamp));
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.DataType is null));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
         Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
-        Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
     }
 
     /// <summary>
@@ -267,16 +266,15 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
         Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp is null));
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.DataType is null));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         if (includeSessionNumber)
         {
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
         }
     }
 
@@ -298,16 +296,15 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
         Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp is null));
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.DataType is null));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
-        Assert.AreEqual((uint?)this.metricsB.First().DataType, payloadVersionB.Metrics.ElementAt(0).DataType);
 
         if (includeSessionNumber)
         {
             Assert.AreEqual(this.seqMetricB.Name, payloadVersionB.Metrics.ElementAt(1).Name);
             Assert.AreEqual(Convert.ToUInt64(this.seqMetricB.Value), payloadVersionB.Metrics.ElementAt(1).LongValue);
-            Assert.AreEqual((uint?)this.seqMetricB.DataType, payloadVersionB.Metrics.ElementAt(1).DataType);
         }
     }
 }
