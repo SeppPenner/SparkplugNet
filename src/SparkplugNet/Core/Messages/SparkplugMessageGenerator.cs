@@ -29,6 +29,16 @@ internal sealed class SparkplugMessageGenerator
     }
 
     /// <summary>
+    /// Gets the STATE topic for publishing and subscribing.
+    /// </summary>
+    /// <param name="scadaHostIdentifier">The SCADA host identifier.</param>
+    /// <returns>The STATE topic for the configured specification version.</returns>
+    internal string GetSparkplugStateTopic(string scadaHostIdentifier)
+    {
+        return SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier, this.specificationVersion);
+    }
+
+    /// <summary>
     /// Gets a STATE message.
     /// </summary>
     /// <param name="nameSpace">The namespace.</param>
@@ -574,7 +584,7 @@ internal sealed class SparkplugMessageGenerator
     private MqttApplicationMessage GetSparkplugStateMessageA(string scadaHostIdentifier, bool online)
     {
         return new MqttApplicationMessageBuilder()
-            .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier, this.specificationVersion))
+            .WithTopic(this.GetSparkplugStateTopic(scadaHostIdentifier))
             .WithPayload(online ? "ONLINE" : "OFFLINE").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce).WithRetainFlag().Build();
     }
 
@@ -599,7 +609,7 @@ internal sealed class SparkplugMessageGenerator
         }
 
         return new MqttApplicationMessageBuilder()
-            .WithTopic(SparkplugTopicGenerator.GetSparkplugStateMessageTopic(scadaHostIdentifier, this.specificationVersion))
+            .WithTopic(this.GetSparkplugStateTopic(scadaHostIdentifier))
             .WithPayload(stateString)
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .WithRetainFlag()

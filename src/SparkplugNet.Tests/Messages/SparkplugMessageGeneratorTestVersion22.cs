@@ -79,6 +79,7 @@ public sealed class SparkplugMessageGeneratorTestVersion22
         var message = this.messageGenerator.GetSparkplugStateMessage(SparkplugNamespace.VersionB, "scada1", true);
 
         Assert.AreEqual("STATE/scada1", message.Topic);
+        Assert.AreEqual(message.Topic, this.messageGenerator.GetSparkplugStateTopic("scada1"));
         Assert.AreEqual("ONLINE", message.ConvertPayloadToString());
     }
 

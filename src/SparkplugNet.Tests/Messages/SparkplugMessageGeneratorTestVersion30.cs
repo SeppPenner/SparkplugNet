@@ -44,6 +44,7 @@ public sealed class SparkplugMessageGeneratorTestVersion30
         var payloadVersionB = JsonSerializer.Deserialize<StateMessage>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/STATE/scada1", message.Topic);
+        Assert.AreEqual(message.Topic, this.messageGenerator.GetSparkplugStateTopic("scada1"));
         Assert.IsNotNull(payloadVersionB);
         Assert.AreEqual(true, payloadVersionB.Online);
         Assert.IsTrue(payloadVersionB.Timestamp >= timestampBefore);
