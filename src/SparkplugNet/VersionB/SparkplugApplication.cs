@@ -140,12 +140,12 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     }
 
     /// <summary>
-    /// Handles the received messages for payload version A.
+    /// Handles the received Sparkplug B payloads.
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
     /// <exception cref="InvalidOperationException">Thrown if the topic is unknown or the device identifier is invalid.</exception>
-    private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
+    internal async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
     {
         // Filter out session number metric.
         var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
@@ -161,8 +161,11 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
         switch (topic.MessageType)
         {
             case SparkplugMessageType.NodeBirth:
-                await this.FireNodeBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
+                await this.FireNodeBirthReceived(new NodeBirthEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier,
+                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online))
+                {
+                    SequenceNumber = payload.Seq
+                });
                 break;
             case SparkplugMessageType.DeviceBirth:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
@@ -170,12 +173,18 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                     throw new InvalidOperationException($"The device identifier is invalid!");
                 }
 
-                await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
-                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online));
+                await this.FireDeviceBirthReceived(new DeviceBirthEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier,
+                    this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online))
+                {
+                    SequenceNumber = payload.Seq
+                });
                 break;
             case SparkplugMessageType.NodeData:
                 var nodeDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
-                await this.FireNodeDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics);
+                await this.FireNodeDataReceived(new NodeDataEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, nodeDataMetrics)
+                {
+                    SequenceNumber = payload.Seq
+                });
                 break;
             case SparkplugMessageType.DeviceData:
                 if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
@@ -184,7 +193,10 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 }
 
                 var deviceDataMetrics = this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Online);
-                await this.FireDeviceDataReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics);
+                await this.FireDeviceDataReceived(new DeviceDataEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier, deviceDataMetrics)
+                {
+                    SequenceNumber = payload.Seq
+                });
                 break;
             case SparkplugMessageType.NodeDeath:
                 this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
@@ -197,7 +209,10 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
                 }
 
                 this.ProcessPayload(topic, filteredMetrics, SparkplugMetricStatus.Offline);
-                await this.FireDeviceDeathReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+                await this.FireDeviceDeathReceived(new DeviceEventArgs(this, topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier)
+                {
+                    SequenceNumber = payload.Seq
+                });
                 break;
         }
     }

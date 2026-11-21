@@ -68,6 +68,11 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         /// Gets the edge node identifier.
         /// </summary>
         public string EdgeNodeIdentifier { get; }
+
+        /// <summary>
+        /// Gets the sequence number from the received Sparkplug B payload, if present.
+        /// </summary>
+        public ulong? SequenceNumber { get; internal init; }
     }
 
     /// <inheritdoc cref="NodeEventArgs" />

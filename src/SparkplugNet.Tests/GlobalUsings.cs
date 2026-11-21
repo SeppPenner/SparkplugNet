@@ -12,6 +12,7 @@ global using SparkplugNet.Core.Exceptions;
 global using SparkplugNet.Core.Extensions;
 global using SparkplugNet.Core.Messages;
 global using SparkplugNet.Core.Node;
+global using SparkplugNet.Core.Topics;
 
 global using SparkplugNet.Tests.Helpers;
 

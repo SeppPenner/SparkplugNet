@@ -39,9 +39,15 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <param name="metrics">The metrics.</param>
     protected virtual Task FireDeviceDataReceived(string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
+        => this.FireDeviceDataReceived(new DeviceDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics));
+
+    /// <summary>
+    /// Fires the device data received event with the supplied event arguments.
+    /// </summary>
+    /// <param name="eventArgs">The device data event arguments.</param>
+    internal Task FireDeviceDataReceived(DeviceDataEventArgs eventArgs)
     {
-        var deviceDataEventArgs = new DeviceDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
-        return this.DeviceDataReceivedEvent.InvokeAsync(deviceDataEventArgs);
+        return this.DeviceDataReceivedEvent.InvokeAsync(eventArgs);
     }
     #endregion
 
@@ -67,9 +73,15 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
     protected virtual Task FireNodeDataReceived(string groupIdentifier, string edgeNodeIdentifier, IEnumerable<T> metrics)
+        => this.FireNodeDataReceived(new NodeDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, metrics));
+
+    /// <summary>
+    /// Fires the node data received event with the supplied event arguments.
+    /// </summary>
+    /// <param name="eventArgs">The node data event arguments.</param>
+    internal Task FireNodeDataReceived(NodeDataEventArgs eventArgs)
     {
-        var nodeDataEventArgs = new NodeDataEventArgs(this, groupIdentifier, edgeNodeIdentifier, metrics);
-        return this.NodeDataReceivedEvent.InvokeAsync(nodeDataEventArgs);
+        return this.NodeDataReceivedEvent.InvokeAsync(eventArgs);
     }
     #endregion
 
@@ -96,9 +108,15 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="deviceIdentifier">The device identifier.</param>
     /// <param name="metrics">The metrics.</param>
     protected virtual Task FireDeviceBirthReceived(string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier, IEnumerable<T> metrics)
+        => this.FireDeviceBirthReceived(new DeviceBirthEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics));
+
+    /// <summary>
+    /// Fires the device birth received event with the supplied event arguments.
+    /// </summary>
+    /// <param name="eventArgs">The device birth event arguments.</param>
+    internal Task FireDeviceBirthReceived(DeviceBirthEventArgs eventArgs)
     {
-        var deviceBirthEventArgs = new DeviceBirthEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, metrics);
-        return this.DeviceBirthReceivedEvent.InvokeAsync(deviceBirthEventArgs);
+        return this.DeviceBirthReceivedEvent.InvokeAsync(eventArgs);
     }
     #endregion
 
@@ -124,9 +142,15 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="deviceIdentifier">The device identifier.</param>
     protected virtual Task FireDeviceDeathReceived(string groupIdentifier, string edgeNodeIdentifier, string deviceIdentifier)
+        => this.FireDeviceDeathReceived(new DeviceEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier));
+
+    /// <summary>
+    /// Fires the device death received event with the supplied event arguments.
+    /// </summary>
+    /// <param name="eventArgs">The device death event arguments.</param>
+    internal Task FireDeviceDeathReceived(DeviceEventArgs eventArgs)
     {
-        var deviceEventArgs = new DeviceEventArgs(this, groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
-        return this.DeviceDeathReceivedEvent.InvokeAsync(deviceEventArgs);
+        return this.DeviceDeathReceivedEvent.InvokeAsync(eventArgs);
     }
     #endregion
 
@@ -152,9 +176,15 @@ public partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IM
     /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
     /// <param name="metrics">The metrics.</param>
     protected virtual Task FireNodeBirthReceived(string groupIdentifier, string edgeNodeIdentifier, IEnumerable<T> metrics)
+        => this.FireNodeBirthReceived(new NodeBirthEventArgs(this, groupIdentifier, edgeNodeIdentifier, metrics));
+
+    /// <summary>
+    /// Fires the node birth received event with the supplied event arguments.
+    /// </summary>
+    /// <param name="eventArgs">The node birth event arguments.</param>
+    internal Task FireNodeBirthReceived(NodeBirthEventArgs eventArgs)
     {
-        var nodeBirthEventArgs = new NodeBirthEventArgs(this, groupIdentifier, edgeNodeIdentifier, metrics);
-        return this.NodeBirthReceivedEvent.InvokeAsync(nodeBirthEventArgs);
+        return this.NodeBirthReceivedEvent.InvokeAsync(eventArgs);
     }
     #endregion
 
