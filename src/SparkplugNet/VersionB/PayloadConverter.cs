@@ -937,8 +937,10 @@ internal static class PayloadConverter
             VersionBDataTypeEnum.String => new PropertyValue(VersionBDataTypeEnum.String, protoPropertyValue.StringValue),
             VersionBDataTypeEnum.Text => new PropertyValue(VersionBDataTypeEnum.Text, protoPropertyValue.StringValue),
             VersionBDataTypeEnum.Uuid => new PropertyValue(VersionBDataTypeEnum.Uuid, protoPropertyValue.StringValue),
-            VersionBDataTypeEnum.PropertySet => new PropertyValue(VersionBDataTypeEnum.PropertySet, ConvertVersionBPropertySet(protoPropertyValue.PropertySetValue)),
-            VersionBDataTypeEnum.PropertySetList => new PropertyValue(VersionBDataTypeEnum.PropertySetList, ConvertVersionBPropertySetList(protoPropertyValue.PropertySetListValue)),
+            VersionBDataTypeEnum.PropertySet => new PropertyValue(VersionBDataTypeEnum.PropertySet,
+                protoPropertyValue.IsNull == true ? null : ConvertVersionBPropertySet(protoPropertyValue.PropertySetValue)),
+            VersionBDataTypeEnum.PropertySetList => new PropertyValue(VersionBDataTypeEnum.PropertySetList,
+                protoPropertyValue.IsNull == true ? null : ConvertVersionBPropertySetList(protoPropertyValue.PropertySetListValue)),
             VersionBDataTypeEnum.Bytes
              or VersionBDataTypeEnum.File
              or VersionBDataTypeEnum.DataSet
@@ -1003,10 +1005,10 @@ internal static class PayloadConverter
                 protoPropertyValue.StringValue = propertyValue.Value.ConvertOrDefaultTo<string>();
                 break;
             case VersionBDataTypeEnum.PropertySet:
-                protoPropertyValue.PropertySetValue = ConvertVersionBPropertySet(propertyValue.Value.ConvertOrDefaultTo<PropertySet>());
+                protoPropertyValue.PropertySetValue = ConvertVersionBPropertySet((PropertySet?)propertyValue.Value);
                 break;
             case VersionBDataTypeEnum.PropertySetList:
-                protoPropertyValue.PropertySetListValue = ConvertVersionBPropertySetList(propertyValue.Value.ConvertOrDefaultTo<PropertySetList>());
+                protoPropertyValue.PropertySetListValue = ConvertVersionBPropertySetList((PropertySetList?)propertyValue.Value);
                 break;
             case VersionBDataTypeEnum.Bytes:
             case VersionBDataTypeEnum.File:
