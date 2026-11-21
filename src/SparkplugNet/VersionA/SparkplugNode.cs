@@ -91,58 +91,21 @@ public sealed class SparkplugNode : SparkplugNodeBase<VersionAData.KuraMetric>
     /// </summary>
     /// <param name="topic">The topic.</param>
     /// <param name="payload">The payload.</param>
-    /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the device identifier is invalid.</exception>
     [Obsolete("Sparkplug version A is obsolete since version 3 of the specification, use version B where possible.")]
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
+        if (this.GetCommandMetricStorage(topic) is not { } metricStorage)
+        {
+            return;
+        }
+
         var payloadVersionA = PayloadHelper.Deserialize<VersionAProtoBuf.ProtoBufPayload>(payload);
 
         if (payloadVersionA is not null)
         {
             var convertedPayload = PayloadConverter.ConvertVersionAPayload(payloadVersionA);
-
-            if (convertedPayload is not VersionAData.Payload _)
-            {
-                throw new InvalidCastException("The metric cast didn't work properly.");
-            }
-
-            await this.HandleMessagesForVersionB(topic, convertedPayload);
-        }
-    }
-
-    /// <summary>
-    /// Handles the received messages for payload version B.
-    /// </summary>
-    /// <param name="topic">The topic.</param>
-    /// <param name="payload">The payload.</param>
-    /// <exception cref="InvalidOperationException">Thrown if the topic is invalid.</exception>
-    private async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, VersionAData.Payload payload)
-    {
-        // Filter out session number metric.
-        var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
-        var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
-
-        if (sessionNumberMetric is not null)
-        {
-            filteredMetrics.Add(sessionNumberMetric);
-        }
-
-        // Handle messages.
-        switch (topic.MessageType)
-        {
-            case SparkplugMessageType.DeviceCommand:
-                if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-                {
-                    throw new InvalidOperationException($"Topic {topic} is invalid!");
-                }
-
-                await this.FireDeviceCommandReceived(topic.DeviceIdentifier, filteredMetrics);
-                break;
-
-            case SparkplugMessageType.NodeCommand:
-                await this.FireNodeCommandReceived(filteredMetrics);
-                break;
+            await this.HandleCommand(topic, convertedPayload.Metrics, metricStorage);
         }
     }
 }

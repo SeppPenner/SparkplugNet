@@ -32,6 +32,11 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         private readonly ConcurrentDictionary<ulong, T> knownMetricsByAlias = new();
 
         /// <summary>
+        /// The alias index for metrics registered by name.
+        /// </summary>
+        private readonly Dictionary<ulong, T> namedMetricsByAlias = new();
+
+        /// <summary>
         /// Gets the metrics as <see cref="List{T}"/>.
         /// </summary>
         public List<T> Metrics => [.. this.knownMetricsByName.Values, .. this.knownMetricsByAlias.Values];
@@ -64,6 +69,14 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                     this.AddVersionBMetric(metric, versionBMetric);
                 }
             }
+
+            foreach (var metric in this.knownMetricsByName.Values)
+            {
+                if (metric is Metric { Alias: ulong alias })
+                {
+                    this.namedMetricsByAlias[alias] = metric;
+                }
+            }
         }
 
         /// <summary>
@@ -81,11 +94,20 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
             }
             else if (alias is ulong metricAlias)
             {
-                this.knownMetricsByAlias.TryGetValue(metricAlias, out metric);
+                this.TryGetMetricByAlias(metricAlias, out metric);
             }
 
             return (metric as Metric)?.DataType;
         }
+
+        /// <summary>
+        /// Finds a metric registered by alias or announced with both a name and an alias.
+        /// </summary>
+        /// <param name="alias">The metric alias.</param>
+        /// <param name="metric">The matching metric.</param>
+        /// <returns>Whether the alias is known.</returns>
+        private bool TryGetMetricByAlias(ulong alias, [MaybeNullWhen(false)] out T metric) =>
+            this.knownMetricsByAlias.TryGetValue(alias, out metric) || this.namedMetricsByAlias.TryGetValue(alias, out metric);
 
         /// <summary>
         /// Filters the outgoing metrics.
@@ -180,7 +202,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                 else
                 {
                     // Check if the metric is known.
-                    if (!this.knownMetricsByAlias.TryGetValue(metric.Alias.Value, out var foundMetric))
+                    if (!this.TryGetMetricByAlias(metric.Alias.Value, out var foundMetric))
                     {
                         shouldbeAdded = false;
                         this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);

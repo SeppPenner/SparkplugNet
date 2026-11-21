@@ -22,6 +22,55 @@ public partial class SparkplugNodeBase<T>
     public ConcurrentDictionary<string, KnownMetricStorage> KnownDevices { get; } = new();
 
     /// <summary>
+    /// Gets the metric definitions for the recipient of an incoming command.
+    /// </summary>
+    /// <param name="topic">The command topic.</param>
+    /// <returns>The recipient's metrics, if the topic addresses a known recipient.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the device identifier is invalid.</exception>
+    private protected KnownMetricStorage? GetCommandMetricStorage(SparkplugMessageTopic topic)
+    {
+        if (topic.MessageType == SparkplugMessageType.NodeCommand)
+        {
+            return this.KnownMetricsStorage;
+        }
+
+        if (topic.MessageType != SparkplugMessageType.DeviceCommand)
+        {
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
+        {
+            throw new InvalidOperationException($"Topic {topic} is invalid!");
+        }
+
+        return this.KnownDevices.GetValueOrDefault(topic.DeviceIdentifier);
+    }
+
+    /// <summary>
+    /// Filters a decoded command and dispatches it to the corresponding event.
+    /// </summary>
+    /// <param name="topic">The command topic.</param>
+    /// <param name="metrics">The decoded command metrics.</param>
+    /// <param name="metricStorage">The recipient's metric definitions.</param>
+    /// <returns>The event dispatch task.</returns>
+    private protected Task HandleCommand(SparkplugMessageTopic topic, IEnumerable<T> metrics, KnownMetricStorage metricStorage)
+    {
+        var sessionNumberMetric = metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
+        var metricsWithoutSessionNumber = metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
+        var filteredMetrics = metricStorage.FilterMetrics(metricsWithoutSessionNumber, topic.MessageType).ToList();
+
+        if (sessionNumberMetric is not null)
+        {
+            filteredMetrics.Add(sessionNumberMetric);
+        }
+
+        return topic.MessageType == SparkplugMessageType.DeviceCommand
+            ? this.FireDeviceCommandReceived(topic.DeviceIdentifier!, filteredMetrics)
+            : this.FireNodeCommandReceived(filteredMetrics);
+    }
+
+    /// <summary>
     /// Publishes a device birth message to the MQTT broker.
     /// </summary>
     /// <param name="knownMetrics">The known metrics.</param>
@@ -30,10 +79,25 @@ public partial class SparkplugNodeBase<T>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     /// <exception cref="Exception">Thrown if the MQTT client is not connected.</exception>
     /// <returns>A <see cref="MqttClientPublishResult"/>.</returns>
-    public async Task<MqttClientPublishResult> PublishDeviceBirthMessage(
+    public Task<MqttClientPublishResult> PublishDeviceBirthMessage(
         List<T> knownMetrics,
         string deviceIdentifier,
-        ILogger<KnownMetricStorage>? logger = null)
+        ILogger<KnownMetricStorage>? logger = null) =>
+        this.PublishDeviceBirthMessage(knownMetrics, deviceIdentifier, logger, updateKnownDevice: true);
+
+    /// <summary>
+    /// Publishes a device birth and optionally replaces the device's metric definitions.
+    /// </summary>
+    /// <param name="knownMetrics">The known metrics.</param>
+    /// <param name="deviceIdentifier">The device identifier.</param>
+    /// <param name="logger">The logger.</param>
+    /// <param name="updateKnownDevice">Whether a new metric definition was supplied.</param>
+    /// <returns>The publish result.</returns>
+    private async Task<MqttClientPublishResult> PublishDeviceBirthMessage(
+        List<T> knownMetrics,
+        string deviceIdentifier,
+        ILogger<KnownMetricStorage>? logger,
+        bool updateKnownDevice)
     {
         if (this.Options is null)
         {
@@ -60,16 +124,41 @@ public partial class SparkplugNodeBase<T>
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
 
-        // Add the known metrics to the known devices.
-        this.KnownDevices.TryAdd(deviceIdentifier, new KnownMetricStorage(knownMetrics, logger));
+        KnownMetricStorage? previousStorage = null;
+        KnownMetricStorage? newStorage = null;
+        if (updateKnownDevice)
+        {
+            newStorage = new KnownMetricStorage(knownMetrics, logger);
+            this.KnownDevices.TryGetValue(deviceIdentifier, out previousStorage);
+            this.KnownDevices[deviceIdentifier] = newStorage;
+        }
 
-        // Invoke the device birth event.
-        await this.FireDeviceBirthPublishing(deviceIdentifier, knownMetrics);
+        var published = false;
+        try
+        {
+            await this.FireDeviceBirthPublishing(deviceIdentifier, knownMetrics);
+            this.EnsurePrimaryHostReady();
 
-        this.EnsurePrimaryHostReady();
-        // Publish the message.
-        this.Options.CancellationToken ??= SystemCancellationToken.None;
-        return await this.client.PublishAsync(deviceBirthMessage, this.Options.CancellationToken.Value);
+            this.Options.CancellationToken ??= SystemCancellationToken.None;
+            var result = await this.client.PublishAsync(deviceBirthMessage, this.Options.CancellationToken.Value);
+            published = result.IsSuccess;
+            return result;
+        }
+        finally
+        {
+            if (!published && newStorage is not null)
+            {
+                // Restore the previous definitions only if this birth still owns the entry.
+                if (previousStorage is null)
+                {
+                    this.KnownDevices.TryRemove(new KeyValuePair<string, KnownMetricStorage>(deviceIdentifier, newStorage));
+                }
+                else
+                {
+                    this.KnownDevices.TryUpdate(deviceIdentifier, previousStorage, newStorage);
+                }
+            }
+        }
     }
 
     /// <summary>

@@ -525,7 +525,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             foreach (var device in this.KnownDevices)
             {
-                await this.PublishDeviceBirthMessage(device.Value.Metrics, device.Key, this.KnownMetricsStorage.Logger);
+                await this.PublishDeviceBirthMessage(device.Value.Metrics, device.Key, logger: null, updateKnownDevice: false);
             }
         }
     }
