@@ -42,6 +42,18 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
         public List<T> Metrics => [.. this.knownMetricsByName.Values, .. this.knownMetricsByAlias.Values];
 
         /// <summary>
+        /// Gets whether the registry contains any configured metrics.
+        /// </summary>
+        internal bool IsEmpty => this.knownMetricsByName.IsEmpty && this.knownMetricsByAlias.IsEmpty;
+
+        /// <summary>
+        /// Finds the name advertised at birth for a Sparkplug B alias.
+        /// </summary>
+        /// <param name="alias">The metric alias.</param>
+        /// <returns>The metric name, if registered.</returns>
+        internal string? GetMetricName(ulong alias) => this.TryGetMetricByAlias(alias, out var metric) ? metric.Name : null;
+
+        /// <summary>
         /// The logger.
         /// </summary>
         public readonly ILogger<KnownMetricStorage>? Logger;
@@ -279,8 +291,9 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
                 }
                 else
                 {
-                    // Check if the metric is known.
-                    if (!this.knownMetricsByName.TryGetValue(metric.Name, out var foundMetric))
+                    // A configured alias-only metric can be matched to the name supplied at birth.
+                    if (!this.knownMetricsByName.TryGetValue(metric.Name, out var foundMetric)
+                        && !this.knownMetricsByAlias.TryGetValue(metric.Alias!.Value, out foundMetric))
                     {
                         shouldbeAdded = false;
                         this.Logger?.LogError("The metric {Metric} is removed because it is unknown.", metric);

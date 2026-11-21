@@ -16,9 +16,9 @@ namespace SparkplugNet.Core;
 public sealed class MetricState<T> where T : IMetric, new()
 {
     /// <summary>
-    /// Gets the group from which this state was received.
+    /// Gets the metric definitions announced by this source in its last birth.
     /// </summary>
-    internal string? GroupIdentifier { get; init; }
+    internal SparkplugBase<T>.KnownMetricStorage? BirthMetrics { get; init; }
 
     /// <summary>
     /// Gets the MQTT session number announced by the node at birth.

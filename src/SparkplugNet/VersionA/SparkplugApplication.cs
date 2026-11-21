@@ -78,7 +78,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
             this.NameSpace,
             groupIdentifier,
             edgeNodeIdentifier,
-            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.NodeCommand),
+            this.FilterSourceMetrics(metrics, SparkplugMessageType.NodeCommand, groupIdentifier, edgeNodeIdentifier),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -122,7 +122,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
             groupIdentifier,
             edgeNodeIdentifier,
             deviceIdentifier,
-            this.KnownMetricsStorage.FilterMetrics(metrics, SparkplugMessageType.DeviceCommand),
+            this.FilterSourceMetrics(metrics, SparkplugMessageType.DeviceCommand, groupIdentifier, edgeNodeIdentifier, deviceIdentifier),
             this.LastSequenceNumber,
             this.LastSessionNumber,
             DateTimeOffset.Now);
@@ -166,17 +166,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
     /// <exception cref="InvalidOperationException">Thrown if the topic is invalid.</exception>
     private async Task HandleMessagesForVersionA(SparkplugMessageTopic topic, VersionAData.Payload payload)
     {
-        // Filter out session number metric.
-        var sessionNumberMetric = payload.Metrics.FirstOrDefault(m => m.Name == Constants.SessionNumberMetricName);
-        var metricsWithoutSequenceMetric = payload.Metrics.Where(m => m.Name != Constants.SessionNumberMetricName);
-        var filteredMetrics = this.KnownMetricsStorage.FilterMetrics(metricsWithoutSequenceMetric, topic.MessageType).ToList();
-
-        if (sessionNumberMetric is not null)
-        {
-            filteredMetrics.Add(sessionNumberMetric);
-        }
-
-        this.UpdateReceivedMetricState(topic, filteredMetrics);
+        var filteredMetrics = this.ProcessReceivedMetrics(topic, payload.Metrics, out var sessionNumberMetric);
 
         // Handle messages.
         switch (topic.MessageType)
@@ -186,7 +176,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
                     filteredMetrics);
                 break;
             case SparkplugMessageType.DeviceBirth:
-                await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.EdgeNodeIdentifier,
+                await this.FireDeviceBirthReceived(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier!,
                     filteredMetrics);
                 break;
             case SparkplugMessageType.NodeData:

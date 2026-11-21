@@ -17,6 +17,11 @@ namespace SparkplugNet.Core.Application;
 public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> where T : IMetric, new()
 {
     /// <summary>
+    /// The current state and birth definitions for each Sparkplug source.
+    /// </summary>
+    private readonly ConcurrentDictionary<(string GroupIdentifier, string EdgeNodeIdentifier, string? DeviceIdentifier), MetricState<T>> metricStates = new();
+
+    /// <summary>
     /// Serializes online and offline STATE publications.
     /// </summary>
     private readonly SemaphoreSlim statePublicationLock = new(1);
@@ -70,14 +75,22 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Gets the node states.
+    /// Gets the most recently updated node state for each edge node identifier.
+    /// Use <see cref="MetricStatesBySource"/> when edge node identifiers repeat across groups.
     /// </summary>
     public ConcurrentDictionary<string, MetricState<T>> NodeStates { get; } = new();
 
     /// <summary>
-    /// Gets the device states.
+    /// Gets the most recently updated device state for each edge node and device identifier pair.
+    /// Use <see cref="MetricStatesBySource"/> when identifiers repeat across groups.
     /// </summary>
     public ConcurrentDictionary<string, MetricState<T>> DeviceStates { get; } = new();
+
+    /// <summary>
+    /// Gets the node and device states keyed by group, edge node, and optional device identifier.
+    /// A null device identifier selects the node itself.
+    /// </summary>
+    public IReadOnlyDictionary<(string GroupIdentifier, string EdgeNodeIdentifier, string? DeviceIdentifier), MetricState<T>> MetricStatesBySource => this.metricStates;
 
     /// <summary>
     /// Gets the options.
@@ -104,6 +117,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         // Clear states.
         this.NodeStates.Clear();
         this.DeviceStates.Clear();
+        this.metricStates.Clear();
 
         // Add handlers.
         this.AddEventHandlers();
@@ -247,12 +261,101 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     protected abstract Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload);
 
     /// <summary>
+    /// Gets the definitions learned from the source or the configured registry before a birth arrives.
+    /// </summary>
+    /// <param name="groupIdentifier">The group identifier.</param>
+    /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+    /// <param name="deviceIdentifier">The device identifier, if applicable.</param>
+    /// <returns>The metric definitions for decoding or validating a message.</returns>
+    private protected KnownMetricStorage GetSourceMetricStorage(string groupIdentifier, string edgeNodeIdentifier, string? deviceIdentifier = null) =>
+        this.metricStates.GetValueOrDefault((groupIdentifier, edgeNodeIdentifier, deviceIdentifier))?.BirthMetrics ?? this.KnownMetricsStorage;
+
+    /// <summary>
+    /// Validates metrics against the source definitions and any configured custom filter.
+    /// </summary>
+    /// <param name="metrics">The metrics to validate.</param>
+    /// <param name="messageType">The type of the message.</param>
+    /// <param name="groupIdentifier">The group identifier.</param>
+    /// <param name="edgeNodeIdentifier">The edge node identifier.</param>
+    /// <param name="deviceIdentifier">The device identifier, if applicable.</param>
+    /// <returns>The metrics accepted by the source and the configured filter.</returns>
+    private protected IEnumerable<T> FilterSourceMetrics(
+        IEnumerable<T> metrics, SparkplugMessageType messageType, string groupIdentifier, string edgeNodeIdentifier, string? deviceIdentifier = null)
+    {
+        var definitions = this.GetSourceMetricStorage(groupIdentifier, edgeNodeIdentifier, deviceIdentifier);
+        var configured = this.KnownMetricsStorage;
+        var accepted = definitions.FilterMetrics(metrics, messageType);
+        if (!ReferenceEquals(definitions, configured) && configured.GetType() != typeof(KnownMetricStorage))
+        {
+            return configured.FilterMetrics(accepted, messageType);
+        }
+
+        return accepted;
+    }
+
+    /// <summary>
+    /// Filters a received payload and applies it to the source's cached state.
+    /// </summary>
+    /// <param name="topic">The received topic.</param>
+    /// <param name="metrics">The payload metrics.</param>
+    /// <param name="sessionNumberMetric">The session number metric, if present.</param>
+    /// <returns>The metrics to deliver to event handlers.</returns>
+    private protected List<T> ProcessReceivedMetrics(SparkplugMessageTopic topic, IReadOnlyList<T> metrics, out T? sessionNumberMetric)
+    {
+        sessionNumberMetric = metrics.FirstOrDefault(metric => metric.Name == Constants.SessionNumberMetricName);
+        var payloadMetrics = metrics.Where(metric => metric.Name != Constants.SessionNumberMetricName);
+        var isBirth = topic.MessageType is SparkplugMessageType.NodeBirth or SparkplugMessageType.DeviceBirth;
+        var source = GetMetricSource(topic);
+        List<T> filteredMetrics;
+        var configured = this.KnownMetricsStorage;
+        if (isBirth && (this.Options?.DiscoverMetricsFromBirth == true || (configured.IsEmpty && configured.GetType() == typeof(KnownMetricStorage))))
+        {
+            filteredMetrics = payloadMetrics.Where(metric =>
+                !string.IsNullOrWhiteSpace(metric.Name) && (metric is Metric { IsNull: true } || metric.Value is not null)).ToList();
+        }
+        else
+        {
+            var accepted = isBirth ? configured.FilterMetrics(payloadMetrics, topic.MessageType)
+                : this.FilterSourceMetrics(payloadMetrics, topic.MessageType, source.GroupIdentifier, source.EdgeNodeIdentifier, source.DeviceIdentifier);
+            filteredMetrics = accepted.ToList();
+        }
+
+        if (sessionNumberMetric is not null)
+        {
+            filteredMetrics.Add(sessionNumberMetric);
+        }
+
+        this.UpdateReceivedMetricState(topic, source, filteredMetrics);
+        return filteredMetrics;
+    }
+
+    /// <summary>
+    /// Gets the source of a node or device message.
+    /// </summary>
+    /// <param name="topic">The received topic.</param>
+    /// <returns>The source identifiers shared across message types.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if a device message has no valid device identifier.</exception>
+    private static (string GroupIdentifier, string EdgeNodeIdentifier, string? DeviceIdentifier) GetMetricSource(SparkplugMessageTopic topic)
+    {
+        var isDevice = topic.MessageType is SparkplugMessageType.DeviceBirth or SparkplugMessageType.DeviceData or SparkplugMessageType.DeviceDeath;
+        if (isDevice && string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
+        {
+            throw new InvalidOperationException($"Topic {topic} is invalid!");
+        }
+
+        return (topic.GroupIdentifier, topic.EdgeNodeIdentifier, isDevice ? topic.DeviceIdentifier : null);
+    }
+
+    /// <summary>
     /// Applies a received birth, data, or death message to the cached metric state.
     /// </summary>
     /// <param name="topic">The topic.</param>
+    /// <param name="source">The source of the message.</param>
     /// <param name="metrics">The received metrics.</param>
-    /// <exception cref="InvalidOperationException">Thrown if a device message has no valid device identifier.</exception>
-    private protected void UpdateReceivedMetricState(SparkplugMessageTopic topic, IReadOnlyList<T> metrics)
+    private void UpdateReceivedMetricState(
+        SparkplugMessageTopic topic,
+        (string GroupIdentifier, string EdgeNodeIdentifier, string? DeviceIdentifier) source,
+        IReadOnlyList<T> metrics)
     {
         if (topic.MessageType == SparkplugMessageType.NodeDeath)
         {
@@ -267,29 +370,18 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             return;
         }
 
-        var isDevice = topic.MessageType is SparkplugMessageType.DeviceBirth or SparkplugMessageType.DeviceData or SparkplugMessageType.DeviceDeath;
-        if (isDevice && string.IsNullOrWhiteSpace(topic.DeviceIdentifier))
-        {
-            throw new InvalidOperationException($"Topic {topic} is invalid!");
-        }
-
-        var states = isDevice ? this.DeviceStates : this.NodeStates;
-        var identifier = isDevice ? $"{topic.EdgeNodeIdentifier}/{topic.DeviceIdentifier}" : topic.EdgeNodeIdentifier;
         var state = isBirth
             ? new MetricState<T>
             {
-                GroupIdentifier = topic.GroupIdentifier,
-                BirthSessionNumber = isDevice ? null : ReadSessionNumber(metrics)
+                BirthMetrics = new KnownMetricStorage(metrics.Where(metric => metric.Name != Constants.SessionNumberMetricName), this.KnownMetricsStorage.Logger),
+                BirthSessionNumber = source.DeviceIdentifier is null ? ReadSessionNumber(metrics) : null
             }
-            : states.GetOrAdd(identifier, static (_, group) => new MetricState<T> { GroupIdentifier = group }, topic.GroupIdentifier);
+            : this.metricStates.GetOrAdd(source, static _ => new MetricState<T>());
 
         if (isDeviceDeath)
         {
-            if (state.GroupIdentifier is null || state.GroupIdentifier == topic.GroupIdentifier)
-            {
-                state.MetricStatus = SparkplugMetricStatus.Offline;
-            }
-
+            state.MetricStatus = SparkplugMetricStatus.Offline;
+            this.UpdateLegacyMetricState(source, state);
             return;
         }
 
@@ -298,9 +390,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             var name = metric.Name;
             if (string.IsNullOrWhiteSpace(name) && metric is Metric { Alias: ulong alias })
             {
-                // An alias-only DATA metric updates the name declared in the corresponding BIRTH.
-                var existing = state.Metrics.FirstOrDefault(entry => entry.Value is Metric definedMetric && definedMetric.Alias == alias);
-                name = existing.Key ?? name;
+                name = state.BirthMetrics?.GetMetricName(alias) ?? name;
             }
 
             if (name is not null)
@@ -312,7 +402,27 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         state.MetricStatus = SparkplugMetricStatus.Online;
         if (isBirth)
         {
-            states[identifier] = state;
+            this.metricStates[source] = state;
+        }
+
+        this.UpdateLegacyMetricState(source, state);
+    }
+
+    /// <summary>
+    /// Updates the state exposed through the edge and device identifier indexes.
+    /// </summary>
+    /// <param name="source">The source of the state.</param>
+    /// <param name="state">The metric state.</param>
+    private void UpdateLegacyMetricState(
+        (string GroupIdentifier, string EdgeNodeIdentifier, string? DeviceIdentifier) source, MetricState<T> state)
+    {
+        if (source.DeviceIdentifier is null)
+        {
+            this.NodeStates[source.EdgeNodeIdentifier] = state;
+        }
+        else
+        {
+            this.DeviceStates[$"{source.EdgeNodeIdentifier}/{source.DeviceIdentifier}"] = state;
         }
     }
 
@@ -323,24 +433,21 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="metrics">The node death metrics.</param>
     private void MarkNodeOffline(SparkplugMessageTopic topic, IReadOnlyList<T> metrics)
     {
-        var node = this.NodeStates.GetOrAdd(
-            topic.EdgeNodeIdentifier, static (_, group) => new MetricState<T> { GroupIdentifier = group }, topic.GroupIdentifier);
-        if (node.GroupIdentifier is null || node.GroupIdentifier == topic.GroupIdentifier)
+        var source = (topic.GroupIdentifier, topic.EdgeNodeIdentifier, (string?)null);
+        var node = this.metricStates.GetOrAdd(source, static _ => new MetricState<T>());
+        if (node.BirthSessionNumber is ulong birth && ReadSessionNumber(metrics) is ulong death && birth != death)
         {
-            if (node.BirthSessionNumber is ulong birth && ReadSessionNumber(metrics) is ulong death && birth != death)
-            {
-                return;
-            }
-
-            node.MetricStatus = SparkplugMetricStatus.Offline;
+            return;
         }
 
-        var devicePrefix = $"{topic.EdgeNodeIdentifier}/";
-        foreach (var (key, device) in this.DeviceStates)
+        node.MetricStatus = SparkplugMetricStatus.Offline;
+        this.UpdateLegacyMetricState(source, node);
+        foreach (var (key, device) in this.metricStates)
         {
-            if (device.GroupIdentifier == topic.GroupIdentifier && key.StartsWith(devicePrefix, StringComparison.Ordinal))
+            if (key.DeviceIdentifier is not null && key.GroupIdentifier == topic.GroupIdentifier && key.EdgeNodeIdentifier == topic.EdgeNodeIdentifier)
             {
                 device.MetricStatus = SparkplugMetricStatus.Offline;
+                this.UpdateLegacyMetricState(key, device);
             }
         }
     }
@@ -649,11 +756,12 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="metricState">The metric state.</param>
     private void UpdateMetricState(SparkplugMetricStatus metricState)
     {
-        var keys = new List<string>(this.NodeStates.Keys.ToList());
-
-        foreach (string key in keys)
+        foreach (var (key, state) in this.metricStates)
         {
-            this.NodeStates[key].MetricStatus = metricState;
+            if (key.DeviceIdentifier is null)
+            {
+                state.MetricStatus = metricState;
+            }
         }
     }
 

@@ -81,6 +81,12 @@ public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
     public bool IsPrimaryApplication { get; set; } = DefaultIsPrimaryApplication;
 
     /// <summary>
+    /// Gets or sets whether to accept advertised metric definitions beyond the configured metrics.
+    /// An application using the built-in registry with no configured metrics discovers them automatically.
+    /// </summary>
+    public bool DiscoverMetricsFromBirth { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether Sparkplug B NCMD and DCMD messages automatically include the bdSeq metric.
     /// </summary>
     [DefaultValue(DefaultAddSessionNumberToCommandMessages)]
