@@ -22,6 +22,21 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     private PrimaryHostState? primaryHost;
 
     /// <summary>
+    /// The broker endpoints in connection order for the current run.
+    /// </summary>
+    private SparkplugBrokerEndpoint[] brokers = [];
+
+    /// <summary>
+    /// The broker currently being used or attempted.
+    /// </summary>
+    private int brokerIndex;
+
+    /// <summary>
+    /// Whether the broker walk owns connection retries.
+    /// </summary>
+    private volatile bool walkingBrokers;
+
+    /// <summary>
     /// Keeps data and individual device publications outside a complete birth sequence.
     /// </summary>
     private readonly SemaphoreSlim publicationLock = new(1);
@@ -90,6 +105,15 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             throw new InvalidOperationException("Start should only be called once!");
         }
 
+        if (nodeOptions.AdditionalBrokers.Count > 0 && (!nodeOptions.WaitForPrimaryHost
+            || nodeOptions.PrimaryHostOnlineTimeout < TimeSpan.FromMilliseconds(1)
+            || nodeOptions.PrimaryHostOnlineTimeout > TimeSpan.FromMilliseconds(int.MaxValue)))
+        {
+            throw new ArgumentException("Additional brokers require primary host tracking and a valid online timeout.", nameof(nodeOptions));
+        }
+
+        this.brokers = [new(nodeOptions.BrokerAddress, nodeOptions.Port), .. nodeOptions.AdditionalBrokers];
+        this.brokerIndex = 0;
         this.IsRunning = true;
 
         if (knownMetricsStorage is not null)
@@ -109,7 +133,14 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
         try
         {
-            await this.ConnectAndPublishBirthsInternal(primaryHost);
+            if (this.brokers.Length > 1)
+            {
+                await this.WalkBrokers(primaryHost!);
+            }
+            else
+            {
+                await this.ConnectAndPublishBirthsInternal(primaryHost);
+            }
         }
         catch (Exception exception)
         {
@@ -149,7 +180,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         }
         finally
         {
-            await this.DisconnectAfterStoppingInternal();
+            await this.DisconnectAfterStoppingInternal(publishWill: true);
         }
     }
 
@@ -296,7 +327,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
     private async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
     {
-        if (!this.IsRunning || this.IsConnected)
+        if (!this.IsRunning || this.IsConnected || this.walkingBrokers)
         {
             return;
         }
@@ -315,7 +346,15 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
 
             if (this.IsRunning && !this.IsConnected && ReferenceEquals(this.primaryHost, primaryHost) && ReferenceEquals(this.Options, options))
             {
-                await this.ConnectAndPublishBirthsInternal(primaryHost);
+                if (this.brokers.Length > 1)
+                {
+                    this.brokerIndex = (this.brokerIndex + 1) % this.brokers.Length;
+                    await this.WalkBrokers(primaryHost!);
+                }
+                else
+                {
+                    await this.ConnectAndPublishBirthsInternal(primaryHost);
+                }
             }
         }
         catch (OperationCanceledException) when (!this.IsRunning || !this.IsConnected || cancellationToken.IsCancellationRequested)
@@ -370,12 +409,19 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             ? null
             : CancellationTokenSource.CreateLinkedTokenSource(configuredToken, primaryHost.StoppingToken);
         var cancellationToken = startupCancellation?.Token ?? configuredToken;
-        var hostOnline = primaryHost?.BeginConnection();
+        var hostOnline = primaryHost?.BeginConnection(this.brokerIndex);
         await this.ConnectInternal(cancellationToken);
         await this.SubscribeInternal(cancellationToken);
         if (hostOnline is not null)
         {
-            await hostOnline.WaitAsync(cancellationToken);
+            if (this.brokers.Length > 1)
+            {
+                await hostOnline.WaitAsync(this.Options!.PrimaryHostOnlineTimeout, cancellationToken);
+            }
+            else
+            {
+                await hostOnline.WaitAsync(cancellationToken);
+            }
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -383,9 +429,52 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
     }
 
     /// <summary>
+    /// Tries one broker at a time until an online primary host is available.
+    /// </summary>
+    /// <param name="primaryHost">The primary host state for this run.</param>
+    private async Task WalkBrokers(PrimaryHostState primaryHost)
+    {
+        var options = this.Options!;
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            options.CancellationToken ?? SystemCancellationToken.None, primaryHost.StoppingToken);
+        this.walkingBrokers = true;
+        try
+        {
+            while (!cancellation.IsCancellationRequested)
+            {
+                try
+                {
+                    await this.ConnectAndPublishBirthsInternal(primaryHost);
+                    if (this.IsConnected)
+                    {
+                        return;
+                    }
+                }
+                catch (Exception exception) when (!cancellation.IsCancellationRequested
+                    && exception is TimeoutException or MQTTnet.Exceptions.MqttCommunicationException or OperationCanceledException)
+                {
+                    this.KnownMetricsStorage.Logger?.LogDebug(exception, "Trying the next Sparkplug broker.");
+                }
+
+                primaryHost.EndConnection();
+                await this.DisconnectAfterStoppingInternal();
+                this.brokerIndex = (this.brokerIndex + 1) % this.brokers.Length;
+                await Task.Delay(options.ReconnectInterval, cancellation.Token);
+            }
+
+            cancellation.Token.ThrowIfCancellationRequested();
+        }
+        finally
+        {
+            this.walkingBrokers = false;
+        }
+    }
+
+    /// <summary>
     /// Disconnects a stopped node and waits for MQTTnet to deliver the disconnect notification before it can be restarted.
     /// </summary>
-    private async Task DisconnectAfterStoppingInternal()
+    /// <param name="publishWill">Whether an intentional Sparkplug session termination is in progress.</param>
+    private async Task DisconnectAfterStoppingInternal(bool publishWill = false)
     {
         var disconnected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         Task CompleteDisconnect(MqttClientDisconnectedEventArgs args)
@@ -399,7 +488,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
         {
             if (this.IsConnected)
             {
-                await this.client.DisconnectAsync();
+                await this.DisconnectSessionInternal(publishWill);
                 await disconnected.Task;
             }
         }
@@ -408,6 +497,18 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             this.client.DisconnectedAsync -= CompleteDisconnect;
         }
     }
+
+    /// <summary>
+    /// Sends the MQTT 5 Disconnect with Will Message reason for a Sparkplug 3.0 edge session termination.
+    /// </summary>
+    /// <param name="publishWill">Whether an intentional Sparkplug session termination is in progress.</param>
+    /// <returns>The disconnect task.</returns>
+    private Task DisconnectSessionInternal(bool publishWill) =>
+        publishWill && this.NameSpace == SparkplugNamespace.VersionB
+            && this.messageGenerator.SpecificationVersion == SparkplugSpecificationVersion.Version30
+            && this.Options?.MqttProtocolVersion == SparkplugMqttProtocolVersion.V500
+            ? this.client.DisconnectAsync(new MqttClientDisconnectOptions { Reason = MqttClientDisconnectOptionsReason.DisconnectWithWillMessage })
+            : this.client.DisconnectAsync();
 
     /// <summary>
     /// Ends the current MQTT session when a configured primary host goes offline.
@@ -431,7 +532,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             {
                 if (this.IsConnected && this.LastSessionNumber == sessionNumber)
                 {
-                    await this.client.DisconnectAsync();
+                    await this.DisconnectSessionInternal(publishWill: true);
                 }
             }
         }
@@ -516,9 +617,10 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
             builder.WithTlsOptions(this.Options.MqttTlsOptions);
         }
 
+        var broker = this.brokers[this.brokerIndex];
         if (this.Options.MqttWebSocketOptions is null)
         {
-            builder.WithTcpServer(this.Options.BrokerAddress, this.Options.Port);
+            builder.WithTcpServer(broker.Address, broker.Port);
         }
         else
         {
@@ -528,7 +630,7 @@ public abstract partial class SparkplugNodeBase<T> : SparkplugBase<T> where T : 
                 .WithProxyOptions(this.Options.MqttWebSocketOptions.ProxyOptions)
                 .WithRequestHeaders(this.Options.MqttWebSocketOptions.RequestHeaders)
                 .WithSubProtocols(this.Options.MqttWebSocketOptions.SubProtocols)
-                .WithUri(this.Options.BrokerAddress)
+                .WithUri(broker.Address)
                 .WithKeepAliveInterval(this.Options.MqttWebSocketOptions.KeepAliveInterval)
                 .WithUseDefaultCredentials(this.Options.MqttWebSocketOptions.UseDefaultCredentials)
             );

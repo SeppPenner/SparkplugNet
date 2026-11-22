@@ -92,7 +92,7 @@ public partial class SparkplugBase<T> : ISparkplugConnection where T : IMetric, 
     /// <summary>
     /// Gets a value indicating whether this instance is connected.
     /// </summary>
-    public bool IsConnected => this.client.IsConnected;
+    public virtual bool IsConnected => this.client.IsConnected;
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is running.

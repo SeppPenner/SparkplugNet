@@ -16,6 +16,11 @@ namespace SparkplugNet.VersionB;
 /// <seealso cref="SparkplugApplicationBase{T}"/>
 public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
 {
+    /// <summary>
+    /// Buffers out-of-order messages when a reorder timeout has been configured.
+    /// </summary>
+    private readonly SparkplugMessageOrder messageOrder = new();
+
     /// <inheritdoc cref="SparkplugApplicationBase{T}"/>
     /// <summary>
     /// Initializes a new instance of the <see cref="SparkplugApplication"/> class.
@@ -68,13 +73,14 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             this.FilterSourceMetrics(metrics, SparkplugMessageType.NodeCommand, groupIdentifier, edgeNodeIdentifier),
             this.LastSequenceNumber,
             this.Options.AddSessionNumberToCommandMessages ? this.LastSessionNumber : null,
-            DateTimeOffset.UtcNow);
+            DateTimeOffset.UtcNow,
+            this.Options.IncludeDataTypesInCommandMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.client.PublishAsync(dataMessage);
+        await this.GetCommandClient(groupIdentifier, edgeNodeIdentifier).PublishAsync(dataMessage);
     }
 
     /// <summary>
@@ -107,13 +113,14 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
             this.FilterSourceMetrics(metrics, SparkplugMessageType.DeviceCommand, groupIdentifier, edgeNodeIdentifier, deviceIdentifier),
             this.LastSequenceNumber,
             this.Options.AddSessionNumberToCommandMessages ? this.LastSessionNumber : null,
-            DateTimeOffset.UtcNow);
+            DateTimeOffset.UtcNow,
+            this.Options.IncludeDataTypesInCommandMessages);
 
         // Increment the sequence number.
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.client.PublishAsync(dataMessage);
+        await this.GetCommandClient(groupIdentifier, edgeNodeIdentifier).PublishAsync(dataMessage);
     }
 
     /// <summary>
@@ -124,19 +131,72 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <exception cref="InvalidCastException">Thrown if the metric cast didn't work properly.</exception>
     protected override async Task OnMessageReceived(SparkplugMessageTopic topic, byte[] payload)
     {
-        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
+        if (topic.MessageType is SparkplugMessageType.NodeCommand or SparkplugMessageType.DeviceCommand)
+        {
+            return;
+        }
 
+        var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBuf.ProtoBufPayload>(payload);
         if (payloadVersionB is not null)
         {
-            var definitions = this.GetSourceMetricStorage(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
-            var convertedPayload = PayloadConverter.ConvertVersionBPayload(payloadVersionB, topic.MessageType, definitions);
-
-            if (convertedPayload is not Payload _)
+            if (this.messageGenerator.SpecificationVersion == SparkplugSpecificationVersion.Version30
+                && this.Options?.MessageReorderTimeout is { } timeout)
             {
-                throw new InvalidCastException("The metric cast didn't work properly.");
+                try
+                {
+                    await this.messageOrder.Receive(topic, payloadVersionB, timeout, this.ProcessPayload, this.RequestRebirth);
+                }
+                catch (Exception exception)
+                {
+                    this.KnownMetricsStorage.Logger?.LogError(exception, "Could not process the ordered Sparkplug message.");
+                    throw;
+                }
             }
+            else
+            {
+                await this.ProcessPayload(topic, payloadVersionB);
+            }
+        }
+    }
 
-            await this.HandleMessagesForVersionB(topic, convertedPayload);
+    /// <inheritdoc />
+    private protected override void ResetReceivedMessageOrder() => this.messageOrder.Reset();
+
+    /// <inheritdoc />
+    private protected override void ResetReceivedMessageOrder(string group, string node) => this.messageOrder.Reset(group, node);
+
+    /// <summary>
+    /// Converts and processes a payload against the definitions from the ordered birth messages.
+    /// </summary>
+    /// <param name="topic">The Sparkplug topic.</param>
+    /// <param name="payload">The serialized Sparkplug message contents.</param>
+    /// <returns>The processing task.</returns>
+    private Task ProcessPayload(SparkplugMessageTopic topic, VersionBProtoBuf.ProtoBufPayload payload)
+    {
+        var definitions = this.GetSourceMetricStorage(topic.GroupIdentifier, topic.EdgeNodeIdentifier, topic.DeviceIdentifier);
+        var convertedPayload = PayloadConverter.ConvertVersionBPayload(payload, topic.MessageType, definitions)
+            ?? throw new InvalidCastException("The metric cast didn't work properly.");
+        return this.HandleMessagesForVersionB(topic, convertedPayload);
+    }
+
+    /// <summary>
+    /// Asks the edge node to announce its definitions again when a message is missing.
+    /// </summary>
+    /// <param name="topic">A topic from the edge node requesting recovery.</param>
+    /// <returns>The publication task.</returns>
+    private async Task RequestRebirth(SparkplugMessageTopic topic)
+    {
+        if (this.IsRunning && this.IsConnected)
+        {
+            try
+            {
+                await this.PublishNodeCommand([new(Constants.RebirthMetricName, VersionBDataTypeEnum.Boolean, true)],
+                    topic.GroupIdentifier, topic.EdgeNodeIdentifier);
+            }
+            catch (Exception exception)
+            {
+                this.KnownMetricsStorage.Logger?.LogWarning(exception, "Could not request a Sparkplug rebirth.");
+            }
         }
     }
 
@@ -148,7 +208,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<Metric>
     /// <exception cref="InvalidOperationException">Thrown if the topic is unknown or the device identifier is invalid.</exception>
     internal async Task HandleMessagesForVersionB(SparkplugMessageTopic topic, Payload payload)
     {
-        var filteredMetrics = this.ProcessReceivedMetrics(topic, payload.Metrics, out var sessionNumberMetric);
+        var filteredMetrics = this.ProcessReceivedMetrics(topic, payload.Metrics, out var sessionNumberMetric, payload.Timestamp);
 
         // Handle messages.
         switch (topic.MessageType)

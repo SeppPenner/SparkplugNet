@@ -111,16 +111,28 @@ public sealed class SparkplugApplicationMetricStateTests
         var key = isDevice ? "edge/device" : "edge";
 
         await application.HandleMessagesForVersionB(birth, new VersionBData.Payload { Metrics = [speed, pressure] });
-        await application.HandleMessagesForVersionB(death, new VersionBData.Payload());
+        const ulong wireTimestamp = 1_700_000_000_000;
+        var receivedAt = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        await application.HandleMessagesForVersionB(death, new VersionBData.Payload { Timestamp = wireTimestamp });
 
         var offline = states[key];
         Assert.AreEqual(SparkplugMetricStatus.Offline, offline.MetricStatus);
+        Assert.IsTrue(offline.MetricsAreStale);
+        if (isDevice)
+        {
+            Assert.AreEqual(wireTimestamp, offline.StatusTimestamp);
+        }
+        else
+        {
+            Assert.IsTrue(offline.StatusTimestamp >= receivedAt);
+        }
         Assert.AreEqual(2, offline.Metrics.Count);
 
         await application.HandleMessagesForVersionB(birth, new VersionBData.Payload { Metrics = [speed] });
 
         var reborn = states[key];
         Assert.AreEqual(SparkplugMetricStatus.Online, reborn.MetricStatus);
+        Assert.IsFalse(reborn.MetricsAreStale);
         Assert.AreSame(speed, reborn.Metrics.Values.Single());
     }
 
@@ -156,6 +168,8 @@ public sealed class SparkplugApplicationMetricStateTests
             Assert.AreEqual(SparkplugMetricStatus.Offline, application.NodeStates["edge"].MetricStatus);
             Assert.AreEqual(SparkplugMetricStatus.Offline, application.DeviceStates["edge/first"].MetricStatus);
             Assert.AreEqual(SparkplugMetricStatus.Offline, application.DeviceStates["edge/second"].MetricStatus);
+            Assert.AreEqual(application.NodeStates["edge"].StatusTimestamp, application.DeviceStates["edge/first"].StatusTimestamp);
+            Assert.AreEqual(application.NodeStates["edge"].StatusTimestamp, application.DeviceStates["edge/second"].StatusTimestamp);
             events++;
             return Task.CompletedTask;
         };

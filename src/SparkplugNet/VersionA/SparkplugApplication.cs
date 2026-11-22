@@ -87,7 +87,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.client.PublishAsync(dataMessage);
+        await this.GetCommandClient(groupIdentifier, edgeNodeIdentifier).PublishAsync(dataMessage);
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public sealed class SparkplugApplication : SparkplugApplicationBase<VersionAData
         this.IncrementLastSequenceNumber();
 
         // Publish the message.
-        await this.client.PublishAsync(dataMessage);
+        await this.GetCommandClient(groupIdentifier, edgeNodeIdentifier).PublishAsync(dataMessage);
     }
 
     /// <summary>

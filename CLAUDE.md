@@ -44,7 +44,7 @@ Layout inside `src/SparkplugNet`:
 
 Repository root: `README.md` (badges, supported frameworks, structure), `HowToUse.md` (the usage
 samples for both versions), `Changelog.md`, `Updating.md` (the five step release recipe),
-`Version3Compatibility.md` (the TCK rule table), `License.txt` (MIT), `Icon.png` and `Icon.svg`,
+`testing/sparkplug-tck/` (the official Sparkplug 3.0 TCK setup), `License.txt` (MIT), `Icon.png` and `Icon.svg`,
 `.all-contributorsrc`, `BuildAndPushPackage.bat`, `Delete-BIN-OBJ-Folders.bat`, `.editorconfig`
 (under `src`) and `.gitattributes`. `doc/` holds the specification PDFs and the two `.proto` files
 the ProtoBuf classes were generated from.
@@ -81,12 +81,9 @@ dotnet test src/SparkplugNet.sln -c Release
   storage including its filtering, and the metric timestamp handling. `EqualityHelper.cs` is not a
   test class, it is the deep comparison the payload tests run on. Never claim a test run happened
   without running it.
-- Beyond the tests, behaviour against a real broker is only verified by running
-  `SparkplugNet.Examples` against an MQTT broker on `localhost:1883`. There is no test that opens a
-  connection. A throwaway console project that references this library plus the `MQTTnet.Server`
-  package can host a broker in process and drive an application and a node against it, which is how
-  the move to MQTTnet 5 was checked end to end. `MQTTnet.Server` is deliberately not referenced by
-  any project in this repository.
+- `testing/sparkplug-tck/` runs the Eclipse Sparkplug 3.0.0 Host Application and Edge Node
+  scenarios against HiveMQ with MQTT 3.1.1 and MQTT 5. See the README there for the runner and logs.
+  `SparkplugNet.Examples` can also connect to a broker on `localhost:1883`.
 
 ## Code conventions
 

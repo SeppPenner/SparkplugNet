@@ -4,6 +4,7 @@ SparkplugNet
 SparkplugNet is a library to use the Sparkplug industrial IoT (IIoT) standard in .Net. It uses [MQTTnet](https://github.com/chkr1011/MQTTnet) in the background.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/w6pu8fcav4n7651t?svg=true)](https://ci.appveyor.com/project/SeppPenner/sparkplugnet)
+[![Sparkplug 3.0 TCK scenarios: 100%](https://img.shields.io/badge/Sparkplug%203.0%20TCK%20scenarios-100%25-brightgreen)](./testing/sparkplug-tck/README.md#results)
 [![GitHub issues](https://img.shields.io/github/issues/SeppPenner/SparkplugNet.svg)](https://github.com/SeppPenner/SparkplugNet/issues)
 [![GitHub forks](https://img.shields.io/github/forks/SeppPenner/SparkplugNet.svg)](https://github.com/SeppPenner/SparkplugNet/network)
 [![GitHub stars](https://img.shields.io/github/stars/SeppPenner/SparkplugNet.svg)](https://github.com/SeppPenner/SparkplugNet/stargazers)

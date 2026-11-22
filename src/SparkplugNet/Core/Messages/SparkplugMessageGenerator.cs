@@ -428,6 +428,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="sessionNumber">The session number to include as a metric, or <c>null</c> to omit it.</param>
     /// <param name="dateTime">The date time.</param>
+    /// <param name="includeDataTypes">Whether to include metric data types for a Sparkplug 3.0 command.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
@@ -438,7 +439,8 @@ internal sealed class SparkplugMessageGenerator
         IEnumerable<T> metrics,
         int sequenceNumber,
         long? sessionNumber,
-        DateTimeOffset dateTime)
+        DateTimeOffset dateTime,
+        bool includeDataTypes = false)
         where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
@@ -467,7 +469,7 @@ internal sealed class SparkplugMessageGenerator
                                      ?? new List<Metric>();
 
                     return this.GetSparkplugNodeCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier,
-                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime);
+                         AddSessionNumberToMetrics(newMetrics, sessionNumber), sequenceNumber, dateTime, includeDataTypes);
                 }
 
             default:
@@ -487,6 +489,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="sessionNumber">The session number to include as a metric, or <c>null</c> to omit it.</param>
     /// <param name="dateTime">The date time.</param>
+    /// <param name="includeDataTypes">Whether to include metric data types for a Sparkplug 3.0 command.</param>
     /// <exception cref="ArgumentException">Thrown if the group identifier or the edge node identifier or the device identifier is invalid.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the namespace is out of range.</exception>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
@@ -498,7 +501,8 @@ internal sealed class SparkplugMessageGenerator
         IEnumerable<T> metrics,
         int sequenceNumber,
         long? sessionNumber,
-        DateTimeOffset dateTime)
+        DateTimeOffset dateTime,
+        bool includeDataTypes = false)
         where T : IMetric, new()
     {
         if (!groupIdentifier.IsIdentifierValid())
@@ -534,7 +538,7 @@ internal sealed class SparkplugMessageGenerator
 
                     newMetrics = AddSessionNumberToMetrics(newMetrics, sessionNumber);
 
-                    return this.GetSparkplugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime);
+                    return this.GetSparkplugDeviceCommandB(nameSpace, groupIdentifier, edgeNodeIdentifier, deviceIdentifier, newMetrics, sequenceNumber, dateTime, includeDataTypes);
                 }
 
             default:
@@ -1085,8 +1089,10 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The message timestamp.</param>
     /// <param name="messageType">The message type.</param>
+    /// <param name="includeCommandDataTypes">Whether to include metric types when serializing a command.</param>
     /// <returns>The serialized payload.</returns>
-    private byte[]? SerializeSparkplugPayloadB(IEnumerable<Metric> metrics, int sequenceNumber, DateTimeOffset dateTime, SparkplugMessageType messageType)
+    private byte[]? SerializeSparkplugPayloadB(IEnumerable<Metric> metrics, int sequenceNumber, DateTimeOffset dateTime,
+        SparkplugMessageType messageType, bool includeCommandDataTypes = false)
     {
         var payload = new Payload
         {
@@ -1100,6 +1106,11 @@ internal sealed class SparkplugMessageGenerator
         {
             var isBirth = messageType is SparkplugMessageType.NodeBirth or SparkplugMessageType.DeviceBirth;
             var isCommand = messageType is SparkplugMessageType.NodeCommand or SparkplugMessageType.DeviceCommand;
+            if (isCommand)
+            {
+                convertedPayload.Seq = null;
+            }
+
             foreach (var metric in convertedPayload.Metrics)
             {
                 if (!isCommand)
@@ -1107,9 +1118,25 @@ internal sealed class SparkplugMessageGenerator
                     metric.Timestamp ??= convertedPayload.Timestamp;
                 }
 
-                if (!isBirth)
+                if (!isBirth && (!isCommand || !includeCommandDataTypes))
                 {
                     metric.DataType = null;
+                }
+            }
+
+            if (!isCommand)
+            {
+                var wireMetrics = convertedPayload.Metrics;
+                var chronological = wireMetrics.Where(metric => metric.IsHistorical == false)
+                    .OrderBy(metric => metric.Timestamp)
+                    .ToArray();
+                var next = 0;
+                for (var i = 0; i < wireMetrics.Count; i++)
+                {
+                    if (wireMetrics[i].IsHistorical == false)
+                    {
+                        wireMetrics[i] = chronological[next++];
+                    }
                 }
             }
         }
@@ -1163,6 +1190,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
+    /// <param name="includeDataTypes">Whether to include metric data types for a Sparkplug 3.0 command.</param>
     /// <returns>A new NCMD <see cref="MqttApplicationMessage"/>.</returns>
     private MqttApplicationMessage GetSparkplugNodeCommandB(
         SparkplugNamespace nameSpace,
@@ -1170,9 +1198,10 @@ internal sealed class SparkplugMessageGenerator
         string edgeNodeIdentifier,
         IEnumerable<Metric> metrics,
         int sequenceNumber,
-        DateTimeOffset dateTime)
+        DateTimeOffset dateTime,
+        bool includeDataTypes)
     {
-        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.NodeCommand);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.NodeCommand, includeDataTypes);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(
@@ -1236,6 +1265,7 @@ internal sealed class SparkplugMessageGenerator
     /// <param name="metrics">The metrics.</param>
     /// <param name="sequenceNumber">The sequence number.</param>
     /// <param name="dateTime">The date time.</param>
+    /// <param name="includeDataTypes">Whether to include metric data types for a Sparkplug 3.0 command.</param>
     /// <returns>A new DCMD <see cref="MqttApplicationMessage"/>.</returns>
     private MqttApplicationMessage GetSparkplugDeviceCommandB(
         SparkplugNamespace nameSpace,
@@ -1244,9 +1274,10 @@ internal sealed class SparkplugMessageGenerator
         string deviceIdentifier,
         IEnumerable<Metric> metrics,
         int sequenceNumber,
-        DateTimeOffset dateTime)
+        DateTimeOffset dateTime,
+        bool includeDataTypes)
     {
-        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.DeviceCommand);
+        var serialized = this.SerializeSparkplugPayloadB(metrics, sequenceNumber, dateTime, SparkplugMessageType.DeviceCommand, includeDataTypes);
 
         return new MqttApplicationMessageBuilder()
             .WithTopic(

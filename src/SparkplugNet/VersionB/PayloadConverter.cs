@@ -31,25 +31,33 @@ internal static class PayloadConverter
         var metrics = new List<Metric>(protoPayload.Metrics.Count);
         foreach (var protoMetric in protoPayload.Metrics)
         {
-            if (protoMetric.DataType is not null || metricStorage is null)
+            try
             {
-                metrics.Add(ConvertVersionBMetric(protoMetric));
-                continue;
-            }
+                if (protoMetric.DataType is not null || metricStorage is null)
+                {
+                    metrics.Add(ConvertVersionBMetric(protoMetric));
+                    continue;
+                }
 
-            var dataType = protoMetric.Name switch
-            {
-                Constants.SessionNumberMetricName => VersionBDataTypeEnum.Int64,
-                Constants.RebirthMetricName when messageType == SparkplugMessageType.NodeCommand => VersionBDataTypeEnum.Boolean,
-                _ => metricStorage.GetVersionBMetricDataType(protoMetric.Name, protoMetric.Alias)
-            };
-            if (dataType is null)
-            {
-                metricStorage.Logger?.LogWarning("Ignoring Sparkplug metric {Name} (alias {Alias}) with no known data type.", protoMetric.Name, protoMetric.Alias);
-                continue;
-            }
+                var dataType = protoMetric.Name switch
+                {
+                    Constants.SessionNumberMetricName => VersionBDataTypeEnum.Int64,
+                    Constants.RebirthMetricName when messageType == SparkplugMessageType.NodeCommand => VersionBDataTypeEnum.Boolean,
+                    _ => metricStorage.GetVersionBMetricDataType(protoMetric.Name, protoMetric.Alias)
+                };
+                if (dataType is null)
+                {
+                    metricStorage.Logger?.LogWarning("Ignoring Sparkplug metric {Name} (alias {Alias}) with no known data type.", protoMetric.Name, protoMetric.Alias);
+                    continue;
+                }
 
-            metrics.Add(ConvertVersionBMetric(protoMetric, dataType.Value));
+                metrics.Add(ConvertVersionBMetric(protoMetric, dataType.Value));
+            }
+            catch (OverflowException exception) when (knownMetrics is not null)
+            {
+                knownMetrics.Logger?.LogWarning(exception,
+                    "Ignoring Sparkplug metric {Name} (alias {Alias}) with an out-of-range value.", protoMetric.Name, protoMetric.Alias);
+            }
         }
 
         return new Payload

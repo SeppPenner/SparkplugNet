@@ -108,6 +108,16 @@ public sealed class SparkplugNodeOptions : SparkplugBaseOptions
     public bool WaitForPrimaryHost { get; set; }
 
     /// <summary>
+    /// Gets or sets the brokers to try after the configured broker, in order. All brokers use the same MQTT settings.
+    /// </summary>
+    public IReadOnlyList<SparkplugBrokerEndpoint> AdditionalBrokers { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets how long to wait for the primary host before trying the next broker in a multi-broker topology.
+    /// </summary>
+    public TimeSpan PrimaryHostOnlineTimeout { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
     /// Gets or sets the cancellation token.
     /// </summary>
     [JsonIgnore]

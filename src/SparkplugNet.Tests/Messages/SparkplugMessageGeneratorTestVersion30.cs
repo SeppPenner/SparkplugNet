@@ -34,6 +34,29 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     private readonly SparkplugMessageGenerator messageGenerator = new(SparkplugSpecificationVersion.Version30);
 
     /// <summary>
+    /// Tests chronological ordering of live samples without moving historical metrics.
+    /// </summary>
+    [TestMethod]
+    public void TestLiveMetricsArePublishedChronologically()
+    {
+        var publishedAt = DateTimeOffset.UtcNow;
+        var olderTimestamp = (ulong)publishedAt.AddMilliseconds(-100).ToUnixTimeMilliseconds();
+        var metrics = new VersionBData.Metric[]
+        {
+            new("Newest", VersionBData.DataType.Int32, 20) { IsHistorical = false },
+            new("Historical", VersionBData.DataType.Int32, 10) { IsHistorical = true, Timestamp = olderTimestamp - 1 },
+            new("Older", VersionBData.DataType.Int32, 15) { IsHistorical = false, Timestamp = olderTimestamp }
+        };
+
+        var message = this.messageGenerator.GetSparkplugNodeDataMessage(SparkplugNamespace.VersionB, "group", "edge", metrics, 1, 0, publishedAt);
+        var payload = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
+
+        Assert.IsNotNull(payload);
+        CollectionAssert.AreEqual(new[] { "Older", "Historical", "Newest", Constants.SessionNumberMetricName },
+            payload.Metrics.Select(metric => metric.Name).ToArray());
+    }
+
+    /// <summary>
     /// Tests the Sparkplug message generator with a message with a version B namespace and a online state.
     /// </summary>
     [TestMethod]
@@ -273,21 +296,24 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     /// Tests the Sparkplug message generator with a device command message with a version B namespace.
     /// </summary>
     /// <param name="includeSessionNumber">Whether to include the session number metric.</param>
+    /// <param name="includeDataTypes">Whether to include command data types.</param>
     [TestMethod]
-    [DataRow(true)]
-    [DataRow(false)]
-    public void TestDeviceCommandMessageNamespaceB(bool includeSessionNumber)
+    [DataRow(true, false)]
+    [DataRow(false, false)]
+    [DataRow(false, true)]
+    public void TestDeviceCommandMessageNamespaceB(bool includeSessionNumber, bool includeDataTypes)
     {
         var dateTime = DateTimeOffset.UtcNow;
-        var message = this.messageGenerator.GetSparkplugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 0, includeSessionNumber ? 1L : null, dateTime);
+        var message = this.messageGenerator.GetSparkplugDeviceCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", "device1", this.metricsB, 7, includeSessionNumber ? 1L : null, dateTime, includeDataTypes);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/DCMD/edge1/device1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
+        Assert.IsNull(payloadVersionB.Seq);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
         Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp is null));
-        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.DataType is null));
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.DataType.HasValue == includeDataTypes));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);
@@ -303,21 +329,24 @@ public sealed class SparkplugMessageGeneratorTestVersion30
     /// Tests the Sparkplug message generator with a node command message with a version B namespace.
     /// </summary>
     /// <param name="includeSessionNumber">Whether to include the session number metric.</param>
+    /// <param name="includeDataTypes">Whether to include command data types.</param>
     [TestMethod]
-    [DataRow(true)]
-    [DataRow(false)]
-    public void TestNodeCommandMessageNamespaceB(bool includeSessionNumber)
+    [DataRow(true, false)]
+    [DataRow(false, false)]
+    [DataRow(false, true)]
+    public void TestNodeCommandMessageNamespaceB(bool includeSessionNumber, bool includeDataTypes)
     {
         var dateTime = DateTimeOffset.UtcNow;
-        var message = this.messageGenerator.GetSparkplugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 0, includeSessionNumber ? 1L : null, dateTime);
+        var message = this.messageGenerator.GetSparkplugNodeCommandMessage(SparkplugNamespace.VersionB, "group1", "edge1", this.metricsB, 7, includeSessionNumber ? 1L : null, dateTime, includeDataTypes);
         var payloadVersionB = PayloadHelper.Deserialize<VersionBProtoBufPayload>(message.Payload.ToArray());
 
         Assert.AreEqual("spBv1.0/group1/NCMD/edge1", message.Topic);
         Assert.IsNotNull(payloadVersionB);
+        Assert.IsNull(payloadVersionB.Seq);
         Assert.AreEqual((ulong)dateTime.ToUnixTimeMilliseconds(), payloadVersionB.Timestamp);
         Assert.AreEqual(includeSessionNumber ? 2 : 1, payloadVersionB.Metrics.Count);
         Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.Timestamp is null));
-        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.DataType is null));
+        Assert.IsTrue(payloadVersionB.Metrics.All(metric => metric.DataType.HasValue == includeDataTypes));
 
         Assert.AreEqual(this.metricsB.First().Name, payloadVersionB.Metrics.ElementAt(0).Name);
         Assert.AreEqual(Convert.ToUInt32(this.metricsB.First().Value), payloadVersionB.Metrics.ElementAt(0).IntValue);

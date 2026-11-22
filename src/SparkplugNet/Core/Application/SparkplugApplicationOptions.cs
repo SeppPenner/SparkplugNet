@@ -18,6 +18,11 @@ namespace SparkplugNet.Core.Application;
 public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
 {
     /// <summary>
+    /// Gets or sets the additional brokers to use concurrently. All brokers use the same MQTT settings.
+    /// </summary>
+    public IReadOnlyList<SparkplugBrokerEndpoint> AdditionalBrokers { get; set; } = [];
+
+    /// <summary>
     /// The default value whether the application is a primary application or not.
     /// </summary>
     public const bool DefaultIsPrimaryApplication = false;
@@ -87,10 +92,21 @@ public sealed class SparkplugApplicationOptions : SparkplugBaseOptions
     public bool DiscoverMetricsFromBirth { get; set; }
 
     /// <summary>
+    /// Gets or sets the time to wait for missing Sparkplug 3.0 messages before requesting a rebirth.
+    /// A null value disables message reordering.
+    /// </summary>
+    public TimeSpan? MessageReorderTimeout { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether Sparkplug B NCMD and DCMD messages automatically include the bdSeq metric.
     /// </summary>
     [DefaultValue(DefaultAddSessionNumberToCommandMessages)]
     public bool AddSessionNumberToCommandMessages { get; set; } = DefaultAddSessionNumberToCommandMessages;
+
+    /// <summary>
+    /// Gets or sets whether Sparkplug 3.0 commands carry metric data types for receivers that require them.
+    /// </summary>
+    public bool IncludeDataTypesInCommandMessages { get; set; }
 
     /// <summary>
     /// Gets or sets the cancellation token.

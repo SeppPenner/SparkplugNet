@@ -31,6 +31,16 @@ services:
       timeout: 3s
       retries: 20
 
+  broker-secondary:
+    image: hivemq/hivemq-ce:2026.5
+    ports:
+      - "127.0.0.1:1884:1883"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/1883'"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
   web-console:
     build:
       context: .

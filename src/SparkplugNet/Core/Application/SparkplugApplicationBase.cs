@@ -22,14 +22,48 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     private readonly ConcurrentDictionary<(string GroupIdentifier, string EdgeNodeIdentifier, string? DeviceIdentifier), MetricState<T>> metricStates = new();
 
     /// <summary>
-    /// Serializes online and offline STATE publications.
+    /// Tracks the current broker for each node and its devices.
     /// </summary>
-    private readonly SemaphoreSlim statePublicationLock = new(1);
+    private readonly ConcurrentDictionary<(string Group, string Node), BrokerConnection> sourceBrokers = new();
 
     /// <summary>
-    /// The primary host STATE messages for the current MQTT connection.
+    /// The MQTT connections for the current host run, with the configured broker first.
     /// </summary>
-    private volatile PrimaryStateSession? primaryStateSession;
+    private BrokerConnection[] brokers = [];
+
+    /// <summary>
+    /// Cancels reconnection when the current host run stops.
+    /// </summary>
+    private CancellationTokenSource? stopping;
+
+    /// <summary>
+    /// Holds the connection and STATE publication for a single broker.
+    /// </summary>
+    /// <param name="client">The broker's MQTT client.</param>
+    /// <param name="endpoint">The broker endpoint.</param>
+    private sealed class BrokerConnection(IMqttClient client, SparkplugBrokerEndpoint endpoint)
+    {
+        /// <summary>The broker's MQTT client.</summary>
+        internal IMqttClient Client { get; } = client;
+
+        /// <summary>The broker endpoint.</summary>
+        internal SparkplugBrokerEndpoint Endpoint { get; } = endpoint;
+
+        /// <summary>Serializes online and offline STATE publications.</summary>
+        internal SemaphoreSlim StateLock { get; } = new(1);
+
+        /// <summary>Serializes attempts to connect and subscribe to this broker.</summary>
+        internal SemaphoreSlim ConnectionLock { get; } = new(1);
+
+        /// <summary>The primary host STATE for the current connection.</summary>
+        internal volatile PrimaryStateSession? Session;
+
+        /// <summary>The registered disconnect handler.</summary>
+        internal Func<MqttClientDisconnectedEventArgs, Task>? Disconnected;
+
+        /// <summary>The registered receive handler.</summary>
+        internal Func<MqttApplicationMessageReceivedEventArgs, Task>? Received;
+    }
 
     /// <summary>
     /// The prepared online STATE for one connection.
@@ -97,6 +131,9 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// </summary>
     public SparkplugApplicationOptions? Options { private set; get; }
 
+    /// <inheritdoc />
+    public override bool IsConnected => this.brokers.Any(broker => broker.Client.IsConnected);
+
     /// <summary>
     /// Starts the Sparkplug application.
     /// </summary>
@@ -111,6 +148,12 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         }
 
         ArgumentNullException.ThrowIfNull(applicationOptions);
+        if (applicationOptions.MessageReorderTimeout is { } timeout
+            && (timeout < TimeSpan.FromMilliseconds(1) || timeout > TimeSpan.FromMilliseconds(int.MaxValue)))
+        {
+            throw new ArgumentOutOfRangeException(nameof(applicationOptions), "The message reorder timeout is out of range.");
+        }
+
         this.IsRunning = true;
         this.Options = applicationOptions;
 
@@ -118,22 +161,29 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         this.NodeStates.Clear();
         this.DeviceStates.Clear();
         this.metricStates.Clear();
+        this.sourceBrokers.Clear();
+        this.ResetReceivedMessageOrder();
 
-        // Add handlers.
-        this.AddEventHandlers();
-
+        var first = new BrokerConnection(this.client, new(applicationOptions.BrokerAddress, applicationOptions.Port));
+        var factory = new MqttClientFactory();
+        this.brokers = [first, .. applicationOptions.AdditionalBrokers.Select(endpoint => new BrokerConnection(factory.CreateMqttClient(), endpoint))];
+        this.stopping = CancellationTokenSource.CreateLinkedTokenSource(applicationOptions.CancellationToken ?? SystemCancellationToken.None);
+        foreach (var broker in this.brokers)
+        {
+            this.AddEventHandlers(broker);
+        }
         try
         {
-            await this.ConnectInternal();
-            await this.SubscribeInternal();
-            await this.PublishInternal();
+            foreach (var broker in this.brokers)
+            {
+                await this.EstablishConnection(broker, this.stopping.Token);
+            }
         }
         catch
         {
             this.IsRunning = false;
-            this.primaryStateSession = null;
-            this.RemoveEventHandlers();
-            await this.client.DisconnectAsync();
+            this.ResetReceivedMessageOrder();
+            await this.StopBrokers();
             throw;
         }
     }
@@ -144,23 +194,23 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     public async Task Stop()
     {
         this.IsRunning = false;
+        this.ResetReceivedMessageOrder();
         try
         {
-            await this.SendOfflineStateMessage();
+            await this.StopBrokers();
         }
         finally
         {
-            this.RemoveEventHandlers();
-            try
-            {
-                await this.FireDisconnected();
-            }
-            finally
-            {
-                await this.client.DisconnectAsync();
-            }
+            this.MarkSourcesOffline();
+            await this.FireDisconnected();
         }
     }
+
+    /// <summary>
+    /// Publishes offline STATE for every connected broker before a caller-managed transport shutdown.
+    /// Call <see cref="Stop"/> for the usual shutdown with MQTT DISCONNECT.
+    /// </summary>
+    public Task PublishOfflineState() => Task.WhenAll(this.brokers.Select(this.SendOfflineStateMessage));
 
     /// <summary>
     /// Publishes a node command.
@@ -178,7 +228,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.client.IsConnected)
+        if (!this.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -213,7 +263,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
         }
 
-        if (!this.client.IsConnected)
+        if (!this.IsConnected)
         {
             throw new Exception("The MQTT client is not connected, please try again.");
         }
@@ -299,8 +349,10 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="topic">The received topic.</param>
     /// <param name="metrics">The payload metrics.</param>
     /// <param name="sessionNumberMetric">The session number metric, if present.</param>
+    /// <param name="timestamp">The UTC Unix timestamp in milliseconds from the payload, if available.</param>
     /// <returns>The metrics to deliver to event handlers.</returns>
-    private protected List<T> ProcessReceivedMetrics(SparkplugMessageTopic topic, IReadOnlyList<T> metrics, out T? sessionNumberMetric)
+    private protected List<T> ProcessReceivedMetrics(
+        SparkplugMessageTopic topic, IReadOnlyList<T> metrics, out T? sessionNumberMetric, ulong? timestamp = null)
     {
         sessionNumberMetric = metrics.FirstOrDefault(metric => metric.Name == Constants.SessionNumberMetricName);
         var payloadMetrics = metrics.Where(metric => metric.Name != Constants.SessionNumberMetricName);
@@ -325,7 +377,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             filteredMetrics.Add(sessionNumberMetric);
         }
 
-        this.UpdateReceivedMetricState(topic, source, filteredMetrics);
+        this.UpdateReceivedMetricState(topic, source, filteredMetrics, timestamp);
         return filteredMetrics;
     }
 
@@ -352,10 +404,12 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// <param name="topic">The topic.</param>
     /// <param name="source">The source of the message.</param>
     /// <param name="metrics">The received metrics.</param>
+    /// <param name="timestamp">The payload timestamp in UTC Unix milliseconds.</param>
     private void UpdateReceivedMetricState(
         SparkplugMessageTopic topic,
         (string GroupIdentifier, string EdgeNodeIdentifier, string? DeviceIdentifier) source,
-        IReadOnlyList<T> metrics)
+        IReadOnlyList<T> metrics,
+        ulong? timestamp)
     {
         if (topic.MessageType == SparkplugMessageType.NodeDeath)
         {
@@ -380,7 +434,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
         if (isDeviceDeath)
         {
-            state.MetricStatus = SparkplugMetricStatus.Offline;
+            SetMetricStatus(state, SparkplugMetricStatus.Offline, timestamp ?? GetUtcTimestamp());
             this.UpdateLegacyMetricState(source, state);
             return;
         }
@@ -399,7 +453,10 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             }
         }
 
-        state.MetricStatus = SparkplugMetricStatus.Online;
+        if (state.MetricStatus != SparkplugMetricStatus.Online)
+        {
+            SetMetricStatus(state, SparkplugMetricStatus.Online, timestamp ?? GetUtcTimestamp());
+        }
         if (isBirth)
         {
             this.metricStates[source] = state;
@@ -440,13 +497,14 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             return;
         }
 
-        node.MetricStatus = SparkplugMetricStatus.Offline;
+        var timestamp = GetUtcTimestamp();
+        SetMetricStatus(node, SparkplugMetricStatus.Offline, timestamp);
         this.UpdateLegacyMetricState(source, node);
         foreach (var (key, device) in this.metricStates)
         {
             if (key.DeviceIdentifier is not null && key.GroupIdentifier == topic.GroupIdentifier && key.EdgeNodeIdentifier == topic.EdgeNodeIdentifier)
             {
-                device.MetricStatus = SparkplugMetricStatus.Offline;
+                SetMetricStatus(device, SparkplugMetricStatus.Offline, timestamp);
                 this.UpdateLegacyMetricState(key, device);
             }
         }
@@ -495,66 +553,106 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     /// Handles the client disconnection event.
     /// </summary>
     /// <param name="args">The arguments.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    protected virtual async Task OnClientDisconnected(MqttClientDisconnectedEventArgs args)
+    protected virtual Task OnClientDisconnected(MqttClientDisconnectedEventArgs args) =>
+        args.ClientWasConnected && this.brokers.FirstOrDefault() is { } broker
+            ? this.HandleBrokerDisconnection(broker)
+            : Task.CompletedTask;
+
+    /// <summary>
+    /// Marks the sources on a disconnected broker stale and reestablishes that broker's connection.
+    /// </summary>
+    /// <param name="broker">The disconnected broker.</param>
+    private async Task HandleBrokerDisconnection(BrokerConnection broker)
     {
-        this.primaryStateSession = null;
+        if (!this.IsRunning || broker.Client.IsConnected || this.stopping is not { } run)
+        {
+            return;
+        }
+
+        broker.Session = null;
+        this.MarkSourcesOffline(broker);
+        var options = this.Options!;
+        var cancellationToken = run.Token;
         try
         {
-            if (this.Options is null)
-            {
-                throw new ArgumentNullException(nameof(this.Options), "The options aren't set properly.");
-            }
-
-            // Set all metrics to stale.
-            this.UpdateMetricState(SparkplugMetricStatus.Offline);
-
-            // Invoke disconnected callback.
             await this.FireDisconnected();
-
-            // Wait until the reconnect interval is reached.
-            await Task.Delay(this.Options.ReconnectInterval);
-
-            if (this.IsRunning)
+            while (this.IsRunning && this.stopping == run && !broker.Client.IsConnected)
             {
-                // Connect, subscribe to incoming messages and send a state message.
-                await this.ConnectInternal();
-                this.UpdateMetricState(SparkplugMetricStatus.Online);
-                await this.SubscribeInternal();
-                await this.PublishInternal();
+                await Task.Delay(options.ReconnectInterval, cancellationToken);
+                try
+                {
+                    await this.EstablishConnection(broker, cancellationToken);
+                }
+                catch (MQTTnet.Exceptions.MqttCommunicationException exception) when (!run.IsCancellationRequested)
+                {
+                    this.KnownMetricsStorage.Logger?.LogDebug(exception, "Could not reconnect to the Sparkplug broker.");
+                }
             }
         }
-        catch (Exception ex)
+        catch (OperationCanceledException) when (run.IsCancellationRequested)
         {
-            await Task.FromException(ex);
         }
     }
 
     /// <summary>
+    /// Discards any messages buffered for the previous broker connection.
+    /// </summary>
+    private protected virtual void ResetReceivedMessageOrder()
+    {
+    }
+
+    /// <summary>
+    /// Discards messages buffered for the given edge node.
+    /// </summary>
+    /// <param name="group">The group identifier.</param>
+    /// <param name="node">The edge node identifier.</param>
+    private protected virtual void ResetReceivedMessageOrder(string group, string node)
+    {
+    }
+
+    /// <summary>
+    /// Gets the MQTT client to which an edge node is connected.
+    /// </summary>
+    /// <param name="group">The group identifier.</param>
+    /// <param name="node">The edge node identifier.</param>
+    /// <returns>The client for publishing commands.</returns>
+    private protected IMqttClient GetCommandClient(string group, string node) =>
+        this.sourceBrokers.TryGetValue((group, node), out var broker)
+            ? broker.Client
+            : this.brokers.FirstOrDefault(candidate => candidate.Client.IsConnected)?.Client ?? this.client;
+
+    /// <summary>
     /// Adds the event handlers to the client.
     /// </summary>
-    private void AddEventHandlers()
+    /// <param name="broker">The broker connection.</param>
+    private void AddEventHandlers(BrokerConnection broker)
     {
-        this.client.DisconnectedAsync += this.OnClientDisconnected;
-        this.client.ConnectedAsync += this.OnClientConnected;
-        this.client.ApplicationMessageReceivedAsync += this.OnApplicationMessageReceived;
+        broker.Disconnected = broker.Client == this.client
+            ? this.OnClientDisconnected
+            : args => args.ClientWasConnected ? this.HandleBrokerDisconnection(broker) : Task.CompletedTask;
+        broker.Received = args => this.OnApplicationMessageReceived(broker, args);
+        broker.Client.DisconnectedAsync += broker.Disconnected;
+        broker.Client.ConnectedAsync += this.OnClientConnected;
+        broker.Client.ApplicationMessageReceivedAsync += broker.Received;
     }
 
     /// <summary>
     /// Removes the event handlers from the client.
     /// </summary>
-    private void RemoveEventHandlers()
+    /// <param name="broker">The broker connection.</param>
+    private void RemoveEventHandlers(BrokerConnection broker)
     {
-        this.client.DisconnectedAsync -= this.OnClientDisconnected;
-        this.client.ConnectedAsync -= this.OnClientConnected;
-        this.client.ApplicationMessageReceivedAsync -= this.OnApplicationMessageReceived;
+        broker.Client.DisconnectedAsync -= broker.Disconnected;
+        broker.Client.ConnectedAsync -= this.OnClientConnected;
+        broker.Client.ApplicationMessageReceivedAsync -= broker.Received;
     }
 
     /// <summary>
     /// Handles the message received handler.
     /// </summary>
+    /// <param name="broker">The broker that received the message.</param>
     /// <param name="args">The arguments.</param>
-    private Task OnApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs args)
+    private Task OnApplicationMessageReceived(BrokerConnection broker, MqttApplicationMessageReceivedEventArgs args)
     {
         try
         {
@@ -562,7 +660,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (this.messageGenerator.SpecificationVersion == SparkplugSpecificationVersion.Version30
                 && this.NameSpace == SparkplugNamespace.VersionB
-                && this.primaryStateSession is { BirthPublished: true } session
+                && broker.Session is { BirthPublished: true } session
                 && topic == session.Birth.Topic)
             {
                 // A retained snapshot from the subscription can arrive after the new birth.
@@ -574,7 +672,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 var payload = Encoding.UTF8.GetString(args.ApplicationMessage.Payload.ToArray());
                 if (StateMessage.TryReadJson(payload, out var online, out _) && !online)
                 {
-                    return this.PublishOnlineState(session);
+                    return this.PublishOnlineState(broker, session);
                 }
 
                 return Task.CompletedTask;
@@ -582,8 +680,18 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (SparkplugMessageTopic.TryParse(topic, out var topicParsed))
             {
+                var source = (topicParsed!.GroupIdentifier, topicParsed.EdgeNodeIdentifier);
+                if (topicParsed.MessageType == SparkplugMessageType.NodeBirth)
+                {
+                    this.sourceBrokers[source] = broker;
+                }
+                else if (this.sourceBrokers.TryGetValue(source, out var previous) && previous != broker)
+                {
+                    return Task.CompletedTask;
+                }
+
                 var data = args.ApplicationMessage.Payload.ToArray();
-                return this.OnMessageReceived(topicParsed!, data);
+                return this.OnMessageReceived(topicParsed, data);
             }
 
             return Task.CompletedTask;
@@ -595,10 +703,39 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
+    /// Connects, subscribes and publishes the initial STATE for a broker.
+    /// </summary>
+    /// <param name="broker">The broker connection.</param>
+    /// <param name="cancellationToken">Cancels connection establishment.</param>
+    private async Task EstablishConnection(BrokerConnection broker, SystemCancellationToken cancellationToken)
+    {
+        await broker.ConnectionLock.WaitAsync(cancellationToken);
+        try
+        {
+            if (!broker.Client.IsConnected)
+            {
+                await this.ConnectInternal(broker, cancellationToken);
+                await this.SubscribeInternal(broker);
+                if (broker.Session is { } session)
+                {
+                    this.IncrementLastSequenceNumber();
+                    await this.PublishOnlineState(broker, session);
+                }
+            }
+        }
+        finally
+        {
+            broker.ConnectionLock.Release();
+        }
+    }
+
+    /// <summary>
     /// Connects the Sparkplug application to the MQTT broker.
     /// </summary>
+    /// <param name="broker">The broker connection.</param>
+    /// <param name="cancellationToken">Cancels connection establishment.</param>
     /// <exception cref="ArgumentNullException">Thrown if the options are null.</exception>
-    private async Task ConnectInternal()
+    private async Task ConnectInternal(BrokerConnection broker, SystemCancellationToken cancellationToken)
     {
         try
         {
@@ -611,8 +748,6 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
             this.IncrementLastSessionNumber();
 
             // Build up the MQTT client and connect.
-            this.Options.CancellationToken ??= SystemCancellationToken.None;
-
             var builder = new MqttClientOptionsBuilder()
                 .WithClientId(this.Options.ClientId)
                 .WithCredentials(this.Options.UserName, this.Options.Password)
@@ -636,7 +771,7 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
 
             if (this.Options.MqttWebSocketOptions is null)
             {
-                builder.WithTcpServer(this.Options.BrokerAddress, this.Options.Port);
+                builder.WithTcpServer(broker.Endpoint.Address, broker.Endpoint.Port);
             }
             else
             {
@@ -646,20 +781,20 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                     .WithProxyOptions(this.Options.MqttWebSocketOptions.ProxyOptions)
                     .WithRequestHeaders(this.Options.MqttWebSocketOptions.RequestHeaders)
                     .WithSubProtocols(this.Options.MqttWebSocketOptions.SubProtocols)
-                    .WithUri(this.Options.BrokerAddress)
+                    .WithUri(broker.Endpoint.Address)
                     .WithKeepAliveInterval(this.Options.MqttWebSocketOptions.KeepAliveInterval)
                     .WithUseDefaultCredentials(this.Options.MqttWebSocketOptions.UseDefaultCredentials)
                 );
             }
 
-            this.primaryStateSession = null;
+            broker.Session = null;
             if (this.Options.IsPrimaryApplication)
             {
                 var hostIdentifier = this.Options.ScadaHostIdentifier;
                 var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 var willMessage = this.messageGenerator.GetSparkplugStateMessage(this.NameSpace, hostIdentifier, false, timestamp);
                 var birthMessage = this.messageGenerator.GetSparkplugStateMessage(this.NameSpace, hostIdentifier, true, timestamp);
-                this.primaryStateSession = new PrimaryStateSession(hostIdentifier, birthMessage);
+                broker.Session = new PrimaryStateSession(hostIdentifier, birthMessage);
 
                 builder.WithWillContentType(willMessage.ContentType);
                 builder.WithWillCorrelationData(willMessage.CorrelationData);
@@ -680,8 +815,13 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
                 }
             }
 
-            this.ClientOptions = builder.Build();
-            await this.client.ConnectAsync(this.ClientOptions, this.Options.CancellationToken.Value);
+            var clientOptions = builder.Build();
+            if (broker.Client == this.client)
+            {
+                this.ClientOptions = clientOptions;
+            }
+
+            await broker.Client.ConnectAsync(clientOptions, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -690,59 +830,56 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Publishes the initial online STATE for a primary host.
-    /// </summary>
-    private Task PublishInternal()
-    {
-        if (this.primaryStateSession is not { } session)
-        {
-            return Task.CompletedTask;
-        }
-
-        this.IncrementLastSequenceNumber();
-        return this.PublishOnlineState(session);
-    }
-
-    /// <summary>
     /// Publishes the online STATE prepared for the current MQTT connection.
     /// </summary>
+    /// <param name="broker">The broker connection.</param>
     /// <param name="session">The primary host state for the connection.</param>
-    private async Task PublishOnlineState(PrimaryStateSession session)
+    private async Task PublishOnlineState(BrokerConnection broker, PrimaryStateSession session)
     {
         var cancellationToken = this.Options?.CancellationToken ?? SystemCancellationToken.None;
-        await this.statePublicationLock.WaitAsync(cancellationToken);
+        await broker.StateLock.WaitAsync(cancellationToken);
         try
         {
-            if (this.IsRunning && this.IsConnected && ReferenceEquals(this.primaryStateSession, session))
+            if (this.IsRunning && broker.Client.IsConnected && ReferenceEquals(broker.Session, session))
             {
-                var result = await this.client.PublishAsync(session.Birth, cancellationToken);
-                if (!result.IsSuccess)
-                {
-                    throw new InvalidOperationException($"Could not publish the online STATE ({result.ReasonCode}).");
-                }
-
+                var wasPublished = session.BirthPublished;
+                // Another publisher can respond to STATE before MQTT acknowledges our publication.
                 session.BirthPublished = true;
+                try
+                {
+                    var result = await broker.Client.PublishAsync(session.Birth, cancellationToken);
+                    if (!result.IsSuccess)
+                    {
+                        throw new InvalidOperationException($"Could not publish the online STATE ({result.ReasonCode}).");
+                    }
+                }
+                catch
+                {
+                    session.BirthPublished = wasPublished;
+                    throw;
+                }
             }
         }
         finally
         {
-            this.statePublicationLock.Release();
+            broker.StateLock.Release();
         }
     }
 
     /// <summary>
     /// Subscribes the client to the application subscribe topic.
     /// </summary>
-    private async Task SubscribeInternal()
+    /// <param name="broker">The broker connection.</param>
+    private async Task SubscribeInternal(BrokerConnection broker)
     {
         var topic = SparkplugTopicGenerator.GetWildcardNamespaceSubscribeTopic(this.NameSpace);
-        await this.client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
+        await broker.Client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
 
         if (this.messageGenerator.SpecificationVersion == SparkplugSpecificationVersion.Version30
             && this.NameSpace == SparkplugNamespace.VersionB
-            && this.primaryStateSession is { } session)
+            && broker.Session is { } session)
         {
-            var subscription = await this.client.SubscribeAsync(session.Birth.Topic, MqttQualityOfServiceLevel.AtLeastOnce);
+            var subscription = await broker.Client.SubscribeAsync(session.Birth.Topic, MqttQualityOfServiceLevel.AtLeastOnce);
             if (subscription.Items.Single().ResultCode is not (MqttClientSubscribeResultCode.GrantedQoS0 or MqttClientSubscribeResultCode.GrantedQoS1))
             {
                 throw new InvalidOperationException($"Could not subscribe to the primary host STATE topic {session.Birth.Topic}.");
@@ -751,32 +888,64 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
     }
 
     /// <summary>
-    /// Updates the metric state.
+    /// Marks cached nodes and devices offline when their broker connection is lost.
     /// </summary>
-    /// <param name="metricState">The metric state.</param>
-    private void UpdateMetricState(SparkplugMetricStatus metricState)
+    /// <param name="broker">The disconnected broker, or null when stopping the host.</param>
+    private void MarkSourcesOffline(BrokerConnection? broker = null)
     {
-        foreach (var (key, state) in this.metricStates)
+        if (broker is not null)
         {
-            if (key.DeviceIdentifier is null)
+            foreach (var (source, connection) in this.sourceBrokers)
             {
-                state.MetricStatus = metricState;
+                if (connection == broker)
+                {
+                    this.ResetReceivedMessageOrder(source.Group, source.Node);
+                }
+            }
+        }
+
+        var timestamp = GetUtcTimestamp();
+        foreach (var (source, state) in this.metricStates)
+        {
+            if (broker is null || this.brokers.Length == 1
+                || (this.sourceBrokers.TryGetValue((source.GroupIdentifier, source.EdgeNodeIdentifier), out var connection) && connection == broker))
+            {
+                SetMetricStatus(state, SparkplugMetricStatus.Offline, timestamp);
             }
         }
     }
 
     /// <summary>
+    /// Updates a source's status and the timestamp applicable to its cached metrics.
+    /// </summary>
+    /// <param name="state">The source state.</param>
+    /// <param name="status">The new status.</param>
+    /// <param name="timestamp">The UTC Unix timestamp in milliseconds.</param>
+    private static void SetMetricStatus(MetricState<T> state, SparkplugMetricStatus status, ulong timestamp)
+    {
+        state.StatusTimestamp = timestamp;
+        state.MetricStatus = status;
+    }
+
+    /// <summary>
+    /// Gets the current host UTC time in Unix milliseconds.
+    /// </summary>
+    /// <returns>The host timestamp.</returns>
+    private static ulong GetUtcTimestamp() => (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+    /// <summary>
     /// Sends the offline state message when intentionally stopping the application.
     /// </summary>
-    private async Task SendOfflineStateMessage()
+    /// <param name="broker">The broker connection.</param>
+    private async Task SendOfflineStateMessage(BrokerConnection broker)
     {
-        await this.statePublicationLock.WaitAsync();
+        await broker.StateLock.WaitAsync();
         try
         {
-            if (this.IsConnected && this.primaryStateSession is { } session)
+            if (broker.Client.IsConnected && broker.Session is { } session)
             {
                 var offlineStateMessage = this.messageGenerator.GetSparkplugStateMessage(this.NameSpace, session.HostIdentifier, false);
-                var result = await this.client.PublishAsync(offlineStateMessage);
+                var result = await broker.Client.PublishAsync(offlineStateMessage);
                 if (!result.IsSuccess)
                 {
                     throw new InvalidOperationException($"Could not publish the offline STATE ({result.ReasonCode}).");
@@ -785,8 +954,40 @@ public abstract partial class SparkplugApplicationBase<T> : SparkplugBase<T> whe
         }
         finally
         {
-            this.primaryStateSession = null;
-            this.statePublicationLock.Release();
+            broker.Session = null;
+            broker.StateLock.Release();
         }
+    }
+
+    /// <summary>
+    /// Ends all connections and releases the additional MQTT clients.
+    /// </summary>
+    private async Task StopBrokers()
+    {
+        var run = this.stopping;
+        run?.Cancel();
+        var connections = Interlocked.Exchange(ref this.brokers, []);
+        await Task.WhenAll(connections.Select(async broker =>
+        {
+            this.RemoveEventHandlers(broker);
+            try
+            {
+                await this.SendOfflineStateMessage(broker);
+            }
+            finally
+            {
+                try
+                {
+                    await broker.Client.DisconnectAsync();
+                }
+                finally
+                {
+                    if (broker.Client != this.client)
+                    {
+                        broker.Client.Dispose();
+                    }
+                }
+            }
+        }));
     }
 }

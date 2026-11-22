@@ -31,6 +31,16 @@ public sealed class MetricState<T> where T : IMetric, new()
     public SparkplugMetricStatus MetricStatus { get; set; } = SparkplugMetricStatus.Unknown;
 
     /// <summary>
+    /// Gets the UTC Unix timestamp in milliseconds at which the source became online or offline.
+    /// </summary>
+    public ulong? StatusTimestamp { get; internal set; }
+
+    /// <summary>
+    /// Gets whether the cached values belong to an offline source and must be treated as stale.
+    /// </summary>
+    public bool MetricsAreStale => this.MetricStatus == SparkplugMetricStatus.Offline;
+
+    /// <summary>
     /// Gets or sets the metrics.
     /// </summary>
     public ConcurrentDictionary<string, T> Metrics { get; set; } = new();

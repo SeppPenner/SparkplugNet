@@ -250,6 +250,30 @@ public sealed class SparkplugPayloadConverterTestVersionB
     }
 
     /// <summary>
+    /// An invalid metric must not discard valid definitions from the same birth.
+    /// </summary>
+    [TestMethod]
+    public void TestBirthRetainsDefinitionsAfterAnOutOfRangeMetric()
+    {
+        var payload = new VersionBProtoBufPayload
+        {
+            Seq = 1,
+            Metrics =
+            [
+                new() { Name = "Invalid", DataType = (uint)VersionBData.DataType.UInt8, IntValue = 256 },
+                new() { Name = "Temperature", DataType = (uint)VersionBData.DataType.Int16, IntValue = 21 }
+            ]
+        };
+        var registry = new SparkplugBase<VersionBData.Metric>.KnownMetricStorage([]);
+
+        var converted = VersionBMain.PayloadConverter.ConvertVersionBPayload(payload, SparkplugMessageType.DeviceBirth, registry);
+
+        Assert.AreEqual(1UL, converted.Seq);
+        Assert.AreEqual("Temperature", converted.Metrics.Single().Name);
+        Assert.AreEqual((short)21, converted.Metrics.Single().Value);
+    }
+
+    /// <summary>
     /// Tests the Sparkplug payload converter for converting a version B payload from Proto.
     /// </summary>
     [TestMethod]

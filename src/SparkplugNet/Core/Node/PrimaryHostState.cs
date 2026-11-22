@@ -34,7 +34,12 @@ internal sealed class PrimaryHostState(string stateTopic, SparkplugSpecification
     /// <summary>
     /// The timestamp of the most recent valid STATE from the configured host.
     /// </summary>
-    private long? lastTimestamp;
+    private readonly Dictionary<int, long> lastTimestamps = new();
+
+    /// <summary>
+    /// The broker for the current connection.
+    /// </summary>
+    private int brokerIndex;
 
     /// <summary>
     /// Whether NBIRTH has been published for the current connection.
@@ -86,14 +91,16 @@ internal sealed class PrimaryHostState(string stateTopic, SparkplugSpecification
     /// <summary>
     /// Starts waiting for STATE on a new connection.
     /// </summary>
+    /// <param name="brokerIndex">The configured broker index.</param>
     /// <returns>A task that completes when the configured host is online.</returns>
-    internal Task BeginConnection()
+    internal Task BeginConnection(int brokerIndex = 0)
     {
         lock (this.sync)
         {
             this.online?.TrySetCanceled();
             var signal = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             this.online = signal;
+            this.brokerIndex = brokerIndex;
             this.birthPublished = false;
             return signal.Task;
         }
@@ -138,12 +145,15 @@ internal sealed class PrimaryHostState(string stateTopic, SparkplugSpecification
 
         lock (this.sync)
         {
-            if (this.online is null || timestamp < this.lastTimestamp)
+            if (this.online is null || (this.lastTimestamps.TryGetValue(this.brokerIndex, out var lastTimestamp) && timestamp < lastTimestamp))
             {
                 return false;
             }
 
-            this.lastTimestamp = timestamp;
+            if (timestamp is { } value)
+            {
+                this.lastTimestamps[this.brokerIndex] = value;
+            }
             if (isOnline)
             {
                 this.online.TrySetResult();
