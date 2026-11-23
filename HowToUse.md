@@ -354,5 +354,41 @@ await node.Start(options);
 
 With this option, `Start` waits for an online `STATE` and publishes the birth messages before returning. The cancellation token or `Stop()` can end a pending wait. After the primary host goes offline, the node reconnects and waits again. Calls that publish device births or metric data require the node to have published its birth with the host online.
 
+## Use several brokers
+
+Both the application and the node accept further brokers in `AdditionalBrokers`. All brokers use the same MQTT settings as the configured one.
+
+```csharp
+var applicationOptions = new SparkplugApplicationOptions(
+    brokerAddress: "broker1",
+    clientId: "host1",
+    scadaHostIdentifier: "host1",
+    isPrimaryApplication: true,
+    cancellationToken: cancellationToken)
+{
+    AdditionalBrokers = [new SparkplugBrokerEndpoint("broker2", 1883)]
+};
+
+var nodeOptions = new SparkplugNodeOptions(
+    brokerAddress: "broker1",
+    clientId: "edge1",
+    scadaHostIdentifier: "host1",
+    groupIdentifier: "group1",
+    edgeNodeIdentifier: "edge1",
+    cancellationToken: cancellationToken)
+{
+    WaitForPrimaryHost = true,
+    PrimaryHostOnlineTimeout = TimeSpan.FromSeconds(5),
+    AdditionalBrokers = [new SparkplugBrokerEndpoint("broker2", 1883)]
+};
+```
+
+The application connects to all brokers at the same time and publishes its `STATE` on each of them. The node is connected to one broker at a time. It starts with the configured broker and moves on to the next one in the list if the primary host does not report online there within `PrimaryHostOnlineTimeout`, so `AdditionalBrokers` on a node requires `WaitForPrimaryHost = true`. `PublishOfflineState()` publishes the offline `STATE` of the application on every connected broker, for a shutdown that closes the connections itself. `Stop()` remains the normal way to shut down.
+
+## Further Sparkplug 3.0 options of the application
+
+- `MessageReorderTimeout`: When set, the application holds back messages that arrive out of sequence and waits this long for the missing ones. If they do not arrive, it requests a rebirth. `null` (the default) disables the reordering.
+- `IncludeDataTypesInCommandMessages`: When `true`, NCMD and DCMD messages carry the data type of each metric, for receivers that require it. The default is `false`.
+
 ## Connection via WebSocket to MQTT server
 As discussed in https://github.com/SeppPenner/SparkplugNet/issues/52, I don't want to stop using 1883 as default port. Therefore, when using WebSockets, you need to specify the complete url (e.g. `mqtt.eclipseprojects.io:443/mqtt` or maybe `test.something.com:443`) as option for `BrokerAddress`. `Port` is ignored in this case.

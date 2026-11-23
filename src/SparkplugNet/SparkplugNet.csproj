@@ -17,7 +17,7 @@
         <PackageIcon>Icon.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryType>Github</RepositoryType>
-        <PackageReleaseNotes>Version 1.4.1.0 (2026-08-18): Moved to MQTTnet 5.2 (BREAKING), removed support for Net9.0, added support for Net10.0, updated NuGet packages, fixed the conversion of UInt32 metrics, fixed the identifier check for strict identifier checking, fixed reading incoming payloads, fixed the eclipse_tahu submodule.</PackageReleaseNotes>
+        <PackageReleaseNotes>Version 1.6.0.0 (2026-11-24): Passes the Sparkplug 3.0 TCK Host Application and Edge Node scenarios, added AdditionalBrokers for multi-broker setups, added MessageReorderTimeout, IncludeDataTypesInCommandMessages and PublishOfflineState() to the application, fixed session handling, command payloads and metric ordering.</PackageReleaseNotes>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
