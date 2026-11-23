@@ -175,10 +175,14 @@ Do not silently "clean up" these, they are existing behaviour:
 6. Tag the commit with the plain version number, no `v` prefix (`1.4.1`, `1.4.0`, `1.3.10`, ...).
    The existing tags are lightweight tags, create new ones the same way.
 7. Push the commits and the tag.
-8. Publish the package with `BuildAndPushPackage.bat`. It deletes every `bin` and `obj` below
-   `src`, builds Release and pushes `*.nupkg` and `*.snupkg` to nuget.org and to the GitHub package
-   feed. It needs `NUGET_API_KEY` and `GITHUB_API_KEY` in the environment and it must run after the
-   tag, otherwise GitVersion burns a prerelease version into the package.
+8. Publish the packages with `BuildAndPushPackage.bat`. It deletes every `bin` and `obj` below
+   `src`, builds Release, builds the nanoFramework project and packs its `.nuspec` with the
+   GitVersion version of `SparkplugNet`, then pushes the `SparkplugNet`,
+   `SparkplugNet.Extensions.Json` and `SparkplugNet.nanoFramework` packages to nuget.org and to the
+   GitHub package feed. It needs `NUGET_API_KEY` and `GITHUB_API_KEY` in the environment,
+   `nuget.exe` on the PATH and the MSBuild of Visual Studio or the Build Tools with the nanoFramework
+   extension (or `NanoFrameworkProjectSystemPath` pointing at the extracted extension files). It must
+   run after the tag, otherwise GitVersion burns a prerelease version into the packages.
 
 The version in the `Changelog.md` has four parts (`1.4.1.0`), the tag has three (`1.4.1`). The
 oldest tags (`1.0`, `0.7`) have two, do not copy that.

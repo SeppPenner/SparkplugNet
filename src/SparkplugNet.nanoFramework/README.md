@@ -6,6 +6,10 @@ The codec supports scalar metrics, byte and file values, and explicit nulls. Box
 
 In Sparkplug 3.0, data messages omit metric data types and fill missing metric timestamps with the payload timestamp. Pass the source's birth metrics to `SparkplugBCodec.Decode` when decoding a payload with omitted types. The Edge Node resolves incoming commands against the metrics of the addressed node or device.
 
+## Install
+
+Install the [SparkplugNet.nanoFramework](https://www.nuget.org/packages/SparkplugNet.nanoFramework/) NuGet package in a nanoFramework application, or build the project from source.
+
 ## Build
 
 Use the [nanoFramework Visual Studio extension](https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html) and run these commands from the repository root in a Visual Studio Developer PowerShell with NuGet CLI available.
@@ -15,7 +19,7 @@ nuget restore src/SparkplugNet.nanoFramework/packages.config -PackagesDirectory 
 msbuild src/SparkplugNet.nanoFramework/SparkplugNet.nanoFramework.nfproj /p:Configuration=Release
 ```
 
-Add the `.nfproj` as a project reference in a nanoFramework application and deploy it to a device with networking enabled. Configure the network and UTC clock before connecting. Use a broker address reachable from the device.
+To use a source build, add the `.nfproj` as a project reference. Deploy the application to a device with networking enabled. Configure the network and UTC clock before connecting. Use a broker address reachable from the device.
 
 ## Publish metrics
 
