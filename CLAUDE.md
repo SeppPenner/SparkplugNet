@@ -164,13 +164,19 @@ Do not silently "clean up" these, they are existing behaviour:
 
 ## Releasing
 
+**Every new version is released completely.** Changelog, README, nuget.org, GitHub Packages and a
+GitHub release belong to every version, none of these steps is optional and none of them waits for
+a separate request.
+
 1. Make the change.
 2. Add an entry at the top of `Changelog.md` in the existing format:
    `* **Version 1.4.2.0 (2026-08-18)**: Short description.`
 3. Update `<PackageReleaseNotes>` in `src/SparkplugNet/SparkplugNet.csproj` to the same text. It is
    the one version string that is maintained by hand, everything else comes from GitVersion.
-4. If the change is user visible, update `README.md` (the "Available for" list, the "Special notes"
-   section for breaking changes) and `HowToUse.md`.
+4. Update `README.md` for every version, the part above the contributors table. The "Available for"
+   list has to match the target frameworks, breaking changes go into the "Special notes" section,
+   and nothing there may describe a state the packages have left behind. If the change is user
+   visible, update `HowToUse.md` as well.
 5. Commit that.
 6. Tag the commit with the plain version number, no `v` prefix (`1.4.1`, `1.4.0`, `1.3.10`, ...).
    The existing tags are lightweight tags, create new ones the same way.
@@ -182,7 +188,20 @@ Do not silently "clean up" these, they are existing behaviour:
    GitHub package feed. It needs `NUGET_API_KEY` and `GITHUB_API_KEY` in the environment,
    `nuget.exe` on the PATH and the MSBuild of Visual Studio or the Build Tools with the nanoFramework
    extension (or `NanoFrameworkProjectSystemPath` pointing at the extracted extension files). It must
-   run after the tag, otherwise GitVersion burns a prerelease version into the packages.
+   run after the tag, otherwise GitVersion burns a prerelease version into the packages. Call it
+   with its full path: the Claude Code shell sets `NoDefaultCurrentDirectoryInExePath=1`, so cmd
+   does not find a bare `BuildAndPushPackage.bat` in the current directory. A push to nuget.org
+   cannot be taken back, the version is burned even after unlisting. nuget.org needs a few minutes
+   to validate a new version before it is listed. Check afterwards that all three packages arrived
+   on nuget.org and on GitHub Packages (`gh api /users/SeppPenner/packages/nuget/<id>/versions`).
+9. Create the GitHub release:
+   `gh release create 1.4.2 -R SeppPenner/SparkplugNet --verify-tag --latest --title "Version 1.4.2.0 (2026-08-18)" --notes-file <file>`.
+   The notes are the changelog sentence plus one line per package, for example
+   `NuGet: https://www.nuget.org/packages/SparkplugNet/1.4.2`. Write credits as `` `@name` `` in
+   backticks, a bare `@name` notifies that person again.
+
+On 2026-11-23 eleven of the tags had a GitHub release (the newest is 1.5.0), the older history there
+is incomplete.
 
 The version in the `Changelog.md` has four parts (`1.4.1.0`), the tag has three (`1.4.1`). The
 oldest tags (`1.0`, `0.7`) have two, do not copy that.
